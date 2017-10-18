@@ -22,6 +22,23 @@ Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.
 
 Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
 
+## Running as an Electron app
+npm install
+npm run build
+npm run electron
+
 ## Further help
 
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+
+## Packaging 
+
+# for use in npm scripts
+npm install electron-packager --save-dev
+
+# for use from cli
+npm install electron-packager -g
+
+npm install --save-dev electron
+
+electron-packager . firecloud-explorer --overwrite --asar=true --platform=linux --arch=x64 --icon=assets/broad-icon.png --prune=true --out=release-builds

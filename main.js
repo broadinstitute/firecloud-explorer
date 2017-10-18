@@ -11,7 +11,8 @@ app.on('ready', function () {
 
   // Initialize the window to our specified dimensions
   win = new BrowserWindow({width: 1024, height: 768});
-
+  win.setMenu(null);
+  
   // Specify entry point
   if (process.env.PACKAGE === 'true'){
     win.loadURL(url.format({
