@@ -1,7 +1,10 @@
 {
   "name": "firecloud-explorer",
+  "productName": "Firecloud Download Client",
   "version": "0.0.0",
   "license": "MIT",
+  "main": "main.js",
+
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -9,8 +12,7 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "build-electron": "ng build --base-href . && cp src/electron/* dist",
-    "electron": "npm run build-electron && electron dist"
+    "electron": "electron ."
   },
   "private": true,
   "dependencies": {
@@ -34,7 +36,7 @@
     "bootstrap": "4.0.0-alpha.6",
     "classlist.js": "^1.1",
     "core-js": "^2.4.1",
-    "electron": "^1.7.9",
+    "dotenv": "^4.0.0",
     "font-awesome": "^4.7.0",
     "hammerjs": "^2.0.8",
     "lodash": "^4.17.4",
@@ -53,6 +55,8 @@
     "@types/jasminewd2": "~2.0.2",
     "@types/node": "~6.0.60",
     "codelyzer": "~3.2.0",
+    "electron": "^1.7.9",
+    "electron-packager": "^9.1.0",
     "enhanced-resolve": "3.3.0",
     "jasmine-core": "~2.6.2",
     "jasmine-spec-reporter": "~4.1.0",

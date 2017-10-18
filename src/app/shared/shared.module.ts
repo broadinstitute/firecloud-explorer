@@ -17,7 +17,8 @@ import {
   MatIconModule,
   MatTooltipModule,
   MatExpansionModule,
-  MatPaginatorModule
+  MatPaginatorModule,
+  MatRadioModule
 } from '@angular/material';
 
 //primeng
@@ -59,6 +60,7 @@ import { BigInputActionComponent } from './big-input/big-input-action.component'
     MatTooltipModule,
     MatExpansionModule,
     MatPaginatorModule,
+    MatRadioModule,
 
     ButtonModule,
     CheckboxModule,
@@ -95,6 +97,7 @@ import { BigInputActionComponent } from './big-input/big-input-action.component'
     MatTooltipModule,
     MatExpansionModule,
     MatPaginatorModule,
+    MatRadioModule,         
 
     ButtonModule,
     CheckboxModule,
