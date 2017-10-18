@@ -1,0 +1,42 @@
+<p-growl [value]="msgs"></p-growl>
+
+<p-treeTable [value]="files" selectionMode="checkbox" [(selection)]="selectedFiles" [style]="{'margin-top':'50px'}" (onNodeSelect)="nodeSelect($event)"
+  (onNodeUnselect)="nodeUnselect($event)" [contextMenu]="cm">
+  <p-header>File Storage</p-header>
+
+  <p-column *ngFor="let col of cols" [field]="col.field" [header]="col.header" [footer]="col.footer"></p-column>
+</p-treeTable>
+<hr>
+<p-toolbar>
+  <div class="ui-toolbar-group-left">
+    <button mat-icon-button color="primary" (click)="expandAll()" matTooltip="Expand all">
+      <mat-icon class="mat-24" aria-label="Expand All">add_to_queue</mat-icon>
+    </button>
+    <button mat-icon-button color="primary" (click)="collapseAll()" matTooltip="Collapse all">
+      <mat-icon class="mat-24" aria-label="Collapse All">remove_from_queue</mat-icon>
+    </button>
+    <i class="fa fa-bars"></i>
+    <button mat-icon-button color="primary" (click)="selectAll()" matTooltip="Select all">
+      <mat-icon class="mat-24" aria-label="Select All">select_all</mat-icon>
+    </button>
+    <button mat-icon-button color="primary" (click)="selectNone()" matTooltip="select none">
+      <mat-icon class="mat-24" aria-label="Select None">remove_from_queue</mat-icon>
+    </button>
+    <button mat-icon-button color="primary" (click)="toggleSelection()" matTooltup="Toggle selection">
+      <mat-icon class="mat-24" aria-label="Toggle selection">remove_from_queue</mat-icon>
+    </button>
+    <p>You have selected: {{selectedFiles?.length}} files </p>
+  </div>
+
+  <div class="ui-toolbar-group-right">
+    <button mat-raised-button color="primary" (click)="selectionDone()">
+        <mat-icon class="mat-24" aria-label="Example icon-button with a heart icon">cloud_download</mat-icon>
+        Download selection
+    </button>
+  </div>
+</p-toolbar>
+
+
+
+
+<p-contextMenu #cm [model]="items"></p-contextMenu>

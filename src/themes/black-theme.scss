@@ -1,0 +1,9 @@
+$fc-black-primary: mat-palette($mat-grey, 900, 500, 900);
+$fc-black-accent: mat-palette($mat-green, A200);
+$fc-black-warn: mat-palette($mat-red, A200);
+
+$fc-black-theme: mat-dark-theme(
+    $fc-black-primary,
+    $fc-black-accent,
+    $fc-black-warn
+);

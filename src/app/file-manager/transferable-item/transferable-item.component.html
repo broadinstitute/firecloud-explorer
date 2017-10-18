@@ -1,0 +1,44 @@
+<div class="container-fluid row">
+
+  <div class="col-sm-6 col-md-6 col-lg-6">
+    <mat-icon class="md-24 pull-right" aria-label="actions">{{item.icon}}</mat-icon>
+    <span>{{item.name}}</span>
+  </div>
+
+  <div class="col-sm-1 col-md-1 col-lg-1">
+    <span>{{item.size}}</span>
+  </div>
+
+  <div class="col-sm-3 col-md-3 col-lg-3">
+    <!-- <md-progress-bar [color]="color" [mode]="mode" [value]="value" [bufferValue]="bufferValue"></md-progress-bar> -->
+    <p-progressBar [value]="value"></p-progressBar>
+  </div>
+
+  <div class="col-sm-2 col-md-2 col-lg-2 row">
+
+    <div class="col-sm-3 col-md-3 col-lg-3">
+      <button mat-icon-button>
+            <mat-icon class="md-24" mdTooltip="Show Item Info" mdTooltipPosition="below" (click)="getInfo()" aria-label="actions">info</mat-icon>
+          </button>
+
+    </div>
+
+    <div class="col-sm-3 col-md-3 col-lg-3">
+      <button mat-icon-button>
+          <mat-icon class="md-24" [mdTooltip]="tooltipText" mdTooltipPosition="below" (click)="handler()" aria-label="actions">{{icon}}</mat-icon>
+        </button>
+    </div>
+
+    <div class="col-sm-3 col-md-3 col-lg-3">
+      <button mat-icon-button>
+         <mat-icon class="md-24"  mdTooltip="Abort Operation" mdTooltipPosition="below" (click)="abort()" aria-label="Abort Download">cancel</mat-icon>
+      </button>
+    </div>
+
+
+    <div class="col-sm-1 col-md-1 col-lg-1">
+      <mat-checkbox [checked]="item.selected" (change)="selectionChanged($event)"></mat-checkbox>
+    </div>
+
+  </div>
+</div>
