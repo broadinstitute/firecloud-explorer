@@ -10,7 +10,14 @@ let win = null;
 app.on('ready', function () {
 
   // Initialize the window to our specified dimensions
-  win = new BrowserWindow({width: 1024, height: 768});
+  win = new BrowserWindow({
+    width: 1024, 
+    height: 768,
+    minWidth: 1024, 
+    minHeight: 768,
+    icon: path.join(__dirname, 'src/assets/icons/png/64x64.png')
+  });
+
   win.setMenu(null);
   
   // Specify entry point
