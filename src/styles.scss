@@ -16,15 +16,10 @@
 
 @import 'styles-reset.scss-theme';
 @import 'app/app.component.scss-theme';
-@import 'app/shared/big-input/big-input.component.scss-theme';
-
 
 @mixin custom-components-theme($theme) {
   @include fc-styles-reset-theme($theme);
   @include fc-app-component-theme($theme);
-  @include fc-big-input-component-theme($theme);
-//  @include fc-parent-component-theme($theme);
-//  @include fc-child-component-theme($theme);
 }
 
 .default-theme {
