@@ -3,13 +3,13 @@ import { Action } from '@app/core';
 import * as DownloadablesActions from '../actions/downloadables.actions';
 import { Item } from '../models/item';
 
-export type Action = DownloadablesActions.All;;
+export type Action = DownloadablesActions.All;
 
-export type DownloadableState = {
+export interface DownloadableState {
     count: number;
     selectedCount: number;
-    items: Item[]
-};
+    items: Item[];
+}
 
 const initialState: DownloadableState = {
     count: 0,
@@ -28,7 +28,7 @@ export function DownloadablesReducer(state = initialState, action: Action): Down
             return initialState;
 
         case DownloadablesActions.RESET:
-            let tmp3 = initialState;
+            const tmp3 = initialState;
             return tmp3;
 
         case DownloadablesActions.SELECT_ALL:
@@ -62,9 +62,9 @@ export function DownloadablesReducer(state = initialState, action: Action): Down
             };
 
         case DownloadablesActions.ADD_ITEM:
-            let add_item = [...state.items, action.payload];
-            let add_item_sc = add_item.filter(x => { return x.selected == true }).length;
-            let add_item_count = add_item.length;
+            const add_item = [...state.items, action.payload];
+            const add_item_sc = add_item.filter(x => x.selected === true).length;
+            const add_item_count = add_item.length;
             return {
                 count: add_item_count,
                 selectedCount: add_item_sc,
@@ -72,18 +72,18 @@ export function DownloadablesReducer(state = initialState, action: Action): Down
             };
 
         case DownloadablesActions.UPDATE_ITEM:
-            let upd_item = state.items.filter(item => { return item.id !== action.payload.id; });
-            let tmp1 = [...upd_item, action.payload];
+            const upd_item = state.items.filter(item => item.id !== action.payload.id);
+            const tmp1 = [...upd_item, action.payload];
             return {
                 count: tmp1.length,
-                selectedCount: tmp1.filter(x => { return x.selected == true }).length,
+                selectedCount: tmp1.filter(x => x.selected === true).length,
                 items: tmp1
             };
 
         case DownloadablesActions.REMOVE_ITEM:
-            let rem_item = state.items.filter(item => { return item.id !== action.payload.id; });
-            let rem_item_sc = add_item.filter(x => { return x.selected == true }).length;
-            let rem_item_count = add_item.length;
+            const rem_item = state.items.filter(item => item.id !== action.payload.id);
+            const rem_item_sc = add_item.filter(x => x.selected === true).length;
+            const rem_item_count = add_item.length;
             return {
                 count: rem_item_count,
                 selectedCount: rem_item_sc,
@@ -91,18 +91,17 @@ export function DownloadablesReducer(state = initialState, action: Action): Down
             };
 
         case DownloadablesActions.SELECT_ITEM:
-            let sel_item = state.items.filter(x => {
-                if (x.id == action.payload.id) {
-                    x.selected == action.payload.selected;
+            const sel_item = state.items.filter(item => {
+                if (item.id === action.payload.id) {
+                    item.selected === action.payload.selected;
                 }
                 return true;
             });
-            let sel_item_sc = sel_item.filter(item => {
-                return item.selected == true;
+            const sel_item_sc = sel_item.filter(item => {
+                return item.selected === true;
             });
 
-            console.log(JSON.stringify(sel_item_sc, null, 2));
-            let sel_item_count = state.count;
+            const sel_item_count = state.count;
             return {
                 count: sel_item_count,
                 selectedCount: sel_item_sc.length,

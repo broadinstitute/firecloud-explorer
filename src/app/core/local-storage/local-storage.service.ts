@@ -5,15 +5,7 @@ const APP_PREFIX = 'ANMS-';
 @Injectable()
 export class LocalStorageService {
 
-  constructor() {}
-
-  setItem(key: string, value: any) {
-    localStorage.setItem(`${APP_PREFIX}${key}`, JSON.stringify(value));
-  }
-
-  getItem(key: string) {
-    return JSON.parse(localStorage.getItem(`${APP_PREFIX}${key}`));
-  }
+  constructor() { }
 
   static loadInitialState() {
     return Object.keys(localStorage)
@@ -36,5 +28,14 @@ export class LocalStorageService {
         return state;
       }, undefined);
   }
+
+  setItem(key: string, value: any) {
+    localStorage.setItem(`${APP_PREFIX}${key}`, JSON.stringify(value));
+  }
+
+  getItem(key: string) {
+    return JSON.parse(localStorage.getItem(`${APP_PREFIX}${key}`));
+  }
+
 
 }

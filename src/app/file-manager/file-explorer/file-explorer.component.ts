@@ -25,15 +25,15 @@ export class FileExplorerComponent implements OnInit {
 
   @Output('done') done: EventEmitter<any> = new EventEmitter();
 
-  //files: Observable<TreeNode[]>;
+  // files: Observable<TreeNode[]>;
   files: TreeNode[];
   workspaces: any[];
 
   selectedFiles: TreeNode[];
   selectedFile: TreeNode;
 
-  fileCount: number = 0;
-  fileSize: number = 0;
+  fileCount = 0;
+  fileSize = 0;
 
   archivos: TreeNode[];
 
@@ -48,7 +48,7 @@ export class FileExplorerComponent implements OnInit {
   }
   ngOnInit() {
 
-      // this.files = this.gcsService.getBucketFiles();
+    // this.files = this.gcsService.getBucketFiles();
 
     // this.filesService.getWorkspaces(false)
     //   .subscribe(
@@ -161,10 +161,10 @@ export class FileExplorerComponent implements OnInit {
   }
 
   toggleSelection() {
-    let newSelection = [];
+    const newSelection = [];
     this.files.forEach(x => {
       if (this.selectedFiles.includes(x)) {
-        //do nothing
+        // do nothing
       } else {
         newSelection.push(x);
       }
@@ -183,12 +183,12 @@ export class FileExplorerComponent implements OnInit {
 
   selectionDone() {
     this.selectedFiles.forEach(file => {
-      let item = {
+      const item = {
         id: file.data.id,
         name: file.data.name,
         size: file.data.size,
         updated: new Date('1/1/16'),
-        icon: file.data.type == 'Folder' ? 'folder' : 'cloud',
+        icon: file.data.type === 'Folder' ? 'folder' : 'cloud',
         selected: false
       };
       this.store.dispatch(new Downloadables.AddItem(item));

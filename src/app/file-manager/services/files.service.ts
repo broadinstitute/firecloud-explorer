@@ -34,7 +34,7 @@ export class FilesService {
                 });
                 return arbol;
             });
-    };
+    }
 
     private processTree(arbol: TreeNode[], item: any): TreeNode[] {
         const path: string = 'root/' + item.name;

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Http } from '@angular/http'
+import { Http } from '@angular/http';
 import { HttpClient } from '@angular/common/http';
 import { } from '@types/gapi.client.storage';
 import { environment } from '@env/environment';
@@ -33,38 +33,38 @@ export class GcsService {
   private authorize() {
     const immediate = false;
     gapi.auth.authorize(
-      { client_id: this.CLIENT_ID, 
-        scope: this.bucket_scopes, 
-        immediate: immediate 
-      }, 
+      {
+        client_id: this.CLIENT_ID,
+        scope: this.bucket_scopes,
+        immediate: immediate
+      },
       authResult => {
         console.log(JSON.stringify(authResult));
-      if (authResult && !authResult.error) {
+        if (authResult && !authResult.error) {
           gapi.auth.setToken(authResult);
           return this.executeQuery();
-      }
-    });
+        }
+      });
   }
 
   private executeQuery() {
-    let request = gapi.client['storage'].objects.list({
+    const request = gapi.client['storage'].objects.list({
       bucket: this.BUCKET_NAME
     });
-    request.execute(function(resp){
-      if(resp.items !== null && resp.items !== undefined){
+    request.execute(function (resp) {
+      if (resp.items !== null && resp.items !== undefined) {
         console.log(resp.items);
         return JSON.stringify(resp.items);
       }
-     return null;
+      return null;
     });
   }
 
   public getBucketFiles() {
     gapi.load('client', () => {
       gapi.client.load('storage', 'v1', () => {
-        this.authorize();        
+        this.authorize();
       });
     });
   }
-
 }

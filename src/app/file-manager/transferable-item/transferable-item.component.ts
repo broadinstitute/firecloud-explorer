@@ -18,16 +18,16 @@ export class TransferableItemComponent implements OnInit {
 
   color = 'primary';
   mode = 'determinate';
-  value: number = 0;
+  value = 0;
   bufferValue = 75;
 
   currentState: any = 'initial';
 
   constructor() { }
 
-  label: string = 'Download';
-  icon: string = 'cloud_download';
-  tooltipText: string = 'Action Button';
+  label = 'Download';
+  icon = 'cloud_download';
+  tooltipText = 'Action Button';
 
   ngOnInit() {
     this.init();
@@ -64,8 +64,8 @@ export class TransferableItemComponent implements OnInit {
     this.label = 'Pause';
     this.icon = 'pause_circle_filled';
     this.tooltipText = 'Pause current Download';
-    for (var i = 0; i < 60; i++) {
-      for (var j = 0; j < 125000; j++) { }
+    for (let i = 0; i < 60; i++) {
+      for (let j = 0; j < 125000; j++) { }
       this.value = i;
     }
     // this.done();

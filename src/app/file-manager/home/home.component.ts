@@ -9,9 +9,9 @@ import { ANIMATE_ON_ROUTE_ENTER } from '@app/core';
 export class HomeComponent implements OnInit {
 
   animateOnRouteEnter = ANIMATE_ON_ROUTE_ENTER;
-  index: number = 0;
 
-  display: boolean = false;
+  index = 0;
+  display = false;
 
   constructor() { }
 

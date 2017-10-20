@@ -3,18 +3,18 @@ import { HttpEvent, HttpInterceptor, HttpHandler, HttpRequest, HttpResponse, Htt
 import { Observable } from 'rxjs';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/catch';
-//import 'rxjs/add/operator/throw';
+// import 'rxjs/add/operator/throw';
 
 @Injectable()
 export class RequestInterceptor implements HttpInterceptor {
 
-    token: string = '';
+    token = '';
 
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
 
-        //this.token = localStorage.getItem('token');
+        // this.token = localStorage.getItem('token');
 
-        if (request.method == 'OPTIONS') {
+        if (request.method === 'OPTIONS') {
             const authReq = request.clone({
                 headers: request.headers
                     .set('Access-Control-Allow-Origin', '*')
@@ -22,7 +22,7 @@ export class RequestInterceptor implements HttpInterceptor {
             return next.handle(authReq);
         }
 
-        if (request.method == 'POST') {
+        if (request.method === 'POST') {
             const authReq = request.clone({
                 headers: request.headers
                     .set('Accept', 'application/json')
@@ -38,7 +38,6 @@ export class RequestInterceptor implements HttpInterceptor {
                 .set('Accept', 'application/json')
                 .set('Content-Type', 'application/json')
                 .set('Access-Control-Allow-Origin', '*')
-                
         });
 
         return next
@@ -51,7 +50,7 @@ export class RequestInterceptor implements HttpInterceptor {
             })
             .catch(response => {
                 if (response instanceof HttpErrorResponse) {
-                    let keys: string[] = JSON.parse(response.error).errorKeys;
+                    const keys: string[] = JSON.parse(response.error).errorKeys;
                     console.log('processing error response', JSON.stringify(response, null, 2));
                 }
                 return Observable.throw(response);

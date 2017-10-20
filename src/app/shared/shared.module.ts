@@ -21,7 +21,7 @@ import {
   MatRadioModule
 } from '@angular/material';
 
-//primeng
+// primeng
 import {
   ButtonModule,
   CheckboxModule,
@@ -35,9 +35,6 @@ import {
   SharedModule as PrimeNgSharedModule,
   MenuModule
 } from 'primeng/primeng';
-
-import { BigInputComponent } from './big-input/big-input.component';
-import { BigInputActionComponent } from './big-input/big-input-action.component';
 
 @NgModule({
   imports: [
@@ -74,8 +71,7 @@ import { BigInputActionComponent } from './big-input/big-input-action.component'
     MenuModule
   ],
   declarations: [
-    BigInputComponent,
-    BigInputActionComponent
+
   ],
   exports: [
     CommonModule,
@@ -97,7 +93,7 @@ import { BigInputActionComponent } from './big-input/big-input-action.component'
     MatTooltipModule,
     MatExpansionModule,
     MatPaginatorModule,
-    MatRadioModule,         
+    MatRadioModule,
 
     ButtonModule,
     CheckboxModule,
@@ -109,9 +105,6 @@ import { BigInputActionComponent } from './big-input/big-input-action.component'
     TreeTableModule,
     PrimeNgSharedModule,
     MenuModule,
-
-    BigInputComponent,
-    BigInputActionComponent,
 
   ],
   schemas: [

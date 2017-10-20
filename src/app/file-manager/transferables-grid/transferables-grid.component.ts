@@ -23,7 +23,7 @@ export class TransferablesGridComponent implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   itemsObs: Observable<DownloadableState>;
-  idCounter: number = 1;
+  idCounter = 1;
 
   color = 'primary';
   mode = 'determinate';
@@ -37,7 +37,7 @@ export class TransferablesGridComponent implements OnInit {
 
   data: any;
 
-  selectionCount: number = 0;
+  selectionCount = 0;
 
   constructor(private store: Store<AppState>) {
     this.itemsObs = store.select('downloadables');
@@ -88,12 +88,27 @@ export class TransferablesGridComponent implements OnInit {
       error => {
         console.log(error);
       }
-    )
-
+    );
   }
 
   trackSelection(event) {
     this.selectItem(event);
   }
+
+  pauseSelected() {
+  }
+
+  resumeSelected() {
+  }
+
+  retrySelected() {
+  }
+
+  abortSelected() {
+  }
+
+  stopAll() {
+  }
+
 }
 
