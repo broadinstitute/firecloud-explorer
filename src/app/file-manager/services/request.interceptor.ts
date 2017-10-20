@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpEvent, HttpInterceptor, HttpHandler, HttpRequest, HttpResponse, HttpErrorResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { SecurityService } from './security.service';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/catch';
-// import 'rxjs/add/operator/throw';
+
 
 @Injectable()
 export class RequestInterceptor implements HttpInterceptor {
@@ -11,8 +12,6 @@ export class RequestInterceptor implements HttpInterceptor {
     token = '';
 
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-
-        // this.token = localStorage.getItem('token');
 
         if (request.method === 'OPTIONS') {
             const authReq = request.clone({
@@ -34,7 +33,7 @@ export class RequestInterceptor implements HttpInterceptor {
 
         const customReq = request.clone({
             headers: request.headers
-                .set('Authorization', 'Token ' + this.token)
+                .set('Authorization', 'Bearer ' + SecurityService.getAccessToken())
                 .set('Accept', 'application/json')
                 .set('Content-Type', 'application/json')
                 .set('Access-Control-Allow-Origin', '*')
@@ -43,9 +42,6 @@ export class RequestInterceptor implements HttpInterceptor {
         return next
             .handle(customReq)
             .do((ev: HttpEvent<any>) => {
-                if (ev instanceof HttpResponse) {
-                    console.log('ṕrocessing response ...', JSON.stringify(ev));
-                }
                 return ev;
             })
             .catch(response => {

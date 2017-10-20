@@ -10,8 +10,8 @@ import { Item } from '../models/item';
 import { DownloadableState, DownloadablesReducer } from '../reducers/downloadables.reducer';
 
 import { FilesService } from '../services/files.service';
+import { FirecloudService } from '../services/firecloud.service';
 import { GcsService } from '../services/gcs.service';
-
 interface AppState {
   downloadables: DownloadableState;
 }
@@ -25,7 +25,6 @@ export class FileExplorerComponent implements OnInit {
 
   @Output('done') done: EventEmitter<any> = new EventEmitter();
 
-  // files: Observable<TreeNode[]>;
   files: TreeNode[];
   workspaces: any[];
 
@@ -42,56 +41,23 @@ export class FileExplorerComponent implements OnInit {
 
   constructor(private store: Store<AppState>,
     private filesService: FilesService,
-    private gcsService: GcsService
+    private gcsService: GcsService,
+    private firecloudService: FirecloudService
   ) {
 
   }
   ngOnInit() {
 
-    // this.files = this.gcsService.getBucketFiles();
-
-    // this.filesService.getWorkspaces(false)
-    //   .subscribe(
-    //   event => {
-
-    //     if (event.type === HttpEventType.Sent) {
-    //       console.log("Request Sent ...");
-    //     }
-    //     if (event.type === HttpEventType.ResponseHeader) {
-    //       console.log("Response Headers received ...");
-    //     }
-
-    //     if (event.type === HttpEventType.UploadProgress) {
-    //       // This is an upload progress event. Compute and show the % done:
-    //       const percentDone = Math.round(100 * event.loaded / event.total);
-    //       console.log(`File is ${percentDone}% uploaded.`);
-    //     }
-
-    //     if (event.type === HttpEventType.DownloadProgress) {
-    //       // This is an upload progress event. Compute and show the % done:
-    //       const percentDone = Math.round(100 * event.loaded / event.total);
-    //       console.log(JSON.stringify(event));
-    //       console.log(`File is ${percentDone}% downloaded.`);
-    //     }
-
-    //     if (event instanceof HttpResponse) {
-    //       console.log('File is completely uploaded!');
-    //       this.workspaces = event.body;
-    //     }
-    //   },
-    //   error => {
-    //     console.log("-----------------> " + JSON.stringify(error));
-    //   });
-
-    this.filesService.getBucketFiles().subscribe(
+    this.filesService.getBucketFiles(false).subscribe(
       resp => {
-        this.files = resp;
+        resp.subscribe(r => {
+          this.files = r;
+        });
       }
     );
 
     this.cols = [
-      { field: 'path', header: 'Path', footer: 'Path' },
-      { field: 'name', header: 'Name', footer: 'Name' },
+      { field: 'path', header: 'Name', footer: 'Name' },
       { field: 'size', header: 'Size', footer: 'Size' },
       { field: 'type', header: 'Type', footer: 'Type' }
     ];
@@ -182,12 +148,16 @@ export class FileExplorerComponent implements OnInit {
   }
 
   selectionDone() {
-    this.selectedFiles.forEach(file => {
+
+    this.selectedFiles
+    .filter(file => { return file.data.type == 'File'})
+    .forEach(file => {
       const item = {
         id: file.data.id,
-        name: file.data.name,
+        name: file.data.path,
         size: file.data.size,
-        updated: new Date('1/1/16'),
+        created: file.data.updated,
+        updated: file.data.updated,
         icon: file.data.type === 'Folder' ? 'folder' : 'cloud',
         selected: false
       };

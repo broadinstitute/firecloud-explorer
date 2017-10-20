@@ -16,7 +16,17 @@ import { TransferableItemComponent } from './transferable-item/transferable-item
 import { TransferablesGridComponent } from './transferables-grid/transferables-grid.component';
 
 import { FilesService } from './services/files.service';
+import { FirecloudService } from './services/firecloud.service';
 import { GcsService } from './services/gcs.service';
+
+import { GcsApiService } from './services/gcs-api.service';
+import { GcsApiMockService } from './services/gcs-api-mock.service';
+import { FirecloudApiService } from './services/firecloud-api.service';
+import { FirecloudApiMockService } from './services/firecloud-api-mock.service';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { RequestInterceptor } from './services/request.interceptor';
+import { environment } from '@env/environment';
+import { HttpClient } from '@angular/common/http';
 
 @NgModule({
   imports: [
@@ -25,7 +35,6 @@ import { GcsService } from './services/gcs.service';
     SharedModule,
     FileManagerRoutingModule,
     StoreModule.forFeature('downloadables', DownloadablesReducer),
-    // EffectsModule.forFeature([SettingsEffects])
   ],
   declarations: [
     HomeComponent,
@@ -35,7 +44,33 @@ import { GcsService } from './services/gcs.service';
   ],
   providers: [
     FilesService,
-    GcsService
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: RequestInterceptor,
+      multi: true
+    },
+    {
+      provide: FirecloudService,
+      deps: [HttpClient],
+      useFactory(http: HttpClient) {
+        if (environment.testing) {
+          return new FirecloudApiMockService();
+        } else {
+          return new FirecloudApiService(http);
+        }
+      }
+    },
+    {
+      provide: GcsService,
+      deps: [HttpClient],
+      useFactory(http: HttpClient) {
+        if (environment.testing) {
+          return new GcsApiMockService();
+        } else {
+          return new GcsApiService(http);
+        }
+      }
+    }
   ],
   exports: [
 
