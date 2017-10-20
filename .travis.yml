@@ -14,3 +14,4 @@ script:
   # call script for deploying of produced artifacts
   #- bash ./.travis-deploy.sh
 
+
