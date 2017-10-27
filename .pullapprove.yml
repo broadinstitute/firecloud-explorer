@@ -1,0 +1,25 @@
+version: 2
+
+always_pending:
+  labels:
+    - do-not-merge
+    - needs-rebase
+    - work-in-progress
+
+group_defaults:
+  approve_by_comment:
+    enabled: true
+    approve_regex: '^:\+1:'
+  author_approval:
+    ignored: true
+
+groups:
+  reviewers:
+    required: 1
+    teams:
+      - dsde-pipelines-developers
+      - belatrix-fc
+  tech-lead:
+    required: -1
+    users:
+      - pshapiro4broad
