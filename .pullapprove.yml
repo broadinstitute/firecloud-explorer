@@ -1,12 +1,11 @@
 version: 2
 
-always_pending:
-  labels:
-    - do-not-merge
-    - needs-rebase
-    - work-in-progress
-
 group_defaults:
+  always_pending:
+    labels:
+      - do-not-merge
+      - needs-rebase
+      - work-in-progress
   approve_by_comment:
     enabled: true
     approve_regex: '^:\+1:'
