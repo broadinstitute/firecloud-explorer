@@ -1,0 +1,38 @@
+@import 'styles-variables';
+
+@import '~bootstrap/scss/bootstrap-reboot';
+@import '~bootstrap/scss/bootstrap-grid';
+@import '~bootstrap/scss/utilities';
+
+@import 'styles-reset';
+
+@import '~@angular/material/theming';
+
+@include mat-core();
+
+@import 'default-theme.scss';
+@import 'light-theme.scss';
+@import 'black-theme.scss';
+
+@import 'styles-reset.scss-theme';
+@import 'app/app.component.scss-theme';
+
+@mixin custom-components-theme($theme) {
+  @include fc-styles-reset-theme($theme);
+  @include fc-app-component-theme($theme);
+}
+
+.default-theme {
+  @include angular-material-theme($fc-theme);
+  @include custom-components-theme($fc-theme);
+}
+
+.light-theme {
+  @include angular-material-theme($fc-light-theme);
+  @include custom-components-theme($fc-light-theme);
+}
+
+.black-theme {
+  @include angular-material-theme($fc-black-theme);
+  @include custom-components-theme($fc-black-theme);
+}

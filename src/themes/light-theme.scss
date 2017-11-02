@@ -1,0 +1,9 @@
+$fc-light-primary: mat-palette($mat-grey, 200, 500, 300);
+$fc-light-accent: mat-palette($mat-brown, 200);
+$fc-light-warn: mat-palette($mat-deep-orange, 200);
+
+$fc-light-theme: mat-light-theme(
+    $fc-light-primary,
+    $fc-light-accent,
+    $fc-light-warn
+);

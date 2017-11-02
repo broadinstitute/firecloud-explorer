@@ -1,0 +1,9 @@
+$fc-primary: mat-palette($mat-indigo, 800, 300, 900);
+$fc-accent: mat-palette($mat-light-blue);
+$fc-warn: mat-palette($mat-deep-orange, A200);
+
+$fc-theme: mat-light-theme(
+    $fc-primary,
+    $fc-accent,
+    $fc-warn
+);

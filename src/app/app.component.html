@@ -1,0 +1,71 @@
+<mat-sidenav-container>
+
+  <mat-sidenav #sidenav mode="push">
+    <div class="branding"><img src="assets/broad_logo.png"/> <span>FireCloud Download Manager</span></div>
+
+    <mat-nav-list>
+      <a mat-list-item *ngFor="let item of navigationSideMenu" (click)="sidenav.close()"
+         [routerLink]="[item.link]" routerLinkActive="active">
+        {{item.label}}
+      </a>
+    </mat-nav-list>
+
+  </mat-sidenav>
+
+  <div class="wrapper">
+
+    <mat-toolbar color="primary">
+      <button mat-icon-button class="hidden-md-up" (click)="sidenav.open()">
+        <mat-icon>menu</mat-icon>
+      </button>
+
+      <span routerLink="" class="branding spacer hidden-md-up text-center"><img
+        src="assets/broad_logo.png"/><strong>    FC</strong>Explorer</span>
+
+      <span routerLink="" class="branding spacer hidden-sm-down"><img
+        src="assets/broad_logo.svg"/><strong>    FC</strong>Explorer</span>
+
+      <span class="hidden-sm-down">
+        <button mat-button class="nav-button" *ngFor="let item of navigation"
+            [routerLink]="[item.link]" routerLinkActive="active">
+          {{item.label}}
+        </button>
+      </span>
+
+      <button mat-button class="sign-in-button"
+              *ngIf="!isAuthenticated"
+              (click)="onLoginClick()">
+        Sign in
+      </button>
+
+      <button *ngIf="isAuthenticated"
+              mat-icon-button
+              [matMenuTriggerFor]="toolbarUserMenu">
+        <mat-icon>person</mat-icon>
+      </button>
+      
+      <mat-menu #toolbarUserMenu="matMenu">
+        <button mat-menu-item (click)="onLogoutClick()">
+          <mat-icon>power_settings_new</mat-icon>
+          <span>Logout</span>
+        </button>
+      </mat-menu>
+
+    </mat-toolbar>
+
+    <div class="content"
+         [@routerTransition]="o.isActivated && o.activatedRoute.routeConfig.path">
+      <router-outlet #o="outlet"></router-outlet>
+    </div>
+
+    <div class="footer">
+      <div class="row">
+        <div class="col-12 signature">
+          &#169; {{year}} - Broad Institute
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</mat-sidenav-container>

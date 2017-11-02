@@ -1,0 +1,103 @@
+<div class="row">
+
+  <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+    <mat-card>
+      <mat-card-content class="row">
+        <section class="example-section">
+          <div class="col-sm-12 col-md-8 col-lg-8 col-xl-8" style="border: 1px solid black; margin: 0 0 0 20px">
+            <mat-progress-bar class="example-margin" [color]="color" [mode]="mode" [value]="value" [bufferValue]="bufferValue">
+            </mat-progress-bar>
+          </div>
+
+          <div class="col-sm-12 col-md-2 col-lg-2 col-xl-2">
+            <button mat-raised-button color="primary" (click)="pauseSelected()" matTooltip="Cancel All">
+              <mat-icon class="mat-24" aria-label="Cancel All">cancel</mat-icon> Cancel all
+            </button>
+          </div>
+
+          <div class="col-sm-12 col-md-2 col-lg-2 col-xl-2">
+            <button mat-raised-button color="primary" (click)="resumeSelected()" matTooltip="Pause All">
+              <mat-icon aria-label="Pause All">pause_circle_filled</mat-icon> Pause all
+            </button>
+          </div>
+        </section>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+    <hr>
+  </div>
+
+  <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+    <mat-expansion-panel>
+
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Download List
+        </mat-panel-title>
+        <mat-panel-description>
+          Show detailed download list
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+
+      <div>
+        <p-toolbar>
+          <div class="ui-toolbar-group-left">
+            <button mat-icon-button color="primary" (click)="selectAll()" matTooltip="select All">
+              <mat-icon class="mat-24" aria-label="Example icon-button with a heart icon">select_all</mat-icon>
+            </button>
+            <button mat-icon-button color="primary" (click)="unselectAll()" matTooltip="Unselect All">
+              <mat-icon class="mat-24" aria-label="Example icon-button with a heart icon">remove_from_queue</mat-icon>
+            </button>
+            <button mat-icon-button color="primary" (click)="toggleSelection()" matTooltip="Toggle selection">
+              <mat-icon class="mat-24" aria-label="Example icon-button with a heart icon">select_all</mat-icon>
+            </button>
+          </div>
+        </p-toolbar>
+      </div>
+
+      <div class="col-sm-12 col-md-12 col-lg-12">
+
+        <mat-list>
+          <h3 md-subheader>Selected Files {{ (itemsObs | async).selectedCount }} of {{ (itemsObs | async).count }}</h3>
+
+          <mat-list-item *ngFor="let item of (itemsObs | async).items">
+            <div class="col-sm-12 col-md-12 col-lg-12">
+              <app-transferable-item [item]='item' (selectionChange)="trackSelection($event)"></app-transferable-item>
+            </div>
+          </mat-list-item>
+          <mat-paginator [length]="(itemsObs | async).items.length" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions" (page)="pageEvent = $event">
+          </mat-paginator>
+
+        </mat-list>
+
+        <p-toolbar class="col-sm-12 col-md-12 col-lg-12">
+          <div class="ui-toolbar-group-left">
+            <button mat-icon-button color="primary" (click)="pauseSelected()" matTooltip="Pause selection">
+              <mat-icon class="mat-24" aria-label="Example icon-button with a heart icon">pause_circle_filled</mat-icon>
+            </button>
+            <button mat-icon-button color="primary" (click)="resumeSelected()" matTooltip="Resume selection">
+              <mat-icon class="mat-24" aria-label="Example icon-button with a heart icon">play_circle_filled</mat-icon>
+            </button>
+            <button mat-icon-button color="primary" (click)="retrySelected()" matTooltip="Retry selection">
+              <mat-icon class="mat-24" aria-label="Example icon-button with a heart icon">replay</mat-icon>
+            </button>
+            <button mat-icon-button color="primary" (click)="abortSelected()" matTooltip="Abort selection">
+              <mat-icon class="mat-24" aria-label="Example icon-button with a heart icon">remove_from_queue</mat-icon>
+            </button>
+          </div>
+
+          <div class="ui-toolbar-group-right">
+            <button mat-raised-button color="primary" (click)="stopAll()">
+              <mat-icon class="mat-24" aria-label="Example icon-button with a heart icon">cloud_download</mat-icon>
+            </button>
+          </div>
+        </p-toolbar>
+
+      </div>
+
+    </mat-expansion-panel>
+  </div>
+
+</div>

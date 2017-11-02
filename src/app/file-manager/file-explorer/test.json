@@ -1,0 +1,194 @@
+[
+    {
+        "data": {
+            "name": "/"
+        },
+        "children": [
+            {
+                "data": {
+                    "name": "consent/"
+                },
+                "icon": {
+
+                },
+                "children": [
+                    {
+                        "data": {
+                            "name": "Broad Institute.."
+                        }
+                    },
+                    {
+                        "data": {
+                            "name": "consent2/"
+                        },
+                        "children": [
+                            {
+                                "data": {
+                                    "name": "Broad Config.txt"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "data": {
+                    "name": "images.jpg"
+                }
+            },
+            {
+                "data": {
+                    "name": "robot 1.1 ...."
+                }
+            },
+            {
+                "data": {
+                    "name": "test/"
+                }
+            },
+            {
+                "data": {
+                    "name": "unnamed.jpg"
+                }
+            }
+        ]
+    }
+]
+
+[
+    {
+        "data": {
+            "id": "consent-bucket/Untitled Document/1507583305428268",
+            "selfLink": "https://www.googleapis.com/storage/v1/b/consent-bucket/o/Untitled%20Document",
+            "bucket": "consent-bucket",
+            "name": "Untitled Document",
+            "path": "",
+            "size": "0",
+            "type": "File",
+            "leaf": true
+        }
+    },
+    {
+        "data": {
+            "id": "consent-bucket/consent//1507146443517011",
+            "selfLink": "https://www.googleapis.com/storage/v1/b/consent-bucket/o/consent%2F",
+            "bucket": "consent-bucket",
+            "name": "consent",
+            "path": "",
+            "size": "0",
+            "type": "Folder",
+            "leaf": false
+        },
+        "children": [
+            {
+                "data": {
+                    "id": "consent-bucket/consent//1507146443517011",
+                    "selfLink": "https://www.googleapis.com/storage/v1/b/consent-bucket/o/consent%2F",
+                    "bucket": "consent-bucket",
+                    "name": "consent",
+                    "path": "",
+                    "size": "0",
+                    "type": "Folder"
+                }
+            },
+            {
+                "data": {
+                    "id": "consent-bucket/consent/Broad Institute- GitHub App.jpg/1507146482706316",
+                    "selfLink": "https://www.googleapis.com/storage/v1/b/consent-bucket/o/consent%2FBroad%20Institute-%20GitHub%20App.jpg",
+                    "bucket": "consent-bucket",
+                    "name": "Broad Institute- GitHub App.jpg",
+                    "path": "consent/",
+                    "size": "107332",
+                    "type": "File",
+                    "leaf": true
+                }
+            }
+        ]
+    },
+    {
+        "data": {
+            "id": "consent-bucket/consent/consent2//1507146597241736",
+            "selfLink": "https://www.googleapis.com/storage/v1/b/consent-bucket/o/consent%2Fconsent2%2F",
+            "bucket": "consent-bucket",
+            "name": "consent2",
+            "path": "consent/",
+            "size": "0",
+            "type": "Folder",
+            "leaf": false
+        },
+        "children": [
+            {
+                "data": {
+                    "id": "consent-bucket/consent/consent2//1507146597241736",
+                    "selfLink": "https://www.googleapis.com/storage/v1/b/consent-bucket/o/consent%2Fconsent2%2F",
+                    "bucket": "consent-bucket",
+                    "name": "consent2",
+                    "path": "consent/",
+                    "size": "0",
+                    "type": "Folder"
+                }
+            }
+        ]
+    },
+    {
+        "data": {
+            "id": "consent-bucket/consent/consent2/Broad Config.txt/1507146627631737",
+            "selfLink": "https://www.googleapis.com/storage/v1/b/consent-bucket/o/consent%2Fconsent2%2FBroad%20Config.txt",
+            "bucket": "consent-bucket",
+            "name": "Broad Config.txt",
+            "path": "consent/consent2/",
+            "size": "1463",
+            "type": "File",
+            "leaf": true
+        }
+    },
+    {
+        "data": {
+            "id": "consent-bucket/images.jpg/1506713004382254",
+            "selfLink": "https://www.googleapis.com/storage/v1/b/consent-bucket/o/images.jpg",
+            "bucket": "consent-bucket",
+            "name": "images.jpg",
+            "path": "",
+            "size": "8130",
+            "type": "File",
+            "leaf": true
+        }
+    },
+    {
+        "data": {
+            "id": "consent-bucket/robo3t-1.1.1-linux-x86_64-c93c6b0.tar.gz/1506715067419388",
+            "selfLink": "https://www.googleapis.com/storage/v1/b/consent-bucket/o/robo3t-1.1.1-linux-x86_64-c93c6b0.tar.gz",
+            "bucket": "consent-bucket",
+            "name": "robo3t-1.1.1-linux-x86_64-c93c6b0.tar.gz",
+            "path": "",
+            "size": "36033059",
+            "type": "File",
+            "leaf": true
+        }
+    },
+    {
+        "data": {
+            "id": "consent-bucket/test//1507146648482293",
+            "selfLink": "https://www.googleapis.com/storage/v1/b/consent-bucket/o/test%2F",
+            "bucket": "consent-bucket",
+            "name": "test",
+            "path": "",
+            "size": "0",
+            "type": "Folder",
+            "leaf": false
+        },
+        "children": [
+            {
+                "data": {
+                    "id": "consent-bucket/test//1507146648482293",
+                    "selfLink": "https://www.googleapis.com/storage/v1/b/consent-bucket/o/test%2F",
+                    "bucket": "consent-bucket",
+                    "name": "test",
+                    "path": "",
+                    "size": "0",
+                    "type": "Folder"
+                }
+            }
+        ]
+    }
+]
