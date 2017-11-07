@@ -5,7 +5,10 @@
 
 export const environment = {
   production: false,
+  testing: true,
   CLIENT_ID: '92957442758-l0dm6534tk8ok7fr7tdm68fjjulmvsk9.apps.googleusercontent.com',
   CLIENT_SECRET: '8SHcED22xutGMb5cSp4-UIPf',
-  BUCKET_NAME: 'bucket-privado'
+  BUCKET_NAME: 'bucket-privado',
+  FIRECLOUD_API: 'https://firecloud-orchestration.dsde-alpha.broadinstitute.org/',
+  GOOGLE_URL: 'https://www.googleapis.com/'
 };

@@ -1,15 +1,19 @@
 <div class="container-fluid row">
 
-  <div class="col-sm-6 col-md-6 col-lg-6">
-    <mat-icon class="md-24 pull-right" aria-label="actions">{{item.icon}}</mat-icon>
+  <div class="col-sm-5 col-md-5 col-lg-5">
+    <!-- <mat-icon class="md-24 pull-right" aria-label="actions">{{item.icon}}</mat-icon> -->
     <span>{{item.name}}</span>
+  </div>
+  
+  <div class="col-sm-2 col-md-2 col-lg-2">
+    <span>{{item.updated | date: 'short'}}</span>
   </div>
 
   <div class="col-sm-1 col-md-1 col-lg-1">
     <span>{{item.size}}</span>
   </div>
 
-  <div class="col-sm-3 col-md-3 col-lg-3">
+  <div class="col-sm-2 col-md-2 col-lg-2">
     <!-- <md-progress-bar [color]="color" [mode]="mode" [value]="value" [bufferValue]="bufferValue"></md-progress-bar> -->
     <p-progressBar [value]="value"></p-progressBar>
   </div>

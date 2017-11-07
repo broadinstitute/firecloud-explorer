@@ -1,8 +1,9 @@
 export interface Item {
     id: number;
     name: string;
-    size: number;
+    created: Date;
     updated: Date;
+    size: string;
     icon: string;
     selected: boolean;
 }

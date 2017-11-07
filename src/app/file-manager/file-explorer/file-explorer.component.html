@@ -4,7 +4,7 @@
   (onNodeUnselect)="nodeUnselect($event)" [contextMenu]="cm">
   <p-header>File Storage</p-header>
 
-  <p-column *ngFor="let col of cols" [field]="col.field" [header]="col.header" [footer]="col.footer"></p-column>
+  <p-column *ngFor="let col of cols" [field]="col.field" [header]="col.header" ></p-column>
 </p-treeTable>
 <hr>
 <p-toolbar>
