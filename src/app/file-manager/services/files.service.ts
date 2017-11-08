@@ -39,7 +39,6 @@ export class FilesService {
 
     private processTree(arbol: TreeNode[], item: any): TreeNode[] {
         const path: string = 'root/' + item.name;
-        const paths: string[] = path.split('/');
         return this.controlTree(arbol, item, path);
     }
 
@@ -88,6 +87,30 @@ export class FilesService {
         return node;
     }
 
+    /**
+     * This method is for the case in which the GCS
+     * don't send us the file structure
+     * @param treeLocal
+     * @param item
+     */
+    private createFileNode(treeLocal: TreeNode[], item: any): TreeNode[] {
+        const node: TreeNode = {};
+        const fileData: FileData = {
+            id: item.id,
+            selfLink: item.selfLink,
+            bucket: item.bucket,
+            created: item.timeCreated,
+            updated: item.updated,
+            path: item.name.split('/')[item.name.split('/').length - 1],
+            size: item.size + ' MB',
+            type: (<string>item.name).endsWith('/') ? 'Folder' : 'File',
+            leaf: true
+        };
+        node.data = fileData;
+        treeLocal.push(node);
+        return treeLocal;
+    }
+
     private createNode(item: any, path: string): TreeNode {
         const node: TreeNode = {};
         const fileData: FileData = {
@@ -105,7 +128,6 @@ export class FilesService {
         node.data = fileData ;
         return node;
     }
-
 
     private initializeContentBucket(contentBucket, workspaceName): TreeNode {
         contentBucket.data = {
@@ -127,7 +149,9 @@ export class FilesService {
                 const workspaceName = workspacesMap.get(bucketName);
                 bucket.items.forEach(item => {
                     this.isBottom = true;
-                    filesBucket = [...this.processTree(filesBucket, item)];
+                    if (!item.name.endsWith('/')) {
+                        filesBucket = [...this.createFileNode(filesBucket, item)];
+                    }
                 });
                 contentBucket.children = [...filesBucket];
                 this.initializeContentBucket(contentBucket, workspaceName);
@@ -138,3 +162,4 @@ export class FilesService {
       });
     }
 }
+
