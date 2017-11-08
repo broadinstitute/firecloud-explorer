@@ -2,19 +2,23 @@ import { Component, HostBinding, OnDestroy, OnInit } from '@angular/core';
 import { OverlayContainer } from '@angular/cdk/overlay';
 import { Store } from '@ngrx/store';
 import { Subject } from 'rxjs/Subject';
+import { LoginService } from '@app/file-manager/services/login.service.ts';
+import { SecurityService } from '@app/file-manager/services/security.service.ts';
 import 'rxjs/add/operator/takeUntil';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/filter';
+import { Router } from '@angular/router';
 
 import { login, logout, selectorAuth, routerTransition } from '@app/core';
 import { environment as env } from '@env/environment';
 
 import { selectorSettings } from './settings';
 @Component({
-  selector: 'fc-root',
+  selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
-  animations: [routerTransition]
+  animations: [routerTransition],
+  providers: [LoginService]
 })
 export class AppComponent implements OnInit, OnDestroy {
 
@@ -35,7 +39,9 @@ export class AppComponent implements OnInit, OnDestroy {
 
   constructor(
     public overlayContainer: OverlayContainer,
-    private store: Store<any>
+    private store: Store<any>,
+    private loginService: LoginService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -51,6 +57,7 @@ export class AppComponent implements OnInit, OnDestroy {
       .select(selectorAuth)
       .takeUntil(this.unsubscribe$)
       .subscribe(auth => this.isAuthenticated = auth.isAuthenticated);
+      this.onLogoutClick();
   }
 
   ngOnDestroy(): void {
@@ -59,11 +66,20 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   onLoginClick() {
-    this.store.dispatch(login());
+    const redirect = '/home';
+    if (!this.loginService.isLogged()) {
+      this.loginService.googleLogin().then(
+          res => this.router.navigate([redirect]));
+    } else {
+      this.router.navigate([redirect]);
+    }
   }
 
   onLogoutClick() {
+    const redirect = '/login';
+    SecurityService.removeAccessToken();
     this.store.dispatch(logout());
+    this.router.navigate([redirect]);
   }
 
 }

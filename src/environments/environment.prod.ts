@@ -1,6 +1,7 @@
 export const environment = {
   production: true,
-  CLIENT_ID: '92957442758-l0dm6534tk8ok7fr7tdm68fjjulmvsk9.apps.googleusercontent.com',
-  CLIENT_SECRET: '8SHcED22xutGMb5cSp4-UIPf',
+  CLIENT_ID: '454950129951-4nd5ah1v74efvi4619m5f075q4dp1puq.apps.googleusercontent.com',
+  CLIENT_SECRET: '7lWnz5qgiiPPkNr18kS1-DdF',
   BUCKET_NAME: 'bucket-privado'
 };
+

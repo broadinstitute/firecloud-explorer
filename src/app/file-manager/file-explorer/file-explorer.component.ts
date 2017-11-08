@@ -150,7 +150,7 @@ export class FileExplorerComponent implements OnInit {
   selectionDone() {
 
     this.selectedFiles
-    .filter(file => { return file.data.type == 'File'})
+    .filter(file => file.data.type === 'File')
     .forEach(file => {
       const item = {
         id: file.data.id,

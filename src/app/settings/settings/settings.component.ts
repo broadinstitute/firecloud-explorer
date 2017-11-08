@@ -6,7 +6,7 @@ import 'rxjs/add/operator/takeUntil';
 import { selectorSettings, actionChangeTheme } from '../settings.reducer';
 
 @Component({
-  selector: 'fc-settings',
+  selector: 'app-settings',
   templateUrl: './settings.component.html',
   styleUrls: ['./settings.component.scss']
 })

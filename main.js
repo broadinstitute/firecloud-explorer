@@ -1,7 +1,8 @@
 // ./main.js
-const {app, BrowserWindow} = require('electron')
+const {app, BrowserWindow, ipcMain} = require('electron')
 const path = require('path');
 const url = require('url');
+const electronOauth2 = require('electron-oauth2');
 
 require('dotenv').config();
 
@@ -19,7 +20,7 @@ app.on('ready', function () {
   });
 
   win.setMenu(null);
-  
+
   // Specify entry point
   if (process.env.PACKAGE === 'true'){
     win.loadURL(url.format({
@@ -29,17 +30,35 @@ app.on('ready', function () {
     }));
   } else {
     win.loadURL(process.env.HOST);
-    win.webContents.openDevTools();
   }
 
   // Show dev tools
   // Remove this line before distributing
-  //win.webContents.openDevTools()
+  // win.webContents.openDevTools()
 
   // Remove window once app is closed
   win.on('closed', function () {
     win = null;
   });
+
+  // ----- Google auth -----
+  const windowParams = {
+    alwaysOnTop: true,
+    autoHideMenuBar: true,
+    webPreferences: {
+        nodeIntegration: false
+    }
+  }
+
+  ipcMain.on('google-oauth',(event, googleConfig, googleOptions) =>{
+    const myApiOauth = electronOauth2(googleConfig, windowParams);  
+    myApiOauth.getAccessToken(googleOptions)
+    .then(token => {
+      // use your token.access_token 
+      win.webContents.send('sendRendererMessage', { result: token}); 
+    });
+  });
+  // ----- Google auth -----
 
 });
 
@@ -54,4 +73,3 @@ app.on('window-all-closed', function () {
     app.quit();
   }
 });
-

@@ -93,7 +93,7 @@ export function DownloadablesReducer(state = initialState, action: Action): Down
         case DownloadablesActions.SELECT_ITEM:
             const sel_item = state.items.filter(item => {
                 if (item.id === action.payload.id) {
-                    item.selected === action.payload.selected;
+                    item.selected = action.payload.selected;
                 }
                 return true;
             });

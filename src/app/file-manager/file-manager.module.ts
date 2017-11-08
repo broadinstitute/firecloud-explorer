@@ -11,6 +11,7 @@ import { FileManagerRoutingModule } from './file-manager-routing.module';
 import { DownloadablesReducer } from './reducers/downloadables.reducer';
 
 import { HomeComponent } from './home/home.component';
+import { LoginComponent } from './login/login.component';
 import { FileExplorerComponent } from './file-explorer/file-explorer.component';
 import { TransferableItemComponent } from './transferable-item/transferable-item.component';
 import { TransferablesGridComponent } from './transferables-grid/transferables-grid.component';
@@ -40,7 +41,8 @@ import { HttpClient } from '@angular/common/http';
     HomeComponent,
     FileExplorerComponent,
     TransferableItemComponent,
-    TransferablesGridComponent
+    TransferablesGridComponent,
+    LoginComponent
   ],
   providers: [
     FilesService,
