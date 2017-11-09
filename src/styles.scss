@@ -36,3 +36,215 @@
   @include angular-material-theme($fc-black-theme);
   @include custom-components-theme($fc-black-theme);
 }
+
+html,
+body {
+  font-family: 'Roboto', sans-serif;
+}
+
+.button-primary.mat-raised-button {
+  background-color: #3f3f3f; 
+}
+
+.button-secondary.mat-raised-button {
+  border: 1px solid #3f3f3f; 
+}
+
+.button-primary,
+.button-secondary {
+  span {
+    font-family: 'Roboto', sans-serif;
+  }
+  i {
+    font-size: 1.1rem;
+    padding: 0 5px 3px 0;
+    vertical-align: top;
+  }
+}
+
+.button-primary span {
+  font-weight: 700;
+  color: #ffffff;  
+}
+
+.button-secondary span {
+  font-weight: 500;
+}
+
+p.aclaration {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 300;
+  color: #081c22;  
+  margin: 0;
+}
+
+h3.subtitle,
+h4.subtitle {
+  font-family: 'Roboto', sans-serif;
+  margin: 0;
+  line-height: 2rem;
+  color: #081c22;
+}
+
+/*TAB*/
+
+.tab-header {
+  width: 100%;
+  position: relative;
+}
+
+.tab-header,
+.tab-header.ui-tabview.ui-tabview-top>.ui-tabview-nav {
+  padding: 0;
+}
+
+.tab-header.ui-tabview .ui-tabview-nav {
+  margin: 0;
+}
+
+.ui-tabview .ui-tabview-panel {
+  padding: 40px 20px;
+}
+
+.ui-corner-all {
+  border-radius: 0;
+}
+
+.tab-header.ui-tabview .ui-widget-header {
+  border: none;
+  background: #999999;
+}
+
+.tab-header .ui-tabview-nav li {
+  width: 50%;
+  margin: 0;
+  
+  a {
+    width: 100%;
+    text-align: center;
+  } 
+}
+
+.tab-header li.ui-state-default {
+  border: 0 0 2px 0 solid #999999;  
+  background: #e8e8e8;  
+  a {
+      color: #b2b1b1;
+      font-size: 1.2rem;
+      padding: .5em 1em;
+      font-family: 'Roboto', sans-serif;
+    }
+}
+
+.tab-header li.ui-state-active {
+  border-color: #fafafa;
+  background: #fafafa;
+  a {
+      color: #081c22;
+    }
+}
+
+/*TREETABLE*/
+
+.tree-table {
+  margin: 40px 0;
+}
+
+.tree-table thead th,
+.tree-table thead tr {
+  color: #081c22;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-align: left;
+  border-width: 0 0 2px 0;
+  border-color: #081c22;
+}
+
+.tree-table thead th:first-child,
+.tree-table thead tr:first-child {
+  padding-left: 20px;
+  width: 60%;
+}
+
+.tree-table tbody td:first-child {
+  width: 60%;
+}
+
+.tree-table .ui-state-highlight {
+  border-color: rgba(1,96,160,0.3);
+  background:  rgba(1,96,160,0.3);
+}
+
+/*TABLE*/
+
+.table-common.mat-table {
+  margin: 30px 0;
+  background: transparent;
+}
+
+.table-common.mat-table .mat-header-row{
+  min-height: 30px;
+  border-width: 0 0 2px 0;
+  border-color: #081c22;
+
+  .mat-header-cell {
+    font-size: 0.9rem;    
+    font-weight: 700;
+    color: #081c22;
+  }
+}
+
+/*TOOLBAR*/
+
+.toolbar-accent.ui-toolbar,
+.toolbar-default.ui-toolbar {
+  padding: 20px;
+}
+
+.toolbar-accent.ui-toolbar.ui-widget-header {
+  background: #ffffff;
+  border: 2px solid #3f3f3f;
+}
+
+.toolbar-default.ui-toolbar.ui-widget-header {
+  background-color: transparent;
+  border: 1px solid #3f3f3f;
+}
+
+/*EXPAND PANEL*/
+
+.expand-panel.mat-expansion-panel{
+  margin: 20px 0;
+  box-shadow: none;
+  background: transparent;
+}
+
+.expand-panel.mat-expansion-panel:not([class*=mat-elevation-z]) {
+  box-shadow: none;
+}
+
+.expand-panel.mat-expansion-panel .mat-expansion-panel-header{
+  padding-left: 0;
+}
+
+.expand-panel .mat-expansion-panel-body {
+  margin: 0;
+}
+
+/*PROGRESS BAR*/
+
+.progress-bar .ui-widget-content,
+.progress-bar-small .ui-widget-content, {
+  background: #e8e8e8;  
+  border: none;
+  height: 0.6em; 
+}
+
+.progress-bar .ui-widget-content {
+  margin: 5px 0
+}
+
+.progress-bar-small .ui-widget-content {
+  margin: 0 10px 0 0;
+}

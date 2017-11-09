@@ -1,69 +1,67 @@
 @import 'styles-variables';
 
-mat-sidenav-container {
-  height: 100%;
+header {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  padding: 20px 40px;  
+  
+  nav {
+    display: flex;   
+    flex-direction: row;    
+    justify-content: flex-end;
+    width: 70%;
+  }
 
-  mat-toolbar {
-    z-index: 1;
-
-    .nav-button {
-      margin: 0 10px 0 0;
-    }
-
-    .branding {
-      cursor: pointer;
-    }
-
-    .sign-in-button {
-      line-height: 35px;
-      margin-right: 10px;
-    }
-
-    .spacer {
-      flex: 1 1 auto;
-    }
-
-    @media (max-width: map-get($grid-breakpoints, lg)) {
-      .nav-button {
-        min-width: 0;
-        padding: 0 10px;
-      }
-      .sign-in-button {
-        min-width: 0;
-        padding: 0 10px;
-        margin: 0 5px 0 0;
-      }
-    }
+  .logo {
+    justify-content: flex-start;
+    width: 30%;
   }
 }
 
-
-mat-sidenav {
-  width: 250px;
-
-  .branding {
-    height: 64px;
-    padding: 8px 10px;
-    font-size: 20px;
-    font-weight: 500;
-
-    img {
-      margin: 0 10px 0 0;
-    }
-
-    span {
-      position: relative;
-      top: 3px;
-    }
+.logo {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 300;
+  font-size: 25px;
+  span {
+    font-weight: 700;
   }
+} 
 
-  .mat-nav-list {
-    padding-top: 0;
+.nav-button {
+  margin: 0 10px 0 0;
+}
+
+.sign-in-button {
+  line-height: 35px;
+  margin-right: 10px;
+}
+
+.menu-item {
+  font-family: 'Roboto', sans-serif;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.submenu-item {
+  text-align: right;
+  line-height: 35px;
+  height: 35px;
+}
+
+@media (max-width: map-get($grid-breakpoints, lg)) {
+  .nav-button {
+    min-width: 0;
+    padding: 0 10px;
+  }
+  .sign-in-button {
+    min-width: 0;
+    padding: 0 10px;
+    margin: 0 5px 0 0;
   }
 }
 
 .wrapper {
-  z-index: -2;
   min-height: 100%;
   display: flex;
   flex-direction: column;
@@ -74,57 +72,21 @@ mat-sidenav {
   }
 
   .footer {
-    padding: 0 15px;
-    text-align: center;
-    z-index: 1;
+    background-color: #3f3f3f;
+    padding: 12px 40px 10px 40px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;  
+    position: fixed;  
+    bottom: 0;
 
-    .row {
-      padding: 10px 0;
-
-      .links {
-        a {
-          transition: padding 0.5s;
-          display: inline-block;
-          padding: 20px 5px;
-
-          &:hover {
-            text-decoration: none;
-          }
-
-          span {
-            display: inline-block;
-            width: 70px;
-            padding: 0 0 0 5px;
-            overflow: hidden;
-            text-align: left;
-            white-space: nowrap;
-            transition: width 0.5s;
-          }
-        }
-
-        @media (max-width: map-get($grid-breakpoints, md)) {
-          a {
-            padding: 20px;
-
-            span {
-              width: 0;
-              padding: 0;
-            }
-          }
-        }
-
-        @media (max-width: map-get($grid-breakpoints, sm)) {
-          a {
-            padding: 20px 5px;
-          }
-        }
-      }
-
-      .signature {
-        a {
-          float: right;
-        }
-      }
+    .footer-signature {
+      color: #ffffff;
+      line-height: 2rem;
+    }
+    
+    .footer-logo {
+      height: 30px;
     }
   }
 }

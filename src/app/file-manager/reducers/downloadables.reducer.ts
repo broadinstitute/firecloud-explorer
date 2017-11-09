@@ -61,6 +61,21 @@ export function DownloadablesReducer(state = initialState, action: Action): Down
                 })
             };
 
+        case DownloadablesActions.TOGGLE_ITEM_SELECTION:
+
+            const tmp_tog = state.items.filter(item => {
+                if (item.id === action.payload.id) {
+                    item.selected = !item.selected;
+                }
+                return true;
+            });
+
+            return {
+                count: tmp_tog.length,
+                selectedCount: tmp_tog.filter(x => x.selected === true).length,
+                items: tmp_tog
+            };
+
         case DownloadablesActions.ADD_ITEM:
             const add_item = [...state.items, action.payload];
             const add_item_sc = add_item.filter(x => x.selected === true).length;
@@ -97,14 +112,10 @@ export function DownloadablesReducer(state = initialState, action: Action): Down
                 }
                 return true;
             });
-            const sel_item_sc = sel_item.filter(item => {
-                return item.selected === true;
-            });
 
-            const sel_item_count = state.count;
             return {
-                count: sel_item_count,
-                selectedCount: sel_item_sc.length,
+                count: state.count,
+                selectedCount: sel_item.filter(item => item.selected === true).length,
                 items: sel_item
             };
 

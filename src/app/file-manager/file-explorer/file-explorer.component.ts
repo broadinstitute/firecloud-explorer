@@ -24,13 +24,16 @@ export class FileExplorerComponent implements OnInit {
   msgs: Message[];
 
   @Output('done') done: EventEmitter<any> = new EventEmitter();
+  @Output('count') count: EventEmitter<any> = new EventEmitter();
 
   files: TreeNode[];
   workspaces: any[];
 
-  selectedFiles: TreeNode[];
+  selectedCount = 0;
+  selectedFiles: TreeNode[] = [];
   selectedFile: TreeNode;
 
+  folderCount = 0;
   fileCount = 0;
   fileSize = 0;
 
@@ -59,7 +62,7 @@ export class FileExplorerComponent implements OnInit {
     this.cols = [
       { field: 'path', header: 'Name', footer: 'Name' },
       { field: 'size', header: 'Size', footer: 'Size' },
-      { field: 'type', header: 'Type', footer: 'Type' }
+      { field: 'updated', header: 'Modified', footer: 'Modified' }
     ];
 
     this.items = [
@@ -68,12 +71,23 @@ export class FileExplorerComponent implements OnInit {
     ];
   }
 
+  countFiles() {
+    this.fileCount = 0;
+    this.selectedFiles.forEach(f => {
+      if (f.data.type === 'File') {
+        this.fileCount++;
+      }
+    });
+  }
+
   nodeSelect(event) {
+    this.countFiles();
     this.msgs = [];
     this.msgs.push({ severity: 'info', summary: 'Node Selected', detail: event.node.data.name });
   }
 
   nodeUnselect(event) {
+    this.countFiles();
     this.msgs = [];
     this.msgs.push({ severity: 'info', summary: 'Node Unselected', detail: event.node.data.name });
   }
@@ -90,6 +104,7 @@ export class FileExplorerComponent implements OnInit {
 
   deleteNode(node: TreeNode) {
     node.parent.children = node.parent.children.filter(n => n.data !== node.data);
+    this.countFiles();
     this.msgs = [];
     this.msgs.push({ severity: 'info', summary: 'Node Deleted', detail: node.data.name });
   }
@@ -120,10 +135,12 @@ export class FileExplorerComponent implements OnInit {
     this.files.forEach(node => {
       this.selectRecursive(node, true);
     });
+    this.countFiles();
   }
 
   selectNone() {
     this.selectedFiles = [];
+    this.countFiles();
   }
 
   toggleSelection() {
@@ -136,6 +153,7 @@ export class FileExplorerComponent implements OnInit {
       }
     });
     this.selectedFiles = newSelection;
+    this.countFiles();
   }
 
   private selectRecursive(node: TreeNode, isExpand: boolean) {

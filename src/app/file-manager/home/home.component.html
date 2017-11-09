@@ -1,24 +1,13 @@
-<div class="container-fluid">
+<div class="tab-container">
+  <p-tabView [(activeIndex)]="index" styleClass="tab-header">
 
-  <div class="row"  >
+    <p-tabPanel header="Select files to download" [ngClass]="animateOnRouteEnter">
+      <app-file-explorer (done)="changeTab(1)" (count)="track($event)"></app-file-explorer>
+    </p-tabPanel>
 
-    <div class="col-sm-12 col-md-12 col-lg-12">
-      <p-tabView [(activeIndex)]="index">
+    <p-tabPanel header="Download status" [ngClass]="animateOnRouteEnter">
+      <app-transferables-grid [count]="selectedFiles"></app-transferables-grid>
+    </p-tabPanel>
 
-        <p-tabPanel header="Select files to download" [ngClass]="animateOnRouteEnter" >
-          <app-file-explorer (done)="changeTab(1)"></app-file-explorer>
-        </p-tabPanel>
-
-        <p-tabPanel header="Download status" [ngClass]="animateOnRouteEnter" >
-          <app-transferables-grid></app-transferables-grid>
-        </p-tabPanel>
-
-        <!-- <p-tabPanel header="Selected To Upload" leftIcon="fa-list" rightIcon="fa-upload">
-        </p-tabPanel> -->
-
-      </p-tabView>
-    </div>
-
-  </div>
-
+  </p-tabView>
 </div>

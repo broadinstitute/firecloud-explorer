@@ -1,40 +1,28 @@
 <p-growl [value]="msgs"></p-growl>
 
-<p-treeTable [value]="files" selectionMode="checkbox" [(selection)]="selectedFiles" [style]="{'margin-top':'50px'}" (onNodeSelect)="nodeSelect($event)"
-  (onNodeUnselect)="nodeUnselect($event)" [contextMenu]="cm">
-  <p-header>File Storage</p-header>
+<button mat-raised-button (click)="selectAll()" class="button-secondary">
+  <i class="material-icons">check_box</i>Select all</button>
+<button mat-raised-button (click)="selectNone()" class="button-secondary">
+  <i class="material-icons">check_box_outline_blank</i>Select none</button>
+<button mat-raised-button (click)="expandAll()" class="button-secondary">
+  <i class="material-icons">add_to_queue</i>Expand all</button>
+<button mat-raised-button (click)="collapseAll()" class="button-secondary">
+  <i class="material-icons">airplay</i>Collapse all</button>
 
-  <p-column *ngFor="let col of cols" [field]="col.field" [header]="col.header" ></p-column>
+<p-treeTable [value]="files" selectionMode="checkbox" [(selection)]="selectedFiles" styleClass="tree-table" (onNodeSelect)="nodeSelect($event)"
+  (onNodeUnselect)="nodeUnselect($event)" [contextMenu]="cm">
+  <p-column *ngFor="let col of cols" [field]="col.field" [header]="col.header"></p-column>
 </p-treeTable>
-<hr>
-<p-toolbar>
+
+<p-toolbar styleClass="toolbar-accent" color="primary">
   <div class="ui-toolbar-group-left">
-    <button mat-icon-button color="primary" (click)="expandAll()" matTooltip="Expand all">
-      <mat-icon class="mat-24" aria-label="Expand All">add_to_queue</mat-icon>
-    </button>
-    <button mat-icon-button color="primary" (click)="collapseAll()" matTooltip="Collapse all">
-      <mat-icon class="mat-24" aria-label="Collapse All">remove_from_queue</mat-icon>
-    </button>
-    <i class="fa fa-bars"></i>
-    <button mat-icon-button color="primary" (click)="selectAll()" matTooltip="Select all">
-      <mat-icon class="mat-24" aria-label="Select All">select_all</mat-icon>
-    </button>
-    <button mat-icon-button color="primary" (click)="selectNone()" matTooltip="select none">
-      <mat-icon class="mat-24" aria-label="Select None">remove_from_queue</mat-icon>
-    </button>
-    <button mat-icon-button color="primary" (click)="toggleSelection()" matTooltup="Toggle selection">
-      <mat-icon class="mat-24" aria-label="Toggle selection">remove_from_queue</mat-icon>
-    </button>
-    <p>You have selected: {{selectedFiles?.length}} files </p>
+    <h3 class="subtitle">You have selected: {{ fileCount }} files </h3>
   </div>
 
   <div class="ui-toolbar-group-right">
-    <button mat-raised-button color="primary" (click)="selectionDone()">
-        <mat-icon class="mat-24" aria-label="Example icon-button with a heart icon">cloud_download</mat-icon>
-        Download selection
-    </button>
+    <button mat-raised-button (click)="selectionDone()" class="button-primary" [disabled]="fileCount <= 0">
+      <i class="material-icons">vertical_align_bottom</i>Download selection</button>
   </div>
 </p-toolbar>
-
 
 <p-contextMenu #cm [model]="items"></p-contextMenu>
