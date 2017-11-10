@@ -24,10 +24,12 @@ export class AppComponent implements OnInit, OnDestroy {
 
   private unsubscribe$: Subject<void> = new Subject<void>();
 
+  title = 'app';
+
   @HostBinding('class') componentCssClass;
 
   year = new Date().getFullYear();
-//  logo = require('../assets/logo.png');
+  //  logo = require('../assets/logo.png');
   navigation = [
     { link: 'home', label: 'Workspaces' }
   ];
@@ -42,22 +44,22 @@ export class AppComponent implements OnInit, OnDestroy {
     private store: Store<any>,
     private loginService: LoginService,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.store
-    .select(selectorSettings)
-    .takeUntil(this.unsubscribe$)
-    .map(({ theme }) => theme.toLowerCase())
-    .subscribe(theme => {
-      this.componentCssClass = theme;
-      this.overlayContainer.getContainerElement().classList.add(theme);
-    });
+      .select(selectorSettings)
+      .takeUntil(this.unsubscribe$)
+      .map(({ theme }) => theme.toLowerCase())
+      .subscribe(theme => {
+        this.componentCssClass = theme;
+        this.overlayContainer.getContainerElement().classList.add(theme);
+      });
     this.store
       .select(selectorAuth)
       .takeUntil(this.unsubscribe$)
       .subscribe(auth => this.isAuthenticated = auth.isAuthenticated);
-      this.onLogoutClick();
+    this.onLogoutClick();
   }
 
   ngOnDestroy(): void {
@@ -69,7 +71,7 @@ export class AppComponent implements OnInit, OnDestroy {
     const redirect = '/home';
     if (!this.loginService.isLogged()) {
       this.loginService.googleLogin().then(
-          res => this.router.navigate([redirect]));
+        res => this.router.navigate([redirect]));
     } else {
       this.router.navigate([redirect]);
     }

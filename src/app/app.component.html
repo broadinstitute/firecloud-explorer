@@ -1,7 +1,7 @@
 <mat-sidenav-container>
 
   <mat-sidenav #sidenav mode="push">
-    <div class="branding"><img src="assets/broad_logo.png"/> <span>FireCloud Download Manager</span></div>
+    <div class="branding"><img src="assets/broad_logo.png"/> <span id="appname">FireCloud Download Manager</span></div>
 
     <mat-nav-list>
       <a mat-list-item *ngFor="let item of navigationSideMenu" (click)="sidenav.close()"
