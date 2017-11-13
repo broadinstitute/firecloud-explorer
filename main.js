@@ -38,11 +38,19 @@ app.on('ready', function () {
 
   // Remove window once app is closed
   win.on('closed', function () {
+    app.quit();
     win = null;
   });
 
   // ----- Google auth -----
+  var googleConfig = {};
+  var googleOptions = {};
+
   const windowParams = {
+    parent: win,
+    modal: true,
+    frame: false,
+    resizable: false,
     alwaysOnTop: true,
     autoHideMenuBar: true,
     webPreferences: {
@@ -50,13 +58,19 @@ app.on('ready', function () {
     }
   }
 
-  ipcMain.on('google-oauth',(event, googleConfig, googleOptions) =>{
-    const myApiOauth = electronOauth2(googleConfig, windowParams);  
-    myApiOauth.getAccessToken(googleOptions)
+  ipcMain.on('configure-gaccount', (event, googleConfig, googleOptions) => {
+    this.googleConfig = googleConfig;
+    this.googleOptions = googleOptions;
+  });
+
+  ipcMain.on('google-oauth', (event) => {
+    const myApiOauth = electronOauth2(this.googleConfig, windowParams);
+    myApiOauth.getAccessToken(this.googleOptions)
     .then(token => {
       // use your token.access_token 
-      win.webContents.send('sendRendererMessage', { result: token}); 
-    });
+        win.webContents.send('sendRendererMessage', { result: token });
+    })
+    .catch((reason) => console.warn('Google Pop-up Warning ' + reason));
   });
   // ----- Google auth -----
 

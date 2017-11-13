@@ -5,7 +5,7 @@
         </div>
         <p class="aclaration">Login using your Google account associated with <span class="medium">FireCloud</span></p>
         <div class="flex-container center">
-            <button id="signIn" mat-raised-button class="button-primary" (click)="showError()">Sign In</button>
+            <button [disabled]= "isSubmitted" mat-raised-button class="button-primary" (click)="logIn()">Sign In</button>
         </div>
     </p-toolbar>
 </div>

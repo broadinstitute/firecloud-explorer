@@ -26,4 +26,12 @@ export class FirecloudApiService extends FirecloudService {
       return workspaces;
   });
   }
+
+  public getUserRegistrationStatus(): Observable<any> {
+    const statusAPI = 'me';
+    return this.http.get(environment.FIRECLOUD_API + statusAPI)
+      .map((resp: Response) => {
+        return resp;
+      });
+  }
 }

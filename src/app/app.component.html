@@ -1,13 +1,16 @@
   <div class="wrapper">
     <header>
-      <div class="logo">
+      <div *ngIf="isAuthenticated" class="logo">
         <span class="bold">FC</span>Explorer
       </div>
 
       <nav>
-        <button mat-button *ngIf="!isAuthenticated" (click)="onLoginClick()" class="menu-item">Sign In</button>
         <button mat-button *ngIf="isAuthenticated" [matMenuTriggerFor]="toolbarUserMenu" class="menu-item">
+<<<<<<< HEAD
           <mat-icon>person</mat-icon> Username 
+=======
+          <mat-icon>person</mat-icon>UserName
+>>>>>>> 15b8dba... code refactoring
         </button>
         <mat-menu #toolbarUserMenu="matMenu">
           <button mat-menu-item (click)="onLogoutClick()" class="submenu-item">Sign Out</button>

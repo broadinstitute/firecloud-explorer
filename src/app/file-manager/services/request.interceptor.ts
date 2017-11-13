@@ -46,7 +46,6 @@ export class RequestInterceptor implements HttpInterceptor {
             })
             .catch(response => {
                 if (response instanceof HttpErrorResponse) {
-                    const keys: string[] = JSON.parse(response.error).errorKeys;
                     console.log('processing error response', JSON.stringify(response, null, 2));
                 }
                 return Observable.throw(response);
