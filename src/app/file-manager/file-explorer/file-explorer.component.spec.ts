@@ -6,11 +6,10 @@ import { RouterModule } from '@angular/router';
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { SharedModule } from '@app/shared';
 import { CoreModule } from '@app/core';
-import { FileManagerModule } from '@app/file-manager';
 import { SettingsModule } from '../../settings';
 import { NgxElectronModule } from 'ngx-electron';
 import { RouterTestingModule } from '@angular/router/testing';
-
+import { FilesService } from '../services/files.service';
 
 describe('FileExplorerComponent', () => {
   let component: FileExplorerComponent;
@@ -30,12 +29,14 @@ describe('FileExplorerComponent', () => {
 
         // features
         SettingsModule,
-        FileManagerModule,
         NgxElectronModule,
         RouterTestingModule,
       ],
       schemas: [
         CUSTOM_ELEMENTS_SCHEMA
+      ],
+      providers: [
+        FilesService
       ]
     })
       .compileComponents();
