@@ -8,10 +8,8 @@ import { Observable } from 'rxjs/Observable';
 import * as Downloadables from '../actions/downloadables.actions';
 import { Item } from '../models/item';
 import { DownloadableState, DownloadablesReducer } from '../reducers/downloadables.reducer';
-
 import { FilesService } from '../services/files.service';
-import { FirecloudService } from '../services/firecloud.service';
-import { GcsService } from '../services/gcs.service';
+
 interface AppState {
   downloadables: DownloadableState;
 }
@@ -27,25 +25,18 @@ export class FileExplorerComponent implements OnInit {
   @Output('count') count: EventEmitter<any> = new EventEmitter();
 
   files: TreeNode[];
-  workspaces: any[];
 
-  selectedCount = 0;
   selectedFiles: TreeNode[] = [];
   selectedFile: TreeNode;
 
-  folderCount = 0;
   fileCount = 0;
-  fileSize = 0;
 
   archivos: TreeNode[];
 
-  items: MenuItem[];
   cols: any[];
 
   constructor(private store: Store<AppState>,
     private filesService: FilesService,
-    private gcsService: GcsService,
-    private firecloudService: FirecloudService
   ) {
 
   }
@@ -63,11 +54,6 @@ export class FileExplorerComponent implements OnInit {
       { field: 'path', header: 'Name', footer: 'Name' },
       { field: 'size', header: 'Size', footer: 'Size' },
       { field: 'updated', header: 'Modified', footer: 'Modified' }
-    ];
-
-    this.items = [
-      { label: 'View', icon: 'fa-search', command: (event) => this.viewNode(this.selectedFile) },
-      { label: 'Delete', icon: 'fa-close', command: (event) => this.deleteNode(this.selectedFile) }
     ];
   }
 

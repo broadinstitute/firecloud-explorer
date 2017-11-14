@@ -11,6 +11,26 @@ export interface DownloadableState {
     items: Item[];
 }
 
+export class DownloadableStateImpl implements DownloadableState {
+    itms: Item[];
+
+    constructor(itm: Item[]) {
+        this.itms = itm;
+    }
+
+    get count(): number {
+        return this.items.length;
+    }
+
+    get selectedCount(): number {
+        return this.items.filter(x => x.selected === true).length;
+    }
+
+    get items(): Item[] {
+        return this.itms;
+    }
+}
+
 const initialState: DownloadableState = {
     count: 0,
     selectedCount: 0,
@@ -32,78 +52,51 @@ export function DownloadablesReducer(state = initialState, action: Action): Down
             return tmp3;
 
         case DownloadablesActions.SELECT_ALL:
-            return {
-                count: state.count,
-                selectedCount: state.count,
-                items: state.items.filter(item => {
+            return new DownloadableStateImpl(
+                state.items.filter(item => {
                     item.selected = true;
                     return true;
                 })
-            };
+            );
 
         case DownloadablesActions.UNSELECT_ALL:
-            return {
-                count: state.count,
-                selectedCount: 0,
-                items: state.items.filter(item => {
+            return new DownloadableStateImpl(
+                state.items.filter(item => {
                     item.selected = false;
                     return true;
                 })
-            };
+            );
 
         case DownloadablesActions.TOGGLE_SELECTION:
-            return {
-                count: state.count,
-                selectedCount: state.count - state.selectedCount,
-                items: state.items.filter(item => {
+            return new DownloadableStateImpl(
+                state.items.filter(item => {
                     item.selected = !item.selected;
                     return true;
                 })
-            };
+            );
 
         case DownloadablesActions.TOGGLE_ITEM_SELECTION:
-
-            const tmp_tog = state.items.filter(item => {
-                if (item.id === action.payload.id) {
-                    item.selected = !item.selected;
-                }
-                return true;
-            });
-
-            return {
-                count: tmp_tog.length,
-                selectedCount: tmp_tog.filter(x => x.selected === true).length,
-                items: tmp_tog
-            };
+            return new DownloadableStateImpl(
+                state.items.filter(item => {
+                    if (item.id === action.payload.id) {
+                        item.selected = !item.selected;
+                    }
+                    return true;
+                })
+            );
 
         case DownloadablesActions.ADD_ITEM:
             const add_item = [...state.items, action.payload];
-            const add_item_sc = add_item.filter(x => x.selected === true).length;
-            const add_item_count = add_item.length;
-            return {
-                count: add_item_count,
-                selectedCount: add_item_sc,
-                items: add_item
-            };
+            return new DownloadableStateImpl(add_item);
 
         case DownloadablesActions.UPDATE_ITEM:
             const upd_item = state.items.filter(item => item.id !== action.payload.id);
             const tmp1 = [...upd_item, action.payload];
-            return {
-                count: tmp1.length,
-                selectedCount: tmp1.filter(x => x.selected === true).length,
-                items: tmp1
-            };
+            return new DownloadableStateImpl(upd_item);
 
         case DownloadablesActions.REMOVE_ITEM:
             const rem_item = state.items.filter(item => item.id !== action.payload.id);
-            const rem_item_sc = add_item.filter(x => x.selected === true).length;
-            const rem_item_count = add_item.length;
-            return {
-                count: rem_item_count,
-                selectedCount: rem_item_sc,
-                items: rem_item
-            };
+            return new DownloadableStateImpl(rem_item);
 
         case DownloadablesActions.SELECT_ITEM:
             const sel_item = state.items.filter(item => {
@@ -112,12 +105,7 @@ export function DownloadablesReducer(state = initialState, action: Action): Down
                 }
                 return true;
             });
-
-            return {
-                count: state.count,
-                selectedCount: sel_item.filter(item => item.selected === true).length,
-                items: sel_item
-            };
+            return new DownloadableStateImpl(sel_item);
 
         default:
             return state;

@@ -70,7 +70,6 @@ export class FilesDataSource extends DataSource<Item> {
 
     return Observable.merge(...displayDataChanges).map(() => {
 
-      // const data = this.getSortedData(this.filesDB.data.slice());
       const data = this.filesDB.data.slice();
 
       // Grab the page's slice of data.
@@ -81,29 +80,6 @@ export class FilesDataSource extends DataSource<Item> {
 
   disconnect() {
 
-  }
-
-  getSortedData(data: Item[]): Item[] {
-
-    if (!this._sort.active || this._sort.direction === '') { return data; }
-
-    return data.sort((a, b) => {
-      let propertyA: number | string = '';
-      let propertyB: number | string = '';
-      const propertyC: Date | string = '';
-
-      switch (this._sort.active) {
-        case 'id': [propertyA, propertyB] = [a.id, b.id]; break;
-        case 'name': [propertyA, propertyB] = [a.name, b.name]; break;
-        case 'size': [propertyA, propertyB] = [a.size, b.size]; break;
-        // case 'updated': [propertyC, propertyC] = [a.updated, b.updated]; break;
-      }
-
-      const valueA = isNaN(+propertyA) ? propertyA : +propertyA;
-      const valueB = isNaN(+propertyB) ? propertyB : +propertyB;
-
-      return (valueA < valueB ? -1 : 1) * (this._sort.direction === 'asc' ? 1 : -1);
-    });
   }
 }
 
