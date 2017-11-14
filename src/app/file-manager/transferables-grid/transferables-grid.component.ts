@@ -8,7 +8,7 @@ import { DownloadableState, DownloadablesReducer } from '../reducers/downloadabl
 import { MatPaginator, PageEvent } from '@angular/material';
 import { DataSource } from '@angular/cdk/collections';
 
-interface AppState {
+export interface AppState {
   downloadables: DownloadableState;
 }
 
@@ -16,7 +16,6 @@ interface AppState {
   selector: 'app-transferables-grid',
   templateUrl: './transferables-grid.component.html',
   styleUrls: ['./transferables-grid.component.css'],
-  // changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TransferablesGridComponent implements OnInit {
 
@@ -40,6 +39,7 @@ export class TransferablesGridComponent implements OnInit {
   selectionCount = 0;
 
   constructor(private store: Store<AppState>) {
+    console.log(store);
     this.itemsObs = store.select('downloadables');
   }
 
