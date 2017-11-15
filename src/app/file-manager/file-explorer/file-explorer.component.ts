@@ -8,10 +8,8 @@ import { Observable } from 'rxjs/Observable';
 import * as Downloadables from '../actions/downloadables.actions';
 import { Item } from '../models/item';
 import { DownloadableState, DownloadablesReducer } from '../reducers/downloadables.reducer';
-
 import { FilesService } from '../services/files.service';
-import { FirecloudService } from '../services/firecloud.service';
-import { GcsService } from '../services/gcs.service';
+
 interface AppState {
   downloadables: DownloadableState;
 }
@@ -26,23 +24,18 @@ export class FileExplorerComponent implements OnInit {
   @Output('done') done: EventEmitter<any> = new EventEmitter();
 
   files: TreeNode[];
-  workspaces: any[];
 
-  selectedFiles: TreeNode[];
+  selectedFiles: TreeNode[] = [];
   selectedFile: TreeNode;
 
   fileCount = 0;
-  fileSize = 0;
 
   archivos: TreeNode[];
 
-  items: MenuItem[];
   cols: any[];
 
   constructor(private store: Store<AppState>,
     private filesService: FilesService,
-    private gcsService: GcsService,
-    private firecloudService: FirecloudService
   ) {
 
   }
@@ -59,21 +52,27 @@ export class FileExplorerComponent implements OnInit {
     this.cols = [
       { field: 'path', header: 'Name', footer: 'Name' },
       { field: 'size', header: 'Size', footer: 'Size' },
-      { field: 'type', header: 'Type', footer: 'Type' }
-    ];
-
-    this.items = [
-      { label: 'View', icon: 'fa-search', command: (event) => this.viewNode(this.selectedFile) },
-      { label: 'Delete', icon: 'fa-close', command: (event) => this.deleteNode(this.selectedFile) }
+      { field: 'updated', header: 'Modified', footer: 'Modified' }
     ];
   }
 
+  countFiles() {
+    this.fileCount = 0;
+    this.selectedFiles.forEach(f => {
+      if (f.data.type === 'File') {
+        this.fileCount++;
+      }
+    });
+  }
+
   nodeSelect(event) {
+    this.countFiles();
     this.msgs = [];
     this.msgs.push({ severity: 'info', summary: 'Node Selected', detail: event.node.data.name });
   }
 
   nodeUnselect(event) {
+    this.countFiles();
     this.msgs = [];
     this.msgs.push({ severity: 'info', summary: 'Node Unselected', detail: event.node.data.name });
   }
@@ -90,6 +89,7 @@ export class FileExplorerComponent implements OnInit {
 
   deleteNode(node: TreeNode) {
     node.parent.children = node.parent.children.filter(n => n.data !== node.data);
+    this.countFiles();
     this.msgs = [];
     this.msgs.push({ severity: 'info', summary: 'Node Deleted', detail: node.data.name });
   }
@@ -120,10 +120,12 @@ export class FileExplorerComponent implements OnInit {
     this.files.forEach(node => {
       this.selectRecursive(node, true);
     });
+    this.countFiles();
   }
 
   selectNone() {
     this.selectedFiles = [];
+    this.countFiles();
   }
 
   toggleSelection() {
@@ -136,6 +138,7 @@ export class FileExplorerComponent implements OnInit {
       }
     });
     this.selectedFiles = newSelection;
+    this.countFiles();
   }
 
   private selectRecursive(node: TreeNode, isExpand: boolean) {

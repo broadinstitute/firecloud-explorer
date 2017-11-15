@@ -1,103 +1,115 @@
-<div class="row">
-
-  <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
-    <mat-card>
-      <mat-card-content class="row">
-        <section class="example-section">
-          <div class="col-sm-12 col-md-8 col-lg-8 col-xl-8" style="border: 1px solid black; margin: 0 0 0 20px">
-            <mat-progress-bar class="example-margin" [color]="color" [mode]="mode" [value]="value" [bufferValue]="bufferValue">
-            </mat-progress-bar>
-          </div>
-
-          <div class="col-sm-12 col-md-2 col-lg-2 col-xl-2">
-            <button mat-raised-button color="primary" (click)="pauseSelected()" matTooltip="Cancel All">
-              <mat-icon class="mat-24" aria-label="Cancel All">cancel</mat-icon> Cancel all
-            </button>
-          </div>
-
-          <div class="col-sm-12 col-md-2 col-lg-2 col-xl-2">
-            <button mat-raised-button color="primary" (click)="resumeSelected()" matTooltip="Pause All">
-              <mat-icon aria-label="Pause All">pause_circle_filled</mat-icon> Pause all
-            </button>
-          </div>
-        </section>
-      </mat-card-content>
-    </mat-card>
+<p-toolbar styleClass="toolbar-accent">
+  <div class="ui-toolbar-group-left" style="width: 50%;">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="padding: 0;">
+      <h4 class="subtitle" style="display: inline;">Downloading X of {{filesDatabase.data.length}} files</h4>
+      <h4 class="subtitle" style="float: right; text-align: right; display: inline;">X%</h4>
+    </div>
+    <p-progressBar mode="determinate" class="progress-bar" [value]="5" [showValue]="false"></p-progressBar>
+    <p class="aclaration">
+      <small>Estimated remaining time: </small>
+    </p>
   </div>
 
-  <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
-    <hr>
+  <div class="ui-toolbar-group-right" style="margin-top: 20px;">
+    <button mat-raised-button (click)="pauseSelected()" class="button-secondary">
+      <i class="material-icons">highlight_off</i>Cancel all</button>
+    <button mat-raised-button (click)="resumeSelected()" class="button-primary">
+      <i class="material-icons">pause_circle_outline</i>Pause all</button>
+  </div>
+</p-toolbar>
+
+
+<mat-expansion-panel #expa class="expand-panel">
+
+  <mat-expansion-panel-header>
+    <mat-panel-title>{{ expa.expanded ? 'Hide detailed download list' : 'Show detailed download list'}}</mat-panel-title>
+  </mat-expansion-panel-header>
+
+  <!--Have to fix these features-->
+  <div class="col-lg-12 col-mat-12 col-sm-12 col-xs-12" style="padding: 0;">
+    <button mat-raised-button (click)="selectAll()" class="button-secondary">
+      <i class="material-icons">check_box</i>Select all</button>
+    <button mat-raised-button (click)="unselectAll()" class="button-secondary">
+      <i class="material-icons">check_box_outline_blank</i>Select none</button>
+    <button mat-raised-button (click)="toggleSelection()" class="button-secondary">
+      <i class="material-icons">shuffle</i>Toogle selection</button>
   </div>
 
-  <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
-    <mat-expansion-panel>
+  <mat-table #table [dataSource]="dataSource" matSort class="table-common">
 
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          Download List
-        </mat-panel-title>
-        <mat-panel-description>
-          Show detailed download list
-        </mat-panel-description>
-      </mat-expansion-panel-header>
+    <ng-container matColumnDef="id">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Id </mat-header-cell>
+      <mat-cell *matCellDef="let row"> {{row.id}} </mat-cell>
+    </ng-container>
 
-      <div>
-        <p-toolbar>
-          <div class="ui-toolbar-group-left">
-            <button mat-icon-button color="primary" (click)="selectAll()" matTooltip="select All">
-              <mat-icon class="mat-24" aria-label="Example icon-button with a heart icon">select_all</mat-icon>
-            </button>
-            <button mat-icon-button color="primary" (click)="unselectAll()" matTooltip="Unselect All">
-              <mat-icon class="mat-24" aria-label="Example icon-button with a heart icon">remove_from_queue</mat-icon>
-            </button>
-            <button mat-icon-button color="primary" (click)="toggleSelection()" matTooltip="Toggle selection">
-              <mat-icon class="mat-24" aria-label="Example icon-button with a heart icon">select_all</mat-icon>
-            </button>
-          </div>
-        </p-toolbar>
-      </div>
+    <ng-container matColumnDef="selected">
+      <mat-header-cell *matHeaderCellDef mat-sort-header style="flex: 0 0 44px;"></mat-header-cell>
+      <mat-cell *matCellDef="let row" style="flex: 0 0 44px;">
+        <mat-checkbox #cbox color="primary" disableRipple></mat-checkbox>
+      </mat-cell>
+    </ng-container>
 
-      <div class="col-sm-12 col-md-12 col-lg-12">
+    <ng-container matColumnDef="name">
+      <mat-header-cell *matHeaderCellDef mat-sort-header style="flex: 0 0 40%;"> Name </mat-header-cell>
+      <mat-cell *matCellDef="let row" style="flex: 0 0 40%;"> {{row.name}} </mat-cell>
+    </ng-container>
 
-        <mat-list>
-          <h3 md-subheader>Selected Files {{ (itemsObs | async).selectedCount }} of {{ (itemsObs | async).count }}</h3>
+    <ng-container matColumnDef="size">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Size </mat-header-cell>
+      <mat-cell *matCellDef="let row"> {{row.size}} </mat-cell>
+    </ng-container>
 
-          <mat-list-item *ngFor="let item of (itemsObs | async).items">
-            <div class="col-sm-12 col-md-12 col-lg-12">
-              <app-transferable-item [item]='item' (selectionChange)="trackSelection($event)"></app-transferable-item>
-            </div>
-          </mat-list-item>
-          <mat-paginator [length]="(itemsObs | async).items.length" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions" (page)="pageEvent = $event">
-          </mat-paginator>
+    <ng-container matColumnDef="status">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Status </mat-header-cell>
+      <mat-cell *matCellDef="let row"> Downloading </mat-cell>
+    </ng-container>
 
-        </mat-list>
+    <ng-container matColumnDef="progress">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Progress </mat-header-cell>
+      <mat-cell *matCellDef="let row">
+        <p-progressBar mode="determinate" class="progress-bar-small" [value]="15" [showValue]="false"></p-progressBar>
+      </mat-cell>
+    </ng-container>
 
-        <p-toolbar class="col-sm-12 col-md-12 col-lg-12">
-          <div class="ui-toolbar-group-left">
-            <button mat-icon-button color="primary" (click)="pauseSelected()" matTooltip="Pause selection">
-              <mat-icon class="mat-24" aria-label="Example icon-button with a heart icon">pause_circle_filled</mat-icon>
-            </button>
-            <button mat-icon-button color="primary" (click)="resumeSelected()" matTooltip="Resume selection">
-              <mat-icon class="mat-24" aria-label="Example icon-button with a heart icon">play_circle_filled</mat-icon>
-            </button>
-            <button mat-icon-button color="primary" (click)="retrySelected()" matTooltip="Retry selection">
-              <mat-icon class="mat-24" aria-label="Example icon-button with a heart icon">replay</mat-icon>
-            </button>
-            <button mat-icon-button color="primary" (click)="abortSelected()" matTooltip="Abort selection">
-              <mat-icon class="mat-24" aria-label="Example icon-button with a heart icon">remove_from_queue</mat-icon>
-            </button>
-          </div>
+    <ng-container matColumnDef="actions">
+      <mat-header-cell *matHeaderCellDef mat-sort-header style="flex: 0 0 85px; text-align: center;"> Actions </mat-header-cell>
+      <mat-cell *matCellDef="let row" style="flex: 0 0 85px;">
+        <button mat-icon-button>
+          <mat-icon aria-label="Cancel file download">highlight_off</mat-icon>
+        </button>
+        <button mat-icon-button>
+          <mat-icon aria-label="Pause file download">pause_circle_outline</mat-icon>
+        </button>
+      </mat-cell>
+    </ng-container>
 
-          <div class="ui-toolbar-group-right">
-            <button mat-raised-button color="primary" (click)="stopAll()">
-              <mat-icon class="mat-24" aria-label="Example icon-button with a heart icon">cloud_download</mat-icon>
-            </button>
-          </div>
-        </p-toolbar>
 
-      </div>
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+    <!-- <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="selectRow($event, row);$event.stopPropagation()" [ngClass]="{'ui-table-row-selected': isSelected(row)}"></mat-row> -->
+  </mat-table>
 
-    </mat-expansion-panel>
+  <mat-paginator #paginator [length]="filesDatabase.data.length" [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]"
+    style="background: transparent; margin-bottom: 20px;">
+  </mat-paginator>
+
+  <div class="ui-toolbar-group-left">
+    <!--Have to fix this feature-->
+    <!-- <h4 class="subtitle">Selected Files {{ filesDatabase.selectedCount }} of {{ filesDatabase.totalCount }}</h4> -->
   </div>
 
-</div>
+  <div class="ui-toolbar-group-right">
+    <button mat-raised-button (click)="pauseSelected()" class="button-secondary">
+      <i class="material-icons">highlight_off</i>Cancel selection</button>
+    <button mat-raised-button (click)="resumeSelected()" class="button-secondary">
+      <i class="material-icons">pause_circle_outline</i>Pause selection</button>
+    <!-- <button mat-raised-button (click)="retrySelected()" class="button-primary">
+              <i class="material-icons">refresh</i>Retry selection</button> -->
+    <!-- <button mat-raised-button (click)="abortSelected()" class="button-primary">
+              <i class="material-icons">pause_circle_outline</i>Abort selection</button> -->
+    <!-- <button mat-raised-button color="primary" (click)="stopAll()">
+      <mat-icon class="mat-24" aria-label="Example icon-button with a heart icon">cloud_download</mat-icon>
+    </button> -->
+  </div>
+
+</mat-expansion-panel>

@@ -9,6 +9,7 @@ import {
   MatTabsModule,
   MatInputModule,
   MatProgressSpinnerModule,
+  MatProgressBarModule,
   MatChipsModule,
   MatSidenavModule,
   MatCheckboxModule,
@@ -18,7 +19,8 @@ import {
   MatTooltipModule,
   MatExpansionModule,
   MatPaginatorModule,
-  MatRadioModule
+  MatRadioModule,
+  MatTableModule
 } from '@angular/material';
 
 // primeng
@@ -47,6 +49,7 @@ import {
     MatTabsModule,
     MatInputModule,
     MatProgressSpinnerModule,
+    MatProgressBarModule,
     MatChipsModule,
     MatCardModule,
     MatSidenavModule,
@@ -58,6 +61,7 @@ import {
     MatExpansionModule,
     MatPaginatorModule,
     MatRadioModule,
+    MatTableModule,
 
     ButtonModule,
     CheckboxModule,
@@ -83,6 +87,7 @@ import {
     MatChipsModule,
     MatInputModule,
     MatProgressSpinnerModule,
+    MatProgressBarModule,
     MatCheckboxModule,
     MatCardModule,
     MatSidenavModule,
@@ -94,6 +99,7 @@ import {
     MatExpansionModule,
     MatPaginatorModule,
     MatRadioModule,
+    MatTableModule,
 
     ButtonModule,
     CheckboxModule,

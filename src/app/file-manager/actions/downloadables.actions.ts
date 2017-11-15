@@ -7,6 +7,7 @@ export const RESET = '[Downloadables] Reset';
 export const SELECT_ALL = '[Downloadables] Select All';
 export const UNSELECT_ALL = '[Downloadables] Unselect All';
 export const TOGGLE_SELECTION = '[Downloadables] Toggle Selection';
+export const TOGGLE_ITEM_SELECTION = '[Downloadables] Toggle Item Selection';
 export const ADD_ITEM = '[Downloadables] Add Item';
 export const UPDATE_ITEM = '[Downloadables] Update Item';
 export const REMOVE_ITEM = '[Downloadables] Remove Item';
@@ -34,6 +35,11 @@ export class UnselectAll implements Action {
 
 export class ToggleSelection implements Action {
     readonly type = TOGGLE_SELECTION;
+}
+
+export class ToggleItemSelection implements Action {
+        readonly type = TOGGLE_ITEM_SELECTION;
+        constructor(public payload: any) { }
 }
 
 export class AddItem implements Action {
@@ -67,6 +73,7 @@ export type All
     | SelectAll
     | UnselectAll
     | ToggleSelection
+    | ToggleItemSelection
     | AddItem
     | UpdateItem
     | RemoveItem

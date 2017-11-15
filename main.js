@@ -19,6 +19,7 @@ app.on('ready', function () {
     icon: path.join(__dirname, 'src/assets/icons/png/64x64.png')
   });
 
+  win.maximize();
   win.setMenu(null);
 
   // Specify entry point
