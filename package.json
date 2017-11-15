@@ -12,7 +12,7 @@
     "lint": "ng lint",
     "e2e": "ng e2e",
     "clean": "rm -rf ./dist/",
-    "build:travisci": "ng build --target production --aot --build-optimizer --vendor-chunk --extract-css --output-hashing all --stats-json --deploy-url /firecloud-explorer/ --base-href /firecloud-explorer",
+    "build:travisci": "ng build --target production --aot --build-optimizer --vendor-chunk --extract-css --output-hashing all --deploy-url /firecloud-explorer/ --base-href /firecloud-explorer",
     "ci": "npm run clean && ng lint && ng test --browser ChromeTravisCi --single-run --reporters spec --sourcemaps=false && npm run build:travisci",
     "electron": "electron ."
   },
