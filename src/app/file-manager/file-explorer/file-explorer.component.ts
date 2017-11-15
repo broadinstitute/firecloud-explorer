@@ -22,7 +22,6 @@ export class FileExplorerComponent implements OnInit {
   msgs: Message[];
 
   @Output('done') done: EventEmitter<any> = new EventEmitter();
-  @Output('count') count: EventEmitter<any> = new EventEmitter();
 
   files: TreeNode[];
 

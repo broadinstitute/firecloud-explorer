@@ -24,7 +24,4 @@ export class HomeComponent implements OnInit {
     this.index = tab;
   }
 
-  track(howmany) {
-    this.selectedFiles = howmany;
-  }
 }

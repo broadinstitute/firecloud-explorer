@@ -1,7 +1,7 @@
 <p-toolbar styleClass="toolbar-accent">
   <div class="ui-toolbar-group-left" style="width: 50%;">
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="padding: 0;">
-      <h4 class="subtitle" style="display: inline;">Downloading X of {{count}} files</h4>
+      <h4 class="subtitle" style="display: inline;">Downloading X of {{filesDatabase.data.length}} files</h4>
       <h4 class="subtitle" style="float: right; text-align: right; display: inline;">X%</h4>
     </div>
     <p-progressBar mode="determinate" class="progress-bar" [value]="5" [showValue]="false"></p-progressBar>
@@ -45,10 +45,7 @@
     <ng-container matColumnDef="selected">
       <mat-header-cell *matHeaderCellDef mat-sort-header style="flex: 0 0 44px;"></mat-header-cell>
       <mat-cell *matCellDef="let row" style="flex: 0 0 44px;">
-        <mat-checkbox #cbox color="primary" disableRipple ></mat-checkbox>
-        <!-- <mat-checkbox #cbox [checked]="isSelected(row)"
-        (click)="selectRowBox($event, cbox, row);" 
-        color="primary" disableRipple ></mat-checkbox> -->
+        <mat-checkbox #cbox color="primary" disableRipple></mat-checkbox>
       </mat-cell>
     </ng-container>
 
@@ -92,7 +89,8 @@
     <!-- <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="selectRow($event, row);$event.stopPropagation()" [ngClass]="{'ui-table-row-selected': isSelected(row)}"></mat-row> -->
   </mat-table>
 
-  <mat-paginator #paginator [length]="filesDatabase.data.length" [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]" style="background: transparent; margin-bottom: 20px;">
+  <mat-paginator #paginator [length]="filesDatabase.data.length" [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]"
+    style="background: transparent; margin-bottom: 20px;">
   </mat-paginator>
 
   <div class="ui-toolbar-group-left">

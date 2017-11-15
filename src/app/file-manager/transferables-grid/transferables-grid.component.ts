@@ -90,8 +90,6 @@ export class FilesDataSource extends DataSource<Item> {
 })
 export class TransferablesGridComponent implements OnInit, AfterViewInit {
 
-  @Input('count') count: any = 0;
-
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
@@ -105,8 +103,6 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   pageSizeOptions = [5, 10, 25, 100];
 
   pageEvent: PageEvent;
-
-  selectionCount = 0;
 
   constructor(private store: Store<AppState>) {
     this.filesDatabase = new FilesDatabase(store);
