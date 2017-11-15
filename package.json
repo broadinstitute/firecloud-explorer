@@ -12,8 +12,8 @@
     "lint": "ng lint",
     "e2e": "ng e2e",
     "clean": "rm -rf ./dist/",
-    "build:travisci": "ng build --target production --aot --build-optimizer --vendor-chunk --extract-css --output-hashing all --stats-json --deploy-url /firecloud-explorer/ --base-href /firecloud-explorer",
-    "ci": "npm run clean && ng lint && ng test --browser ChromeTravisCi --single-run --reporters spec && npm run build:travisci",
+    "build:travisci": "ng build --target production --aot --build-optimizer --vendor-chunk --extract-css --output-hashing all --deploy-url /firecloud-explorer/ --base-href /firecloud-explorer",
+    "ci": "npm run clean && ng lint && ng test --browser ChromeTravisCi --single-run --reporters spec --sourcemaps=false && npm run build:travisci",
     "electron": "electron ."
   },
   "private": true,
@@ -71,6 +71,7 @@
     "karma-coverage-istanbul-reporter": "^1.2.1",
     "karma-jasmine": "~1.1.0",
     "karma-jasmine-html-reporter": "^0.2.2",
+    "karma-spec-reporter": "0.0.31",
     "protractor": "~5.1.2",
     "ts-node": "~3.2.0",
     "tslint": "~5.7.0",

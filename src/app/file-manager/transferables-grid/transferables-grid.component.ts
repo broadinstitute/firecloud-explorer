@@ -15,7 +15,7 @@ import 'rxjs/add/observable/forkJoin';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/observable/merge';
 
-interface AppState {
+export interface AppState {
   downloadables: DownloadableState;
 }
 
