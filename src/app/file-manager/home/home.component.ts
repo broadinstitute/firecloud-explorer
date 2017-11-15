@@ -10,6 +10,7 @@ export class HomeComponent implements OnInit {
 
   animateOnRouteEnter = ANIMATE_ON_ROUTE_ENTER;
 
+  selectedFiles = 0;
   index = 0;
   display = false;
 
@@ -19,6 +20,8 @@ export class HomeComponent implements OnInit {
   }
 
   changeTab(tab: number) {
+    this.index = null;
     this.index = tab;
   }
+
 }
