@@ -86,6 +86,31 @@ h4.subtitle {
   color: #081c22;
 }
 
+.medium {
+  font-weight: 500;
+}
+
+.bold {
+  font-weight: 700;
+}
+
+.italic {
+  font-style: italic;
+}
+
+.logo {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 300;
+} 
+
+.flex-container {
+  display: flex;
+}
+
+.flex-container.center {
+  justify-content: center;
+}
+
 /*TAB*/
 
 .tab-header {
@@ -212,6 +237,13 @@ h4.subtitle {
   border: 1px solid #3f3f3f;
 }
 
+.toolbar-login {
+  width: 600px;
+  border: 2px solid #081c22;
+  align-self: center;
+  margin-top: 50px;
+} 
+
 /*EXPAND PANEL*/
 
 .expand-panel.mat-expansion-panel{
@@ -247,4 +279,44 @@ h4.subtitle {
 
 .progress-bar-small .ui-widget-content {
   margin: 0 10px 0 0;
+}
+
+/*ERROR MESSAGES*/
+
+.error-messages .ui-messages {
+  margin: 20px 0 0 0;
+  background: #ffffff;
+  border: 2px solid #081c22;
+  font-family: 'Roboto', sans-serif;
+}
+
+.error-messages .ui-messages,
+.error-messages .ui-messages-close,
+.error-messages .ui-messages-close:hover {
+  color: #081c22;  
+}
+
+.error-messages .ui-messages-close {
+  margin-right: 5px;
+}
+
+.error-messages .ui-messages-icon {
+  width: 10%;
+  vertical-align: top;
+}
+
+.error-messages .ui-messages ul {
+  width: 85%;
+}
+
+.error-messages .ui-messages-summary {
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.error-messages .ui-messages-detail {
+  display: block;
+  margin-top: 5px;
+  font-size: 0.9rem;
+  font-weight: 300;
 }

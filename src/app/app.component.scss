@@ -16,17 +16,9 @@ header {
   .logo {
     justify-content: flex-start;
     width: 30%;
+    font-size: 25px;    
   }
 }
-
-.logo {
-  font-family: 'Roboto', sans-serif;
-  font-weight: 300;
-  font-size: 25px;
-  span {
-    font-weight: 700;
-  }
-} 
 
 .nav-button {
   margin: 0 10px 0 0;

@@ -1,0 +1,37 @@
+.logo {
+    font-size: 35px;
+    color: #292b2c;
+    display: flex;
+    justify-content: center;
+    margin: 15px 0;
+}
+
+.aclaration {
+    font-size: 1.2rem;
+    text-align: center;
+}
+
+.button-primary {
+    margin: 25px 0 10px 0;
+    line-height: 40px;
+    padding: 0 30px;
+}
+
+.login-message {
+    width: 500px;
+    margin-top: 25px;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 300;
+    font-size: 0.9rem;
+    text-align: center;
+    font-style: italic;
+}
+
+.login-message,
+.login-message a {
+    color: #999999;
+}
+
+.error-messages {
+    width: 600px;
+}

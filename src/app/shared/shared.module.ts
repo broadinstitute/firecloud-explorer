@@ -35,7 +35,8 @@ import {
   TreeTableModule,
   TreeNode,
   SharedModule as PrimeNgSharedModule,
-  MenuModule
+  MenuModule,
+  MessagesModule
 } from 'primeng/primeng';
 
 @NgModule({
@@ -72,7 +73,8 @@ import {
     // SidebarModule,
     TreeTableModule,
     PrimeNgSharedModule,
-    MenuModule
+    MenuModule,
+    MessagesModule
   ],
   declarations: [
 
@@ -111,6 +113,7 @@ import {
     TreeTableModule,
     PrimeNgSharedModule,
     MenuModule,
+    MessagesModule,
 
   ],
   schemas: [
