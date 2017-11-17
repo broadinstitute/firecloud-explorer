@@ -6,6 +6,7 @@ import { GcsService } from './gcs.service';
 import { Observable } from 'rxjs/Rx';
 import { FirecloudService } from './firecloud.service';
 import { FileData } from '../models/filedata';
+import { FilterSizePipe } from '../filters/filesize-filter';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/retry';
@@ -16,7 +17,8 @@ export class FilesService {
     files = {};
     isBottom = true;
 
-    constructor(private gcsService: GcsService, private firecloudService: FirecloudService) { }
+    constructor(private gcsService: GcsService, private firecloudService: FirecloudService,
+                private filterSize: FilterSizePipe) { }
 
     public getBucketFiles(isWorkspacePublic: boolean): Observable<Observable<TreeNode[]>> {
         return this.firecloudService.getUserFirecloudWorkspaces(isWorkspacePublic).map(
@@ -95,24 +97,17 @@ export class FilesService {
      */
     private createFileNode(treeLocal: TreeNode[], item: any): TreeNode[] {
         const node: TreeNode = {};
-        const fileData: FileData = {
-            id: item.id,
-            selfLink: item.selfLink,
-            bucket: item.bucket,
-            created: item.timeCreated,
-            updated: item.updated,
-            path: item.name.split('/')[item.name.split('/').length - 1],
-            size: item.size + ' MB',
-            type: (<string>item.name).endsWith('/') ? 'Folder' : 'File',
-            leaf: true
-        };
+        const fileData: FileData = this.getFileData(item, item.name.split('/')[item.name.split('/').length - 1]);
         node.data = fileData;
         treeLocal.push(node);
         return treeLocal;
     }
 
     private createNode(item: any, path: string): TreeNode {
-        const node: TreeNode = {};
+        return {data: this.getFileData(item, path)};
+    }
+
+    private getFileData(item: any, path: string) {
         const fileData: FileData = {
             id: item.id,
             selfLink: item.selfLink,
@@ -120,22 +115,20 @@ export class FilesService {
             created: item.timeCreated,
             updated: item.updated,
             path: path,
-            size: item.size + ' MB',
+            size: this.filterSize.transform(item.size),
             type: (<string>item.name).endsWith('/') ? 'Folder' : 'File',
             leaf: true
         };
-
-        node.data = fileData ;
-        return node;
+        return fileData;
     }
 
-    private initializeContentBucket(contentBucket, workspaceName): TreeNode {
+    private initializeContentBucket(contentBucket, workspaceName, bucketSize): TreeNode {
         contentBucket.data = {
             path: workspaceName,
-            leaf: true
+            leaf: true,
+            size: this.filterSize.transform(bucketSize)
         };
-        const item = {name: '', id: '', selfLink: '/', bucket: '', path: '/', size: ''};
-        return this.createNode(item, '/');
+        return contentBucket;
     }
 
     private processBucketContent(observables: Observable<any>[], rootTree: TreeNode[], workspacesMap: Map<string, string>) {
@@ -147,14 +140,16 @@ export class FilesService {
                 let filesBucket: TreeNode[] = [];
                 const bucketName = bucket.items[0].bucket;
                 const workspaceName = workspacesMap.get(bucketName);
+                let bucketSize = 0;
                 bucket.items.forEach(item => {
                     this.isBottom = true;
+                    bucketSize += parseFloat(item.size);
                     if (!item.name.endsWith('/')) {
                         filesBucket = [...this.createFileNode(filesBucket, item)];
                     }
                 });
                 contentBucket.children = [...filesBucket];
-                this.initializeContentBucket(contentBucket, workspaceName);
+                this.initializeContentBucket(contentBucket, workspaceName, bucketSize);
                 rootTree.push(contentBucket);
             }
         });

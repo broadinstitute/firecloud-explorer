@@ -43,16 +43,18 @@ export class FileExplorerComponent implements OnInit {
 
     this.filesService.getBucketFiles(false).subscribe(
       resp => {
-        resp.subscribe(r => {
-          this.files = r;
-        });
+        if ( resp !== undefined) {
+          resp.subscribe(r => {
+            this.files = r;
+          });
+        }
       }
     );
 
     this.cols = [
       { field: 'path', header: 'Name', footer: 'Name' },
       { field: 'size', header: 'Size', footer: 'Size' },
-      { field: 'updated', header: 'Modified', footer: 'Modified' }
+      { field: 'updated', header: 'Last Modified', footer: 'Last Modified' }
     ];
   }
 

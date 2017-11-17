@@ -15,6 +15,7 @@ import { GcsService } from '../services/gcs.service';
 import { GcsApiMockService } from '../services/gcs-api-mock.service';
 import { FirecloudService } from '../services/firecloud.service';
 import { FirecloudApiMockService } from '../services/firecloud-api-mock.service';
+import { FilterSizePipe } from '../filters/filesize-filter';
 
 describe('FileExplorerComponent', () => {
   let component: FileExplorerComponent;
@@ -23,7 +24,8 @@ describe('FileExplorerComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [
-        FileExplorerComponent
+        FileExplorerComponent,
+        FilterSizePipe
       ],
       imports: [
         BrowserAnimationsModule,
@@ -41,6 +43,7 @@ describe('FileExplorerComponent', () => {
         CUSTOM_ELEMENTS_SCHEMA
       ],
       providers: [
+        FilterSizePipe,
         FilesService,
         { provide: GcsService, useClass: GcsApiMockService },
         { provide: FirecloudService, useClass: FirecloudApiMockService },

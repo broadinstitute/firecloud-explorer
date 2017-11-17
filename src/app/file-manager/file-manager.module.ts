@@ -28,6 +28,7 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { RequestInterceptor } from './services/request.interceptor';
 import { environment } from '@env/environment';
 import { HttpClient } from '@angular/common/http';
+import { FilterSizePipe } from './filters/filesize-filter';
 
 @NgModule({
   imports: [
@@ -42,9 +43,11 @@ import { HttpClient } from '@angular/common/http';
     FileExplorerComponent,
     TransferableItemComponent,
     TransferablesGridComponent,
-    LoginComponent
+    LoginComponent,
+    FilterSizePipe
   ],
   providers: [
+    FilterSizePipe,
     FilesService,
     {
       provide: HTTP_INTERCEPTORS,
