@@ -1,14 +1,16 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ViewContainerRef } from '@angular/core';
 import { Message, TreeNode, MenuItem } from 'primeng/primeng';
-
 import { HttpEventType, HttpResponse } from '@angular/common/http';
-
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs/Observable';
 import * as Downloadables from '../actions/downloadables.actions';
 import { Item } from '../models/item';
 import { DownloadableState, DownloadablesReducer } from '../reducers/downloadables.reducer';
 import { FilesService } from '../services/files.service';
+import { FirecloudService } from '../services/firecloud.service';
+import { GcsService } from '../services/gcs.service';
+import { FileModalComponent } from '../file-modal/file-modal.component';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
 interface AppState {
   downloadables: DownloadableState;
@@ -36,6 +38,9 @@ export class FileExplorerComponent implements OnInit {
 
   constructor(private store: Store<AppState>,
     private filesService: FilesService,
+    private gcsService: GcsService,
+    private firecloudService: FirecloudService,
+    private dialog: MatDialog
   ) {
 
   }
@@ -52,7 +57,7 @@ export class FileExplorerComponent implements OnInit {
     );
 
     this.cols = [
-      { field: 'path', header: 'Name', footer: 'Name' },
+      { field: 'name', header: 'Name', footer: 'Name' },
       { field: 'size', header: 'Size', footer: 'Size' },
       { field: 'updated', header: 'Last Modified', footer: 'Last Modified' }
     ];
@@ -153,21 +158,30 @@ export class FileExplorerComponent implements OnInit {
   }
 
   selectionDone() {
+    const dialogRef = this.dialog.open(FileModalComponent, {
+      width: '500px',
+    });
 
-    this.selectedFiles
-    .filter(file => file.data.type === 'File')
-    .forEach(file => {
-      const item = {
-        id: file.data.id,
-        name: file.data.path,
-        size: file.data.size,
-        created: file.data.updated,
-        updated: file.data.updated,
-        icon: file.data.type === 'Folder' ? 'folder' : 'cloud',
-        selected: false
-      };
-      this.store.dispatch(new Downloadables.AddItem(item));
-      this.done.emit(true);
+    dialogRef.afterClosed().subscribe(result => {
+      if (result !== undefined) {
+        this.selectedFiles
+        .filter(file => file.data.type === 'File')
+        .forEach(file => {
+          const item = {
+            id: file.data.id,
+            name: file.data.name,
+            size: file.data.size,
+            created: file.data.updated,
+            updated: file.data.updated,
+            icon: file.data.type === 'Folder' ? 'folder' : 'cloud',
+            selected: false,
+            destination: result.directory,
+            preserveStructure: result.preserveStructure
+          };
+          this.store.dispatch(new Downloadables.AddItem(item));
+          this.done.emit(true);
+        });
+      }
     });
   }
 }

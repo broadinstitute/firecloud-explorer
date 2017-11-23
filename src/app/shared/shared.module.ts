@@ -25,8 +25,6 @@ import {
 
 // primeng
 import {
-  ButtonModule,
-  CheckboxModule,
   ProgressBarModule,
   ToolbarModule,
   TabViewModule,
@@ -64,8 +62,6 @@ import {
     MatRadioModule,
     MatTableModule,
 
-    ButtonModule,
-    CheckboxModule,
     ProgressBarModule,
     ToolbarModule,
     TabViewModule,
@@ -103,8 +99,6 @@ import {
     MatRadioModule,
     MatTableModule,
 
-    ButtonModule,
-    CheckboxModule,
     ProgressBarModule,
     ToolbarModule,
     TabViewModule,

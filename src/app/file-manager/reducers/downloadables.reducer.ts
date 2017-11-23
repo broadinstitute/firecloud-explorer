@@ -5,12 +5,6 @@ import { Item } from '../models/item';
 
 export type Action = DownloadablesActions.All;
 
-// export interface DownloadableState {
-//     count: number;
-//     selectedCount: number;
-//     items: Item[];
-// }
-
 export class DownloadableState {
     items: Item[];
 
