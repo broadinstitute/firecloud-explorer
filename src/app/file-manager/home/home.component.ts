@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ANIMATE_ON_ROUTE_ENTER } from '@app/core';
-
+import { TransferablesGridComponent } from '../transferables-grid/transferables-grid.component';
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -9,6 +9,7 @@ import { ANIMATE_ON_ROUTE_ENTER } from '@app/core';
 export class HomeComponent implements OnInit {
 
   animateOnRouteEnter = ANIMATE_ON_ROUTE_ENTER;
+  @ViewChild(TransferablesGridComponent) transferablesGridComponent: TransferablesGridComponent;
 
   selectedFiles = 0;
   index = 0;
@@ -22,6 +23,7 @@ export class HomeComponent implements OnInit {
   changeTab(tab: number) {
     this.index = null;
     this.index = tab;
+    this.transferablesGridComponent.startDownload();
   }
 
 }

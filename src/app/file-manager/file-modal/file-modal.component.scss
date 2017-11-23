@@ -1,0 +1,44 @@
+.mat-dialog-content {
+    height: auto;
+    overflow: hidden;
+
+    hr {
+        margin: 0 0 15px 0;
+    }
+}
+
+.browse-button,
+.browse-location {
+    font-family: 'Roboto', sans-serif;
+    font-size: 0.9rem;
+}
+
+.browse-button label {
+    border: 1px solid #3f3f3f; 
+    font-weight: 500;
+    padding: 5px 15px;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 2px;
+    box-shadow: 0 3px 1px -2px rgba(0,0,0,.2), 0 2px 2px 0 rgba(0,0,0,.14), 0 1px 5px 0 rgba(0,0,0,.12);
+}
+.label-button:active {
+    background-color: #ECECEC;
+}
+
+.browse-location {
+    padding-left: 15px;
+    font-weight: 300;
+    line-height: 35px;
+}
+
+.mat-dialog-actions {
+    margin: 10px 0 0 0;
+    padding-bottom: 0;
+}
+
+.mat-dialog-actions,
+.mat-dialog-actions .button-primary,
+.mat-dialog-actions .button-secondary{
+    float: right;
+}

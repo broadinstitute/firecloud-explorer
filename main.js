@@ -32,7 +32,6 @@ app.on('ready', function () {
   } else {
     win.loadURL(process.env.HOST);
   }
-
   // Show dev tools
   // Remove this line before distributing
   // win.webContents.openDevTools()

@@ -22,6 +22,8 @@ export interface AppState {
 export class FilesDatabase {
   itemsObs: Observable<DownloadableState>;
   totalCount = 0;
+  destinationChange: BehaviorSubject<string> = new BehaviorSubject<string>('');
+  preserveStructureChange: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
 
   dataChange: BehaviorSubject<Item[]> = new BehaviorSubject<Item[]>([]);
   selectionChange: BehaviorSubject<number> = new BehaviorSubject<number>(0);
@@ -190,5 +192,10 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   }
 
   sortData(evt) {
+  }
+
+  startDownload() {
+    /* Info needed to download file: */
+    console.log(JSON.stringify(this.filesDatabase.data));
   }
 }

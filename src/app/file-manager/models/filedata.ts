@@ -8,4 +8,5 @@ export interface FileData {
     size: string;
     type: string;
     leaf: boolean;
+    name: string;
 }

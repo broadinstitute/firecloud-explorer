@@ -107,14 +107,15 @@ export class FilesService {
         return {data: this.getFileData(item, path)};
     }
 
-    private getFileData(item: any, path: string) {
+    private getFileData(item: any, name: string) {
         const fileData: FileData = {
             id: item.id,
             selfLink: item.selfLink,
             bucket: item.bucket,
             created: item.timeCreated,
             updated: item.updated,
-            path: path,
+            name: name,
+            path: item.path,
             size: this.filterSize.transform(item.size),
             type: (<string>item.name).endsWith('/') ? 'Folder' : 'File',
             leaf: true
@@ -124,7 +125,7 @@ export class FilesService {
 
     private initializeContentBucket(contentBucket, workspaceName, bucketSize): TreeNode {
         contentBucket.data = {
-            path: workspaceName,
+            name: workspaceName,
             leaf: true,
             size: this.filterSize.transform(bucketSize)
         };

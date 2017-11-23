@@ -6,4 +6,5 @@ export interface Item {
     size: string;
     icon: string;
     selected: boolean;
+    path: string;
 }
