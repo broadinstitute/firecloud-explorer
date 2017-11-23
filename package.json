@@ -14,7 +14,7 @@
     "e2e:xvfb": "xvfb-run ./node_modules/mocha/bin/mocha",
     "clean": "rm -rf ./dist/",
     "build:travisci": "ng build --target production --aot --build-optimizer --vendor-chunk --extract-css --output-hashing all --deploy-url /firecloud-explorer/ --base-href /firecloud-explorer",
-    "ci": "npm run clean && ng lint && ng test --browser ChromeTravisCi --single-run --reporters spec --sourcemaps=false && npm run build:travisci && npm run build && npm run e2e:xvfb",
+    "ci": "npm run clean && ng lint && ng test --browser ChromeTravisCi --single-run --reporters spec --sourcemaps=false && npm run build && npm run e2e:xvfb && npm run build:travisci",
     "electron": "electron ."
   },
   "private": true,
