@@ -1,11 +1,10 @@
   <div class="wrapper">
     <header>
-      <div class="logo">
+      <div *ngIf="isAuthenticated" class="logo">
         <span class="bold">FC</span>Explorer
       </div>
 
       <nav>
-        <button mat-button *ngIf="!isAuthenticated" (click)="onLoginClick()" class="menu-item">Sign In</button>
         <button mat-button *ngIf="isAuthenticated" [matMenuTriggerFor]="toolbarUserMenu" class="menu-item">
           <mat-icon>person</mat-icon> Username 
         </button>

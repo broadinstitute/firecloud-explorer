@@ -26,5 +26,8 @@ export class FirecloudApiMockService extends FirecloudService {
     });
   }
 
+  public getUserRegistrationStatus() {
+    return Observable.of();
+  }
 
 }

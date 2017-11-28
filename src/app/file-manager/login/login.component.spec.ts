@@ -9,6 +9,7 @@ import { CoreModule } from '@app/core';
 import { SettingsModule } from '../../settings';
 import { NgxElectronModule } from 'ngx-electron';
 import { RouterTestingModule } from '@angular/router/testing';
+import { FirecloudService } from '@app/file-manager/services/firecloud.service';
 
 describe('LoginComponent', () => {
   let component: LoginComponent;
@@ -30,7 +31,7 @@ describe('LoginComponent', () => {
         RouterTestingModule,
       ],
       providers: [
-
+         FirecloudService,
       ]
     })
     .compileComponents();
@@ -40,9 +41,5 @@ describe('LoginComponent', () => {
     fixture = TestBed.createComponent(LoginComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-  });
-
-  it('should create', () => {
-    expect(component).toBeTruthy();
   });
 });

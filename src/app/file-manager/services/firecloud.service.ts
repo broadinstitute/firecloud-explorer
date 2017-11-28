@@ -25,4 +25,5 @@ export abstract class FirecloudService {
 
     abstract getUserFirecloudWorkspaces(optional: boolean): Observable<any>;
 
+    abstract getUserRegistrationStatus(): Observable<any>;
 }

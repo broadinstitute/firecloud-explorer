@@ -2,7 +2,6 @@ import { Component, HostBinding, OnDestroy, OnInit } from '@angular/core';
 import { OverlayContainer } from '@angular/cdk/overlay';
 import { Store } from '@ngrx/store';
 import { Subject } from 'rxjs/Subject';
-import { LoginService } from '@app/file-manager/services/login.service.ts';
 import { SecurityService } from '@app/file-manager/services/security.service.ts';
 import 'rxjs/add/operator/takeUntil';
 import 'rxjs/add/operator/map';
@@ -18,7 +17,6 @@ import { selectorSettings } from './settings';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
   animations: [routerTransition],
-  providers: [LoginService]
 })
 export class AppComponent implements OnInit, OnDestroy {
 
@@ -42,7 +40,6 @@ export class AppComponent implements OnInit, OnDestroy {
   constructor(
     public overlayContainer: OverlayContainer,
     private store: Store<any>,
-    private loginService: LoginService,
     private router: Router
   ) { }
 
@@ -65,16 +62,6 @@ export class AppComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.unsubscribe$.next();
     this.unsubscribe$.complete();
-  }
-
-  onLoginClick() {
-    const redirect = '/home';
-    if (!this.loginService.isLogged()) {
-      this.loginService.googleLogin().then(
-        res => this.router.navigate([redirect]));
-    } else {
-      this.router.navigate([redirect]);
-    }
   }
 
   onLogoutClick() {

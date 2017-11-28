@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
 import { environment } from '@env/environment';
 import { Store } from '@ngrx/store';
-import { login} from '@app/core';
+import { login } from '@app/core';
 import { ElectronService } from 'ngx-electron';
 import { SecurityService } from '../services/security.service';
+import { FirecloudService } from '../services/firecloud.service';
+import { Observable } from 'rxjs/Observable';
 
 const googleConfig = {
   clientId: environment.CLIENT_ID,
@@ -16,28 +18,39 @@ const googleConfig = {
 
 const googleOptions = {
   scope: ['email',
-          'profile',
-          'https://www.googleapis.com/auth/compute',
-          'https://www.googleapis.com/auth/devstorage.full_control'].join(' '),
+    'profile',
+    'https://www.googleapis.com/auth/compute',
+    'https://www.googleapis.com/auth/devstorage.full_control'].join(' '),
   accessType: 'offline'
 };
 
 @Injectable()
 export class LoginService {
   constructor(private electronService: ElectronService,
-              private store: Store<any>) {}
+    private store: Store<any>,
+    private firecloudService: FirecloudService) {
+    this.electronService.ipcRenderer.send('configure-gaccount', googleConfig, googleOptions);
+  }
 
-  public googleLogin(): Promise<void> {
-     if (this.electronService.isElectronApp) {
-      const promise = new Promise<void>((resolve, reject) => {
+  public googleLogin(): Promise<Response> {
+    this.electronService.ipcRenderer.removeAllListeners('sendRendererMessage');
+    if (this.electronService.isElectronApp) {
+      return new Promise<Response>((resolve, reject) => {
         this.electronService.ipcRenderer.send('google-oauth', googleConfig, googleOptions);
         this.electronService.ipcRenderer.on('sendRendererMessage', (event, props) => {
           SecurityService.setAccessToken(props.result.access_token);
-          this.store.dispatch(login());
-          resolve();
+          // Verifies if usr is registerd to FireCloud
+          this.firecloudService.getUserRegistrationStatus().subscribe(
+            registered => {
+              this.store.dispatch(login());
+              resolve();
+            },
+            notRegistered => {
+              SecurityService.removeAccessToken();
+              reject(notRegistered);
+            });
         });
       });
-      return promise;
     } else {
       alert('Implement web login');
       return null;
