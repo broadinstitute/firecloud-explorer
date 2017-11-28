@@ -6,11 +6,7 @@
 
       <nav>
         <button mat-button *ngIf="isAuthenticated" [matMenuTriggerFor]="toolbarUserMenu" class="menu-item">
-<<<<<<< HEAD
           <mat-icon>person</mat-icon> Username 
-=======
-          <mat-icon>person</mat-icon>UserName
->>>>>>> 15b8dba... code refactoring
         </button>
         <mat-menu #toolbarUserMenu="matMenu">
           <button mat-menu-item (click)="onLogoutClick()" class="submenu-item">Sign Out</button>
