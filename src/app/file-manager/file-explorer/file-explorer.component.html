@@ -11,12 +11,18 @@
 
 <p-treeTable [value]="files" selectionMode="checkbox" [(selection)]="selectedFiles" styleClass="tree-table" (onNodeSelect)="nodeSelect($event)"
   (onNodeUnselect)="nodeUnselect($event)">
-  <p-column *ngFor="let col of cols" [field]="col.field" [header]="col.header"></p-column>
+  <p-column field="name" header="Name"></p-column>
+  <p-column field="size" header="Size">
+    <ng-template let-node="rowData" pTemplate="body">
+      <span>{{node.data.size | filesize}}</span>
+    </ng-template>
+  </p-column>
+  <p-column field="updated" header="Last Modified"></p-column>
 </p-treeTable>
 
 <p-toolbar styleClass="toolbar-accent" color="primary">
   <div class="ui-toolbar-group-left">
-    <h3 class="subtitle">You have selected: {{ fileCount }} files </h3>
+    <h3 class="subtitle">Selected: {{ fileCount }} files. Total size: {{ totalSize | filesize }} </h3>
   </div>
 
   <div class="ui-toolbar-group-right">

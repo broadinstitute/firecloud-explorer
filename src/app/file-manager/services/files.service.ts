@@ -6,7 +6,6 @@ import { GcsService } from './gcs.service';
 import { Observable } from 'rxjs/Rx';
 import { FirecloudService } from './firecloud.service';
 import { FileData } from '../models/filedata';
-import { FilterSizePipe } from '../filters/filesize-filter';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/retry';
@@ -17,8 +16,7 @@ export class FilesService {
     files = {};
     isBottom = true;
 
-    constructor(private gcsService: GcsService, private firecloudService: FirecloudService,
-                private filterSize: FilterSizePipe) { }
+    constructor(private gcsService: GcsService, private firecloudService: FirecloudService) { }
 
     public getBucketFiles(isWorkspacePublic: boolean): Observable<Observable<TreeNode[]>> {
         return this.firecloudService.getUserFirecloudWorkspaces(isWorkspacePublic).map(
@@ -116,7 +114,7 @@ export class FilesService {
             updated: item.updated,
             name: name,
             path: item.path,
-            size: this.filterSize.transform(item.size),
+            size: parseFloat(item.size),
             type: (<string>item.name).endsWith('/') ? 'Folder' : 'File',
             leaf: true
         };
@@ -127,7 +125,7 @@ export class FilesService {
         contentBucket.data = {
             name: workspaceName,
             leaf: true,
-            size: this.filterSize.transform(bucketSize)
+            size: bucketSize
         };
         return contentBucket;
     }

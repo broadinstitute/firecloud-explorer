@@ -5,7 +5,7 @@ export interface FileData {
     created: Date;
     updated: Date;
     path: string;
-    size: string;
+    size: number;
     type: string;
     leaf: boolean;
     name: string;

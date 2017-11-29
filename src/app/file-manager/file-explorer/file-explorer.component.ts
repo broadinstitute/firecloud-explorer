@@ -7,6 +7,7 @@ import * as Downloadables from '../actions/downloadables.actions';
 import { Item } from '../models/item';
 import { DownloadableState, DownloadablesReducer } from '../reducers/downloadables.reducer';
 import { FilesService } from '../services/files.service';
+import { FilterSizePipe } from '../filters/filesize-filter';
 import { FirecloudService } from '../services/firecloud.service';
 import { GcsService } from '../services/gcs.service';
 import { FileModalComponent } from '../file-modal/file-modal.component';
@@ -31,6 +32,7 @@ export class FileExplorerComponent implements OnInit {
   selectedFile: TreeNode;
 
   fileCount = 0;
+  totalSize = 0;
 
   archivos: TreeNode[];
 
@@ -40,7 +42,8 @@ export class FileExplorerComponent implements OnInit {
     private filesService: FilesService,
     private gcsService: GcsService,
     private firecloudService: FirecloudService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private filterSize: FilterSizePipe
   ) {
 
   }
@@ -55,19 +58,15 @@ export class FileExplorerComponent implements OnInit {
         }
       }
     );
-
-    this.cols = [
-      { field: 'name', header: 'Name', footer: 'Name' },
-      { field: 'size', header: 'Size', footer: 'Size' },
-      { field: 'updated', header: 'Last Modified', footer: 'Last Modified' }
-    ];
   }
 
   countFiles() {
     this.fileCount = 0;
+    this.totalSize = 0;
     this.selectedFiles.forEach(f => {
       if (f.data.type === 'File') {
         this.fileCount++;
+        this.totalSize += f.data.size;
       }
     });
   }
@@ -92,13 +91,6 @@ export class FileExplorerComponent implements OnInit {
   viewNode(node: TreeNode) {
     this.msgs = [];
     this.msgs.push({ severity: 'info', summary: 'Node Selected', detail: node.data.name });
-  }
-
-  deleteNode(node: TreeNode) {
-    node.parent.children = node.parent.children.filter(n => n.data !== node.data);
-    this.countFiles();
-    this.msgs = [];
-    this.msgs.push({ severity: 'info', summary: 'Node Deleted', detail: node.data.name });
   }
 
   expandAll() {
