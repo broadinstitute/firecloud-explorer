@@ -2,6 +2,7 @@ import { Component, OnInit, AfterViewInit, Input, ViewChild, ChangeDetectionStra
 
 import { Store } from '@ngrx/store';
 import * as Downloadables from '../actions/downloadables.actions';
+import { RegisterDownloadService } from '../services/register-download.service';
 import { Item } from '../models/item';
 import { DownloadableState, DownloadablesReducer } from '../reducers/downloadables.reducer';
 import { MatPaginator, MatSort, PageEvent } from '@angular/material';
@@ -22,8 +23,6 @@ export interface AppState {
 export class FilesDatabase {
   itemsObs: Observable<DownloadableState>;
   totalCount = 0;
-  destinationChange: BehaviorSubject<string> = new BehaviorSubject<string>('');
-  preserveStructureChange: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
 
   dataChange: BehaviorSubject<Item[]> = new BehaviorSubject<Item[]>([]);
   selectionChange: BehaviorSubject<number> = new BehaviorSubject<number>(0);
@@ -39,15 +38,13 @@ export class FilesDatabase {
   constructor(private store: Store<AppState>) {
 
     this.itemsObs = store.select('downloadables');
-    this.itemsObs.subscribe(
-      data => {
+    this.itemsObs.subscribe( data => {
         this.dataChange.next(data.items);
         this.selectionChange.next(data.selectedCount);
         this.totalCount = data.count;
-      }
-    );
+      });
+    }
   }
-}
 
 export class FilesDataSource extends DataSource<Item> {
   itemsObs: Observable<DownloadableState>;
@@ -73,7 +70,6 @@ export class FilesDataSource extends DataSource<Item> {
     return Observable.merge(...displayDataChanges).map(() => {
 
       const data = this.filesDB.data.slice();
-
       // Grab the page's slice of data.
       const startIndex = this._paginator.pageIndex * this._paginator.pageSize;
       return data.splice(startIndex, this._paginator.pageSize);
@@ -106,7 +102,10 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
 
   pageEvent: PageEvent;
 
-  constructor(private store: Store<AppState>) {
+  constructor(
+    private store: Store<AppState>,
+    private registerDownload: RegisterDownloadService
+  ) {
     this.filesDatabase = new FilesDatabase(store);
   }
 
@@ -195,7 +194,6 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   }
 
   startDownload() {
-    /* Info needed to download file: */
-    console.log(JSON.stringify(this.filesDatabase.data));
+    this.registerDownload.startDownload(this.filesDatabase.data);
   }
 }

@@ -9,4 +9,5 @@ export interface FileData {
     type: string;
     leaf: boolean;
     name: string;
+    mediaLink: string;
 }

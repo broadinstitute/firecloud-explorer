@@ -109,11 +109,12 @@ export class FilesService {
         const fileData: FileData = {
             id: item.id,
             selfLink: item.selfLink,
+            name: name,
+            mediaLink: item.mediaLink,
             bucket: item.bucket,
             created: item.timeCreated,
             updated: item.updated,
-            name: name,
-            path: item.path,
+            path: item.name,
             size: parseFloat(item.size),
             type: (<string>item.name).endsWith('/') ? 'Folder' : 'File',
             leaf: true

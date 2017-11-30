@@ -3,6 +3,8 @@ const {app, BrowserWindow, ipcMain} = require('electron')
 const path = require('path');
 const url = require('url');
 const electronOauth2 = require('electron-oauth2');
+const downloadManager = require('./electron_app/DownloadManager');
+const constants = require('./electron_app/helpers/enviroment');
 
 require('dotenv').config();
 
@@ -58,27 +60,30 @@ app.on('ready', function () {
     }
   }
 
-  ipcMain.on('configure-gaccount', (event, googleConfig, googleOptions) => {
+  ipcMain.on(constants.IPC_CONFIRGURE_ACCOUNT, (event, googleConfig, googleOptions) => {
     this.googleConfig = googleConfig;
     this.googleOptions = googleOptions;
   });
 
-  ipcMain.on('google-oauth', (event) => {
+  ipcMain.on(constants.IPC_GOOGLE_AUTH, (event) => {
     const myApiOauth = electronOauth2(this.googleConfig, windowParams);
     myApiOauth.getAccessToken(this.googleOptions)
     .then(token => {
       // use your token.access_token 
-        win.webContents.send('sendRendererMessage', { result: token });
+        win.webContents.send(constants.IPC_SEND_RENDERER, { result: token });
     })
     .catch((reason) => console.warn('Google Pop-up Warning ' + reason));
   });
   // ----- Google auth -----
 
+  ipcMain.on(constants.IPC_START_DOWNLOAD, (event, items, access_token) => {
+    downloadManager(items, access_token);
+  });
 });
 
 app.on('activate', () => {
   if (win === null) {
-    createWindow()
+    createWindow();
   }
 })
 
@@ -86,4 +91,10 @@ app.on('window-all-closed', function () {
   if (process.platform != 'darwin') {
     app.quit();
   }
+    process.exit();
+    app.exit(0);
+});
+
+app.on('before-quit', () => {
+  win = null;
 });

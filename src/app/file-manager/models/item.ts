@@ -6,5 +6,8 @@ export interface Item {
     size: string;
     icon: string;
     selected: boolean;
+    mediaLink: string;
     path: string;
+    preserveStructure: boolean;
+    destination: string;
 }

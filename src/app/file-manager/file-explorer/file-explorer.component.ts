@@ -12,6 +12,7 @@ import { FirecloudService } from '../services/firecloud.service';
 import { GcsService } from '../services/gcs.service';
 import { FileModalComponent } from '../file-modal/file-modal.component';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { TransferablesGridComponent } from '../transferables-grid/transferables-grid.component';
 
 interface AppState {
   downloadables: DownloadableState;
@@ -27,14 +28,12 @@ export class FileExplorerComponent implements OnInit {
   @Output('done') done: EventEmitter<any> = new EventEmitter();
 
   files: TreeNode[];
-
+  dataFile: Item;
   selectedFiles: TreeNode[] = [];
   selectedFile: TreeNode;
 
   fileCount = 0;
   totalSize = 0;
-
-  archivos: TreeNode[];
 
   cols: any[];
 
@@ -43,6 +42,7 @@ export class FileExplorerComponent implements OnInit {
     private gcsService: GcsService,
     private firecloudService: FirecloudService,
     private dialog: MatDialog,
+    private transferablesGridComponent: TransferablesGridComponent,
     private filterSize: FilterSizePipe
   ) {
 
@@ -152,14 +152,15 @@ export class FileExplorerComponent implements OnInit {
   selectionDone() {
     const dialogRef = this.dialog.open(FileModalComponent, {
       width: '500px',
-    });
+      disableClose: true,
+     });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result !== undefined) {
         this.selectedFiles
         .filter(file => file.data.type === 'File')
         .forEach(file => {
-          const item = {
+          this.dataFile = {
             id: file.data.id,
             name: file.data.name,
             size: file.data.size,
@@ -168,11 +169,14 @@ export class FileExplorerComponent implements OnInit {
             icon: file.data.type === 'Folder' ? 'folder' : 'cloud',
             selected: false,
             destination: result.directory,
-            preserveStructure: result.preserveStructure
+            preserveStructure: result.preserveStructure,
+            mediaLink: file.data.mediaLink,
+            path: file.data.path
           };
-          this.store.dispatch(new Downloadables.AddItem(item));
+          this.store.dispatch(new Downloadables.AddItem(this.dataFile));
           this.done.emit(true);
         });
+        this.transferablesGridComponent.startDownload();
       }
     });
   }

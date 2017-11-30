@@ -23,7 +23,6 @@ export class HomeComponent implements OnInit {
   changeTab(tab: number) {
     this.index = null;
     this.index = tab;
-    this.transferablesGridComponent.startDownload();
   }
 
 }
