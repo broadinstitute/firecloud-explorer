@@ -8,7 +8,7 @@ import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
 })
 export class FileModalComponent  {
 
-  preserveStructure = false;
+  preserveStructure = true;
   directory = 'Choose Directory...';
   isValid = false;
 
