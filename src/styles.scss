@@ -78,6 +78,12 @@ p.aclaration {
   margin: 0;
 }
 
+h1 {
+  font-weight: 700;
+  font-size: 1.4rem;
+  margin-bottom: 20px;
+}
+
 h3.subtitle,
 h4.subtitle {
   font-family: 'Roboto', sans-serif;
@@ -109,6 +115,52 @@ h4.subtitle {
 
 .flex-container.center {
   justify-content: center;
+}
+
+/*SIDENAV*/
+
+.sidenav-container {
+  height: 100vh;
+}
+
+.sidenav,
+.sidenav-link {
+  width: 80px;
+  background: #303030 !important;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+a.sidenav-link {
+  align-items: center;
+  height: 80px;
+  border: 0;
+  color: #979797;
+  cursor: pointer;
+}
+
+a.sidenav-link:hover mat-icon,
+a.sidenav-link:hover p {
+  color: #cccccc;
+}
+
+a.sidenav-link.active{
+  color: #ffffff;
+}
+
+a.sidenav-link mat-icon {
+  font-size: 2rem;
+  text-align: center;
+  width: auto;
+}
+
+a.sidenav-link p {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 300;
+  font-size: 0.8rem;
+  text-align: center;
+  margin: 10px auto 0 auto;
 }
 
 /*TAB*/
@@ -172,7 +224,7 @@ h4.subtitle {
 /*TREETABLE*/
 
 .tree-table {
-  margin: 40px 0;
+  margin: 30px 0;
 }
 
 .tree-table thead th,

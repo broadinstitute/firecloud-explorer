@@ -1,26 +1,37 @@
-  <div class="wrapper">
-    <header>
-      <div *ngIf="isAuthenticated" class="logo">
-        <span class="bold">FC</span>Explorer
-      </div>
+<div class="wrapper">
+  <mat-sidenav-container class="sidenav-container">
+    <mat-sidenav mode="side" opened="true" class="sidenav" *ngIf="isAuthenticated">
+      <a class="sidenav-link" [routerLink]="['/file-download']" [routerLinkActive]="['active']">
+        <mat-icon>file_download</mat-icon>
+        <p>Download</p>
+      </a>
+      <a class="sidenav-link" [routerLink]="['/file-upload']" [routerLinkActive]="['active']">
+        <mat-icon>file_upload</mat-icon>
+        <p>Upload</p>
+      </a>
+      <a class="sidenav-link" [routerLink]="['/status']" [routerLinkActive]="['active']">
+        <mat-icon>schedule</mat-icon>
+        <p>Status</p>
+      </a>
+    </mat-sidenav>
 
-      <nav>
+    <mat-sidenav-content>
+      <header>
         <button mat-button *ngIf="isAuthenticated" [matMenuTriggerFor]="toolbarUserMenu" class="menu-item">
-          <mat-icon>person</mat-icon> Username 
+          Username <mat-icon>arrow_drop_down</mat-icon>
         </button>
         <mat-menu #toolbarUserMenu="matMenu">
           <button mat-menu-item (click)="onLogoutClick()" class="submenu-item">Sign Out</button>
         </mat-menu>
-      </nav>
-    </header>
+      </header>
 
-    <div class="content" [@routerTransition]="o.isActivated && o.activatedRoute.routeConfig.path">
-      <router-outlet #o="outlet"></router-outlet>
-    </div>
+      <div class="content">
+          <router-outlet></router-outlet>
+      </div>        
+    </mat-sidenav-content>
+  </mat-sidenav-container>
 
-    <div class="footer">
-      <div class="footer-signature">&#169; {{year}} - Broad Institute</div>
-      <img src="assets/broad_logo.svg" alt="Broad Institute logo" class="footer-logo"/>
-    </div>
+  <div class="footer">
+    <div class="footer-signature">&#169; {{year}} - Broad Institute</div>
   </div>
-  
+</div>

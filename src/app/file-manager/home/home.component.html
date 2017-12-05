@@ -1,13 +1,14 @@
+<!--THIS COMPONENT WON'T BE USED ANYMORE, PLEASE TAKE A LOOK AT THE .TS FILE TO CHECK IF SOMETHING NEEDS TO BE REFACTORED-->
 <div class="tab-container">
-  <p-tabView [(activeIndex)]="index" styleClass="tab-header">
+    <p-tabView [(activeIndex)]="index" styleClass="tab-header">
 
-    <p-tabPanel header="Select files to download" [ngClass]="animateOnRouteEnter">
-      <app-file-explorer (done)="changeTab(1)"></app-file-explorer>
-    </p-tabPanel>
+        <p-tabPanel header="Select files to download" [ngClass]="animateOnRouteEnter">
+            <app-file-explorer (done)="changeTab(1)"></app-file-explorer>
+        </p-tabPanel>
 
-    <p-tabPanel header="Download status" [ngClass]="animateOnRouteEnter">
-      <app-transferables-grid ></app-transferables-grid>
-    </p-tabPanel>
+        <p-tabPanel header="Download status" [ngClass]="animateOnRouteEnter">
+            <app-transferables-grid></app-transferables-grid>
+        </p-tabPanel>
 
-  </p-tabView>
+    </p-tabView>
 </div>

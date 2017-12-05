@@ -27,14 +27,7 @@ export class AppComponent implements OnInit, OnDestroy {
   @HostBinding('class') componentCssClass;
 
   year = new Date().getFullYear();
-  //  logo = require('../assets/logo.png');
-  navigation = [
-    { link: 'home', label: 'Workspaces' }
-  ];
-
-  navigationSideMenu = [
-    ...this.navigation,
-  ];
+  
   isAuthenticated;
 
   constructor(

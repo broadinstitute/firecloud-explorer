@@ -3,21 +3,7 @@
 header {
   display: flex;
   flex-direction: row;
-  width: 100%;
-  padding: 20px 40px;  
-  
-  nav {
-    display: flex;   
-    flex-direction: row;    
-    justify-content: flex-end;
-    width: 70%;
-  }
-
-  .logo {
-    justify-content: flex-start;
-    width: 30%;
-    font-size: 25px;    
-  }
+  justify-content: flex-end;  
 }
 
 .nav-button {
@@ -29,16 +15,23 @@ header {
   margin-right: 10px;
 }
 
-.menu-item {
+.menu-item,
+.submenu-item {
   font-family: 'Roboto', sans-serif;
-  font-size: 1rem;
-  font-weight: 500;
+  font-size: 0.9rem;
+  font-weight: 300;
+  text-align: right;  
+}
+
+.menu-item mat-icon {
+  font-size: 0.9rem;
+  line-height: 1.4rem;
 }
 
 .submenu-item {
-  text-align: right;
-  line-height: 35px;
-  height: 35px;
+  margin: 0;
+  height: 20px;
+  line-height: 20px;
 }
 
 @media (max-width: map-get($grid-breakpoints, lg)) {
@@ -61,24 +54,24 @@ header {
   .content {
     flex: 1 0 auto;
     position: relative;
+    height: 100%;
+    padding: 0 25px 25px 25px;
   }
 
   .footer {
-    background-color: #3f3f3f;
-    padding: 12px 40px 10px 40px;
+    background-color: #000000;
+    padding: 0 20px;
     width: 100%;
     display: flex;
-    justify-content: space-between;  
+    justify-content: flex-end;  
     position: fixed;  
     bottom: 0;
+    z-index: 1;
 
     .footer-signature {
       color: #ffffff;
+      font-size: 0.9rem;
       line-height: 2rem;
-    }
-    
-    .footer-logo {
-      height: 30px;
     }
   }
 }
