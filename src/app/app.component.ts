@@ -27,7 +27,6 @@ export class AppComponent implements OnInit, OnDestroy {
   @HostBinding('class') componentCssClass;
 
   year = new Date().getFullYear();
-  
   isAuthenticated;
 
   constructor(

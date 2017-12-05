@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { HomeComponent, LoginComponent } from '@app/file-manager';
 import { FileExplorerComponent } from '@app/file-manager/file-explorer/file-explorer.component';
-import { TransferablesGridComponent } from '@app/file-manager/transferables-grid/transferables-grid.component'
+import { TransferablesGridComponent } from '@app/file-manager/transferables-grid/transferables-grid.component';
 
 const routes: Routes = [
   {
