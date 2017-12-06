@@ -114,7 +114,7 @@ export class FilesService {
             bucket: item.bucket,
             created: item.timeCreated,
             updated: item.updated,
-            path: item.name,
+            path: item.workspaceName + '/' + item.name,
             size: parseFloat(item.size),
             type: (<string>item.name).endsWith('/') ? 'Folder' : 'File',
             leaf: true
@@ -143,6 +143,7 @@ export class FilesService {
                 let bucketSize = 0;
                 bucket.items.forEach(item => {
                     this.isBottom = true;
+                    item.workspaceName = workspaceName;
                     bucketSize += parseFloat(item.size);
                     if (!item.name.endsWith('/')) {
                         filesBucket = [...this.createFileNode(filesBucket, item)];

@@ -220,6 +220,7 @@ Download.prototype._computeThreadStatus = function () {
   });
 };
 
+// investigar desde aquí
 Download.prototype.getStats = function () {
   if (!this.meta.threads) {
     return this.stats;
@@ -276,14 +277,13 @@ Download.prototype.start = function () {
   self._reset();
   self._retryOptions._nbRetries = 0;
 
-  // toma los datos de la descarga en este punto
   this.options.onStart = function (meta) {
     self.setStatus(1);
     self.setMeta(meta);
 
     self.setUrl(meta.url);
 
-    self._computeStartTime(); // <--
+    self._computeStartTime();
     self._computePastDownloaded();
     self._computeTotalSize();
 
@@ -313,7 +313,7 @@ Download.prototype.start = function () {
       self.setError(err);
       self.setStatus(-1);
 
-      // self.emit('error', self);
+      self.emit('error', self);
       // No error, download ended successfully
     } else {
       self._computeEndTime();
