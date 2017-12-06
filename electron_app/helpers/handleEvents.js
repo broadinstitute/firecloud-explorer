@@ -1,30 +1,30 @@
 module.exports = function(dl, num) {
 	num = num || 1;
 
-	dl._downloads[0].on('start', function() {
+	dl.on('start', function() {
 		console.log('EVENT - Download '+ num +' started !');
 	});
 
-	dl._downloads[0].on('error', function() {
+	dl.on('error', function() {
 		console.log('EVENT - Download '+ num +' error !');
 		console.log(dl.error);
 	});
 
-	dl._downloads[0].on('end', function() {
+	dl.on('end', function() {
 		console.log('EVENT - Download '+ num +' finished !');
 
 		console.log(dl.getStats());
 	});
 
-	dl._downloads[0].on('retry', function() {
+	dl.on('retry', function() {
 		console.log('EVENT - Download '+ num +' error, retrying...');
 	});
 
-	dl._downloads[0].on('stopped', function() {
+	dl.on('stopped', function() {
 		console.log('EVENT - Download '+ num +' stopped...');
 	});
 
-	dl._downloads[0].on('destroyed', function() {
+	dl.on('destroyed', function() {
 		console.log('EVENT - Download '+ num +' destroyed...');
 	});
 };

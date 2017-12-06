@@ -4,7 +4,7 @@ module.exports = function(dl, num) {
 	num = num || 1;
 
 	var timer = setInterval(function() {
-    if (dl._downloads[0].status === 0) {
+    if (dl.status === 0) {
 			console.log('casi hacker!'+ num +' not started.');
 		} else if(dl.status == 1) {
 			var stats = dl.getStats();

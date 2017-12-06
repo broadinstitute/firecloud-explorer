@@ -32,10 +32,11 @@ const processDownload = (access_token, item, folder) => {
   if (downElements.indexOf(filePath) === -1) {
     downElements.push(filePath);
     var dl_test = new Downloader();
-    dl_test.download(item.mediaLink, filePath, setHeader(access_token)).start();
+    var dl = dl_test.download(item.mediaLink, filePath, setHeader(access_token));
+    dl.start();
     console.log('STATUS -> ',dl_test._downloads[0].status);
-    handleEvents(dl_test, 1);
-    printStats(dl_test, 1);
+    handleEvents(dl, item.name);
+    printStats(dl, item.name);
 
 /*     const dl = new mtd(filePath, item.mediaLink, setHeader(access_token));
     dl.start(); */
