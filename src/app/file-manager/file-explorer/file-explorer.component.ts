@@ -13,6 +13,7 @@ import { GcsService } from '../services/gcs.service';
 import { FileModalComponent } from '../file-modal/file-modal.component';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { TransferablesGridComponent } from '../transferables-grid/transferables-grid.component';
+import { Router } from '@angular/router';
 
 interface AppState {
   downloadables: DownloadableState;
@@ -43,7 +44,8 @@ export class FileExplorerComponent implements OnInit {
     private firecloudService: FirecloudService,
     private dialog: MatDialog,
     private transferablesGridComponent: TransferablesGridComponent,
-    private filterSize: FilterSizePipe
+    private filterSize: FilterSizePipe,
+    private router: Router
   ) {
 
   }
@@ -177,6 +179,7 @@ export class FileExplorerComponent implements OnInit {
           this.done.emit(true);
         });
         this.transferablesGridComponent.startDownload();
+        this.router.navigate(['/status']);
       }
     });
   }
