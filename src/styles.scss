@@ -121,6 +121,7 @@ h4.subtitle {
 
 .sidenav-container {
   height: 100vh;
+  overflow: hidden;
 }
 
 .sidenav,
@@ -161,64 +162,6 @@ a.sidenav-link p {
   font-size: 0.8rem;
   text-align: center;
   margin: 10px auto 0 auto;
-}
-
-/*TAB*/
-
-.tab-header {
-  width: 100%;
-  position: relative;
-}
-
-.tab-header,
-.tab-header.ui-tabview.ui-tabview-top>.ui-tabview-nav {
-  padding: 0;
-}
-
-.tab-header.ui-tabview .ui-tabview-nav {
-  margin: 0;
-}
-
-.ui-tabview .ui-tabview-panel {
-  padding: 40px 20px;
-}
-
-.ui-corner-all {
-  border-radius: 0;
-}
-
-.tab-header.ui-tabview .ui-widget-header {
-  border: none;
-  background: #999999;
-}
-
-.tab-header .ui-tabview-nav li {
-  width: 50%;
-  margin: 0;
-  
-  a {
-    width: 100%;
-    text-align: center;
-  } 
-}
-
-.tab-header li.ui-state-default {
-  border: 0 0 2px 0 solid #999999;  
-  background: #e8e8e8;  
-  a {
-      color: #b2b1b1;
-      font-size: 1.2rem;
-      padding: .5em 1em;
-      font-family: 'Roboto', sans-serif;
-    }
-}
-
-.tab-header li.ui-state-active {
-  border-color: #fafafa;
-  background: #fafafa;
-  a {
-      color: #081c22;
-    }
 }
 
 /*TREETABLE*/
