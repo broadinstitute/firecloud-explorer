@@ -273,7 +273,6 @@ Download.prototype.destroy = function () {
 Download.prototype.start = function () {
   var self = this;
 
-  console.log('Download.prototype.start -> ', this);
   self._reset();
   self._retryOptions._nbRetries = 0;
 

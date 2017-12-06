@@ -22,9 +22,9 @@ const downloadManager = (items, access_token) => {
     }
   });
 };
-var registerDlEvents = (num, dl) => {
-	handleEvents(dl, num);
-	 printStats(dl, num);
+const registerDlEvents = (num, dl) => {
+  handleEvents(dl, num);
+  printStats(dl, num);
 };
 
 const processDownload = (access_token, item, folder) => {
@@ -34,17 +34,13 @@ const processDownload = (access_token, item, folder) => {
     var dl_test = new Downloader();
     var dl = dl_test.download(item.mediaLink, filePath, setHeader(access_token));
     dl.start();
-    console.log('STATUS -> ',dl_test._downloads[0].status);
     handleEvents(dl, item.name);
     printStats(dl, item.name);
-
-/*     const dl = new mtd(filePath, item.mediaLink, setHeader(access_token));
-    dl.start(); */
   }
 };
 
 const setHeader = (access_token) => {
-  return  {
+  return {
     count: 8,
     port: 443,
     headers: {
