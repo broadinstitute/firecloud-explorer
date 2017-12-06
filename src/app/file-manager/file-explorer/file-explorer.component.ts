@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter, ViewContainerRef } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Message, TreeNode, MenuItem } from 'primeng/primeng';
 import { HttpEventType, HttpResponse } from '@angular/common/http';
 import { Store } from '@ngrx/store';
@@ -26,8 +26,6 @@ interface AppState {
 export class FileExplorerComponent implements OnInit {
   msgs: Message[];
 
-  @Output('done') done: EventEmitter<any> = new EventEmitter();
-
   files: TreeNode[];
   dataFile: Item;
   selectedFiles: TreeNode[] = [];
@@ -53,7 +51,7 @@ export class FileExplorerComponent implements OnInit {
 
     this.filesService.getBucketFiles(false).subscribe(
       resp => {
-        if ( resp !== undefined) {
+        if (resp !== undefined) {
           resp.subscribe(r => {
             this.files = r;
           });
@@ -155,29 +153,28 @@ export class FileExplorerComponent implements OnInit {
     const dialogRef = this.dialog.open(FileModalComponent, {
       width: '500px',
       disableClose: true,
-     });
+    });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result !== undefined) {
         this.selectedFiles
-        .filter(file => file.data.type === 'File')
-        .forEach(file => {
-          this.dataFile = {
-            id: file.data.id,
-            name: file.data.name,
-            size: file.data.size,
-            created: file.data.updated,
-            updated: file.data.updated,
-            icon: file.data.type === 'Folder' ? 'folder' : 'cloud',
-            selected: false,
-            destination: result.directory,
-            preserveStructure: result.preserveStructure,
-            mediaLink: file.data.mediaLink,
-            path: file.data.path
-          };
-          this.store.dispatch(new Downloadables.AddItem(this.dataFile));
-          this.done.emit(true);
-        });
+          .filter(file => file.data.type === 'File')
+          .forEach(file => {
+            this.dataFile = {
+              id: file.data.id,
+              name: file.data.name,
+              size: file.data.size,
+              created: file.data.updated,
+              updated: file.data.updated,
+              icon: file.data.type === 'Folder' ? 'folder' : 'cloud',
+              selected: false,
+              destination: result.directory,
+              preserveStructure: result.preserveStructure,
+              mediaLink: file.data.mediaLink,
+              path: file.data.path
+            };
+            this.store.dispatch(new Downloadables.AddItem(this.dataFile));
+          });
         this.transferablesGridComponent.startDownload();
         this.router.navigate(['/status']);
       }
