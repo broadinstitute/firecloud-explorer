@@ -1,7 +1,9 @@
 const mtd = require('zeltice-mt-downloader');
+const Downloader = require('./Downloader');
 const path = require('path');
 const os = require('os');
-
+const handleEvents = require('./helpers/handleEvents');
+const printStats = require('./helpers/printStats');
 const handleFolder = require('./helpers/handleDisk');
 
 let downElements = [];
@@ -20,19 +22,30 @@ const downloadManager = (items, access_token) => {
     }
   });
 };
+var registerDlEvents = (num, dl) => {
+	handleEvents(dl, num);
+	 printStats(dl, num);
+};
 
 const processDownload = (access_token, item, folder) => {
   filePath = path.join(folder, item.name);
   if (downElements.indexOf(filePath) === -1) {
     downElements.push(filePath);
-    const dl = new mtd(filePath, item.mediaLink, setHeader(access_token));
-    dl.start();
+    var dl_test = new Downloader();
+    dl_test.download(item.mediaLink, filePath, setHeader(access_token)).start();
+    console.log('STATUS -> ',dl_test._downloads[0].status);
+    handleEvents(dl_test, 1);
+    printStats(dl_test, 1);
+
+/*     const dl = new mtd(filePath, item.mediaLink, setHeader(access_token));
+    dl.start(); */
   }
 };
 
 const setHeader = (access_token) => {
   return  {
     count: 8,
+    port: 443,
     headers: {
       'Authorization': 'Bearer ' + access_token,
     },

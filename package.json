@@ -35,6 +35,8 @@
     "@ngrx/store": "^4.0.0",
     "@types/lodash": "^4.14.77",
     "bootstrap": "4.0.0-alpha.6",
+    "chai": "^3.5.0",
+    "chai-as-promised": "^5.3.0",
     "classlist.js": "^1.1",
     "core-js": "^2.4.1",
     "dotenv": "^4.0.0",
@@ -44,16 +46,15 @@
     "hammerjs": "^2.0.8",
     "lodash": "^4.17.4",
     "mkdirp": "^0.5.1",
+    "mocha": "^4.0.0",
+    "moment": "^2.19.3",
     "ngx-bootstrap": "^1.9.3",
     "ngx-electron": "^1.0.3",
     "primeng": "^4.2.2",
     "rxjs": "^5.4.2",
     "uuid": "^3.1.0",
     "web-animations-js": "^2.2.5",
-    "zone.js": "0.8.12",
-    "chai": "^3.5.0",
-    "chai-as-promised": "^5.3.0",
-    "mocha": "^4.0.0"
+    "zone.js": "0.8.12"
   },
   "devDependencies": {
     "@angular/cli": "1.5.0-rc.0",

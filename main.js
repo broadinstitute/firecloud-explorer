@@ -98,3 +98,7 @@ app.on('window-all-closed', function () {
 app.on('before-quit', () => {
   win = null;
 });
+
+process.on('unhandledRejection', (reason, p) => {
+  console.log('Unhandled Rej at Promise:', p, '',reazon);
+})
