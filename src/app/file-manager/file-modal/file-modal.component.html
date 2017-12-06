@@ -12,7 +12,7 @@
   <hr>
 </mat-dialog-content>
 
-<mat-checkbox aria-label="Preserve folder structure"  (change)="selectionChanged($event)" color="primary" class="dialog-checkbox" disableRipple>Preserve folder structure</mat-checkbox>
+<mat-checkbox [checked]="preserveStructure" aria-label="Preserve folder structure"  (change)="selectionChanged($event)" color="primary" class="dialog-checkbox" disableRipple>Preserve folder structure</mat-checkbox>
 
 <mat-dialog-actions>
   <button mat-raised-button (click)="cancel()"  class="button-secondary">Cancel</button>
