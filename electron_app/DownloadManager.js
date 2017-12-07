@@ -13,37 +13,25 @@ const downloadManager = (items, access_token) => {
     if (item.preserveStructure) {
       const structurePath = item.path.substring(item.path.lastIndexOf('/'), 0);
       handleFolder(path.join(item.destination, structurePath)).then(result =>
-        processDownload(options, item, result)
+        processDownload(access_token, item, result)
       );
     } else {
-      processDownload(options, item, item.destination);
+      processDownload(access_token, item, item.destination);
     }
   });
 };
 
-const processDownload = (options, item, folder) => {
+const processDownload = (access_token, item, folder) => {
   filePath = path.join(folder, item.name);
-  if (downElements.indexOf(filePath) === -1) {
-    downElements.push(filePath);
-    const dl = new mtd(filePath, item.mediaLink, options);
-    dl.start();
-  }
+  const dl = new mtd(filePath, item.mediaLink, setHeader(access_token));
+  dl.start();
 };
 
 const setHeader = (access_token) => {
-  return  {
+  return {
     count: 8,
     headers: {
       'Authorization': 'Bearer ' + access_token,
-    },
-    onStart: function (meta) {
-      console.log('Download started');
-    },
-    onEnd: function (err, result) {
-      if (err) console.error(err);
-      else {
-        console.log('Download Complete');
-      }
     }
   };
 };
