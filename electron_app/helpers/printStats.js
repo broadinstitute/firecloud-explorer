@@ -2,7 +2,6 @@ var Downloader = require('../Downloader');
 
 module.exports = function(dl, num) {
 	num = num || 1;
-
 	var timer = setInterval(function() {
     if (dl.status === 0) {
 			console.log('Download: '+ num +' not started.');

@@ -10,6 +10,6 @@ export class DownloadStatusService {
   constructor() { }
 
   getStatus(): any {
-
+    http.get()
   }
 }

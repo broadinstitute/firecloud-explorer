@@ -1,5 +1,4 @@
 const net = require('net');
-const http = require('net');
 
 const downloadState = {
   'status': 'downloading',
@@ -7,18 +6,32 @@ const downloadState = {
   'ETA': '3600s'
 };
 
-/* http.createServer((req, res) => {
-  res.writeHead(200, {'Content-Type': 'text/plain'});
-  res.end(JSON.stringify(downloadState));
-}).listen(5505); */
+var clientSocket = new net.Socket();
 
-var service = net.createServer((socket) => {
-  socket.write(JSON.stringify(downloadState));
-  socket.pipe(socket);
+var service = net.createServer((clientSocket) => {
+  clientSocket.write(JSON.stringify(downloadState));
+  clientSocket.write('HOLA');
+  clientSocket.pipe(clientSocket);
 });
+
+var stats = dl.getStats();
+allDownloads.forEach(dl => {
+  
+})
 
 service.listen(5500, '127.0.0.1', () => {
   console.log('connection created');
 });
 
-// module.exports = { service };
+service.on('connection', (socket) => {
+  var info = {};
+
+  allDownloads.forEach(dl => {
+    var stats = dl.getStats();
+    info.progress = stats.total.completed;
+    info.id = 'NOMBRE DESCARGA';
+  });
+  socket.write(info);
+});
+
+module.exports = { service };

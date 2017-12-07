@@ -6,9 +6,10 @@ const handleEvents = require('./helpers/handleEvents');
 const printStats = require('./helpers/printStats');
 const handleFolder = require('./helpers/handleDisk');
 
+const service = require('./helpers/downloadInfo').service;
+
 const downloadManager = (items, access_token) => {
   let filePath = '';
-  const options = setHeader(access_token);
   items.forEach(item => {
     if (item.preserveStructure) {
       const structurePath = item.path.substring(item.path.lastIndexOf('/'), 0);
@@ -21,13 +22,19 @@ const downloadManager = (items, access_token) => {
   });
 };
 
+var allDownloads = [];
 const processDownload = (access_token, item, folder) => {
   filePath = path.join(folder, item.name);
   var dl_test = new Downloader();
   var dl = dl_test.download(item.mediaLink, filePath, setHeader(access_token));
+  allDownloads.push(dl);
   dl.start();
   handleEvents(dl, item.name);
   printStats(dl, item.name);
+};
+
+var getAllDownloads = () => {
+  return allDownloads;
 };
 
 const setHeader = (access_token) => {
@@ -36,15 +43,6 @@ const setHeader = (access_token) => {
     port: 443,
     headers: {
       'Authorization': 'Bearer ' + access_token,
-    },
-    onStart: function (meta) {
-      console.log('Download started');
-    },
-    onEnd: function (err, result) {
-      if (err) console.error(err);
-      else {
-        console.log('Download Complete');
-      }
     }
   };
 };
