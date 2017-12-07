@@ -6,8 +6,6 @@ const handleEvents = require('./helpers/handleEvents');
 const printStats = require('./helpers/printStats');
 const handleFolder = require('./helpers/handleDisk');
 
-let downElements = [];
-
 const downloadManager = (items, access_token) => {
   let filePath = '';
   const options = setHeader(access_token);
@@ -22,21 +20,14 @@ const downloadManager = (items, access_token) => {
     }
   });
 };
-const registerDlEvents = (num, dl) => {
-  handleEvents(dl, num);
-  printStats(dl, num);
-};
 
 const processDownload = (access_token, item, folder) => {
   filePath = path.join(folder, item.name);
-  if (downElements.indexOf(filePath) === -1) {
-    downElements.push(filePath);
-    var dl_test = new Downloader();
-    var dl = dl_test.download(item.mediaLink, filePath, setHeader(access_token));
-    dl.start();
-    handleEvents(dl, item.name);
-    printStats(dl, item.name);
-  }
+  var dl_test = new Downloader();
+  var dl = dl_test.download(item.mediaLink, filePath, setHeader(access_token));
+  dl.start();
+  handleEvents(dl, item.name);
+  printStats(dl, item.name);
 };
 
 const setHeader = (access_token) => {
