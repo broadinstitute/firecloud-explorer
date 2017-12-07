@@ -8,7 +8,6 @@ import { EffectsModule } from '@ngrx/effects';
 import { FileManagerRoutingModule } from './file-manager-routing.module';
 import { DownloadablesReducer } from './reducers/downloadables.reducer';
 
-import { HomeComponent } from './home/home.component';
 import { LoginComponent } from './login/login.component';
 import { FileExplorerComponent } from './file-explorer/file-explorer.component';
 import { TransferableItemComponent } from './transferable-item/transferable-item.component';
@@ -41,7 +40,6 @@ import { FilterSizePipe } from './filters/filesize-filter';
     MatDialogModule
   ],
   declarations: [
-    HomeComponent,
     FileExplorerComponent,
     TransferableItemComponent,
     TransferablesGridComponent,

@@ -3,9 +3,11 @@
         <div id="title" class="logo">
             <span class="bold">FCExplorer</span>
         </div>
-        <p class="aclaration">Login using your Google account associated with <span class="medium">FireCloud</span></p>
+        <p class="aclaration">Login using your Google account associated with
+            <span class="medium">FireCloud</span>
+        </p>
         <div class="flex-container center">
-            <button [disabled]= "isSubmitted" mat-raised-button class="button-primary" (click)="logIn()">Sign In</button>
+            <button [disabled]="isSubmitted" mat-raised-button class="button-primary" (click)="logIn()">Sign In</button>
         </div>
     </p-toolbar>
 </div>
@@ -15,5 +17,6 @@
 </div>
 
 <div class="flex-container center">
-    <p class="login-message">Not a FireCloud user yet? Please go to: <span class="bold">{{fireCloudURL}}</span> to create a user account.</p>
+    <p class="login-message">Not a FireCloud user yet? Please go to:
+        <span class="bold">{{fireCloudURL}}</span> to create a user account.</p>
 </div>

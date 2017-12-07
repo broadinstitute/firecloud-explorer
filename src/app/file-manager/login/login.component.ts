@@ -15,7 +15,7 @@ export class LoginComponent implements OnInit {
   msgs: Message[] = [];
   fireCloudURL = environment.FIRECLOUD_URL;
   hasError = false;
-  redirect = '/home';
+  redirect = '/file-download';
   isSubmitted = false;
 
   constructor(
