@@ -3,6 +3,7 @@ import { environment } from '@env/environment';
 import { Router } from '@angular/router';
 import { LoginService } from '../services/login.service';
 import { Message } from 'primeng/components/common/api';
+import { ElectronService } from 'ngx-electron';
 
 @Component({
   selector: 'app-login',
@@ -19,6 +20,7 @@ export class LoginComponent implements OnInit {
   isSubmitted = false;
 
   constructor(
+    private electronService: ElectronService,
     private loginService: LoginService,
     private router: Router
   ) { }
@@ -42,6 +44,10 @@ export class LoginComponent implements OnInit {
       }
     );
   }
+
+  openFcOnBrowser() {
+      this.electronService.shell.openExternal(this.fireCloudURL);
+    }
 
   showError(errorCode: number) {
     this.msgs = [];
