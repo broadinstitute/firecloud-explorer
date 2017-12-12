@@ -7,6 +7,7 @@ import { Item } from '../models/item';
 import { DownloadableState, DownloadablesReducer } from '../reducers/downloadables.reducer';
 import { MatPaginator, MatSort, PageEvent } from '@angular/material';
 import { animate, state, style, transition, trigger } from '@angular/animations';
+import { DownloadStatusService } from '../services/download-status.service';
 
 import { DataSource, CollectionViewer } from '@angular/cdk/collections';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
@@ -104,7 +105,8 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
 
   constructor(
     private store: Store<AppState>,
-    private registerDownload: RegisterDownloadService
+    private registerDownload: RegisterDownloadService,
+    private downloadStatus: DownloadStatusService
   ) {
     this.filesDatabase = new FilesDatabase(store);
   }
@@ -151,6 +153,7 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.dataSource = new FilesDataSource(this.filesDatabase, this.store, this.sort, this.paginator);
+    this.downloadStatus.getStatus();
   }
 
   ngAfterViewInit() {

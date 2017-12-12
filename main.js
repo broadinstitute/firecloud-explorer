@@ -77,7 +77,7 @@ app.on('ready', function () {
   // ----- Google auth -----
 
   ipcMain.on(constants.IPC_START_DOWNLOAD, (event, items, access_token) => {
-    downloadManager(items, access_token);
+    downloadManager(items, access_token, win);
   });
 });
 
@@ -100,5 +100,5 @@ app.on('before-quit', () => {
 });
 
 process.on('unhandledRejection', (reason, p) => {
-  console.log('Unhandled Rej at Promise:', p, '',reazon);
+  console.log('Unhandled Rej at Promise:', p, '',reason);
 })
