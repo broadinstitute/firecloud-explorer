@@ -1,23 +1,35 @@
 import { Injectable } from '@angular/core';
 import { ElectronService } from 'ngx-electron';
 import { Observable } from 'rxjs/Observable';
+import { FilesDatabase } from '../transferables-grid/transferables-grid.component';
 
 /**
  * Toma los datos de la descarga para conocer su estado
  */
 @Injectable()
 export class DownloadStatusService {
+  filesDatabase: FilesDatabase;
+  allItemsStatus = Observable;
+  itemsStatus = [];
 
-  constructor(private electronService: ElectronService) {}
+  constructor(private electronService: ElectronService) {
+  }
 
-  getStatus(): any {
+  getStatus(): Observable<any> {
     this.electronService.ipcRenderer.removeAllListeners('download-status');
-    this.electronService.ipcRenderer.on('download-status', (event, props) => {
-      console.log(props.total.completed);
+    const allItemsStatus = Observable.create((observer) => {
+      this.electronService.ipcRenderer.on('download-status', (event, data) => {
+        // this.itemsStatus
+        observer.next(data);
+      });
     });
+    return allItemsStatus;
   }
 
   updateItemProgess(): any {
-    
+  }
+
+  generalProgress(): any {
+
   }
 }

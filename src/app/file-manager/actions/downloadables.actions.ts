@@ -12,6 +12,7 @@ export const ADD_ITEM = '[Downloadables] Add Item';
 export const UPDATE_ITEM = '[Downloadables] Update Item';
 export const REMOVE_ITEM = '[Downloadables] Remove Item';
 export const SELECT_ITEM = '[Downloadables] Select Item';
+export const UPDATE_ITEM_PROGRESS = '[Downloadables] Update Item Progress';
 
 export class Load implements Action {
     readonly type = LOAD;
@@ -62,6 +63,12 @@ export class RemoveItem implements Action {
 
 export class SelectItem implements Action {
     readonly type = SELECT_ITEM;
+
+    constructor(public payload: any) { }
+}
+
+export class UpdateItemProgress implements Action {
+    readonly type = UPDATE_ITEM_PROGRESS;
 
     constructor(public payload: any) { }
 }

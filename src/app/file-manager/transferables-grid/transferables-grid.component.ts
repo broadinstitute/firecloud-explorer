@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, Input, ViewChild, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, AfterViewInit, Input, ViewChild, ChangeDetectionStrategy, NgZone } from '@angular/core';
 
 import { Store } from '@ngrx/store';
 import * as Downloadables from '../actions/downloadables.actions';
@@ -9,6 +9,7 @@ import { MatPaginator, MatSort, PageEvent } from '@angular/material';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { DownloadStatusService } from '../services/download-status.service';
 
+import { ElectronService} from 'ngx-electron';
 import { DataSource, CollectionViewer } from '@angular/cdk/collections';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
@@ -97,6 +98,7 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   selectedRows: any[] = [];
   filesDatabase = null;
   idCounter = 1;
+  generalProgress = 0;
 
   pageSize = 5;
   pageSizeOptions = [5, 10, 25, 100];
@@ -106,7 +108,9 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   constructor(
     private store: Store<AppState>,
     private registerDownload: RegisterDownloadService,
-    private downloadStatus: DownloadStatusService
+    private downloadStatus: DownloadStatusService,
+    private electronService: ElectronService,
+    private zone: NgZone
   ) {
     this.filesDatabase = new FilesDatabase(store);
   }
@@ -153,7 +157,12 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.dataSource = new FilesDataSource(this.filesDatabase, this.store, this.sort, this.paginator);
-    this.downloadStatus.getStatus();
+    this.downloadStatus.getStatus().subscribe(data => {
+      console.log('SUBSCRIBER DATA -> ', data);
+      this.zone.run(() => {
+        this.generalProgress = Math.floor(data.total.completed);
+      });
+    });
   }
 
   ngAfterViewInit() {
