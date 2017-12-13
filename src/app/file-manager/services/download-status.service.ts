@@ -11,8 +11,13 @@ export class DownloadStatusService {
   constructor(private electronService: ElectronService) {}
 
   getStatus(): any {
+    this.electronService.ipcRenderer.removeAllListeners('download-status');
     this.electronService.ipcRenderer.on('download-status', (event, props) => {
-      console.log(props);
+      console.log(props.total.completed);
     });
+  }
+
+  updateItemProgess(): any {
+    
   }
 }

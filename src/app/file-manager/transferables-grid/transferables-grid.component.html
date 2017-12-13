@@ -69,7 +69,7 @@
     <ng-container matColumnDef="progress">
       <mat-header-cell *matHeaderCellDef mat-sort-header> Progress </mat-header-cell>
       <mat-cell *matCellDef="let row">
-        <p-progressBar mode="determinate" class="progress-bar-small" [value]="15" [showValue]="false"></p-progressBar>
+        <p-progressBar mode="determinate" class="progress-bar-small" [value]="{{row.progress}}" [showValue]="false"></p-progressBar>
       </mat-cell>
     </ng-container>
 

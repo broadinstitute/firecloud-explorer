@@ -10,4 +10,5 @@ export interface Item {
     path: string;
     preserveStructure: boolean;
     destination: string;
+    progress: number;
 }

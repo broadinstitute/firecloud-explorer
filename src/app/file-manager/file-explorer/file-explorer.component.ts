@@ -171,7 +171,8 @@ export class FileExplorerComponent implements OnInit {
               destination: result.directory,
               preserveStructure: result.preserveStructure,
               mediaLink: file.data.mediaLink,
-              path: file.data.path
+              path: file.data.path,
+              progress: 0
             };
             this.store.dispatch(new Downloadables.AddItem(this.dataFile));
           });
