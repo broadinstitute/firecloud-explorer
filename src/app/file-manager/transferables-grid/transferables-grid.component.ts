@@ -1,13 +1,13 @@
-import { Component, OnInit, AfterViewInit, Input, ViewChild, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, AfterViewInit, Input, ViewChild, ChangeDetectionStrategy, NgZone } from '@angular/core';
 
 import { Store } from '@ngrx/store';
-import * as Downloadables from '../actions/downloadables.actions';
+import * as Transferables from '../actions/transferables.actions';
 import { RegisterDownloadService } from '../services/register-download.service';
 import { Item } from '../models/item';
-import { DownloadableState, DownloadablesReducer } from '../reducers/downloadables.reducer';
+import { TransferableState, TransferablesReducer } from '../reducers/transferables.reducer';
 import { MatPaginator, MatSort, PageEvent } from '@angular/material';
 import { animate, state, style, transition, trigger } from '@angular/animations';
-
+import { ElectronService} from 'ngx-electron';
 import { DataSource, CollectionViewer } from '@angular/cdk/collections';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
@@ -15,13 +15,16 @@ import 'rxjs/add/operator/startWith';
 import 'rxjs/add/observable/forkJoin';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/observable/merge';
+import { GcsService } from '@app/file-manager/services/gcs.service';
+import { Type } from '@app/file-manager/models/type';
+
 
 export interface AppState {
-  downloadables: DownloadableState;
+  transferables: TransferableState;
 }
 
 export class FilesDatabase {
-  itemsObs: Observable<DownloadableState>;
+  itemsObs: Observable<TransferableState>;
   totalCount = 0;
 
   dataChange: BehaviorSubject<Item[]> = new BehaviorSubject<Item[]>([]);
@@ -37,17 +40,17 @@ export class FilesDatabase {
 
   constructor(private store: Store<AppState>) {
 
-    this.itemsObs = store.select('downloadables');
-    this.itemsObs.subscribe( data => {
-        this.dataChange.next(data.items);
-        this.selectionChange.next(data.selectedCount);
-        this.totalCount = data.count;
-      });
-    }
+    this.itemsObs = store.select('transferables');
+    this.itemsObs.subscribe(data => {
+      this.dataChange.next(data.items);
+      this.selectionChange.next(data.selectedCount);
+      this.totalCount = data.count;
+    });
   }
+}
 
 export class FilesDataSource extends DataSource<Item> {
-  itemsObs: Observable<DownloadableState>;
+  itemsObs: Observable<TransferableState>;
   dataChange: BehaviorSubject<Item[]> = new BehaviorSubject<Item[]>([]);
 
   constructor(private filesDB: FilesDatabase,
@@ -104,13 +107,16 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
 
   constructor(
     private store: Store<AppState>,
-    private registerDownload: RegisterDownloadService
+    private registerDownload: RegisterDownloadService,
+    private gcsService: GcsService,
+    private electronService: ElectronService,
+    private zone: NgZone
   ) {
     this.filesDatabase = new FilesDatabase(store);
   }
 
   load() {
-    this.store.dispatch(new Downloadables.Load());
+    this.store.dispatch(new Transferables.Load());
   }
 
   filter() {
@@ -118,35 +124,35 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   }
 
   reset() {
-    this.store.dispatch(new Downloadables.Reset());
+    this.store.dispatch(new Transferables.Reset());
   }
 
   selectAll() {
-    this.store.dispatch(new Downloadables.SelectAll());
+    this.store.dispatch(new Transferables.SelectAll());
   }
 
   unselectAll() {
-    this.store.dispatch(new Downloadables.UnselectAll());
+    this.store.dispatch(new Transferables.UnselectAll());
   }
 
   toggleSelection() {
-    this.store.dispatch(new Downloadables.ToggleSelection());
+    this.store.dispatch(new Transferables.ToggleSelection());
   }
 
   updateItem(item: any) {
-    this.store.dispatch(new Downloadables.UpdateItem(item));
+    this.store.dispatch(new Transferables.UpdateItem(item));
   }
 
   selectItem(item: any) {
-    this.store.dispatch(new Downloadables.SelectItem(item));
+    this.store.dispatch(new Transferables.SelectItem(item));
   }
 
   toggleItemSelection(item: any) {
-    this.store.dispatch(new Downloadables.ToggleItemSelection(item));
+    this.store.dispatch(new Transferables.ToggleItemSelection(item));
   }
 
   removeItem(item: any) {
-    this.store.dispatch(new Downloadables.RemoveItem(item));
+    this.store.dispatch(new Transferables.RemoveItem(item));
   }
 
   ngOnInit() {
@@ -175,11 +181,6 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   stopAll() {
   }
 
-  // selectRow(event, row) {
-  //   console.log(JSON.stringify(event.target));
-  //   this.toggleItemSelection(row);
-  //   event.stopPropagation();
-  // }
   selectRowBox(event, cbox, row) {
     this.toggleItemSelection(row);
     cbox.toggle();
@@ -194,6 +195,13 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   }
 
   startDownload() {
-    this.registerDownload.startDownload(this.filesDatabase.data);
+    const files = this.filesDatabase.data.filter(item => item.type === Type.DOWNLOAD);
+    this.registerDownload.startDownload(files);
   }
+
+  startUpload() {
+    const files = this.filesDatabase.data.filter(item => item.type === Type.UPLOAD);
+    this.gcsService.uploadFiles(localStorage.getItem('uploadBucket'), files);
+  }
+
 }

@@ -1,0 +1,20 @@
+<h2 mat-dialog-title>Where do you want to upload to?</h2>
+
+<mat-dialog-content>
+  <div class="flex-container">
+    <mat-form-field class="full-width">
+      <input type="text" matInput placeholder="Select workspace..." [formControl]="workspaceCtrl" [matAutocomplete]="auto">
+      <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)" [panelOpen]="false">
+        <mat-option *ngFor="let workspace of filteredWorkspaces | async" [value]="workspace">
+          {{ workspace.name }}
+        </mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
+  </div>
+  <span class="italic">Files will be stored into "uploads" folder</span>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button mat-raised-button (click)="cancel()" class="button-secondary">Cancel</button>
+  <button mat-raised-button (click)="uploadFiles()" class="button-primary">Start Upload!</button>
+</mat-dialog-actions>

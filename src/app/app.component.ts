@@ -1,4 +1,4 @@
-import { Component, HostBinding, OnDestroy, OnInit } from '@angular/core';
+import { Component, HostBinding, OnDestroy, OnInit, NgZone } from '@angular/core';
 import { OverlayContainer } from '@angular/cdk/overlay';
 import { Store } from '@ngrx/store';
 import { Subject } from 'rxjs/Subject';
@@ -20,7 +20,9 @@ import { selectorSettings } from './settings';
 })
 export class AppComponent implements OnInit, OnDestroy {
 
+  public static updateUserEmail: Subject<boolean> = new Subject();
   private unsubscribe$: Subject<void> = new Subject<void>();
+  userEmail: String;
 
   title = 'app';
 
@@ -32,8 +34,13 @@ export class AppComponent implements OnInit, OnDestroy {
   constructor(
     public overlayContainer: OverlayContainer,
     private store: Store<any>,
-    private router: Router
-  ) { }
+    private router: Router,
+    private zone: NgZone
+  ) {
+    AppComponent.updateUserEmail.subscribe(res => {
+      this.userEmail = localStorage.getItem('userEmail');
+    });
+  }
 
   ngOnInit(): void {
     this.store
@@ -52,6 +59,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+
     this.unsubscribe$.next();
     this.unsubscribe$.complete();
   }

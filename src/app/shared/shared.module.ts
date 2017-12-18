@@ -1,6 +1,6 @@
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
   MatButtonModule,
   MatToolbarModule,
@@ -20,7 +20,8 @@ import {
   MatExpansionModule,
   MatPaginatorModule,
   MatRadioModule,
-  MatTableModule
+  MatTableModule,
+  MatAutocompleteModule
 } from '@angular/material';
 
 // primeng
@@ -41,7 +42,7 @@ import {
   imports: [
     CommonModule,
     FormsModule,
-
+    ReactiveFormsModule,
     MatButtonModule,
     MatToolbarModule,
     MatSelectModule,
@@ -61,6 +62,7 @@ import {
     MatPaginatorModule,
     MatRadioModule,
     MatTableModule,
+    MatAutocompleteModule,
 
     ProgressBarModule,
     ToolbarModule,
@@ -78,7 +80,7 @@ import {
   exports: [
     CommonModule,
     FormsModule,
-
+    ReactiveFormsModule,
     MatButtonModule,
     MatMenuModule,
     MatTabsModule,
@@ -98,6 +100,7 @@ import {
     MatPaginatorModule,
     MatRadioModule,
     MatTableModule,
+    MatAutocompleteModule,
 
     ProgressBarModule,
     ToolbarModule,

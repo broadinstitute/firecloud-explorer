@@ -1,43 +1,43 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnChanges, DoCheck, Output, ViewChild, EventEmitter, ViewContainerRef, NgZone } from '@angular/core';
 import { Message, TreeNode, MenuItem } from 'primeng/primeng';
 import { HttpEventType, HttpResponse } from '@angular/common/http';
+import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs/Observable';
 import * as Transferables from '../actions/transferables.actions';
 import { Item } from '../models/item';
 import { TransferableState, TransferablesReducer } from '../reducers/transferables.reducer';
-import { FilesService } from '../services/files.service';
+import { ElectronService } from 'ngx-electron';
 import { FilterSizePipe } from '../filters/filesize-filter';
-import { FirecloudService } from '../services/firecloud.service';
 import { GcsService } from '../services/gcs.service';
 import { FileModalComponent } from '../file-modal/file-modal.component';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { RegisterUploadService } from '../services/register-upload.service';
 import { FileUploadModalComponent } from '../file-upload-modal/file-upload-modal.component';
 import { TransferablesGridComponent } from '../transferables-grid/transferables-grid.component';
-import { Router } from '@angular/router';
+import { TreeTable } from 'primeng/primeng';
+import { ChangeDetectorRef } from '@angular/core';
 import { Type } from '@app/file-manager/models/type';
 
 interface AppState {
-  downloadables: TransferableState;
+  uploadables: TransferableState;
 }
 @Component({
-  selector: 'app-file-explorer',
-  templateUrl: './file-explorer.component.html',
-  styleUrls: ['./file-explorer.component.css']
+  selector: 'app-file-explorer-upload',
+  templateUrl: './file-explorer-upload.component.html',
+  styleUrls: ['./file-explorer-upload.component.scss']
 })
-export class FileExplorerComponent implements OnInit {
+export class FileExplorerUploadComponent implements OnInit {
   msgs: Message[];
 
-  shouldSpin = false;
+  @ViewChild(TreeTable) tt: TreeTable;
+
+  @Output('done') done: EventEmitter<any> = new EventEmitter();
 
   files: TreeNode[];
   dataFile: Item;
   selectedFiles: TreeNode[] = [];
   selectedFile: TreeNode;
-
-  color = 'primary';
-  mode = 'indeterminate';
-  value = 50;
 
   fileCount = 0;
   totalSize = 0;
@@ -45,27 +45,29 @@ export class FileExplorerComponent implements OnInit {
   cols: any[];
 
   constructor(private store: Store<AppState>,
-    private filesService: FilesService,
-    private firecloudService: FirecloudService,
+    private gcsService: GcsService,
+    private electronService: ElectronService,
     private dialog: MatDialog,
     private transferablesGridComponent: TransferablesGridComponent,
     private filterSize: FilterSizePipe,
-    private router: Router
+    private registerUpload: RegisterUploadService,
+    private changeDetectorRef: ChangeDetectorRef,
+    private router: Router,
+    private zone: NgZone
   ) {
 
+    // subscribe to get-filesystem event from nodejs
+    this.electronService.ipcRenderer.on('get-filesystem', (event, localFiles) => {
+      this.zone.run(() => {
+        this.files = localFiles.result;
+      });
+    });
   }
+
+
   ngOnInit() {
-    this.shouldSpin = true;
-    this.filesService.getBucketFiles(false).subscribe(
-      resp => {
-        if (resp !== undefined) {
-          resp.subscribe(r => {
-            this.files = r;
-          });
-        }
-        this.shouldSpin = false;
-      }
-    );
+    // call node's get-filesystem
+    this.registerUpload.getFileSystem('/home/dags/Documents');
   }
 
   countFiles() {
@@ -80,20 +82,25 @@ export class FileExplorerComponent implements OnInit {
   }
 
   nodeSelect(event) {
-    this.countFiles();
-    this.msgs = [];
-    this.msgs.push({ severity: 'info', summary: 'Node Selected', detail: event.node.data.name });
+    this.zone.run(() => {
+      this.countFiles();
+      this.msgs = [];
+      this.msgs.push({ severity: 'info', summary: 'Node Selected', detail: event.node.data.name });
+    });
   }
 
   nodeUnselect(event) {
-    this.countFiles();
-    this.msgs = [];
-    this.msgs.push({ severity: 'info', summary: 'Node Unselected', detail: event.node.data.name });
+    this.zone.run(() => {
+      this.countFiles();
+      this.msgs = [];
+      this.msgs.push({ severity: 'info', summary: 'Node Unselected', detail: event.node.data.name });
+    });
   }
 
-  nodeExpand(event) {
-    if (event.node) {
-    }
+  nodeExpand(evt) {
+  }
+
+  nodeCollapse(evt) {
   }
 
   viewNode(node: TreeNode) {
@@ -102,14 +109,19 @@ export class FileExplorerComponent implements OnInit {
   }
 
   expandAll() {
-    this.files.forEach(node => {
-      this.expandRecursive(node, true);
+    this.zone.run(() => {
+      this.files.forEach(node => {
+        this.expandRecursive(node, true);
+      });
     });
   }
 
   collapseAll() {
-    this.files.forEach(node => {
-      this.expandRecursive(node, false);
+    this.zone.run(() => {
+
+      this.files.forEach(node => {
+        this.expandRecursive(node, false);
+      });
     });
   }
 
@@ -158,9 +170,9 @@ export class FileExplorerComponent implements OnInit {
   }
 
   selectionDone() {
-    const dialogRef = this.dialog.open(FileModalComponent, {
+    const dialogRef = this.dialog.open(FileUploadModalComponent, {
       width: '500px',
-      disableClose: true,
+      disableClose: true
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -178,16 +190,21 @@ export class FileExplorerComponent implements OnInit {
               selected: false,
               destination: result.directory,
               preserveStructure: result.preserveStructure,
-              mediaLink: file.data.mediaLink,
+              mediaLink: '',
               path: file.data.path,
-              type: Type.DOWNLOAD
+              type: Type.UPLOAD
             };
             this.store.dispatch(new Transferables.AddItem(this.dataFile));
           });
-        this.transferablesGridComponent.startDownload();
+        this.transferablesGridComponent.startUpload();
         this.router.navigate(['/status']);
       }
     });
   }
 
+  upload() {
+    const dialogRef = this.dialog.open(FileUploadModalComponent, {
+      width: '500px'
+    });
+  }
 }

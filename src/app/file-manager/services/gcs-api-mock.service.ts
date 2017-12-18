@@ -16,4 +16,5 @@ export class GcsApiMockService extends GcsService {
     return Observable.of(buckets.default.content(bucketName));
   }
 
+  public uploadFiles(bucketName, files: any[]) {}
 }
