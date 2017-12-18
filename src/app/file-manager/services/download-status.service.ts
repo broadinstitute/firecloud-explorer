@@ -3,36 +3,49 @@ import { ElectronService } from 'ngx-electron';
 import { Observable } from 'rxjs/Observable';
 import { FilesDatabase } from '../transferables-grid/transferables-grid.component';
 
+import { DownloadItem } from '../models/downloadItem';
+
 /**
- * Toma los datos de la descarga para conocer su estado
+ * Download progress information service
  */
 @Injectable()
 export class DownloadStatusService {
-  filesDatabase: FilesDatabase;
-  allItemsStatus = Observable;
-  itemsStatus = [];
+  private filesDatabase: FilesDatabase;
+  private itemsStatus: Array<DownloadItem> = [];
 
   constructor(private electronService: ElectronService) {
   }
 
-  getStatus(): Observable<any> {
+  updateProgress() {
     this.electronService.ipcRenderer.removeAllListeners('download-status');
     const allItemsStatus = Observable.create((observer) => {
       this.electronService.ipcRenderer.on('download-status', (event, data) => {
-        observer.next(data);
+        const newFile: DownloadItem = { name: data.name, progress: data.total.completed };
+        observer.next(this.generalProgress(newFile));
       });
     });
-    return allItemsStatus;
   }
 
-  updateItemProgess(): any {
+  private generalProgress(data: DownloadItem): number {
+    let totalProgress = 0;
+    this.updateProgressItem(data);
+    this.itemsStatus.forEach( el => {
+      totalProgress += el.progress;
+      console.log(totalProgress);
+    });
+    console.log(this.itemsStatus.length);
+    return Math.floor(totalProgress / this.itemsStatus.length);
   }
 
-  generalProgress(): any {
-    
-  }
-
-  private ifNotExist(targetArray: Array<any>, element: any): Array<any> {
-    return;
+  private updateProgressItem(data: DownloadItem) {
+    let i = 0;
+    while (i < this.itemsStatus.length) {
+      if (data.name === this.itemsStatus[i].name) {
+        this.itemsStatus[i].progress = data.progress;
+        return;
+      }
+      i++;
+    }
+    this.itemsStatus.push(data);
   }
 }

@@ -157,10 +157,11 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.dataSource = new FilesDataSource(this.filesDatabase, this.store, this.sort, this.paginator);
-    this.downloadStatus.getStatus().subscribe(data => {
+    this.downloadStatus.updateProgress().subscribe(data => {
       console.log('DATA -> ', JSON.stringify(data));
       this.zone.run(() => {
-        this.generalProgress = Math.floor(data.total.completed);
+        // this.generalProgress = Math.floor(data.total.completed);
+        this.generalProgress = data;
       });
     });
   }
