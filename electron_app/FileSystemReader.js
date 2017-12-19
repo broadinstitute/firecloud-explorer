@@ -75,8 +75,7 @@ const lazyFileSystemReader = (dir, fileList = []) => {
           size: fs.statSync(path.join(dir, file)).size,
           type: 'Folder', 
           created: fs.statSync(path.join(dir, file)).birthTime,
-          updated: fs.statSync(path.join(dir, file)).mtime,
-          otro: 'si'
+          updated: fs.statSync(path.join(dir, file)).mtime
         },
         type: 'Folder',
         leaf: false
