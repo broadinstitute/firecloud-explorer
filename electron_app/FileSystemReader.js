@@ -1,10 +1,5 @@
 const path = require('path');
 const fs = require('fs');
-const _ = require('lodash');
-const {
-  URL
-} = require('url');
-const rootUrl = new URL('file:///');
 
 const recursiveFileSystemReader = (dir, fileList = []) => {
 
@@ -13,11 +8,11 @@ const recursiveFileSystemReader = (dir, fileList = []) => {
     let isFile = false;
 
     const filePath = path.join(dir, file);
-
+    const stat = fs.statSync(filePath);
     try {
-      if (fs.statSync(filePath).isDirectory()) {
+      if (stat.isDirectory()) {
         isDirectory = true;
-      } else if (fs.statSync(filePath).isFile()) {
+      } else if (stat.isFile()) {
         isFile = true;
       }
     } catch (err) {
@@ -33,8 +28,8 @@ const recursiveFileSystemReader = (dir, fileList = []) => {
           path: path.join(dir, file),
           size: getSizeFromFolder(path.join(dir, file)),
           type: 'Folder', 
-          created: fs.statSync(dir).birthTime,
-          updated: fs.statSync(dir).mtime
+          created: stat.birthTime,
+          updated: stat.mtime
         },
         type: 'Folder',
         children: recursiveFileSystemReader(filePath)
@@ -48,10 +43,10 @@ const recursiveFileSystemReader = (dir, fileList = []) => {
         data: {
           name: file,
           path: path.join(dir, file),
-          size: fs.statSync(path.join(dir, file)).size,
+          size: stat.size,
           type: 'File', 
-          created: fs.statSync(path.join(dir, file)).birthTime,
-          updated: fs.statSync(path.join(dir, file)).mtime
+          created: stat.birthTime,
+          updated: stat.mtime
         },
         type: 'File'
       });
@@ -64,8 +59,8 @@ const lazyFileSystemReader = (dir, fileList = []) => {
 
   fs.readdirSync(dir).forEach(file => {
     const filePath = path.join(dir, file);
-
-    if (fs.statSync(filePath).isDirectory() && !file.startsWith('.')) {
+    const stat = fs.statSync(filePath);
+    if (stat.isDirectory() && !file.startsWith('.')) {
       fileList.push({
         label: file,
         name: file,
@@ -74,8 +69,8 @@ const lazyFileSystemReader = (dir, fileList = []) => {
           path: path.join(dir, file),
           size: getSizeFromFolder(path.join(dir, file)),
           type: 'Folder', 
-          created: fs.statSync(path.join(dir, file)).birthTime,
-          updated: fs.statSync(path.join(dir, file)).mtime
+          created: stat.birthTime,
+          updated: stat.mtime
         },
         type: 'Folder',
         leaf: false
@@ -89,9 +84,9 @@ const lazyNodeReader = (dir, fileList = []) => {
 
   fs.readdirSync(dir).forEach(file => {
     const filePath = path.join(dir, file);
-
     let node = {};
-    if (fs.statSync(filePath).isDirectory()) {
+    const stat = fs.statSync(filePath);
+    if (stat.isDirectory()) {
       node = {
         label: file,
         name: file,
@@ -100,8 +95,8 @@ const lazyNodeReader = (dir, fileList = []) => {
           path: path.join(dir, file),
           size: getSizeFromFolder(path.join(dir, file)),
           type: 'Folder', 
-          created: fs.statSync(path.join(dir, file)).birthTime,
-          updated: fs.statSync(path.join(dir, file)).mtime
+          created: stat.birthTime,
+          updated: stat.mtime
         },
         type: 'Folder',
         leaf: false
@@ -114,10 +109,10 @@ const lazyNodeReader = (dir, fileList = []) => {
         data: {
           name: file,
           path: path.join(dir, file),
-          size: fs.statSync(path.join(dir, file)).size,
+          size: stat.size,
           type: 'File',
-          created: fs.statSync(path.join(dir, file)).birthTime,
-          updated: fs.statSync(path.join(dir, file)).mtime
+          created: stat.birthTime,
+          updated: stat.mtime
         },
         type: 'File',
         leaf: true

@@ -7,7 +7,6 @@ import { Item } from '../models/item';
 import { TransferableState, TransferablesReducer } from '../reducers/transferables.reducer';
 import { MatPaginator, MatSort, PageEvent } from '@angular/material';
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { ElectronService} from 'ngx-electron';
 import { DataSource, CollectionViewer } from '@angular/cdk/collections';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
@@ -109,7 +108,6 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
     private store: Store<AppState>,
     private registerDownload: RegisterDownloadService,
     private gcsService: GcsService,
-    private electronService: ElectronService,
     private zone: NgZone
   ) {
     this.filesDatabase = new FilesDatabase(store);

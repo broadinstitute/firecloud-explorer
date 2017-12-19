@@ -5,5 +5,7 @@ module.exports = Object.freeze({
   IPC_CONFIRGURE_ACCOUNT: 'configure-gaccount',
   IPC_GET_FILESYSTEM: 'get-filesystem',
   IPC_GET_NODE_CONTENT: 'get-node-content',
-  IPC_START_UPLOAD: 'start-upload'
+  IPC_START_UPLOAD: 'start-upload',
+  GOOGLE_API: 'https://www.googleapis.com/upload/storage/v1/b/',
+  
 });

@@ -1,11 +1,12 @@
 const fs = require('fs');
 const mime = require('mime-types');
 const req = require('request');
+const constants = require('./helpers/enviroment');
 
 
 const uploadManager = (bucketName, fileList = [], access_token) => {
 
-    const url = 'https://www.googleapis.com/upload/storage/v1/b/' + bucketName + '/o?uploadType=resumable&name=';
+    const url = constants.GOOGLE_API + bucketName + '/o?uploadType=resumable&name=';
 
     fileList.forEach(file => {
         const contentType = mime.lookup(file.path);
