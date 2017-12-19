@@ -15,8 +15,7 @@ const uploadManager = (bucketName, fileList = [], access_token) => {
             headers: {
                     'Authorization': 'Bearer ' + access_token,
                     'X-Upload-Content-Type': contentType,
-                    'X-Upload-Content-Length': size,
-                    'Content-Length': size
+                    'X-Upload-Content-Length': size
                 },
                 uri: url + 'uploads/' + file.name,
                 method: 'POST',
@@ -28,18 +27,21 @@ const uploadManager = (bucketName, fileList = [], access_token) => {
                     console.log('Error!', err);
                 } else {
                     var location = resp.headers['location'];
-                    console.log("location:" + location);
+                    if(location !== undefined) {
+                        var reqConfig = req.put({uri: location},
+                            function (err, resp, body) {
+                              if (err) {
+                                  console.log('Error!', err);
+                              } else {
+                                  console.log('URL: ' + body);
+                              }
+                          });
+                          reqConfig.setHeader('Content-Length', size);
+                          fs.createReadStream(file.path).pipe(reqConfig);
+                    } else {
+                        console.error("There was an error trying to connect to google");
+                    }
                     
-                    var reqConfig = req.put({uri: location},
-                      function (err, resp, body) {
-                        if (err) {
-                            console.log('Error!', err);
-                        } else {
-                            console.log('URL: ' + body);
-                        }
-                    });
-                    reqConfig.setHeader('Content-Length', size);
-                    fs.createReadStream(file.path).pipe(reqConfig);
                 }
             }
         );
