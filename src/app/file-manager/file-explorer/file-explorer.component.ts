@@ -56,6 +56,7 @@ export class FileExplorerComponent implements OnInit {
   }
   ngOnInit() {
     this.shouldSpin = true;
+    this.store.dispatch(new Transferables.Reset());
     this.filesService.getBucketFiles(false).subscribe(
       resp => {
         if (resp !== undefined) {

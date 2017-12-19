@@ -67,7 +67,7 @@ export class FileExplorerUploadComponent implements OnInit {
 
   ngOnInit() {
     // call node's get-filesystem
-    this.registerUpload.getFileSystem('/home/dags/Documents');
+    this.registerUpload.getFileSystem('');
   }
 
   countFiles() {
