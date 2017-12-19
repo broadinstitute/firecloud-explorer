@@ -10,7 +10,6 @@ const uploadManager = (bucketName, fileList = [], access_token) => {
     fileList.forEach(file => {
         const contentType = mime.lookup(file.path);
         const size = file.size;
-        console.log("uri" + url + 'uploads/' + file.name);
         req.post({
             headers: {
                     'Authorization': 'Bearer ' + access_token,
