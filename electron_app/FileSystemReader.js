@@ -31,10 +31,10 @@ const recursiveFileSystemReader = (dir, fileList = []) => {
         data: {
           name: file,
           path: path.join(dir, file),
-          size: fs.statSync(path.join(dir, file)).size,
+          size: getSizeFromFolder(path.join(dir, file)),
           type: 'Folder', 
-          created: fs.statSync(path.join(dir, file)).birthTime,
-          updated: fs.statSync(path.join(dir, file)).mtime
+          created: fs.statSync(dir).birthTime,
+          updated: fs.statSync(dir).mtime
         },
         type: 'Folder',
         children: recursiveFileSystemReader(filePath)
@@ -72,7 +72,7 @@ const lazyFileSystemReader = (dir, fileList = []) => {
         data: {
           name: file,
           path: path.join(dir, file),
-          size: fs.statSync(path.join(dir, file)).size,
+          size: getSizeFromFolder(path.join(dir, file)),
           type: 'Folder', 
           created: fs.statSync(path.join(dir, file)).birthTime,
           updated: fs.statSync(path.join(dir, file)).mtime
@@ -98,7 +98,7 @@ const lazyNodeReader = (dir, fileList = []) => {
         data: {
           name: file,
           path: path.join(dir, file),
-          size: fs.statSync(path.join(dir, file)).size,
+          size: getSizeFromFolder(path.join(dir, file)),
           type: 'Folder', 
           created: fs.statSync(path.join(dir, file)).birthTime,
           updated: fs.statSync(path.join(dir, file)).mtime
@@ -126,6 +126,15 @@ const lazyNodeReader = (dir, fileList = []) => {
     }
   });
   return fileList;
+}
+
+function getSizeFromFolder(dir) {
+  const files = fs.readdirSync(dir);
+  totalSize = 0;
+  for (let file of files) {
+    totalSize += fs.statSync(path.join(dir, file)).size;
+  }
+  return totalSize;
 }
 
 module.exports = {
