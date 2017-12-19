@@ -1,13 +1,12 @@
 import { Injectable } from '@angular/core';
 import { ElectronService } from 'ngx-electron';
 import { Observable } from 'rxjs/Observable';
-import { FilesDatabase } from '../transferables-grid/transferables-grid.component';
 import { Store } from '@ngrx/store';
 import * as Downloadables from '../actions/downloadables.actions';
 
 import { DownloadItem } from '../models/downloadItem';
 import { Item } from '../models/item';
-import { AppState } from '../transferables-grid/transferables-grid.component';
+import { AppState, FilesDatabase } from '../transferables-grid/transferables-grid.component';
 
 /**
  * Download progress information service
@@ -19,9 +18,11 @@ export class DownloadStatusService {
   private itemsStatus: Array<DownloadItem> = [];
 
   constructor(private store: Store<AppState>,
+    private filesDB: FilesDatabase,
     private electronService: ElectronService) { }
 
   updateProgress(): Observable<any> {
+    console.log( this.store.dispatch(new Downloadables.Load()));
     this.electronService.ipcRenderer.removeAllListeners('download-status');
     const allItemsStatus = Observable.create((observer) => {
       this.electronService.ipcRenderer.on('download-status', (event, data) => {
@@ -33,8 +34,8 @@ export class DownloadStatusService {
   }
 
   private updateDownloadItem(data: DownloadItem) {
-    this.filesDatabase.data
-    this.store.dispatch(new Downloadables.UpdateItem(item));
+/*     new FilesDataSource(this.filesDatabase, this.store, this.sort, this.paginator);
+    this.store.dispatch(new Downloadables.UpdateItem(item)); */
   }
 
   private generalProgress(data: DownloadItem): number {
