@@ -18,6 +18,7 @@ import { FirecloudService } from './services/firecloud.service';
 import { GcsService } from './services/gcs.service';
 import { RegisterDownloadService } from './services/register-download.service';
 import { DownloadStatusService } from './services/download-status.service';
+import { FilesDatabase } from './dbstate/filesDatabase';
 
 import { GcsApiService } from './services/gcs-api.service';
 import { GcsApiMockService } from './services/gcs-api-mock.service';
@@ -52,6 +53,7 @@ import { FilterSizePipe } from './filters/filesize-filter';
     FilterSizePipe,
     TransferablesGridComponent,
     DownloadStatusService,
+    FilesDatabase,
     FilesService,
     {
       provide: HTTP_INTERCEPTORS,

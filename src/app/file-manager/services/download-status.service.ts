@@ -6,7 +6,8 @@ import * as Downloadables from '../actions/downloadables.actions';
 
 import { DownloadItem } from '../models/downloadItem';
 import { Item } from '../models/item';
-import { AppState, FilesDatabase } from '../transferables-grid/transferables-grid.component';
+import { AppState } from '../dbstate/appState';
+import { FilesDatabase } from '../dbstate/filesDatabase';
 
 /**
  * Download progress information service
@@ -18,15 +19,14 @@ export class DownloadStatusService {
   private itemsStatus: Array<DownloadItem> = [];
 
   constructor(private store: Store<AppState>,
-    private filesDB: FilesDatabase,
     private electronService: ElectronService) { }
 
   updateProgress(): Observable<any> {
-    console.log( this.store.dispatch(new Downloadables.Load()));
     this.electronService.ipcRenderer.removeAllListeners('download-status');
     const allItemsStatus = Observable.create((observer) => {
       this.electronService.ipcRenderer.on('download-status', (event, data) => {
         const newFile: DownloadItem = { name: data.name, progress: data.total.completed };
+        this.updateDownloadItem(newFile);
         observer.next(this.generalProgress(newFile));
       });
     });
@@ -34,8 +34,13 @@ export class DownloadStatusService {
   }
 
   private updateDownloadItem(data: DownloadItem) {
-/*     new FilesDataSource(this.filesDatabase, this.store, this.sort, this.paginator);
-    this.store.dispatch(new Downloadables.UpdateItem(item)); */
+    const downloadItems = (new FilesDatabase(this.store));
+    for (let i = 0; i < downloadItems.data.length; i++) {
+      if (data.name === downloadItems.data[i].name) {
+        downloadItems.data[i].progress = data.progress;
+        this.store.dispatch(new Downloadables.UpdateItem(downloadItems.data[i]));
+      }
+    }
   }
 
   private generalProgress(data: DownloadItem): number {

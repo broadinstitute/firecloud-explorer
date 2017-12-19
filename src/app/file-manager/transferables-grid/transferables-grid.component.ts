@@ -18,70 +18,9 @@ import 'rxjs/add/observable/forkJoin';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/observable/merge';
 
-export interface AppState {
-  downloadables: DownloadableState;
-}
-
-export class FilesDatabase {
-  itemsObs: Observable<DownloadableState>;
-  totalCount = 0;
-
-  dataChange: BehaviorSubject<Item[]> = new BehaviorSubject<Item[]>([]);
-  selectionChange: BehaviorSubject<number> = new BehaviorSubject<number>(0);
-
-  get data(): Item[] {
-    return this.dataChange.value;
-  }
-
-  get selectedCount(): number {
-    return this.selectionChange.value;
-  }
-
-  constructor(private store: Store<AppState>) {
-
-    this.itemsObs = store.select('downloadables');
-    this.itemsObs.subscribe( data => {
-        this.dataChange.next(data.items);
-        this.selectionChange.next(data.selectedCount);
-        this.totalCount = data.count;
-      });
-    }
-  }
-
-export class FilesDataSource extends DataSource<Item> {
-  itemsObs: Observable<DownloadableState>;
-  dataChange: BehaviorSubject<Item[]> = new BehaviorSubject<Item[]>([]);
-
-  constructor(private filesDB: FilesDatabase,
-    private store: Store<AppState>,
-    private _sort: MatSort,
-    private _paginator: MatPaginator) {
-
-    super();
-  }
-
-  connect(): Observable<Item[]> {
-
-    const displayDataChanges = [
-      this.filesDB.dataChange,
-      this._paginator.page,
-      this.filesDB.selectionChange,
-      // this._sort.sortChange
-    ];
-
-    return Observable.merge(...displayDataChanges).map(() => {
-
-      const data = this.filesDB.data.slice();
-      // Grab the page's slice of data.
-      const startIndex = this._paginator.pageIndex * this._paginator.pageSize;
-      return data.splice(startIndex, this._paginator.pageSize);
-    });
-  }
-
-  disconnect() {
-
-  }
-}
+import { AppState } from '../dbstate/appState';
+import { FilesDataSource } from '../dbstate/filesDataSource';
+import { FilesDatabase } from '../dbstate/filesDatabase';
 
 @Component({
   selector: 'app-transferables-grid',

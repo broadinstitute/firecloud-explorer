@@ -83,7 +83,7 @@ export function DownloadablesReducer(state = initialState, action: Action): Down
         case DownloadablesActions.UPDATE_ITEM:
             const upd_item = state.items.filter(item => item.id !== action.payload.id);
             const tmp1 = [...upd_item, action.payload];
-            return new DownloadableState(upd_item);
+            return new DownloadableState(tmp1);
 
         case DownloadablesActions.REMOVE_ITEM:
             const rem_item = state.items.filter(item => item.id !== action.payload.id);
