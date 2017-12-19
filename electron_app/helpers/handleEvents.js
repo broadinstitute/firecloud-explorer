@@ -12,8 +12,6 @@ module.exports = function(dl, num) {
 
 	dl.on('end', function() {
 		console.log('EVENT - Download '+ num +' finished !');
-
-		console.log(dl.getStats());
 	});
 
 	dl.on('retry', function() {

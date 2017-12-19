@@ -29,11 +29,11 @@ const processDownload = (access_token, item, folder, win) => {
   var dl = dl_test.download(item.mediaLink, filePath, setHeader(access_token));
   allDownloads.push(dl);
   dl.start();
-  handleEvents(dl, item.name);
+  // handleEvents(dl, item.name);
   downloadStats(dl, item.name, win);
 };
 
-var getAllDownloads = () => {
+const getAllDownloads = () => {
   return allDownloads;
 };
 
