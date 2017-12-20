@@ -150,9 +150,7 @@ export class FileExplorerUploadComponent implements OnInit {
   toggleSelection() {
     const newSelection = [];
     this.files.forEach(x => {
-      if (this.selectedFiles.includes(x)) {
-        // do nothing
-      } else {
+      if (!this.selectedFiles.includes(x)) {
         newSelection.push(x);
       }
     });

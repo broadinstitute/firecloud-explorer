@@ -25,7 +25,7 @@ export class GcsApiService extends GcsService {
   }
 
   public uploadFiles(bucketName: String, files: any[]) {
-      if (files != null && files.length > 0) {
+      if (files !== null && files.length > 0) {
         this.electronService.ipcRenderer.send('start-upload', bucketName, files, SecurityService.getAccessToken());
       }
   }
