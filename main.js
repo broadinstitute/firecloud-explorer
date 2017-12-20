@@ -16,6 +16,7 @@ const constants = require('./electron_app/helpers/enviroment');
 const uploadManager = require('./electron_app/UploadManager');
 const fs = require('fs');
 const os = require('os');
+const { handleDiskSpace } = require('./electron_app/helpers/handleDisk');
 
 require('dotenv').config();
 
@@ -113,6 +114,16 @@ app.on('ready', function () {
     });
   });
 
+  ipcMain.on(constants.IPC_VERIFY_BEFORE_DOWNLOAD, (event, destination, totalFilesSize) => {
+    handleDiskSpace(destination, totalFilesSize).then(
+      resolve => {
+        win.webContents.send(constants.IPC_VERIFY_BEFORE_DOWNLOAD, resolve.error, resolve.errorMessage);
+      },
+      error => {
+        console.error('An error ocurred trying to get diskspace and write permissions. ' + error);
+      }
+    );
+  });
 });
 
 app.on('activate', () => {

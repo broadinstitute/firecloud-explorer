@@ -12,10 +12,8 @@ import { FirecloudService } from '../services/firecloud.service';
 import { GcsService } from '../services/gcs.service';
 import { FileModalComponent } from '../file-modal/file-modal.component';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { FileUploadModalComponent } from '../file-upload-modal/file-upload-modal.component';
-import { TransferablesGridComponent } from '../transferables-grid/transferables-grid.component';
-import { Router } from '@angular/router';
 import { Type } from '@app/file-manager/models/type';
+
 
 interface AppState {
   downloadables: TransferableState;
@@ -44,13 +42,12 @@ export class FileExplorerComponent implements OnInit {
 
   cols: any[];
 
-  constructor(private store: Store<AppState>,
+  constructor(
     private filesService: FilesService,
     private firecloudService: FirecloudService,
     private dialog: MatDialog,
-    private transferablesGridComponent: TransferablesGridComponent,
     private filterSize: FilterSizePipe,
-    private router: Router
+    private store: Store<AppState>
   ) {
 
   }
@@ -159,35 +156,12 @@ export class FileExplorerComponent implements OnInit {
   }
 
   selectionDone() {
+    const items = {selectedFiles: this.selectedFiles, totalSize: this.totalSize };
     const dialogRef = this.dialog.open(FileModalComponent, {
       width: '500px',
       disableClose: true,
-    });
+      data: items
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result !== undefined) {
-        this.selectedFiles
-          .filter(file => file.data.type === 'File')
-          .forEach(file => {
-            this.dataFile = {
-              id: file.data.id,
-              name: file.data.name,
-              size: file.data.size,
-              created: file.data.updated,
-              updated: file.data.updated,
-              icon: file.data.type === 'Folder' ? 'folder' : 'cloud',
-              selected: false,
-              destination: result.directory,
-              preserveStructure: result.preserveStructure,
-              mediaLink: file.data.mediaLink,
-              path: file.data.path,
-              type: Type.DOWNLOAD
-            };
-            this.store.dispatch(new Transferables.AddItem(this.dataFile));
-          });
-        this.transferablesGridComponent.startDownload();
-        this.router.navigate(['/status']);
-      }
     });
   }
 

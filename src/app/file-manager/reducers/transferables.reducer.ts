@@ -97,7 +97,6 @@ export function TransferablesReducer(state = initialState, action: Action): Tran
                 return true;
             });
             return new TransferableState(sel_item);
-
         default:
             return state;
     }

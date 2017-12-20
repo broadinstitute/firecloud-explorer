@@ -13,7 +13,7 @@
 </mat-dialog-content>
 
 <mat-checkbox [checked]="preserveStructure" aria-label="Preserve folder structure"  (change)="selectionChanged($event)" color="primary" class="dialog-checkbox" disableRipple>Preserve folder structure</mat-checkbox>
-
+<p-messages class="error-messages" [(value)]="msgs"></p-messages>
 <mat-dialog-actions>
   <button mat-raised-button (click)="cancel()"  class="button-secondary">Cancel</button>
   <button mat-raised-button [disabled]="!isValid" (click)="startDownload()" class="button-primary">Start Download!</button>
