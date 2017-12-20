@@ -20,7 +20,9 @@ import { selectorSettings } from './settings';
 })
 export class AppComponent implements OnInit, OnDestroy {
 
-  private unsubscribe$: Subject<void> = new Subject<void>();
+  static updateUserEmail: Subject<string> = new Subject();
+  unsubscribe$: Subject<void> = new Subject<void>();
+  userEmail: String;
 
   title = 'app';
 
@@ -33,7 +35,11 @@ export class AppComponent implements OnInit, OnDestroy {
     public overlayContainer: OverlayContainer,
     private store: Store<any>,
     private router: Router
-  ) { }
+  ) {
+    AppComponent.updateUserEmail.subscribe(email => {
+      this.userEmail = email;
+    });
+   }
 
   ngOnInit(): void {
     this.store

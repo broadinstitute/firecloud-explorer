@@ -15,12 +15,16 @@ header {
   margin-right: 10px;
 }
 
+.menu-item {
+  margin: 0 25px;
+  padding: 0 10px 0 15px;
+}
+
 .menu-item,
 .submenu-item {
   font-family: 'Roboto', sans-serif;
   font-size: 0.9rem;
   font-weight: 300;
-  text-align: right;  
 }
 
 .menu-item mat-icon {
