@@ -95,15 +95,8 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
     this.store.dispatch(new Transferables.RemoveItem(item));
   }
 
-  removeCompleted(item: any) {
-/*     for (let i = 0; i < item.data.length; i++) {
-
-    } */
-  }
-
   ngOnInit() {
     this.dataSource = new FilesDataSource(this.filesDatabase, this.store, this.sort, this.paginator);
-    this.removeCompleted(this.dataSource);
     this.downloadStatus.updateProgress().subscribe(data => {
       this.zone.run(() => {
         this.generalProgress = data;

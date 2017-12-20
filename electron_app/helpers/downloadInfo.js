@@ -9,11 +9,12 @@ var downloadStats = function(dl, item, win) {
 			// possibly creating disk space
 		} else if(dl.status == 1) {
 			var stats = dl.getStats();
-			item.progress = stats.total.progress;
+			item.progress = stats.total.completed;
       win.webContents.send(constants.IPC_DOWNLOAD_STATUS, item);
 		} else if(dl.status == 3) {
+			item.progress = 100;
 			// completed
-      win.webContents.send(constants.IPC_DOWNLOAD_STATUS, dl.getStats());
+      win.webContents.send(constants.IPC_DOWNLOAD_STATUS, item);
 		}
 		if(dl.status === -1 || dl.status === 3 || dl.status === -3) {
 			clearInterval(timer);

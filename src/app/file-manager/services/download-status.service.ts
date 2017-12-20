@@ -15,7 +15,6 @@ import { FilesDatabase } from '../dbstate/filesDatabase';
 export class DownloadStatusService {
   private filesDatabase: FilesDatabase;
   private allItemsStatus = Observable;
-  private itemsStatus: Array<Item> = [];
 
   constructor(private store: Store<AppState>,
     private electronService: ElectronService) { }
@@ -34,31 +33,18 @@ export class DownloadStatusService {
   private updateDownloadItem(data: Item) {
     const downloadItems = (new FilesDatabase(this.store));
     for (let i = 0; i < downloadItems.data.length; i++) {
-      if (data.name === downloadItems.data[i].name) {
-        downloadItems.data[i].progress = data.progress;
-        this.store.dispatch(new Transferables.UpdateItem(downloadItems.data[i]));
+      if (data.id === downloadItems.data[i].id) {
+        this.store.dispatch(new Transferables.UpdateItem(data));
       }
     }
   }
 
   private generalProgress(data: Item): number {
+    const downloadItems = (new FilesDatabase(this.store));
     let totalProgress = 0;
-    this.updateProgressItem(data);
-    this.itemsStatus.forEach( el => {
+    downloadItems.data.forEach( el => {
       totalProgress += el.progress;
     });
-    return Math.floor(totalProgress / this.itemsStatus.length);
-  }
-
-  private updateProgressItem(data: Item) {
-    let i = 0;
-    while (i < this.itemsStatus.length) {
-      if (data.name === this.itemsStatus[i].name) {
-        this.itemsStatus[i].progress = data.progress;
-        return;
-      }
-      i++;
-    }
-    this.itemsStatus.push(data);
+    return Math.floor(totalProgress / downloadItems.data.length);
   }
 }
