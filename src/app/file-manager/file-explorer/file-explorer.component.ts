@@ -13,8 +13,6 @@ import { FirecloudService } from '../services/firecloud.service';
 import { GcsService } from '../services/gcs.service';
 import { FileModalComponent } from '../file-modal/file-modal.component';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { TransferablesGridComponent } from '../transferables-grid/transferables-grid.component';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-file-explorer',
@@ -34,14 +32,12 @@ export class FileExplorerComponent implements OnInit {
 
   cols: any[];
 
-  constructor(private store: Store<AppState>,
+  constructor(
     private filesService: FilesService,
     private gcsService: GcsService,
     private firecloudService: FirecloudService,
     private dialog: MatDialog,
-    private transferablesGridComponent: TransferablesGridComponent,
     private filterSize: FilterSizePipe,
-    private router: Router
   ) {
 
   }
@@ -148,35 +144,11 @@ export class FileExplorerComponent implements OnInit {
   }
 
   selectionDone() {
+    const items = {selectedFiles: this.selectedFiles, totalSize: this.totalSize };
     const dialogRef = this.dialog.open(FileModalComponent, {
       width: '500px',
       disableClose: true,
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result !== undefined) {
-        this.selectedFiles
-          .filter(file => file.data.type === 'File')
-          .forEach(file => {
-            this.dataFile = {
-              id: file.data.id,
-              name: file.data.name,
-              size: file.data.size,
-              created: file.data.updated,
-              updated: file.data.updated,
-              icon: file.data.type === 'Folder' ? 'folder' : 'cloud',
-              selected: false,
-              destination: result.directory,
-              preserveStructure: result.preserveStructure,
-              mediaLink: file.data.mediaLink,
-              path: file.data.path,
-              progress: 0
-            };
-            this.store.dispatch(new Transferables.AddItem(this.dataFile));
-          });
-        this.transferablesGridComponent.startDownload();
-        this.router.navigate(['/status']);
-      }
+      data: items
     });
   }
 }

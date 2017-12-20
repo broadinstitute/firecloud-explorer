@@ -3,7 +3,7 @@
 <p-toolbar styleClass="toolbar-accent">
   <div class="ui-toolbar-group-left" style="width: 50%;">
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="padding: 0;">
-      <h4 class="subtitle" style="display: inline;">Downloading X of {{filesDatabase.data.length}} files</h4>
+      <h4 class="subtitle" style="display: inline;">Downloading {{filesDatabase.data.length}} files</h4>
       <h4 class="subtitle" style="float: right; text-align: right; display: inline;">{{generalProgress}}%</h4>
     </div>
     <p-progressBar mode="determinate" class="progress-bar" [value]=generalProgress [showValue]="false"></p-progressBar>

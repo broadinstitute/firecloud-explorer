@@ -10,6 +10,7 @@ var downloadStats = function(dl, item, win) {
 		} else if(dl.status == 1) {
 			var stats = dl.getStats();
 			item.progress = stats.total.completed;
+			console.log(item);
       win.webContents.send(constants.IPC_DOWNLOAD_STATUS, item);
 		} else if(dl.status == 3) {
 			item.progress = 100;

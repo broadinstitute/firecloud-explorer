@@ -281,7 +281,7 @@ a.sidenav-link p {
 .error-messages .ui-messages {
   margin: 20px 0 0 0;
   background: #ffffff;
-  border: 2px solid #081c22;
+  border: 1px solid #081c22;
   font-family: 'Roboto', sans-serif;
 }
 
@@ -296,8 +296,9 @@ a.sidenav-link p {
 }
 
 .error-messages .ui-messages-icon {
-  width: 10%;
+  width: 35px;
   vertical-align: top;
+  margin-right: 5px;
 }
 
 .error-messages .ui-messages ul {
@@ -305,13 +306,15 @@ a.sidenav-link p {
 }
 
 .error-messages .ui-messages-summary {
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 500;
+  margin-left: 0;
+  vertical-align: middle;
 }
 
 .error-messages .ui-messages-detail {
   display: block;
   margin-top: 5px;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   font-weight: 300;
 }
