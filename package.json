@@ -37,6 +37,7 @@
     "bootstrap": "4.0.0-alpha.6",
     "classlist.js": "^1.1",
     "core-js": "^2.4.1",
+    "diskspace": "^2.0.0",
     "dotenv": "^4.0.0",
     "electron-oauth2": "^3.0.0",
     "file-loader": "^1.1.5",

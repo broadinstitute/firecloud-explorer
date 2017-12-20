@@ -2,7 +2,7 @@ const mtd = require('zeltice-mt-downloader');
 const path = require('path');
 const os = require('os');
 
-const handleFolder = require('./helpers/handleDisk');
+const { handleFolder } = require('./helpers/handleDisk');
 
 let downElements = [];
 

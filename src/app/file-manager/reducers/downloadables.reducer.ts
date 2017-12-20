@@ -97,7 +97,6 @@ export function DownloadablesReducer(state = initialState, action: Action): Down
                 return true;
             });
             return new DownloadableState(sel_item);
-
         default:
             return state;
     }
