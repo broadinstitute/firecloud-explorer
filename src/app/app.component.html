@@ -19,9 +19,9 @@
     <mat-sidenav-content>
       <header>
         <button mat-button *ngIf="isAuthenticated" [matMenuTriggerFor]="toolbarUserMenu" class="menu-item">
-          Username <mat-icon>arrow_drop_down</mat-icon>
+          {{this.userEmail}} <mat-icon>arrow_drop_down</mat-icon>
         </button>
-        <mat-menu #toolbarUserMenu="matMenu">
+        <mat-menu #toolbarUserMenu="matMenu" xPosition="before" [overlapTrigger]="false">
           <button mat-menu-item (click)="onLogoutClick()" class="submenu-item">Sign Out</button>
         </mat-menu>
       </header>

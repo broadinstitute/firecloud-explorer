@@ -43,7 +43,7 @@ export class LoginService {
           this.firecloudService.getUserRegistrationStatus().subscribe(
             registered => {
               this.store.dispatch(login());
-              resolve();
+              resolve(registered.userInfo.userEmail);
             },
             notRegistered => {
               SecurityService.removeAccessToken();
