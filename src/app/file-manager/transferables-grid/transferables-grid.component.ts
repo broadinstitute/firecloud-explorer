@@ -35,7 +35,7 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   displayedColumns = ['selected', 'name', 'size', 'status', 'progress', 'actions'];
   dataSource: FilesDataSource | null;
   selectedRows: any[] = [];
-  filesDatabase = null;
+  filesDatabase: FilesDatabase;
   idCounter = 1;
   generalProgress = 0;
   completed = 0;

@@ -86,6 +86,7 @@ export class FileModalComponent  {
           preserveStructure: this.preserveStructure,
           mediaLink: file.data.mediaLink,
           path: file.data.path,
+          progress: 0
         };
         this.store.dispatch(new Transferables.AddItem(dataFile));
         this.done.emit(true);
