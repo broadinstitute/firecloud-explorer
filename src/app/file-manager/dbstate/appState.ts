@@ -1,5 +1,5 @@
-import { DownloadableState } from '../reducers/downloadables.reducer';
+import { TransferableState } from '../reducers/transferables.reducer';
 
 export interface AppState {
-  downloadables: DownloadableState;
+  downloadables: TransferableState;
 }

@@ -6,7 +6,7 @@ import { SharedModule } from '@app/shared';
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
 import { FileManagerRoutingModule } from './file-manager-routing.module';
-import { DownloadablesReducer } from './reducers/downloadables.reducer';
+import { TransferablesReducer } from './reducers/transferables.reducer';
 
 import { LoginComponent } from './login/login.component';
 import { FileExplorerComponent } from './file-explorer/file-explorer.component';
@@ -38,7 +38,7 @@ import { FilterSizePipe } from './filters/filesize-filter';
     CoreModule,
     SharedModule,
     FileManagerRoutingModule,
-    StoreModule.forFeature('downloadables', DownloadablesReducer),
+    StoreModule.forFeature('downloadables', TransferablesReducer),
     MatDialogModule
   ],
   declarations: [

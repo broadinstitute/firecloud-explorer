@@ -1,10 +1,10 @@
 import { Component, OnInit, AfterViewInit, Input, ViewChild, ChangeDetectionStrategy, NgZone } from '@angular/core';
 
 import { Store } from '@ngrx/store';
-import * as Downloadables from '../actions/downloadables.actions';
+import * as Transferables from '../actions/transferables.actions';
 import { RegisterDownloadService } from '../services/register-download.service';
 import { Item } from '../models/item';
-import { DownloadableState, DownloadablesReducer } from '../reducers/downloadables.reducer';
+import { TransferableState, TransferablesReducer } from '../reducers/transferables.reducer';
 import { MatPaginator, MatSort, PageEvent } from '@angular/material';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { DownloadStatusService } from '../services/download-status.service';
@@ -38,6 +38,7 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   filesDatabase = null;
   idCounter = 1;
   generalProgress = 0;
+  completed = 0;
 
   pageSize = 5;
   pageSizeOptions = [5, 10, 25, 100];
@@ -55,7 +56,7 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   }
 
   load() {
-    this.store.dispatch(new Downloadables.Load());
+    this.store.dispatch(new Transferables.Load());
   }
 
   filter() {
@@ -63,39 +64,46 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   }
 
   reset() {
-    this.store.dispatch(new Downloadables.Reset());
+    this.store.dispatch(new Transferables.Reset());
   }
 
   selectAll() {
-    this.store.dispatch(new Downloadables.SelectAll());
+    this.store.dispatch(new Transferables.SelectAll());
   }
 
   unselectAll() {
-    this.store.dispatch(new Downloadables.UnselectAll());
+    this.store.dispatch(new Transferables.UnselectAll());
   }
 
   toggleSelection() {
-    this.store.dispatch(new Downloadables.ToggleSelection());
+    this.store.dispatch(new Transferables.ToggleSelection());
   }
 
   updateItem(item: any) {
-    this.store.dispatch(new Downloadables.UpdateItem(item));
+    this.store.dispatch(new Transferables.UpdateItem(item));
   }
 
   selectItem(item: any) {
-    this.store.dispatch(new Downloadables.SelectItem(item));
+    this.store.dispatch(new Transferables.SelectItem(item));
   }
 
   toggleItemSelection(item: any) {
-    this.store.dispatch(new Downloadables.ToggleItemSelection(item));
+    this.store.dispatch(new Transferables.ToggleItemSelection(item));
   }
 
   removeItem(item: any) {
-    this.store.dispatch(new Downloadables.RemoveItem(item));
+    this.store.dispatch(new Transferables.RemoveItem(item));
+  }
+
+  removeCompleted(item: any) {
+/*     for (let i = 0; i < item.data.length; i++) {
+
+    } */
   }
 
   ngOnInit() {
     this.dataSource = new FilesDataSource(this.filesDatabase, this.store, this.sort, this.paginator);
+    this.removeCompleted(this.dataSource);
     this.downloadStatus.updateProgress().subscribe(data => {
       this.zone.run(() => {
         this.generalProgress = data;

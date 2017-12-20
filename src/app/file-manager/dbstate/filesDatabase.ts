@@ -3,12 +3,12 @@ import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs/Observable';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Item } from '../models/item';
-import { DownloadableState } from '../reducers/downloadables.reducer';
+import { TransferableState } from '../reducers/transferables.reducer';
 import { AppState } from './appState';
 
 @Injectable()
 export class FilesDatabase {
-  itemsObs: Observable<DownloadableState>;
+  itemsObs: Observable<TransferableState>;
   totalCount = 0;
 
   dataChange: BehaviorSubject<Item[]> = new BehaviorSubject<Item[]>([]);

@@ -2,15 +2,15 @@ const constants = require('./enviroment');
 const Downloader = require('../Downloader');
 
 
-var downloadStats = function(dl, num, win) {
-  num = num || 1;
+var downloadStats = function(dl, item, win) {
+  item = item || 1;
 	var timer = setInterval(function() {
     if (dl.status === 0) {
 			// possibly creating disk space
 		} else if(dl.status == 1) {
 			var stats = dl.getStats();
-			stats.name = num;
-      win.webContents.send(constants.IPC_DOWNLOAD_STATUS, stats);
+			item.progress = stats.total.progress;
+      win.webContents.send(constants.IPC_DOWNLOAD_STATUS, item);
 		} else if(dl.status == 3) {
 			// completed
       win.webContents.send(constants.IPC_DOWNLOAD_STATUS, dl.getStats());

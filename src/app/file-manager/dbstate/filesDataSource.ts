@@ -6,10 +6,10 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { AppState } from './appState';
 import { FilesDatabase } from './filesDatabase';
 import { Item } from '../models/item';
-import { DownloadableState, DownloadablesReducer } from '../reducers/downloadables.reducer';
+import { TransferableState, TransferablesReducer } from '../reducers/transferables.reducer';
 
 export class FilesDataSource extends DataSource<Item> {
-  itemsObs: Observable<DownloadableState>;
+  itemsObs: Observable<TransferableState>;
   dataChange: BehaviorSubject<Item[]> = new BehaviorSubject<Item[]>([]);
 
   constructor(private filesDB: FilesDatabase,

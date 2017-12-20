@@ -3,9 +3,10 @@ import { Message, TreeNode, MenuItem } from 'primeng/primeng';
 import { HttpEventType, HttpResponse } from '@angular/common/http';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs/Observable';
-import * as Downloadables from '../actions/downloadables.actions';
+import * as Transferables from '../actions/transferables.actions';
 import { Item } from '../models/item';
-import { DownloadableState, DownloadablesReducer } from '../reducers/downloadables.reducer';
+import { AppState } from '../dbstate/appState';
+import { TransferableState, TransferablesReducer } from '../reducers/transferables.reducer';
 import { FilesService } from '../services/files.service';
 import { FilterSizePipe } from '../filters/filesize-filter';
 import { FirecloudService } from '../services/firecloud.service';
@@ -15,9 +16,6 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { TransferablesGridComponent } from '../transferables-grid/transferables-grid.component';
 import { Router } from '@angular/router';
 
-interface AppState {
-  downloadables: DownloadableState;
-}
 @Component({
   selector: 'app-file-explorer',
   templateUrl: './file-explorer.component.html',
@@ -174,7 +172,7 @@ export class FileExplorerComponent implements OnInit {
               path: file.data.path,
               progress: 0
             };
-            this.store.dispatch(new Downloadables.AddItem(this.dataFile));
+            this.store.dispatch(new Transferables.AddItem(this.dataFile));
           });
         this.transferablesGridComponent.startDownload();
         this.router.navigate(['/status']);

@@ -30,7 +30,7 @@ const processDownload = (access_token, item, folder, win) => {
   allDownloads.push(dl);
   dl.start();
   // handleEvents(dl, item.name);
-  downloadStats(dl, item.name, win);
+  downloadStats(dl, item, win);
 };
 
 const getAllDownloads = () => {
