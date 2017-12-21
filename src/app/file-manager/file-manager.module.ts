@@ -38,7 +38,7 @@ import { FilterSizePipe } from './filters/filesize-filter';
     CoreModule,
     SharedModule,
     FileManagerRoutingModule,
-    StoreModule.forFeature('downloadables', TransferablesReducer),
+    StoreModule.forFeature('transferables', TransferablesReducer),
     MatDialogModule
   ],
   declarations: [

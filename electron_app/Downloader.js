@@ -1,6 +1,6 @@
-var Download = require('./Download');
-var Formatters = require('./Formatters');
-var util = require('util');
+const Download = require('./Download');
+const Formatters = require('./Formatters');
+const util = require('util');
 
 var extend = function (target) {
   var sources = [].slice.call(arguments, 1);
@@ -17,7 +17,7 @@ var extend = function (target) {
   - Downloader class
   ------------------------------------------
  */
-var Downloader = function () {
+const Downloader = function () {
   this._downloads = [];
 };
 

@@ -25,8 +25,7 @@ export class FilesDataSource extends DataSource<Item> {
     const displayDataChanges = [
       this.filesDB.dataChange,
       this._paginator.page,
-      this.filesDB.selectionChange,
-      // this._sort.sortChange
+      this.filesDB.selectionChange
     ];
 
     return Observable.merge(...displayDataChanges).map(() => {

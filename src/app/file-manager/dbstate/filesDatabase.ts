@@ -24,7 +24,7 @@ export class FilesDatabase {
 
   constructor(private store: Store<AppState>) {
 
-    this.itemsObs = store.select('downloadables');
+    this.itemsObs = store.select('transferables');
     this.itemsObs.subscribe( data => {
         this.dataChange.next(data.items);
         this.selectionChange.next(data.selectedCount);

@@ -1,9 +1,9 @@
 const mtd = require('zeltice-mt-downloader');
-var fs = require('fs');
-var util = require('util');
-var EventEmitter = require('events').EventEmitter;
+const fs = require('fs');
+const util = require('util');
+const EventEmitter = require('events').EventEmitter;
 
-var Download = function () {
+const Download = function () {
   EventEmitter.call(this);
 
   this._reset();
@@ -220,7 +220,6 @@ Download.prototype._computeThreadStatus = function () {
   });
 };
 
-// investigar desde aquí
 Download.prototype.getStats = function () {
   if (!this.meta.threads) {
     return this.stats;

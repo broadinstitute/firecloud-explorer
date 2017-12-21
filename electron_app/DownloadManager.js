@@ -2,7 +2,6 @@ const mtd = require('zeltice-mt-downloader');
 const Downloader = require('./Downloader');
 const path = require('path');
 const os = require('os');
-const handleEvents = require('./helpers/handleEvents');
 const { handleFolder } = require('./helpers/handleDisk');
 const downloadStats = require('./helpers/downloadInfo').downloadStats;
 

@@ -2,27 +2,26 @@ module.exports = function(dl, num) {
 	num = num || 1;
 
 	dl.on('start', function() {
-		console.log('EVENT - Download '+ num +' started !');
+		// event started download
 	});
 
 	dl.on('error', function() {
-		console.log('EVENT - Download '+ num +' error !');
-		console.log(dl.error);
+		// event error download -> dl.error
 	});
 
 	dl.on('end', function() {
-		console.log('EVENT - Download '+ num +' finished !');
+		// event download finished
 	});
 
 	dl.on('retry', function() {
-		console.log('EVENT - Download '+ num +' error, retrying...');
+		// event retry download
 	});
 
 	dl.on('stopped', function() {
-		console.log('EVENT - Download '+ num +' stopped...');
+		// event download stopped
 	});
 
 	dl.on('destroyed', function() {
-		console.log('EVENT - Download '+ num +' destroyed...');
+		// event download destroyed
 	});
 };

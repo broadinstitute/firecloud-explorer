@@ -1,6 +1,6 @@
-var moment = require('moment');
+const moment = require('moment');
 
-var _floor = function(val) {
+const _floor = function(val) {
     return Math.floor(val);
 };
 
