@@ -6,11 +6,10 @@ import { TreeNode } from 'primeng/primeng';
 import { SecurityService } from './security.service';
 import { GcsService } from './gcs.service';
 import { ElectronService } from 'ngx-electron';
+import { Item } from '../models/item';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/retry';
-
-export type HttpObserve = 'body' | 'events' | 'response';
 
 @Injectable()
 export class GcsApiService extends GcsService {
@@ -28,6 +27,10 @@ export class GcsApiService extends GcsService {
       if (files !== null && files.length > 0) {
         this.electronService.ipcRenderer.send('start-upload', bucketName, files, SecurityService.getAccessToken());
       }
+  }
+
+  public downloadFiles(files: Item[]) {
+      this.electronService.ipcRenderer.send('start-download', files, SecurityService.getAccessToken());
   }
 
 }

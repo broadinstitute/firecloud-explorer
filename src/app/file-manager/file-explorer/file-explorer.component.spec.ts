@@ -17,7 +17,7 @@ import { FirecloudService } from '../services/firecloud.service';
 import { FirecloudApiMockService } from '../services/firecloud-api-mock.service';
 import { FilterSizePipe } from '../filters/filesize-filter';
 import { MatDialogModule } from '@angular/material/dialog';
-import { FileModalComponent } from '../file-modal/file-modal.component';
+import { FileDownloadModalComponent } from '../file-download-modal/file-download-modal.component';
 
 
 describe('FileExplorerComponent', () => {
@@ -29,7 +29,7 @@ describe('FileExplorerComponent', () => {
       declarations: [
         FileExplorerComponent,
         FilterSizePipe,
-        FileModalComponent,
+        FileDownloadModalComponent,
       ],
       imports: [
         BrowserAnimationsModule,

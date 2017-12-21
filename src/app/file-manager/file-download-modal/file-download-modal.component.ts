@@ -8,15 +8,16 @@ import { AppState } from '@app/file-manager/transferables-grid/transferables-gri
 import { TransferablesGridComponent } from '../transferables-grid/transferables-grid.component';
 import { Message } from 'primeng/components/common/api';
 import { DiskStatus } from '../models/diskStatus';
-import { RegisterDownloadService } from '@app/file-manager/services/register-download.service';
+import { DownloadValidatorService } from '@app/file-manager/services/download-validator.service';
 import { Type } from '@app/file-manager/models/type';
+import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-file-modal',
-  templateUrl: './file-modal.component.html',
-  styleUrls: ['./file-modal.component.scss']
+  selector: 'app-file-download-modal',
+  templateUrl: './file-download-modal.component.html',
+  styleUrls: ['./file-download-modal.component.scss']
 })
-export class FileModalComponent  {
+export class FileDownloadModalComponent  {
   @Output('done') done: EventEmitter<any> = new EventEmitter();
 
   preserveStructure = true;
@@ -25,12 +26,14 @@ export class FileModalComponent  {
   files: TreeNode[];
   msgs: Message[] = [];
   verify: DiskStatus;
+  downloadFiles: Item[] = [];
 
   constructor(
-    private registerDownload: RegisterDownloadService,
+    private downloadValidator: DownloadValidatorService,
     private transferablesGridComponent: TransferablesGridComponent,
     private store: Store<AppState>,
-    public dialogRef: MatDialogRef<FileModalComponent>,
+    public dialogRef: MatDialogRef<FileDownloadModalComponent>,
+    public router: Router,
     @Inject(MAT_DIALOG_DATA) public data: any) {
       if (localStorage.getItem('directory') !== null) {
         this.directory = localStorage.getItem('directory');
@@ -39,13 +42,14 @@ export class FileModalComponent  {
   }
 
   startDownload() {
-    this.registerDownload.verifyDisk(this.directory, this.data.totalSize).then(
+    this.downloadValidator.verifyDisk(this.directory, this.data.totalSize).then(
       diskVerification => {
         this.verify = diskVerification;
         if (!this.verify.hasErr) {
           this.setItems();
-          this.transferablesGridComponent.startDownload();
+          this.transferablesGridComponent.startDownload(this.downloadFiles);
           this.dialogRef.close();
+          this.router.navigate(['/status']);
         } else {
           this.msgs = [];
           this.createWarningMsg(this.verify.errMsg);
@@ -55,7 +59,6 @@ export class FileModalComponent  {
 
   cancel(): void {
     this.dialogRef.close();
-    this.store.dispatch(new Transferables.Reset());
   }
 
   selectionChanged(event) {
@@ -87,6 +90,7 @@ export class FileModalComponent  {
           path: file.data.path,
           type: Type.DOWNLOAD
         };
+        this.downloadFiles.push(dataFile);
         this.store.dispatch(new Transferables.AddItem(dataFile));
         this.done.emit(true);
       });

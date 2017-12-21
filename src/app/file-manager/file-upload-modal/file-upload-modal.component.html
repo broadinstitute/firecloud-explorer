@@ -5,7 +5,7 @@
     <mat-form-field class="full-width">
       <input type="text" matInput placeholder="Select workspace..." [formControl]="workspaceCtrl" [matAutocomplete]="auto">
       <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)" [panelOpen]="false">
-        <mat-option *ngFor="let workspace of filteredWorkspaces | async" [value]="workspace">
+        <mat-option *ngFor="let workspace of filteredWorkspaces | async" [value]="workspace" [optionSelected]="changeWorkspace()">
           {{ workspace.name }}
         </mat-option>
       </mat-autocomplete>
@@ -16,5 +16,5 @@
 
 <mat-dialog-actions>
   <button mat-raised-button (click)="cancel()" class="button-secondary">Cancel</button>
-  <button mat-raised-button (click)="uploadFiles()" class="button-primary">Start Upload!</button>
+  <button mat-raised-button (click)="uploadFiles()" [disabled]="disableUpload" class="button-primary">Start Upload!</button>
 </mat-dialog-actions>

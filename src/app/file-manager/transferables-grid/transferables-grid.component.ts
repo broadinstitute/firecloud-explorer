@@ -1,8 +1,8 @@
-import { Component, OnInit, AfterViewInit, Input, ViewChild, ChangeDetectionStrategy, NgZone } from '@angular/core';
+import { Component, OnInit, AfterViewInit, Input, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 
 import { Store } from '@ngrx/store';
 import * as Transferables from '../actions/transferables.actions';
-import { RegisterDownloadService } from '../services/register-download.service';
+import { DownloadValidatorService } from '../services/download-validator.service';
 import { Item } from '../models/item';
 import { TransferableState, TransferablesReducer } from '../reducers/transferables.reducer';
 import { MatPaginator, MatSort, PageEvent } from '@angular/material';
@@ -95,20 +95,12 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
 
   displayedColumns = ['selected', 'name', 'size', 'status', 'progress', 'actions'];
   dataSource: FilesDataSource | null;
-  selectedRows: any[] = [];
   filesDatabase = null;
-  idCounter = 1;
-
-  pageSize = 5;
-  pageSizeOptions = [5, 10, 25, 100];
-
-  pageEvent: PageEvent;
 
   constructor(
     private store: Store<AppState>,
-    private registerDownload: RegisterDownloadService,
-    private gcsService: GcsService,
-    private zone: NgZone
+    private registerDownload: DownloadValidatorService,
+    private gcsService: GcsService
   ) {
     this.filesDatabase = new FilesDatabase(store);
   }
@@ -192,13 +184,11 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   sortData(evt) {
   }
 
-  startDownload() {
-    const files = this.filesDatabase.data.filter(item => item.type === Type.DOWNLOAD);
-    this.registerDownload.startDownload(files);
+  startDownload(files: Item[]) {
+    this.gcsService.downloadFiles(files);
   }
 
-  startUpload() {
-    const files = this.filesDatabase.data.filter(item => item.type === Type.UPLOAD);
+  startUpload(files: Item[]) {
     this.gcsService.uploadFiles(localStorage.getItem('uploadBucket'), files);
   }
 

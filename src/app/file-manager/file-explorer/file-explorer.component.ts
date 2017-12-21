@@ -10,7 +10,7 @@ import { FilesService } from '../services/files.service';
 import { FilterSizePipe } from '../filters/filesize-filter';
 import { FirecloudService } from '../services/firecloud.service';
 import { GcsService } from '../services/gcs.service';
-import { FileModalComponent } from '../file-modal/file-modal.component';
+import { FileDownloadModalComponent } from '../file-download-modal/file-download-modal.component';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { Type } from '@app/file-manager/models/type';
 
@@ -25,9 +25,6 @@ interface AppState {
 })
 export class FileExplorerComponent implements OnInit {
   msgs: Message[];
-
-  shouldSpin = false;
-
   files: TreeNode[];
   dataFile: Item;
   selectedFiles: TreeNode[] = [];
@@ -52,8 +49,6 @@ export class FileExplorerComponent implements OnInit {
 
   }
   ngOnInit() {
-    this.shouldSpin = true;
-    this.store.dispatch(new Transferables.Reset());
     this.filesService.getBucketFiles(false).subscribe(
       resp => {
         if (resp !== undefined) {
@@ -61,7 +56,6 @@ export class FileExplorerComponent implements OnInit {
             this.files = r;
           });
         }
-        this.shouldSpin = false;
       }
     );
   }
@@ -157,7 +151,7 @@ export class FileExplorerComponent implements OnInit {
 
   selectionDone() {
     const items = {selectedFiles: this.selectedFiles, totalSize: this.totalSize };
-    const dialogRef = this.dialog.open(FileModalComponent, {
+    const dialogRef = this.dialog.open(FileDownloadModalComponent, {
       width: '500px',
       disableClose: true,
       data: items

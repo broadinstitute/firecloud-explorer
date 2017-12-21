@@ -16,7 +16,7 @@ import { TransferablesGridComponent } from './transferables-grid/transferables-g
 import { FilesService } from './services/files.service';
 import { FirecloudService } from './services/firecloud.service';
 import { GcsService } from './services/gcs.service';
-import { RegisterDownloadService } from './services/register-download.service';
+import { DownloadValidatorService } from './services/download-validator.service';
 import { RegisterUploadService } from './services/register-upload.service';
 import { GcsApiService } from './services/gcs-api.service';
 import { GcsApiMockService } from './services/gcs-api-mock.service';
@@ -27,7 +27,7 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { RequestInterceptor } from './services/request.interceptor';
 import { environment } from '@env/environment';
 import { HttpClient } from '@angular/common/http';
-import { FileModalComponent } from './file-modal/file-modal.component';
+import { FileDownloadModalComponent } from './file-download-modal/file-download-modal.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { FilterSizePipe } from './filters/filesize-filter';
 import { FileUploadModalComponent } from './file-upload-modal/file-upload-modal.component';
@@ -47,7 +47,7 @@ import { FileExplorerUploadComponent } from './file-explorer-upload/file-explore
     TransferableItemComponent,
     TransferablesGridComponent,
     LoginComponent,
-    FileModalComponent,
+    FileDownloadModalComponent,
     FilterSizePipe,
     FileUploadModalComponent,
     FileExplorerUploadComponent,
@@ -83,7 +83,7 @@ import { FileExplorerUploadComponent } from './file-explorer-upload/file-explore
         }
       }
     },
-    RegisterDownloadService,
+    DownloadValidatorService,
     RegisterUploadService
   ],
   exports: [
@@ -93,7 +93,7 @@ import { FileExplorerUploadComponent } from './file-explorer-upload/file-explore
     CUSTOM_ELEMENTS_SCHEMA
   ],
   entryComponents: [
-    FileModalComponent,
+    FileDownloadModalComponent,
     FileUploadModalComponent
   ],
 })

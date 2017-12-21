@@ -10,7 +10,7 @@ import { TransferableState, TransferablesReducer } from '../reducers/transferabl
 import { ElectronService } from 'ngx-electron';
 import { FilterSizePipe } from '../filters/filesize-filter';
 import { GcsService } from '../services/gcs.service';
-import { FileModalComponent } from '../file-modal/file-modal.component';
+import { FileDownloadModalComponent } from '../file-download-modal/file-download-modal.component';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { RegisterUploadService } from '../services/register-upload.service';
 import { FileUploadModalComponent } from '../file-upload-modal/file-upload-modal.component';
@@ -38,6 +38,7 @@ export class FileExplorerUploadComponent implements OnInit {
   dataFile: Item;
   selectedFiles: TreeNode[] = [];
   selectedFile: TreeNode;
+  uploadFiles: Item[] = [];
 
   fileCount = 0;
   totalSize = 0;
@@ -192,9 +193,10 @@ export class FileExplorerUploadComponent implements OnInit {
               path: file.data.path,
               type: Type.UPLOAD
             };
+            this.uploadFiles.push(this.dataFile);
             this.store.dispatch(new Transferables.AddItem(this.dataFile));
           });
-        this.transferablesGridComponent.startUpload();
+        this.transferablesGridComponent.startUpload(this.uploadFiles);
         this.router.navigate(['/status']);
       }
     });

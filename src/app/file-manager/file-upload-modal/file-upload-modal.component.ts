@@ -1,13 +1,10 @@
 
 import { Component, Inject } from '@angular/core';
-import { GcsService } from '../services/gcs.service';
-import { HttpEventType, HttpResponse } from '@angular/common/http';
 import { Workspace } from '../models/workspace';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { FormControl } from '@angular/forms';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { Observable } from 'rxjs/Observable';
 import { startWith } from 'rxjs/operator/startWith';
-import { Pipe } from '@angular/core/src/metadata/directives';
 import { map } from 'rxjs/operator/map';
 
 @Component({
@@ -24,9 +21,10 @@ export class FileUploadModalComponent {
 
   writableWorkspaces: Workspace[] = [];
   filteredWorkspaces: Observable<any>;
+  disableUpload = true;
 
   constructor(public dialogRef: MatDialogRef<FileUploadModalComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any, private gcsService: GcsService) {
+    @Inject(MAT_DIALOG_DATA) public data: any) {
 
     this.getWritableWorkspaces();
 
@@ -38,8 +36,13 @@ export class FileUploadModalComponent {
   }
 
   filterWorkspaces(selectedWorkspace: Workspace) {
-     return this.writableWorkspaces
-      .filter(workspace => workspace.name.toLowerCase().includes(selectedWorkspace.name.toLowerCase()));
+    if (selectedWorkspace.name != null && selectedWorkspace.name !== '') {
+      const workspaceName = selectedWorkspace.name.toLowerCase();
+      return this.writableWorkspaces
+      .filter(workspace => workspace.name.toLowerCase().includes(workspaceName));
+    } else {
+      return this.writableWorkspaces;
+    }
   }
 
   cancel(): void {
@@ -65,5 +68,13 @@ export class FileUploadModalComponent {
 
   displayFn(workspace: Workspace): any {
     return workspace ? workspace.name : workspace;
+  }
+
+  changeWorkspace() {
+    if (this.workspaceCtrl.value !== null && this.workspaceCtrl.value !== '' && this.workspaceCtrl.value !== undefined) {
+      this.disableUpload = false;
+    } else {
+      this.disableUpload = true;
+    }
   }
 }
