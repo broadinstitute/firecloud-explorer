@@ -20,8 +20,8 @@ import { selectorSettings } from './settings';
 })
 export class AppComponent implements OnInit, OnDestroy {
 
-  public static updateUserEmail: Subject<boolean> = new Subject();
-  private unsubscribe$: Subject<void> = new Subject<void>();
+  static updateUserEmail: Subject<string> = new Subject();
+  unsubscribe$: Subject<void> = new Subject<void>();
   userEmail: String;
 
   title = 'app';
@@ -34,13 +34,12 @@ export class AppComponent implements OnInit, OnDestroy {
   constructor(
     public overlayContainer: OverlayContainer,
     private store: Store<any>,
-    private router: Router,
-    private zone: NgZone
+    private router: Router
   ) {
-    AppComponent.updateUserEmail.subscribe(res => {
-      this.userEmail = localStorage.getItem('userEmail');
+    AppComponent.updateUserEmail.subscribe(email => {
+      this.userEmail = email;
     });
-  }
+   }
 
   ngOnInit(): void {
     this.store

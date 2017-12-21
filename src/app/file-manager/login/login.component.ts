@@ -3,6 +3,7 @@ import { environment } from '@env/environment';
 import { Router } from '@angular/router';
 import { LoginService } from '../services/login.service';
 import { Message } from 'primeng/components/common/api';
+import { AppComponent } from '../../app.component';
 import { ElectronService } from 'ngx-electron';
 
 @Component({
@@ -35,6 +36,7 @@ export class LoginComponent implements OnInit {
     this.loginService.googleLogin().then(
 
       registered => {
+        AppComponent.updateUserEmail.next(registered.toString());
         this.router.navigate([this.redirect]);
       },
       err => {
