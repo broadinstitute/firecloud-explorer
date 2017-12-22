@@ -4,8 +4,6 @@ import { Workspace } from '../models/workspace';
 import { FormControl } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { Observable } from 'rxjs/Observable';
-import { startWith } from 'rxjs/operator/startWith';
-import { map } from 'rxjs/operator/map';
 
 @Component({
   selector: 'app-file-upload',
