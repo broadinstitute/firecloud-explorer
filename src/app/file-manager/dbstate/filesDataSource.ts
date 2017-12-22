@@ -1,16 +1,12 @@
 import { Store } from '@ngrx/store';
 import { MatPaginator, MatSort } from '@angular/material';
-import { DataSource, CollectionViewer } from '@angular/cdk/collections';
+import { DataSource } from '@angular/cdk/collections';
 import { Observable } from 'rxjs/Observable';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { AppState } from './appState';
 import { FilesDatabase } from './filesDatabase';
 import { Item } from '../models/item';
-import { TransferableState, TransferablesReducer } from '../reducers/transferables.reducer';
 
 export class FilesDataSource extends DataSource<Item> {
-  itemsObs: Observable<TransferableState>;
-  dataChange: BehaviorSubject<Item[]> = new BehaviorSubject<Item[]>([]);
 
   constructor(private filesDB: FilesDatabase,
     private store: Store<AppState>,

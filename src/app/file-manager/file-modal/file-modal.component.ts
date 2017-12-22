@@ -1,7 +1,6 @@
 import {Component, Inject, Output, EventEmitter} from '@angular/core';
-import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import {TreeNode} from 'primeng/primeng';
-import { Item } from '@app/file-manager/models/item';
 import * as Transferables from '../actions/transferables.actions';
 import { Store } from '@ngrx/store';
 import { AppState } from '../dbstate/appState';

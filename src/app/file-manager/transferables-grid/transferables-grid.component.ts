@@ -1,18 +1,12 @@
-import { Component, OnInit, AfterViewInit, Input, ViewChild, ChangeDetectionStrategy, NgZone } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, NgZone } from '@angular/core';
 
 import { Store } from '@ngrx/store';
 import * as Transferables from '../actions/transferables.actions';
 import { RegisterDownloadService } from '../services/register-download.service';
-import { Item } from '../models/item';
-import { TransferableState, TransferablesReducer } from '../reducers/transferables.reducer';
 import { MatPaginator, MatSort, PageEvent } from '@angular/material';
-import { animate, state, style, transition, trigger } from '@angular/animations';
 import { DownloadStatusService } from '../services/download-status.service';
 
 import { ElectronService} from 'ngx-electron';
-import { DataSource, CollectionViewer } from '@angular/cdk/collections';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/startWith';
 import 'rxjs/add/observable/forkJoin';
 import 'rxjs/add/operator/map';
@@ -34,16 +28,8 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
 
   displayedColumns = ['selected', 'name', 'size', 'status', 'progress', 'actions'];
   dataSource: FilesDataSource | null;
-  selectedRows: any[] = [];
   filesDatabase: FilesDatabase;
-  idCounter = 1;
   generalProgress = 0;
-  completed = 0;
-
-  pageSize = 5;
-  pageSizeOptions = [5, 10, 25, 100];
-
-  pageEvent: PageEvent;
 
   constructor(
     private store: Store<AppState>,

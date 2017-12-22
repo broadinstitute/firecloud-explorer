@@ -13,8 +13,6 @@ import { FilesDatabase } from '../dbstate/filesDatabase';
  */
 @Injectable()
 export class DownloadStatusService {
-  private filesDatabase: FilesDatabase;
-  private allItemsStatus = Observable;
 
   constructor(private store: Store<AppState>,
     private electronService: ElectronService) { }

@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { TreeNode } from 'primeng/primeng';
-import { environment } from '@env/environment';
 import { GcsService } from './gcs.service';
 import { Observable } from 'rxjs/Rx';
 import { FirecloudService } from './firecloud.service';
@@ -22,7 +20,6 @@ export class FilesService {
         return this.firecloudService.getUserFirecloudWorkspaces(isWorkspacePublic).map(
             resp => {
              if (resp != null && resp.length > 0) {
-                const result: TreeNode[] = [];
                 const observables: Observable<any>[] = [];
                 const workspacesNameMap: Map<string, string> = new Map<string, string>();
 
