@@ -1,11 +1,11 @@
-// downloadables.ts
+// transerables.ts
 import { Action } from '@app/core';
-import * as DownloadablesActions from '../actions/downloadables.actions';
+import * as TransferablesActions from '../actions/transferables.actions';
 import { Item } from '../models/item';
 
-export type Action = DownloadablesActions.All;
+export type Action = TransferablesActions.All;
 
-export class DownloadableState {
+export class TransferableState {
     items: Item[];
 
     constructor(items: Item[]) {
@@ -22,52 +22,52 @@ export class DownloadableState {
 
 }
 
-const initialState: DownloadableState = {
+const initialState: TransferableState = {
     count: 0,
     selectedCount: 0,
     items: []
 };
 
-export function DownloadablesReducer(state = initialState, action: Action): DownloadableState {
+export function TransferablesReducer(state = initialState, action: Action): TransferableState {
 
     switch (action.type) {
 
-        case DownloadablesActions.LOAD:
+        case TransferablesActions.LOAD:
             return state;
 
-        case DownloadablesActions.FILTER:
+        case TransferablesActions.FILTER:
             return initialState;
 
-        case DownloadablesActions.RESET:
+        case TransferablesActions.RESET:
             const tmp3 = initialState;
             return tmp3;
 
-        case DownloadablesActions.SELECT_ALL:
-            return new DownloadableState(
+        case TransferablesActions.SELECT_ALL:
+            return new TransferableState(
                 state.items.filter(item => {
                     item.selected = true;
                     return true;
                 })
             );
 
-        case DownloadablesActions.UNSELECT_ALL:
-            return new DownloadableState(
+        case TransferablesActions.UNSELECT_ALL:
+            return new TransferableState(
                 state.items.filter(item => {
                     item.selected = false;
                     return true;
                 })
             );
 
-        case DownloadablesActions.TOGGLE_SELECTION:
-            return new DownloadableState(
+        case TransferablesActions.TOGGLE_SELECTION:
+            return new TransferableState(
                 state.items.filter(item => {
                     item.selected = !item.selected;
                     return true;
                 })
             );
 
-        case DownloadablesActions.TOGGLE_ITEM_SELECTION:
-            return new DownloadableState(
+        case TransferablesActions.TOGGLE_ITEM_SELECTION:
+            return new TransferableState(
                 state.items.filter(item => {
                     if (item.id === action.payload.id) {
                         item.selected = !item.selected;
@@ -76,27 +76,27 @@ export function DownloadablesReducer(state = initialState, action: Action): Down
                 })
             );
 
-        case DownloadablesActions.ADD_ITEM:
+        case TransferablesActions.ADD_ITEM:
             const add_item = [...state.items, action.payload];
-            return new DownloadableState(add_item);
+            return new TransferableState(add_item);
 
-        case DownloadablesActions.UPDATE_ITEM:
+        case TransferablesActions.UPDATE_ITEM:
             const upd_item = state.items.filter(item => item.id !== action.payload.id);
             const tmp1 = [...upd_item, action.payload];
-            return new DownloadableState(upd_item);
+            return new TransferableState(upd_item);
 
-        case DownloadablesActions.REMOVE_ITEM:
+        case TransferablesActions.REMOVE_ITEM:
             const rem_item = state.items.filter(item => item.id !== action.payload.id);
-            return new DownloadableState(rem_item);
+            return new TransferableState(rem_item);
 
-        case DownloadablesActions.SELECT_ITEM:
+        case TransferablesActions.SELECT_ITEM:
             const sel_item = state.items.filter(item => {
                 if (item.id === action.payload.id) {
                     item.selected = action.payload.selected;
                 }
                 return true;
             });
-            return new DownloadableState(sel_item);
+            return new TransferableState(sel_item);
         default:
             return state;
     }
