@@ -14,8 +14,7 @@ import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-file-download-modal',
-  templateUrl: './file-download-modal.component.html',
-  styleUrls: ['./file-download-modal.component.scss']
+  templateUrl: './file-download-modal.component.html'
 })
 export class FileDownloadModalComponent  {
   @Output('done') done: EventEmitter<any> = new EventEmitter();
