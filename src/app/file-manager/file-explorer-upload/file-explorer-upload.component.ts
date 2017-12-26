@@ -34,11 +34,13 @@ export class FileExplorerUploadComponent implements OnInit {
   files: TreeNode[];
   dataFile: Item;
   selectedFiles: TreeNode[] = [];
+  selectedFile: TreeNode;
   uploadFiles: Item[] = [];
 
   fileCount = 0;
   totalSize = 0;
 
+  cols: any[];
 
   constructor(private store: Store<AppState>,
     private gcsService: GcsService,

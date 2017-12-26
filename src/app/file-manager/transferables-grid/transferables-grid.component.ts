@@ -13,10 +13,12 @@ import 'rxjs/add/operator/startWith';
 import 'rxjs/add/observable/forkJoin';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/observable/merge';
+import { GcsService } from '@app/file-manager/services/gcs.service';
+import { Type } from '@app/file-manager/models/type';
+
 
 import { Observable } from 'rxjs/Observable';
 import { DownloadStatusService } from '../services/download-status.service';
-import { GcsService } from '@app/file-manager/services/gcs.service';
 
 import { AppState } from '../dbstate/appState';
 import { FilesDataSource } from '../dbstate/filesDataSource';
@@ -38,12 +40,11 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   generalProgress = 0;
 
   constructor(
-    private store: Store<AppState>,
-    private validateDiskService: DownloadValidatorService,
+    private downloadStatus: DownloadStatusService,
     private zone: NgZone,
-    private downloadValidator: DownloadValidatorService,
-    private gcsService: GcsService,
-    private downloadStatus: DownloadStatusService
+    private store: Store<AppState>,
+    private registerDownload: DownloadValidatorService,
+    private gcsService: GcsService
   ) {
     this.filesDatabase = new FilesDatabase(store);
   }
