@@ -36,7 +36,7 @@ app.on('ready', function () {
   });
 
   win.maximize();
-  // win.setMenu(null);
+  win.setMenu(null);
 
   // Specify entry point
   if (process.env.PACKAGE === 'true') {
@@ -50,7 +50,7 @@ app.on('ready', function () {
   }
   // Show dev tools
   // Remove this line before distributing
-   win.webContents.openDevTools()
+  // win.webContents.openDevTools()
 
   // Remove window once app is closed
   win.on('closed', function () {
@@ -111,7 +111,6 @@ app.on('ready', function () {
   ipcMain.on(constants.IPC_GET_NODE_CONTENT, (event, nodePath) => {
     if (nodePath === '/') {
       nodePath = os.homedir();
-      console.log(JSON.stringify(os.userInfo(), null, 2));
     }
     var files = lazyNodeReader(nodePath, []);
 

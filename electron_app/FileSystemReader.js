@@ -87,7 +87,9 @@ const lazyNodeReader = (dir, fileList = []) => {
     let node = {};
     try {
       const stat = fs.statSync(filePath);
-      if (stat.isDirectory()) {
+      if (file.startsWith('.')) {
+        // skip file
+      } else if (stat.isDirectory()) {
         node = {
           label: file,
           name: file,
@@ -100,7 +102,8 @@ const lazyNodeReader = (dir, fileList = []) => {
             updated: stat.mtime
           },
           type: 'Folder',
-          leaf: false
+          leaf: false,
+          selectable: false
         };
         fileList.push(node);
       } else {
@@ -116,7 +119,8 @@ const lazyNodeReader = (dir, fileList = []) => {
             updated: stat.mtime
           },
           type: 'File',
-          leaf: true
+          leaf: true,
+          selectable: true
         };
         fileList.push(node);
       }

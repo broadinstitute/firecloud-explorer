@@ -62,7 +62,7 @@ export class FileExplorerUploadComponent implements OnInit {
 
     const homeFolder = '/';
 
-    const rootNode: TreeNode  = {
+    const rootNode: TreeNode = {
       label: homeFolder,
       data: {
         name: homeFolder,
@@ -78,6 +78,7 @@ export class FileExplorerUploadComponent implements OnInit {
         rootNode.children = localFiles.result;
         rootNode.data.name = localFiles.nodePath;
         rootNode.expanded = true;
+        rootNode.selectable = rootNode.children ? (rootNode.children.length > 0) : false;
       });
     });
 
@@ -114,17 +115,15 @@ export class FileExplorerUploadComponent implements OnInit {
   nodeExpand(evt) {
     let node: TreeNode;
     if (evt.node) {
-      // subscribe to get-node-content event from nodejs
       this.electronService.ipcRenderer.once('get-node-content', (event, nodeFiles) => {
         node = evt.node;
         this.zone.run(() => {
-          // node.data.name = nodeFiles.nodePath;
           node.children = nodeFiles.result;
           node.expanded = true;
+          node.selectable = node.children ? (node.children.length > 0) : false;
         });
         return;
       });
-      console.log('expanding ' + evt.node.data.path);
       this.registerUpload.getLazyNodeContent(evt.node.data.path);
     }
   }
