@@ -5,6 +5,7 @@ import { Store } from '@ngrx/store';
 import * as Transferables from '../actions/transferables.actions';
 import { Item } from '../models/item';
 import { TransferableState } from '../reducers/transferables.reducer';
+import { AppState } from '../dbstate/app-state';
 import { ElectronService } from 'ngx-electron';
 import { FilterSizePipe } from '../filters/filesize-filter';
 import { GcsService } from '../services/gcs.service';
@@ -16,9 +17,9 @@ import { TreeTable } from 'primeng/primeng';
 import { ChangeDetectorRef } from '@angular/core';
 import { Type } from '@app/file-manager/models/type';
 
-interface AppState {
-  uploadables: TransferableState;
-}
+// interface AppState {
+//   uploadables: TransferableState;
+// }
 @Component({
   selector: 'app-file-explorer-upload',
   templateUrl: './file-explorer-upload.component.html',
