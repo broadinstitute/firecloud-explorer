@@ -15,6 +15,7 @@ import { TransferablesGridComponent } from '../transferables-grid/transferables-
 import { TreeTable } from 'primeng/primeng';
 import { ChangeDetectorRef } from '@angular/core';
 import { Type } from '@app/file-manager/models/type';
+import { ItemStatus } from '@app/file-manager/models/item-status';
 
 @Component({
   selector: 'app-file-explorer-upload',
@@ -186,7 +187,8 @@ export class FileExplorerUploadComponent implements OnInit {
               mediaLink: '',
               path: file.data.path,
               type: Type.UPLOAD,
-              progress: 0
+              progress: 0,
+              status: ItemStatus.UPLOADING,
             };
             this.uploadFiles.push(this.dataFile);
             this.store.dispatch(new Transferables.AddItem(this.dataFile));

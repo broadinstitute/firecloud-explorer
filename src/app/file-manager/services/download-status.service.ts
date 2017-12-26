@@ -19,20 +19,22 @@ export class DownloadStatusService {
 
   updateProgress(): Observable<any> {
     this.electronService.ipcRenderer.removeAllListeners('download-status');
-    const allItemsStatus = Observable.create((observer) => {
+    return Observable.create((observer) => {
       this.electronService.ipcRenderer.on('download-status', (event, data) => {
         this.updateDownloadItem(data);
         observer.next(this.generalProgress());
       });
     });
-    return allItemsStatus;
   }
 
   private updateDownloadItem(data: Item) {
     const downloadItems = new FilesDatabase(this.store);
     for (let i = 0; i < downloadItems.data.length; i++) {
       if (data.id === downloadItems.data[i].id) {
-        this.store.dispatch(new Transferables.UpdateItem(data));
+        this.store.dispatch(new Transferables.UpdateItemProgress(data));
+      }
+      if (data.progress === 100) {
+        this.store.dispatch(new Transferables.UpdateItemStatus(data));
       }
     }
   }

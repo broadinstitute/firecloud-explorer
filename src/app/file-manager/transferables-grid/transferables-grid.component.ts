@@ -10,10 +10,7 @@ import 'rxjs/add/observable/forkJoin';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/observable/merge';
 import { GcsService } from '@app/file-manager/services/gcs.service';
-
-
 import { DownloadStatusService } from '../services/download-status.service';
-
 import { AppState } from '../dbstate/app-state';
 import { FilesDataSource } from '../dbstate/files-datasource';
 import { FilesDatabase } from '../dbstate/files-database';

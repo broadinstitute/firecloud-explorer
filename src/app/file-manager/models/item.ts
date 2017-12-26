@@ -14,4 +14,5 @@ export interface Item {
     destination: string;
     progress: number;
     type: Type;
+    status: string;
 }

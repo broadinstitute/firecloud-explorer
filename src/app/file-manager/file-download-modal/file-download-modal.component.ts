@@ -11,6 +11,7 @@ import { DiskStatus } from '../models/diskStatus';
 import { DownloadValidatorService } from '@app/file-manager/services/download-validator.service';
 import { Type } from '@app/file-manager/models/type';
 import { Router } from '@angular/router';
+import { ItemStatus } from '@app/file-manager/models/item-status';
 
 @Component({
   selector: 'app-file-download-modal',
@@ -88,7 +89,8 @@ export class FileDownloadModalComponent  {
           mediaLink: file.data.mediaLink,
           path: file.data.path,
           progress: 0,
-          type: Type.DOWNLOAD
+          type: Type.DOWNLOAD,
+          status: ItemStatus.UPLOADING,
         };
         this.downloadFiles.push(dataFile);
         this.store.dispatch(new Transferables.AddItem(dataFile));
