@@ -1,5 +1,3 @@
-@import 'styles-variables';
-
 header {
   display: flex;
   flex-direction: row;
@@ -7,18 +5,11 @@ header {
   height: 5vh;
 }
 
-.nav-button {
-  margin: 0 10px 0 0;
-}
-
-.sign-in-button {
-  line-height: 35px;
-  margin-right: 10px;
-}
-
 .menu-item {
   margin: 0 25px;
   padding: 0 10px 0 15px;
+  text-align: right;
+  background: white;
 }
 
 .menu-item,
@@ -39,18 +30,6 @@ header {
   line-height: 20px;
 }
 
-@media (max-width: map-get($grid-breakpoints, lg)) {
-  .nav-button {
-    min-width: 0;
-    padding: 0 10px;
-  }
-  .sign-in-button {
-    min-width: 0;
-    padding: 0 10px;
-    margin: 0 5px 0 0;
-  }
-}
-
 .wrapper {
   position: relative;
   min-height: 100%;
@@ -67,7 +46,7 @@ header {
 }
 
 .footer {
-  background-color: #000000;
+  background-color: black;
   padding: 0 20px;
   width: 100%;
   height: 30px;
@@ -78,7 +57,7 @@ header {
   z-index: 1;
 
   .footer-signature {
-    color: #ffffff;
+    color: white;
     font-size: 0.9rem;
     line-height: 2rem;
   }
