@@ -21,8 +21,8 @@ export class DownloadStatusService {
     this.electronService.ipcRenderer.removeAllListeners('download-status');
     const allItemsStatus = Observable.create((observer) => {
       this.electronService.ipcRenderer.on('download-status', (event, data) => {
-        observer.next(this.generalProgress());
         this.updateDownloadItem(data);
+        observer.next(this.generalProgress());
       });
     });
     return allItemsStatus;
