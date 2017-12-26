@@ -27,7 +27,7 @@ const recursiveFileSystemReader = (dir, fileList = []) => {
           name: file,
           path: path.join(dir, file),
           size: getSizeFromFolder(path.join(dir, file)),
-          type: 'Folder', 
+          type: 'Folder',
           created: stat.birthTime,
           updated: stat.mtime
         },
@@ -44,7 +44,7 @@ const recursiveFileSystemReader = (dir, fileList = []) => {
           name: file,
           path: path.join(dir, file),
           size: stat.size,
-          type: 'File', 
+          type: 'File',
           created: stat.birthTime,
           updated: stat.mtime
         },
@@ -68,7 +68,7 @@ const lazyFileSystemReader = (dir, fileList = []) => {
           name: file,
           path: path.join(dir, file),
           size: getSizeFromFolder(path.join(dir, file)),
-          type: 'Folder', 
+          type: 'Folder',
           created: stat.birthTime,
           updated: stat.mtime
         },
@@ -85,39 +85,43 @@ const lazyNodeReader = (dir, fileList = []) => {
   fs.readdirSync(dir).forEach(file => {
     const filePath = path.join(dir, file);
     let node = {};
-    const stat = fs.statSync(filePath);
-    if (stat.isDirectory()) {
-      node = {
-        label: file,
-        name: file,
-        data: {
+    try {
+      const stat = fs.statSync(filePath);
+      if (stat.isDirectory()) {
+        node = {
+          label: file,
           name: file,
-          path: path.join(dir, file),
-          size: getSizeFromFolder(path.join(dir, file)),
-          type: 'Folder', 
-          created: stat.birthTime,
-          updated: stat.mtime
-        },
-        type: 'Folder',
-        leaf: false
-      };
-      fileList.push(node);
-    } else {
-      node = {
-        label: file,
-        name: file,
-        data: {
+          data: {
+            name: file,
+            path: path.join(dir, file),
+            size: getSizeFromFolder(path.join(dir, file)),
+            type: 'Folder',
+            created: stat.birthTime,
+            updated: stat.mtime
+          },
+          type: 'Folder',
+          leaf: false
+        };
+        fileList.push(node);
+      } else {
+        node = {
+          label: file,
           name: file,
-          path: path.join(dir, file),
-          size: stat.size,
+          data: {
+            name: file,
+            path: path.join(dir, file),
+            size: stat.size,
+            type: 'File',
+            created: stat.birthTime,
+            updated: stat.mtime
+          },
           type: 'File',
-          created: stat.birthTime,
-          updated: stat.mtime
-        },
-        type: 'File',
-        leaf: true
-      };
-      fileList.push(node);
+          leaf: true
+        };
+        fileList.push(node);
+      }
+    } catch (e) {
+      console.log('error reading file stats ', e);
     }
   });
   return fileList;

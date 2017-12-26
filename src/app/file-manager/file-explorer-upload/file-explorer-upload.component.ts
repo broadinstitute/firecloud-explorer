@@ -18,6 +18,7 @@ import { TransferablesGridComponent } from '../transferables-grid/transferables-
 import { TreeTable } from 'primeng/primeng';
 import { ChangeDetectorRef } from '@angular/core';
 import { Type } from '@app/file-manager/models/type';
+const os = require('os');
 
 interface AppState {
   uploadables: TransferableState;
@@ -57,18 +58,50 @@ export class FileExplorerUploadComponent implements OnInit {
     private zone: NgZone
   ) {
 
+    // const homeFolder = os.homedir();
+    // console.log(homeFolder);
+
+    // const rootNode = {
+    //   label: homeFolder,
+    //   name: homeFolder,
+    //   data: {
+    //     name: homeFolder,
+    //     path: homeFolder
+    //   }
+    // };
+
+    // this.files = [];
+    // this.files.push(rootNode);
+    // this.nodeExpand({ node: rootNode });
+
     // subscribe to get-filesystem event from nodejs
-    this.electronService.ipcRenderer.on('get-filesystem', (event, localFiles) => {
-      this.zone.run(() => {
-        this.files = localFiles.result;
-      });
-    });
+    // this.electronService.ipcRenderer.on('get-filesystem', (event, localFiles) => {
+    // this.electronService.ipcRenderer.on('get-node-content', (event, localFiles) => {
+    //   this.zone.run(() => {
+    //     this.files = localFiles.result;
+    //   });
+    // });
   }
 
 
   ngOnInit() {
-    // call node's get-filesystem
-    this.registerUpload.getFileSystem('');
+    const homeFolder = os.homedir();
+    console.log('homeDir: ' + homeFolder);
+    // const userInfo = os.userInfo([]);
+    // console.log('userInfo: ' + JSON.stringify(userInfo, null, 2));
+
+    const rootNode = {
+      label: homeFolder,
+      name: homeFolder,
+      data: {
+        name: homeFolder,
+        path: homeFolder
+      }
+    };
+
+    this.files = [];
+    this.files.push(rootNode);
+    this.nodeExpand({ node: rootNode });
   }
 
   countFiles() {
@@ -99,9 +132,28 @@ export class FileExplorerUploadComponent implements OnInit {
   }
 
   nodeExpand(evt) {
+    let node: TreeNode;
+    if (evt.node) {
+      // subscribe to get-node-content event from nodejs
+      this.electronService.ipcRenderer.once('get-node-content', (event, nodeFiles) => {
+        node = evt.node;
+        this.zone.run(() => {
+          node.children = nodeFiles.result;
+          node.expanded = true;
+        });
+        return;
+      });
+      this.registerUpload.getLazyNodeContent(evt.node.data.path);
+    }
   }
 
   nodeCollapse(evt) {
+    // let node: TreeNode = evt.node;
+    // console.log(node);
+    // console.log('nodeCollapse.nodeExpanded : ' + node.expanded);
+    // node.expanded = false;
+    // this.changeRef.detectChanges();
+    //    this.changeDetectorRef.detectChanges();
   }
 
   viewNode(node: TreeNode) {

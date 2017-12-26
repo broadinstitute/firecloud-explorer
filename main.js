@@ -16,7 +16,9 @@ const constants = require('./electron_app/helpers/enviroment');
 const uploadManager = require('./electron_app/UploadManager');
 const fs = require('fs');
 const os = require('os');
-const { handleDiskSpace } = require('./electron_app/helpers/handleDisk');
+const {
+  handleDiskSpace
+} = require('./electron_app/helpers/handleDisk');
 
 require('dotenv').config();
 
@@ -107,6 +109,11 @@ app.on('ready', function () {
   });
 
   ipcMain.on(constants.IPC_GET_NODE_CONTENT, (event, nodePath) => {
+    console.log("nodePath: " + nodePath);
+    if (nodePath === '/') {
+      nodePath = os.homedir();
+    }
+    console.log('------------------------------- ' + nodePath);
     var files = lazyNodeReader(nodePath, []);
 
     win.webContents.send(constants.IPC_GET_NODE_CONTENT, {
@@ -145,5 +152,5 @@ app.on('before-quit', () => {
 });
 
 process.on('unhandledRejection', (reason, p) => {
-  console.log('Unhandled Rej at Promise:', p, '',reason);
+  console.log('Unhandled Rej at Promise:', p, '', reason);
 });
