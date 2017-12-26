@@ -2,8 +2,8 @@ import { Store } from '@ngrx/store';
 import { MatPaginator, MatSort } from '@angular/material';
 import { DataSource } from '@angular/cdk/collections';
 import { Observable } from 'rxjs/Observable';
-import { AppState } from './appState';
-import { FilesDatabase } from './filesDatabase';
+import { AppState } from './app-state';
+import { FilesDatabase } from './files-database';
 import { Item } from '../models/item';
 
 export class FilesDataSource extends DataSource<Item> {

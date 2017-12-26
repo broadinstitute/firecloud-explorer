@@ -4,7 +4,7 @@ import { Observable } from 'rxjs/Observable';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Item } from '../models/item';
 import { TransferableState } from '../reducers/transferables.reducer';
-import { AppState } from './appState';
+import { AppState } from './app-state';
 
 @Injectable()
 export class FilesDatabase {

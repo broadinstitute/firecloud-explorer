@@ -48,7 +48,7 @@ app.on('ready', function () {
   }
   // Show dev tools
   // Remove this line before distributing
-   // win.webContents.openDevTools()
+  // win.webContents.openDevTools()
 
   // Remove window once app is closed
   win.on('closed', function () {
@@ -81,7 +81,7 @@ app.on('ready', function () {
     const myApiOauth = electronOauth2(this.googleConfig, windowParams);
     myApiOauth.getAccessToken(this.googleOptions)
       .then(token => {
-        // use your token.access_token 
+        // use your token.access_token
         win.webContents.send(constants.IPC_SEND_RENDERER, {
           result: token
         });

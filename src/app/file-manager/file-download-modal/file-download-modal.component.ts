@@ -4,7 +4,7 @@ import {TreeNode} from 'primeng/primeng';
 import { Item } from '@app/file-manager/models/item';
 import * as Transferables from '../actions/transferables.actions';
 import { Store } from '@ngrx/store';
-import { AppState } from '../dbstate/appState';
+import { AppState } from '../dbstate/app-state';
 import { TransferablesGridComponent } from '../transferables-grid/transferables-grid.component';
 import { Message } from 'primeng/components/common/api';
 import { DiskStatus } from '../models/diskStatus';

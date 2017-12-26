@@ -16,7 +16,7 @@ import { FilesService } from './services/files.service';
 import { FirecloudService } from './services/firecloud.service';
 import { GcsService } from './services/gcs.service';
 import { DownloadStatusService } from './services/download-status.service';
-import { FilesDatabase } from './dbstate/filesDatabase';
+import { FilesDatabase } from './dbstate/files-database';
 
 import { DownloadValidatorService } from './services/download-validator.service';
 import { RegisterUploadService } from './services/register-upload.service';

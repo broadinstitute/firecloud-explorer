@@ -5,8 +5,8 @@ import { Store } from '@ngrx/store';
 import * as Transferables from '../actions/transferables.actions';
 
 import { Item } from '../models/item';
-import { AppState } from '../dbstate/appState';
-import { FilesDatabase } from '../dbstate/filesDatabase';
+import { AppState } from '../dbstate/app-state';
+import { FilesDatabase } from '../dbstate/files-database';
 
 /**
  * Download progress information service

@@ -4,25 +4,19 @@ import { Store } from '@ngrx/store';
 import * as Transferables from '../actions/transferables.actions';
 import { DownloadValidatorService } from '../services/download-validator.service';
 import { Item } from '../models/item';
-import { TransferableState, TransferablesReducer } from '../reducers/transferables.reducer';
-import { MatPaginator, MatSort, PageEvent } from '@angular/material';
-import { animate, state, style, transition, trigger } from '@angular/animations';
-import { DataSource, CollectionViewer } from '@angular/cdk/collections';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { MatPaginator, MatSort } from '@angular/material';
 import 'rxjs/add/operator/startWith';
 import 'rxjs/add/observable/forkJoin';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/observable/merge';
 import { GcsService } from '@app/file-manager/services/gcs.service';
-import { Type } from '@app/file-manager/models/type';
 
 
-import { Observable } from 'rxjs/Observable';
 import { DownloadStatusService } from '../services/download-status.service';
 
-import { AppState } from '../dbstate/appState';
-import { FilesDataSource } from '../dbstate/filesDataSource';
-import { FilesDatabase } from '../dbstate/filesDatabase';
+import { AppState } from '../dbstate/app-state';
+import { FilesDataSource } from '../dbstate/files-datasource';
+import { FilesDatabase } from '../dbstate/files-database';
 
 @Component({
   selector: 'app-transferalbes-grid',
