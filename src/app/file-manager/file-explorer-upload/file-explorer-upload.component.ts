@@ -16,9 +16,6 @@ import { TreeTable } from 'primeng/primeng';
 import { ChangeDetectorRef } from '@angular/core';
 import { Type } from '@app/file-manager/models/type';
 
-// interface AppState {
-//   uploadables: TransferableState;
-// }
 @Component({
   selector: 'app-file-explorer-upload',
   templateUrl: './file-explorer-upload.component.html',
