@@ -18,7 +18,6 @@ import { TransferablesGridComponent } from '../transferables-grid/transferables-
 import { TreeTable } from 'primeng/primeng';
 import { ChangeDetectorRef } from '@angular/core';
 import { Type } from '@app/file-manager/models/type';
-const os = require('os');
 
 interface AppState {
   uploadables: TransferableState;
@@ -57,51 +56,32 @@ export class FileExplorerUploadComponent implements OnInit {
     private router: Router,
     private zone: NgZone
   ) {
-
-    // const homeFolder = os.homedir();
-    // console.log(homeFolder);
-
-    // const rootNode = {
-    //   label: homeFolder,
-    //   name: homeFolder,
-    //   data: {
-    //     name: homeFolder,
-    //     path: homeFolder
-    //   }
-    // };
-
-    // this.files = [];
-    // this.files.push(rootNode);
-    // this.nodeExpand({ node: rootNode });
-
-    // subscribe to get-filesystem event from nodejs
-    // this.electronService.ipcRenderer.on('get-filesystem', (event, localFiles) => {
-    // this.electronService.ipcRenderer.on('get-node-content', (event, localFiles) => {
-    //   this.zone.run(() => {
-    //     this.files = localFiles.result;
-    //   });
-    // });
   }
 
-
   ngOnInit() {
-    const homeFolder = os.homedir();
-    console.log('homeDir: ' + homeFolder);
-    // const userInfo = os.userInfo([]);
-    // console.log('userInfo: ' + JSON.stringify(userInfo, null, 2));
 
-    const rootNode = {
+    const homeFolder = '/';
+
+    const rootNode: TreeNode  = {
       label: homeFolder,
-      name: homeFolder,
       data: {
         name: homeFolder,
         path: homeFolder
-      }
+      },
+      leaf: false
     };
-
     this.files = [];
     this.files.push(rootNode);
-    this.nodeExpand({ node: rootNode });
+
+    this.electronService.ipcRenderer.once('get-node-content', (event, localFiles) => {
+      this.zone.run(() => {
+        rootNode.children = localFiles.result;
+        rootNode.data.name = localFiles.nodePath;
+        rootNode.expanded = true;
+      });
+    });
+
+    this.registerUpload.getLazyNodeContent(homeFolder);
   }
 
   countFiles() {
@@ -138,22 +118,18 @@ export class FileExplorerUploadComponent implements OnInit {
       this.electronService.ipcRenderer.once('get-node-content', (event, nodeFiles) => {
         node = evt.node;
         this.zone.run(() => {
+          // node.data.name = nodeFiles.nodePath;
           node.children = nodeFiles.result;
           node.expanded = true;
         });
         return;
       });
+      console.log('expanding ' + evt.node.data.path);
       this.registerUpload.getLazyNodeContent(evt.node.data.path);
     }
   }
 
   nodeCollapse(evt) {
-    // let node: TreeNode = evt.node;
-    // console.log(node);
-    // console.log('nodeCollapse.nodeExpanded : ' + node.expanded);
-    // node.expanded = false;
-    // this.changeRef.detectChanges();
-    //    this.changeDetectorRef.detectChanges();
   }
 
   viewNode(node: TreeNode) {

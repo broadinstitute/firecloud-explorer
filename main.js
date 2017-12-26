@@ -109,15 +109,15 @@ app.on('ready', function () {
   });
 
   ipcMain.on(constants.IPC_GET_NODE_CONTENT, (event, nodePath) => {
-    console.log("nodePath: " + nodePath);
     if (nodePath === '/') {
       nodePath = os.homedir();
+      console.log(JSON.stringify(os.userInfo(), null, 2));
     }
-    console.log('------------------------------- ' + nodePath);
     var files = lazyNodeReader(nodePath, []);
 
     win.webContents.send(constants.IPC_GET_NODE_CONTENT, {
-      result: files
+      result: files,
+      nodePath: nodePath
     });
   });
 
