@@ -5,11 +5,10 @@
         <mat-icon>file_download</mat-icon>
         <p>Download</p>
       </a>
-      <!-- UNCOMMENT THE FOLLOWING LINES WHEN FILE-UPLOAD COMPONENT IS CREATED  -->
-      <!-- <a class="sidenav-link" [routerLink]="['/file-upload']" [routerLinkActive]="['active']">
+      <a class="sidenav-link" [routerLink]="['/file-upload']" [routerLinkActive]="['active']">
         <mat-icon>file_upload</mat-icon>
         <p>Upload</p>
-      </a>-->
+      </a>
       <a class="sidenav-link" [routerLink]="['/status']" [routerLinkActive]="['active']">
         <mat-icon>schedule</mat-icon>
         <p>Status</p>
@@ -27,12 +26,11 @@
       </header>
 
       <div class="content">
-          <router-outlet></router-outlet>
-      </div>        
+        <router-outlet></router-outlet>
+      </div>
     </mat-sidenav-content>
   </mat-sidenav-container>
-
-  <div class="footer">
-    <div class="footer-signature">&#169; {{year}} - Broad Institute</div>
-  </div>
+</div>
+<div class="footer">
+  <div class="footer-signature">&#169; {{year}} - Broad Institute</div>
 </div>

@@ -22,7 +22,7 @@ export class FilesService {
              if (resp != null && resp.length > 0) {
                 const observables: Observable<any>[] = [];
                 const workspacesNameMap: Map<string, string> = new Map<string, string>();
-
+                localStorage.setItem('workspaces', JSON.stringify(resp));
                 resp.forEach(workspace => {
                     workspacesNameMap.set(workspace.bucketName, workspace.name);
                     observables.push(this.gcsService.getBucketFiles(workspace.bucketName));
@@ -155,4 +155,3 @@ export class FilesService {
       });
     }
 }
-

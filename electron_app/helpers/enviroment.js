@@ -5,5 +5,9 @@ module.exports = Object.freeze({
   IPC_CONFIRGURE_ACCOUNT: 'configure-gaccount',
   IPC_DOWNLOAD_STATUS: 'download-status',
   IPC_DOWNLOAD_COMPLETED: 'download-completed',
+  IPC_GET_FILESYSTEM: 'get-filesystem',
+  IPC_GET_NODE_CONTENT: 'get-node-content',
+  IPC_START_UPLOAD: 'start-upload',
+  GOOGLE_API: 'https://www.googleapis.com/upload/storage/v1/b/',
   IPC_VERIFY_BEFORE_DOWNLOAD: 'verify-before-download'
 });

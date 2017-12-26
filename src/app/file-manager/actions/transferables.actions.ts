@@ -1,7 +1,7 @@
-// transferables.actions.ts
+// Transferables.actions.ts
 import { Action } from '@ngrx/store';
 
-export const LOAD = 'Transferables';
+export const LOAD = '[Transferables] Load';
 export const FILTER = '[Transferables] Filter';
 export const RESET = '[Transferables] Reset';
 export const SELECT_ALL = '[Transferables] Select All';
@@ -12,7 +12,6 @@ export const ADD_ITEM = '[Transferables] Add Item';
 export const UPDATE_ITEM = '[Transferables] Update Item';
 export const REMOVE_ITEM = '[Transferables] Remove Item';
 export const SELECT_ITEM = '[Transferables] Select Item';
-export const UPDATE_ITEM_PROGRESS = '[Transferables] Update Item Progress';
 
 export class Load implements Action {
     readonly type = LOAD;
@@ -39,8 +38,8 @@ export class ToggleSelection implements Action {
 }
 
 export class ToggleItemSelection implements Action {
-        readonly type = TOGGLE_ITEM_SELECTION;
-        constructor(public payload: any) { }
+    readonly type = TOGGLE_ITEM_SELECTION;
+    constructor(public payload: any) { }
 }
 
 export class AddItem implements Action {
@@ -67,11 +66,6 @@ export class SelectItem implements Action {
     constructor(public payload: any) { }
 }
 
-export class UpdateItemProgress implements Action {
-    readonly type = UPDATE_ITEM_PROGRESS;
-
-    constructor(public payload: any) { }
-}
 
 export type All
     = Load

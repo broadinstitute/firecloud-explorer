@@ -11,8 +11,10 @@ import { FilesService } from '../services/files.service';
 import { FilterSizePipe } from '../filters/filesize-filter';
 import { FirecloudService } from '../services/firecloud.service';
 import { GcsService } from '../services/gcs.service';
-import { FileModalComponent } from '../file-modal/file-modal.component';
+import { FileDownloadModalComponent } from '../file-download-modal/file-download-modal.component';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { Type } from '@app/file-manager/models/type';
+
 
 @Component({
   selector: 'app-file-explorer',
@@ -21,11 +23,14 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 })
 export class FileExplorerComponent implements OnInit {
   msgs: Message[];
-
   files: TreeNode[];
   dataFile: Item;
   selectedFiles: TreeNode[] = [];
   selectedFile: TreeNode;
+
+  color = 'primary';
+  mode = 'indeterminate';
+  value = 50;
 
   fileCount = 0;
   totalSize = 0;
@@ -34,15 +39,14 @@ export class FileExplorerComponent implements OnInit {
 
   constructor(
     private filesService: FilesService,
-    private gcsService: GcsService,
     private firecloudService: FirecloudService,
     private dialog: MatDialog,
     private filterSize: FilterSizePipe,
+    private store: Store<AppState>
   ) {
 
   }
   ngOnInit() {
-
     this.filesService.getBucketFiles(false).subscribe(
       resp => {
         if (resp !== undefined) {
@@ -145,10 +149,12 @@ export class FileExplorerComponent implements OnInit {
 
   selectionDone() {
     const items = {selectedFiles: this.selectedFiles, totalSize: this.totalSize };
-    const dialogRef = this.dialog.open(FileModalComponent, {
+    const dialogRef = this.dialog.open(FileDownloadModalComponent, {
       width: '500px',
       disableClose: true,
       data: items
+
     });
   }
+
 }

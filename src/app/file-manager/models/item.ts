@@ -1,3 +1,5 @@
+import { Type } from './type';
+
 export interface Item {
     id: number;
     name: string;
@@ -11,4 +13,5 @@ export interface Item {
     preserveStructure: boolean;
     destination: string;
     progress: number;
+    type: Type;
 }

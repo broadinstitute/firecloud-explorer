@@ -1,4 +1,4 @@
-// transferables.ts
+// transerables.ts
 import { Action } from '@app/core';
 import * as TransferablesActions from '../actions/transferables.actions';
 import { Item } from '../models/item';
@@ -97,7 +97,6 @@ export function TransferablesReducer(state = initialState, action: Action): Tran
                 return true;
             });
             return new TransferableState(sel_item);
-
         default:
             return state;
     }

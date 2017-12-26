@@ -1,29 +1,32 @@
 import { Observable } from 'rxjs/Observable';
-import { HttpClient, HttpHeaders} from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Workspace } from '@app/file-manager/models/workspace';
 
 
 export abstract class FirecloudService {
 
-    public getWorkspaceData(item, optional) {
-        let workspace = null;
-        if (optional === false) {
-            if (item.public === false) {
-              workspace = {public: item.public, accessLevel: item.accessLevel,
-                bucketName: item.workspace.bucketName, name: item.workspace.name
-              };
-            }
-        } else {
-          workspace = {
-                public: item.public,
-                accessLevel: item.accessLevel,
-                bucketName: item.workspace.bucketName,
-                name: item.workspace.name
-            };
-          }
-        return workspace;
+  public getWorkspaceData(item, optional) {
+    let workspace: Workspace = null;
+    if (optional === false) {
+      if (item.public === false) {
+        workspace = this.createWorkspace(item);
+      }
+    } else {
+      workspace = this.createWorkspace(item);
     }
+    return workspace;
+  }
 
-    abstract getUserFirecloudWorkspaces(optional: boolean): Observable<any>;
+  private createWorkspace(item): Workspace {
+    return {
+      public: item.public,
+      accessLevel: item.accessLevel,
+      bucketName: item.workspace.bucketName,
+      name: item.workspace.name,
+    };
 
-    abstract getUserRegistrationStatus(): Observable<any>;
+  }
+  abstract getUserFirecloudWorkspaces(optional: boolean): Observable<any>;
+
+  abstract getUserRegistrationStatus(): Observable<any>;
 }

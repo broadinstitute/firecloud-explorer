@@ -1,25 +1,31 @@
-import { Component, OnInit, AfterViewInit, ViewChild, NgZone } from '@angular/core';
+import { Component, OnInit, NgZone, AfterViewInit, Input, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 
 import { Store } from '@ngrx/store';
 import * as Transferables from '../actions/transferables.actions';
-import { RegisterDownloadService } from '../services/register-download.service';
+import { DownloadValidatorService } from '../services/download-validator.service';
+import { Item } from '../models/item';
+import { TransferableState, TransferablesReducer } from '../reducers/transferables.reducer';
 import { MatPaginator, MatSort, PageEvent } from '@angular/material';
-import { DownloadStatusService } from '../services/download-status.service';
-
-import { ElectronService} from 'ngx-electron';
+import { animate, state, style, transition, trigger } from '@angular/animations';
+import { DataSource, CollectionViewer } from '@angular/cdk/collections';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import 'rxjs/add/operator/startWith';
 import 'rxjs/add/observable/forkJoin';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/observable/merge';
+
+import { Observable } from 'rxjs/Observable';
+import { DownloadStatusService } from '../services/download-status.service';
+import { GcsService } from '@app/file-manager/services/gcs.service';
 
 import { AppState } from '../dbstate/appState';
 import { FilesDataSource } from '../dbstate/filesDataSource';
 import { FilesDatabase } from '../dbstate/filesDatabase';
 
 @Component({
-  selector: 'app-transferables-grid',
+  selector: 'app-transferalbes-grid',
   templateUrl: './transferables-grid.component.html',
-  styleUrls: ['./transferables-grid.component.css'],
+  styleUrls: ['./transferables-grid.component.css']
 })
 export class TransferablesGridComponent implements OnInit, AfterViewInit {
 
@@ -33,10 +39,11 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
 
   constructor(
     private store: Store<AppState>,
-    private registerDownload: RegisterDownloadService,
-    private downloadStatus: DownloadStatusService,
-    private electronService: ElectronService,
-    private zone: NgZone
+    private validateDiskService: DownloadValidatorService,
+    private zone: NgZone,
+    private downloadValidator: DownloadValidatorService,
+    private gcsService: GcsService,
+    private downloadStatus: DownloadStatusService
   ) {
     this.filesDatabase = new FilesDatabase(store);
   }
@@ -112,11 +119,6 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   stopAll() {
   }
 
-  // selectRow(event, row) {
-  //   console.log(JSON.stringify(event.target));
-  //   this.toggleItemSelection(row);
-  //   event.stopPropagation();
-  // }
   selectRowBox(event, cbox, row) {
     this.toggleItemSelection(row);
     cbox.toggle();
@@ -130,7 +132,12 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   sortData(evt) {
   }
 
-  startDownload() {
-    this.registerDownload.startDownload(this.filesDatabase.data);
+  startDownload(files: Item[]) {
+    this.gcsService.downloadFiles(files);
   }
+
+  startUpload(files: Item[]) {
+    this.gcsService.uploadFiles(localStorage.getItem('uploadBucket'), files);
+  }
+
 }

@@ -4,7 +4,6 @@ import { CoreModule } from '@app/core';
 import { SharedModule } from '@app/shared';
 
 import { StoreModule } from '@ngrx/store';
-import { EffectsModule } from '@ngrx/effects';
 import { FileManagerRoutingModule } from './file-manager-routing.module';
 import { TransferablesReducer } from './reducers/transferables.reducer';
 
@@ -16,21 +15,25 @@ import { TransferablesGridComponent } from './transferables-grid/transferables-g
 import { FilesService } from './services/files.service';
 import { FirecloudService } from './services/firecloud.service';
 import { GcsService } from './services/gcs.service';
-import { RegisterDownloadService } from './services/register-download.service';
 import { DownloadStatusService } from './services/download-status.service';
 import { FilesDatabase } from './dbstate/filesDatabase';
 
+import { DownloadValidatorService } from './services/download-validator.service';
+import { RegisterUploadService } from './services/register-upload.service';
 import { GcsApiService } from './services/gcs-api.service';
 import { GcsApiMockService } from './services/gcs-api-mock.service';
 import { FirecloudApiService } from './services/firecloud-api.service';
 import { FirecloudApiMockService } from './services/firecloud-api-mock.service';
+import { ElectronService } from 'ngx-electron';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { RequestInterceptor } from './services/request.interceptor';
 import { environment } from '@env/environment';
 import { HttpClient } from '@angular/common/http';
-import { FileModalComponent } from './file-modal/file-modal.component';
+import { FileDownloadModalComponent } from './file-download-modal/file-download-modal.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { FilterSizePipe } from './filters/filesize-filter';
+import { FileUploadModalComponent } from './file-upload-modal/file-upload-modal.component';
+import { FileExplorerUploadComponent } from './file-explorer-upload/file-explorer-upload.component';
 
 @NgModule({
   imports: [
@@ -46,8 +49,10 @@ import { FilterSizePipe } from './filters/filesize-filter';
     TransferableItemComponent,
     TransferablesGridComponent,
     LoginComponent,
-    FileModalComponent,
-    FilterSizePipe
+    FileDownloadModalComponent,
+    FilterSizePipe,
+    FileUploadModalComponent,
+    FileExplorerUploadComponent,
   ],
   providers: [
     FilterSizePipe,
@@ -73,16 +78,17 @@ import { FilterSizePipe } from './filters/filesize-filter';
     },
     {
       provide: GcsService,
-      deps: [HttpClient],
-      useFactory(http: HttpClient) {
+      deps: [HttpClient, ElectronService],
+      useFactory(http: HttpClient, electronService: ElectronService) {
         if (environment.testing) {
           return new GcsApiMockService();
         } else {
-          return new GcsApiService(http);
+          return new GcsApiService(http, electronService);
         }
       }
     },
-    RegisterDownloadService,
+    DownloadValidatorService,
+    RegisterUploadService
   ],
   exports: [
 
@@ -91,7 +97,8 @@ import { FilterSizePipe } from './filters/filesize-filter';
     CUSTOM_ELEMENTS_SCHEMA
   ],
   entryComponents: [
-    FileModalComponent
+    FileDownloadModalComponent,
+    FileUploadModalComponent
   ],
 })
 export class FileManagerModule { }
