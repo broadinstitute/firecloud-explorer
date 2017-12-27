@@ -90,7 +90,7 @@ export class FileDownloadModalComponent  {
           path: file.data.path,
           progress: 0,
           type: Type.DOWNLOAD,
-          status: ItemStatus.DOWNLOADING,
+          status: ItemStatus.PENDING,
           transferred: 0,
           remaining: 0
         };
