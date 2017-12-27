@@ -87,42 +87,42 @@ const lazyNodeReader = (dir, fileList = []) => {
     let node = {};
     try {
       const stat = fs.statSync(filePath);
-      if (file.startsWith('.')) {
-        // skip file
-      } else if (stat.isDirectory()) {
-        node = {
-          label: file,
-          name: file,
-          data: {
+      if (!file.startsWith('.')) {
+        if (stat.isDirectory()) {
+          node = {
+            label: file,
             name: file,
-            path: path.join(dir, file),
-            size: getSizeFromFolder(path.join(dir, file)),
+            data: {
+              name: file,
+              path: path.join(dir, file),
+              size: getSizeFromFolder(path.join(dir, file)),
+              type: 'Folder',
+              created: stat.birthTime,
+              updated: stat.mtime
+            },
             type: 'Folder',
-            created: stat.birthTime,
-            updated: stat.mtime
-          },
-          type: 'Folder',
-          leaf: false,
-          selectable: false
-        };
-        fileList.push(node);
-      } else {
-        node = {
-          label: file,
-          name: file,
-          data: {
+            leaf: false,
+            selectable: false
+          };
+          fileList.push(node);
+        } else {
+          node = {
+            label: file,
             name: file,
-            path: path.join(dir, file),
-            size: stat.size,
+            data: {
+              name: file,
+              path: path.join(dir, file),
+              size: stat.size,
+              type: 'File',
+              created: stat.birthTime,
+              updated: stat.mtime
+            },
             type: 'File',
-            created: stat.birthTime,
-            updated: stat.mtime
-          },
-          type: 'File',
-          leaf: true,
-          selectable: true
-        };
-        fileList.push(node);
+            leaf: true,
+            selectable: true
+          };
+          fileList.push(node);
+        }
       }
     } catch (e) {
       console.log('error reading file stats ', e);
