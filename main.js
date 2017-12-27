@@ -9,9 +9,7 @@ const path = require('path');
 const url = require('url');
 const electronOauth2 = require('electron-oauth2');
 const downloadManager = require('./electron_app/DownloadManager');
-const lazyFileSystemReader = require('./electron_app/FileSystemReader').lazyFileSystemReader;
 const lazyNodeReader = require('./electron_app/FileSystemReader').lazyNodeReader;
-const recursiveFileSystemReader = require('./electron_app/FileSystemReader').recursiveFileSystemReader;
 const constants = require('./electron_app/helpers/enviroment');
 const uploadManager = require('./electron_app/UploadManager');
 const fs = require('fs');
@@ -98,14 +96,6 @@ app.on('ready', function () {
 
   ipcMain.on(constants.IPC_START_UPLOAD, (event, bucketName, files, access_token) => {
     uploadManager(bucketName, files, access_token);
-  });
-
-  ipcMain.on(constants.IPC_GET_FILESYSTEM, (event, folderPath) => {
-    let home = os.homedir() + path.sep + 'Documents';
-    let files = recursiveFileSystemReader(home /*folderPath*/ , []);
-    win.webContents.send(constants.IPC_GET_FILESYSTEM, {
-      result: files
-    });
   });
 
   ipcMain.on(constants.IPC_GET_NODE_CONTENT, (event, nodePath) => {

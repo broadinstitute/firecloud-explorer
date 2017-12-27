@@ -78,7 +78,6 @@ export class FileExplorerUploadComponent implements OnInit {
         rootNode.children = localFiles.result;
         rootNode.data.name = localFiles.nodePath;
         rootNode.expanded = true;
-        rootNode.selectable = rootNode.children ? (rootNode.children.length > 0) : false;
       });
     });
 
@@ -120,7 +119,6 @@ export class FileExplorerUploadComponent implements OnInit {
         this.zone.run(() => {
           node.children = nodeFiles.result;
           node.expanded = true;
-          node.selectable = node.children ? (node.children.length > 0) : false;
         });
         return;
       });
