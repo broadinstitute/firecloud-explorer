@@ -18,6 +18,24 @@
   filter: alpha(opacity=$IEValue);
 }
 
+@mixin breakpoint($class) {
+  @if $class == sm {
+    @media (max-width: 1366px) { @content; }
+  }
+ 
+  @else if $class == md {
+    @media (min-width: 1367px) and (max-width: 1600px) { @content; }
+  }
+ 
+  @else if $class == lg {
+    @media (min-width: 1601px) { @content; }
+  }
+ 
+  @else {
+    @warn "Breakpoint mixin supports: sm, md, lg";
+  }
+}
+
 html, body, a, p, h1, h2, h3, h4, span, label, div {
   font-family: 'Roboto', sans-serif;
 }
@@ -38,6 +56,31 @@ a:hover {
     vertical-align: top;
   }
 }
+
+.button-icon,
+.mat-paginator-range-actions .mat-icon-button,
+.mat-paginator-navigation-next,
+.mat-paginator-navigation-prev {
+  background: transparent;
+} 
+
+[disabled].button-icon {
+  cursor: not-allowed;
+  color: mat-color($fcExplorer-primary, 200);
+}
+
+.mat-paginator-decrement,
+.mat-paginator-increment {
+  border-top: 2px solid mat-color($fcExplorer-primary, 700) !important;
+  border-right: 2px solid mat-color($fcExplorer-primary, 700) !important;
+} 
+
+[disabled] .mat-paginator-decrement,
+[disabled] .mat-paginator-increment {
+  cursor: not-allowed;
+  border-top: 2px solid mat-color($fcExplorer-primary, 400) !important;
+  border-right: 2px solid mat-color($fcExplorer-primary, 400) !important;
+} 
 
 .button-primary.mat-raised-button {
   background-color: mat-color($fcExplorer-accent);
@@ -192,9 +235,18 @@ a.sidenav-link p {
 
 .tree-table {
   margin: 30px 0;
-  height: 55vh;
   overflow-y: scroll;
   overflow-x: hidden;
+  
+  @include breakpoint(sm) {
+    height: 55vh;
+  }
+  @include breakpoint(md) {
+    height: 58vh;
+  }
+  @include breakpoint(lg) {
+    height: 66vh;
+  }
 }
 
 .tree-table thead th,
@@ -226,15 +278,29 @@ a.sidenav-link p {
 
 /*TABLE*/
 
+.table-container,
+.table-container .table-common.mat-table {
+  @include breakpoint(sm) {
+    height: 55vh;
+  }
+  @include breakpoint(md) {
+    height: 60vh;
+  }
+  @include breakpoint(lg) {
+    height: 64vh;
+  }
+}
+
 .table-common.mat-table {
-  margin: 30px 0;
+  margin: 0 0 20px 0;
   background: transparent;
+  overflow: auto;
 }
 
 .table-common.mat-table .mat-header-row{
-  min-height: 30px;
   border-width: 0 0 2px 0;
-  border-color: mat-color($fcExplorer-primary, 900); 
+  border-color: mat-color($fcExplorer-primary, 900);
+  min-height: 35px; 
 
   .mat-header-cell {
     font-size: 0.9rem;    
@@ -279,8 +345,9 @@ a.sidenav-link p {
 
 /*EXPAND PANEL*/
 
-.expand-panel.mat-expansion-panel{
-  margin: 20px 0;
+.expand-panel.mat-expansion-panel {
+  margin: 0;
+  height: 50px !important;
   box-shadow: none;
   background: transparent;
 }
@@ -289,8 +356,10 @@ a.sidenav-link p {
   box-shadow: none;
 }
 
-.expand-panel.mat-expansion-panel .mat-expansion-panel-header{
-  padding-left: 0;
+.expand-panel.mat-expansion-panel .mat-expansion-panel-header.mat-expanded,
+.expand-panel.mat-expansion-panel .mat-expansion-panel-header,
+.mat-expansion-panel-header.ng-animating {
+  padding: 0 !important;
   transition: all 0.2s ease;
 }
 
@@ -423,4 +492,10 @@ a.sidenav-link p {
 
 .mat-checkbox-checked.mat-accent .mat-checkbox-background, .mat-checkbox-indeterminate.mat-accent .mat-checkbox-background {
   background-color: mat-color($fcExplorer-accent) !important;
+}
+
+/*SELECT and AUTOCOMPLETE*/
+.mat-select-panel,
+.mat-autocomplete-panel {
+  background: white;
 }

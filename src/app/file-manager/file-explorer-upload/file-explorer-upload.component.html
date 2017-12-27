@@ -1,7 +1,6 @@
 <p-growl [value]="msgs"></p-growl>
 
-<div class="flex-container column" style="height: 75vh;">
-  <h1>Select files to upload</h1>
+<h1>Select files to upload</h1>
 
 <div class="full-width">
   <button mat-raised-button (click)="selectAll()" class="button-secondary">
@@ -14,26 +13,24 @@
     <i class="material-icons">airplay</i>Collapse all</button>
 </div>
 
-  <p-treeTable [value]="files" selectionMode="checkbox" [(selection)]="selectedFiles" styleClass="tree-table" (onNodeSelect)="nodeSelect($event)"
-    (onNodeUnselect)="nodeUnselect($event)" (onNodeExpand)="nodeExpand($event)" (onNodeCollapse)="nodeCollapse($event)">
-    <p-column field="name" header="Name"></p-column>
-    <p-column header="Size">
-      <ng-template let-node="rowData" pTemplate="body">
-        <span>{{node.data.size | filesize}}</span>
-      </ng-template>
-    </p-column>
-    <p-column header="Last Modified">
-      <ng-template let-node="rowData" pTemplate="body">
-        <span>{{node.data.updated | date: 'MMM d, y, h:mm a'}}</span>
-      </ng-template>
-    </p-column>
-  </p-treeTable>
-</div>
+<p-treeTable [value]="files" selectionMode="checkbox" [(selection)]="selectedFiles" styleClass="tree-table" (onNodeSelect)="nodeSelect($event)"
+  (onNodeUnselect)="nodeUnselect($event)" (onNodeExpand)="nodeExpand($event)" (onNodeCollapse)="nodeCollapse($event)">
+  <p-column field="name" header="Name"></p-column>
+  <p-column header="Size">
+    <ng-template let-node="rowData" pTemplate="body">
+      <span>{{node.data.size | filesize}}</span>
+    </ng-template>
+  </p-column>
+  <p-column header="Last Modified">
+    <ng-template let-node="rowData" pTemplate="body">
+      <span>{{node.data.updated | date: 'MMM d, y, h:mm a'}}</span>
+    </ng-template>
+  </p-column>
+</p-treeTable>
 
-<div style="height: 10vh;">
-  <p-toolbar styleClass="toolbar-accent" color="primary">
+<p-toolbar styleClass="toolbar-accent" color="primary">
   <div class="ui-toolbar-group-left">
-    <h3 class="subtitle">Selected: {{ fileCount }} files. Total size: {{ totalSize | filesize }} </h3>
+    <h3 class="subtitle">Selected: {{ fileCount }} file(s). Total size: {{ totalSize | filesize }} </h3>
   </div>
 
   <div class="ui-toolbar-group-right">
@@ -41,4 +38,3 @@
       <i class="material-icons">file_upload</i>Upload selection</button>
   </div>
 </p-toolbar>
-</div>
