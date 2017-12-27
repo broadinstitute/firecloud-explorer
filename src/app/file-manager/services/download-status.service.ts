@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
 import { ElectronService } from 'ngx-electron';
 import { Observable } from 'rxjs/Observable';
-import { Store } from '@ngrx/store';
-import * as Transferables from '../actions/transferables.actions';
-
 import { Item } from '../models/item';
+import * as Transferables from '../actions/transferables.actions';
+import { Store } from '@ngrx/store';
 import { AppState } from '../dbstate/app-state';
 import { FilesDatabase } from '../dbstate/files-database';
 
@@ -34,7 +33,7 @@ export class DownloadStatusService {
         this.store.dispatch(new Transferables.UpdateItemProgress(data));
       }
       if (data.progress === 100) {
-        this.store.dispatch(new Transferables.UpdateItemStatus(data));
+        this.store.dispatch(new Transferables.UpdateItemCompleted(data));
       }
     }
   }

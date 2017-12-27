@@ -5,13 +5,13 @@ import { Item } from '@app/file-manager/models/item';
 import * as Transferables from '../actions/transferables.actions';
 import { Store } from '@ngrx/store';
 import { AppState } from '../dbstate/app-state';
-import { TransferablesGridComponent } from '../transferables-grid/transferables-grid.component';
 import { Message } from 'primeng/components/common/api';
 import { DiskStatus } from '../models/diskStatus';
 import { DownloadValidatorService } from '@app/file-manager/services/download-validator.service';
 import { Type } from '@app/file-manager/models/type';
 import { Router } from '@angular/router';
 import { ItemStatus } from '@app/file-manager/models/item-status';
+import { GcsService } from '@app/file-manager/services/gcs.service';
 
 @Component({
   selector: 'app-file-download-modal',
@@ -30,7 +30,7 @@ export class FileDownloadModalComponent  {
 
   constructor(
     private downloadValidator: DownloadValidatorService,
-    private transferablesGridComponent: TransferablesGridComponent,
+    private gcsService: GcsService,
     private store: Store<AppState>,
     public dialogRef: MatDialogRef<FileDownloadModalComponent>,
     public router: Router,
@@ -47,7 +47,7 @@ export class FileDownloadModalComponent  {
         this.verify = diskVerification;
         if (!this.verify.hasErr) {
           this.setItems();
-          this.transferablesGridComponent.startDownload(this.downloadFiles);
+          this.gcsService.downloadFiles(this.downloadFiles);
           this.dialogRef.close();
           this.router.navigate(['/status']);
         } else {

@@ -9,11 +9,17 @@ import { Item } from '../models/item';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/retry';
+import * as Transferables from '../actions/transferables.actions';
+import { Store } from '@ngrx/store';
+import { AppState } from '../dbstate/app-state';
+import { FilesDatabase } from '../dbstate/files-database';
 
 @Injectable()
 export class GcsApiService extends GcsService {
 
-  constructor(private http: HttpClient, private electronService: ElectronService) {
+  constructor(private http: HttpClient,
+              private store: Store<AppState>,
+              private electronService: ElectronService) {
     super();
   }
 
@@ -29,7 +35,16 @@ export class GcsApiService extends GcsService {
   }
 
   public downloadFiles(files: Item[]) {
-      this.electronService.ipcRenderer.send('start-download', files, SecurityService.getAccessToken());
+    let maxFiles = [];
+    if (files.length < 10) {
+      maxFiles = files.splice(0, 9);
+    }
+
+    maxFiles.forEach(item => {
+      this.store.dispatch(new Transferables.UpdateItemDownloading(item));
+    });
+
+    this.electronService.ipcRenderer.send('start-download', maxFiles, SecurityService.getAccessToken());
   }
 
 }
