@@ -1,4 +1,3 @@
-
 import { Injectable } from '@angular/core';
 import { ElectronService } from 'ngx-electron';
 import { DiskStatus } from '../models/diskStatus';
