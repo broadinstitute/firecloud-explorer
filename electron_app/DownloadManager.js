@@ -4,6 +4,7 @@ const { handleFolder } = require('./helpers/handleDisk');
 const downloadStats = require('./helpers/downloadInfo').downloadStats;
 
 let filePath = '';
+
 const downloadManager = (items, access_token, win) => {
   items.forEach(item => {
     if (item.preserveStructure) {
