@@ -4,7 +4,6 @@ import { CoreModule } from '@app/core';
 import { SharedModule } from '@app/shared';
 
 import { StoreModule } from '@ngrx/store';
-import { EffectsModule } from '@ngrx/effects';
 import { FileManagerRoutingModule } from './file-manager-routing.module';
 import { TransferablesReducer } from './reducers/transferables.reducer';
 
@@ -15,6 +14,9 @@ import { TransferablesGridComponent } from './transferables-grid/transferables-g
 import { FilesService } from './services/files.service';
 import { FirecloudService } from './services/firecloud.service';
 import { GcsService } from './services/gcs.service';
+import { DownloadStatusService } from './services/download-status.service';
+import { FilesDatabase } from './dbstate/files-database';
+
 import { DownloadValidatorService } from './services/download-validator.service';
 import { RegisterUploadService } from './services/register-upload.service';
 import { GcsApiService } from './services/gcs-api.service';
@@ -54,6 +56,8 @@ import { FileExplorerUploadComponent } from './file-explorer-upload/file-explore
   providers: [
     FilterSizePipe,
     TransferablesGridComponent,
+    DownloadStatusService,
+    FilesDatabase,
     FilesService,
     {
       provide: HTTP_INTERCEPTORS,

@@ -4,10 +4,10 @@
   <div class="status-box-left">
     <div class="flex-container space-between">
       <h4 class="subtitle">Downloading X of {{filesDatabase.data.length}} files</h4>
-      <h4 class="subtitle">X%</h4>
+      <h4 class="subtitle">{{generalProgress}}%</h4>
     </div>
 
-    <p-progressBar mode="determinate" class="progress-bar" [value]="5" [showValue]="false"></p-progressBar>
+    <p-progressBar mode="determinate" class="progress-bar" [value]="generalProgress" [showValue]="false"></p-progressBar>
 
     <div class="flex-container end actions">
       <button mat-raised-button (click)="pauseSelected()" class="button-secondary">
@@ -76,13 +76,13 @@
 
     <ng-container matColumnDef="status">
       <mat-header-cell *matHeaderCellDef mat-sort-header> Status </mat-header-cell>
-      <mat-cell *matCellDef="let row"> {{row.type}} </mat-cell>
+      <mat-cell *matCellDef="let row"> {{row.status}} </mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="progress">
       <mat-header-cell *matHeaderCellDef mat-sort-header> Progress </mat-header-cell>
       <mat-cell *matCellDef="let row">
-        <p-progressBar mode="determinate" class="progress-bar-small" [value]="15" [showValue]="false"></p-progressBar>
+        <p-progressBar mode="determinate" class="progress-bar-small" [value]=row.progress [showValue]="false"></p-progressBar>
       </mat-cell>
     </ng-container>
 

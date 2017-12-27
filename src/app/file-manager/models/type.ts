@@ -1,4 +1,4 @@
 export class Type {
-     static readonly DOWNLOAD = 'Downloading';
-     static readonly UPLOAD = 'Uploading';
+     static readonly DOWNLOAD = 'Download';
+     static readonly UPLOAD = 'Upload';
 }

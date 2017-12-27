@@ -5,12 +5,16 @@ export interface Item {
     name: string;
     created: Date;
     updated: Date;
-    size: string;
+    size: number;
     icon: string;
     selected: boolean;
     mediaLink: string;
     path: string;
     preserveStructure: boolean;
     destination: string;
+    progress: number;
     type: Type;
+    status: string;
+    transferred: number;
+    remaining: number;
 }

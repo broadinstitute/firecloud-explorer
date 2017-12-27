@@ -1,27 +1,22 @@
-import { Component, OnInit, OnChanges, DoCheck, Output, ViewChild, EventEmitter, ViewContainerRef, NgZone } from '@angular/core';
-import { Message, TreeNode, MenuItem } from 'primeng/primeng';
-import { HttpEventType, HttpResponse } from '@angular/common/http';
+import { Component, OnInit, Output, ViewChild, EventEmitter, NgZone } from '@angular/core';
+import { Message, TreeNode } from 'primeng/primeng';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs/Observable';
 import * as Transferables from '../actions/transferables.actions';
 import { Item } from '../models/item';
-import { TransferableState, TransferablesReducer } from '../reducers/transferables.reducer';
+import { AppState } from '../dbstate/app-state';
 import { ElectronService } from 'ngx-electron';
 import { FilterSizePipe } from '../filters/filesize-filter';
 import { GcsService } from '../services/gcs.service';
-import { FileDownloadModalComponent } from '../file-download-modal/file-download-modal.component';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialog } from '@angular/material';
 import { RegisterUploadService } from '../services/register-upload.service';
 import { FileUploadModalComponent } from '../file-upload-modal/file-upload-modal.component';
 import { TransferablesGridComponent } from '../transferables-grid/transferables-grid.component';
 import { TreeTable } from 'primeng/primeng';
 import { ChangeDetectorRef } from '@angular/core';
 import { Type } from '@app/file-manager/models/type';
+import { ItemStatus } from '@app/file-manager/models/item-status';
 
-interface AppState {
-  uploadables: TransferableState;
-}
 @Component({
   selector: 'app-file-explorer-upload',
   templateUrl: './file-explorer-upload.component.html',
@@ -56,19 +51,32 @@ export class FileExplorerUploadComponent implements OnInit {
     private router: Router,
     private zone: NgZone
   ) {
-
-    // subscribe to get-filesystem event from nodejs
-    this.electronService.ipcRenderer.on('get-filesystem', (event, localFiles) => {
-      this.zone.run(() => {
-        this.files = localFiles.result;
-      });
-    });
   }
 
-
   ngOnInit() {
-    // call node's get-filesystem
-    this.registerUpload.getFileSystem('');
+
+    const homeFolder = '/';
+
+    const rootNode: TreeNode = {
+      label: homeFolder,
+      data: {
+        name: homeFolder,
+        path: homeFolder
+      },
+      leaf: false
+    };
+    this.files = [];
+    this.files.push(rootNode);
+
+    this.electronService.ipcRenderer.once('get-node-content', (event, localFiles) => {
+      this.zone.run(() => {
+        rootNode.children = localFiles.result;
+        rootNode.data.name = localFiles.nodePath;
+        rootNode.expanded = true;
+      });
+    });
+
+    this.registerUpload.getLazyNodeContent(homeFolder);
   }
 
   countFiles() {
@@ -99,6 +107,18 @@ export class FileExplorerUploadComponent implements OnInit {
   }
 
   nodeExpand(evt) {
+    let node: TreeNode;
+    if (evt.node) {
+      this.electronService.ipcRenderer.once('get-node-content', (event, nodeFiles) => {
+        node = evt.node;
+        this.zone.run(() => {
+          node.children = nodeFiles.result;
+          node.expanded = true;
+        });
+        return;
+      });
+      this.registerUpload.getLazyNodeContent(evt.node.data.path);
+    }
   }
 
   nodeCollapse(evt) {
@@ -191,7 +211,11 @@ export class FileExplorerUploadComponent implements OnInit {
               preserveStructure: result.preserveStructure,
               mediaLink: '',
               path: file.data.path,
-              type: Type.UPLOAD
+              type: Type.UPLOAD,
+              progress: 0,
+              status: ItemStatus.UPLOADING,
+              transferred: 0,
+              remaining: 0
             };
             this.uploadFiles.push(this.dataFile);
             this.store.dispatch(new Transferables.AddItem(this.dataFile));

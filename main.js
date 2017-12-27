@@ -9,14 +9,14 @@ const path = require('path');
 const url = require('url');
 const electronOauth2 = require('electron-oauth2');
 const downloadManager = require('./electron_app/DownloadManager');
-const lazyFileSystemReader = require('./electron_app/FileSystemReader').lazyFileSystemReader;
 const lazyNodeReader = require('./electron_app/FileSystemReader').lazyNodeReader;
-const recursiveFileSystemReader = require('./electron_app/FileSystemReader').recursiveFileSystemReader;
 const constants = require('./electron_app/helpers/enviroment');
 const uploadManager = require('./electron_app/UploadManager');
 const fs = require('fs');
 const os = require('os');
-const { handleDiskSpace } = require('./electron_app/helpers/handleDisk');
+const {
+  handleDiskSpace
+} = require('./electron_app/helpers/handleDisk');
 
 require('dotenv').config();
 
@@ -34,7 +34,7 @@ app.on('ready', function () {
   });
 
   win.maximize();
-  // win.setMenu(null);
+  win.setMenu(null);
 
   // Specify entry point
   if (process.env.PACKAGE === 'true') {
@@ -48,7 +48,7 @@ app.on('ready', function () {
   }
   // Show dev tools
   // Remove this line before distributing
-   win.webContents.openDevTools()
+  // win.webContents.openDevTools()
 
   // Remove window once app is closed
   win.on('closed', function () {
@@ -81,7 +81,7 @@ app.on('ready', function () {
     const myApiOauth = electronOauth2(this.googleConfig, windowParams);
     myApiOauth.getAccessToken(this.googleOptions)
       .then(token => {
-        // use your token.access_token 
+        // use your token.access_token
         win.webContents.send(constants.IPC_SEND_RENDERER, {
           result: token
         });
@@ -98,19 +98,15 @@ app.on('ready', function () {
     uploadManager(bucketName, files, access_token);
   });
 
-  ipcMain.on(constants.IPC_GET_FILESYSTEM, (event, folderPath) => {
-    let home = os.homedir() + path.sep + 'Documents';
-    let files = recursiveFileSystemReader(home /*folderPath*/ , []);
-    win.webContents.send(constants.IPC_GET_FILESYSTEM, {
-      result: files
-    });
-  });
-
   ipcMain.on(constants.IPC_GET_NODE_CONTENT, (event, nodePath) => {
+    if (nodePath === '/') {
+      nodePath = os.homedir();
+    }
     var files = lazyNodeReader(nodePath, []);
 
     win.webContents.send(constants.IPC_GET_NODE_CONTENT, {
-      result: files
+      result: files,
+      nodePath: nodePath
     });
   });
 
@@ -142,8 +138,4 @@ app.on('window-all-closed', function () {
 
 app.on('before-quit', () => {
   win = null;
-});
-
-process.on('unhandledRejection', (reason, p) => {
-  console.log('Unhandled Rej at Promise:', p, '',reason);
 });

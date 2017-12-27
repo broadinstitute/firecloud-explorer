@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpResponse, HttpEventType } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { environment } from '@env/environment';
 import { Observable } from 'rxjs/Observable';
-import { TreeNode } from 'primeng/primeng';
 import { SecurityService } from './security.service';
 import { GcsService } from './gcs.service';
 import { ElectronService } from 'ngx-electron';

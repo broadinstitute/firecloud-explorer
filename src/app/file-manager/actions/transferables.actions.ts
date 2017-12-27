@@ -12,6 +12,8 @@ export const ADD_ITEM = '[Transferables] Add Item';
 export const UPDATE_ITEM = '[Transferables] Update Item';
 export const REMOVE_ITEM = '[Transferables] Remove Item';
 export const SELECT_ITEM = '[Transferables] Select Item';
+export const UPDATE_ITEM_PROGRESS = '[Transferables] Update Item Progress';
+export const UPDATE_ITEM_STATUS = '[Transferables] Update Item Status';
 
 export class Load implements Action {
     readonly type = LOAD;
@@ -66,6 +68,17 @@ export class SelectItem implements Action {
     constructor(public payload: any) { }
 }
 
+export class UpdateItemProgress implements Action {
+  readonly type = UPDATE_ITEM_PROGRESS;
+
+  constructor(public payload: any) { }
+}
+
+export class UpdateItemStatus implements Action {
+  readonly type = UPDATE_ITEM_STATUS;
+
+  constructor(public payload: any) { }
+}
 
 export type All
     = Load
@@ -79,4 +92,6 @@ export type All
     | UpdateItem
     | RemoveItem
     | SelectItem
+    | UpdateItemProgress
+    | UpdateItemStatus
     ;
