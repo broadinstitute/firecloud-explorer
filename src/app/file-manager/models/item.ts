@@ -5,7 +5,7 @@ export interface Item {
     name: string;
     created: Date;
     updated: Date;
-    size: string;
+    size: number;
     icon: string;
     selected: boolean;
     mediaLink: string;
@@ -15,4 +15,6 @@ export interface Item {
     progress: number;
     type: Type;
     status: string;
+    transferred: number;
+    remaining: number;
 }

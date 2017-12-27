@@ -94,13 +94,16 @@ export function TransferablesReducer(state = initialState, action: Action): Tran
           state.items.filter(item => {
             if (item.id === action.payload.id) {
               item.progress = action.payload.progress;
+              item.transferred = action.payload.transferred;
             }
           });
           return state;
+
         case TransferablesActions.UPDATE_ITEM_STATUS:
           state.items.filter(item => {
             if (item.id === action.payload.id) {
                 item.status = ItemStatus.COMPLETED;
+                item.transferred = action.payload.size;
             }
           });
           return state;

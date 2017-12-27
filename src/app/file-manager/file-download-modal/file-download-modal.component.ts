@@ -91,6 +91,8 @@ export class FileDownloadModalComponent  {
           progress: 0,
           type: Type.DOWNLOAD,
           status: ItemStatus.DOWNLOADING,
+          transferred: 0,
+          remaining: 0
         };
         this.downloadFiles.push(dataFile);
         this.store.dispatch(new Transferables.AddItem(dataFile));

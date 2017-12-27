@@ -41,10 +41,12 @@ export class DownloadStatusService {
 
   private generalProgress(): number {
     const downloadItems = new FilesDatabase(this.store);
-    let totalProgress = 0;
-    downloadItems.data.forEach( el => {
-      totalProgress += el.progress;
+    let totalSize = 0;
+    let totalTransferred = 0;
+    downloadItems.data.forEach( item => {
+      totalSize += item.size;
+      totalTransferred += item.transferred;
     });
-    return Math.floor(totalProgress / downloadItems.data.length);
+    return Math.floor((totalTransferred * 100) / totalSize);
   }
 }

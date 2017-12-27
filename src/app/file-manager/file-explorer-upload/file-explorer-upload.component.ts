@@ -189,6 +189,8 @@ export class FileExplorerUploadComponent implements OnInit {
               type: Type.UPLOAD,
               progress: 0,
               status: ItemStatus.UPLOADING,
+              transferred: 0,
+              remaining: 0
             };
             this.uploadFiles.push(this.dataFile);
             this.store.dispatch(new Transferables.AddItem(this.dataFile));
