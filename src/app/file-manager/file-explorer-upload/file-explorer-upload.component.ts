@@ -56,19 +56,32 @@ export class FileExplorerUploadComponent implements OnInit {
     private router: Router,
     private zone: NgZone
   ) {
-
-    // subscribe to get-filesystem event from nodejs
-    this.electronService.ipcRenderer.on('get-filesystem', (event, localFiles) => {
-      this.zone.run(() => {
-        this.files = localFiles.result;
-      });
-    });
   }
 
-
   ngOnInit() {
-    // call node's get-filesystem
-    this.registerUpload.getFileSystem('');
+
+    const homeFolder = '/';
+
+    const rootNode: TreeNode = {
+      label: homeFolder,
+      data: {
+        name: homeFolder,
+        path: homeFolder
+      },
+      leaf: false
+    };
+    this.files = [];
+    this.files.push(rootNode);
+
+    this.electronService.ipcRenderer.once('get-node-content', (event, localFiles) => {
+      this.zone.run(() => {
+        rootNode.children = localFiles.result;
+        rootNode.data.name = localFiles.nodePath;
+        rootNode.expanded = true;
+      });
+    });
+
+    this.registerUpload.getLazyNodeContent(homeFolder);
   }
 
   countFiles() {
@@ -99,6 +112,18 @@ export class FileExplorerUploadComponent implements OnInit {
   }
 
   nodeExpand(evt) {
+    let node: TreeNode;
+    if (evt.node) {
+      this.electronService.ipcRenderer.once('get-node-content', (event, nodeFiles) => {
+        node = evt.node;
+        this.zone.run(() => {
+          node.children = nodeFiles.result;
+          node.expanded = true;
+        });
+        return;
+      });
+      this.registerUpload.getLazyNodeContent(evt.node.data.path);
+    }
   }
 
   nodeCollapse(evt) {
