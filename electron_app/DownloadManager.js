@@ -1,15 +1,11 @@
-const mtd = require('zeltice-mt-downloader');
 const Downloader = require('./Downloader');
 const path = require('path');
-const os = require('os');
 const { handleFolder } = require('./helpers/handleDisk');
 const downloadStats = require('./helpers/downloadInfo').downloadStats;
 
-
-const service = require('./helpers/downloadInfo').service;
+let filePath = '';
 
 const downloadManager = (items, access_token, win) => {
-  let filePath = '';
   items.forEach(item => {
     if (item.preserveStructure) {
       const structurePath = item.path.substring(item.path.lastIndexOf('/'), 0);
@@ -24,8 +20,8 @@ const downloadManager = (items, access_token, win) => {
 
 const processDownload = (access_token, item, folder, win) => {
   filePath = path.join(folder, item.name);
-  var dl_test = new Downloader();
-  var dl = dl_test.download(item.mediaLink, filePath, setHeader(access_token));
+  let dl_test = new Downloader();
+  let dl = dl_test.download(item.mediaLink, filePath, setHeader(access_token));
   dl.start();
   downloadStats(dl, item, win);
 };
