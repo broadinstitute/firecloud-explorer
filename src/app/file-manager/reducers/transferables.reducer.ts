@@ -3,6 +3,7 @@ import { Action } from '@app/core';
 import * as TransferablesActions from '../actions/transferables.actions';
 import { Item } from '../models/item';
 import { ItemStatus } from '@app/file-manager/models/item-status';
+import { Type } from '@app/file-manager/models/type';
 
 export type Action = TransferablesActions.All;
 
@@ -21,11 +22,30 @@ export class TransferableState {
         return this.items.filter(x => x.selected === true).length;
     }
 
+    get downloadingCount(): number {
+        return this.items.filter(x => x.status === ItemStatus.COMPLETED && x.type === Type.DOWNLOAD).length;
+    }
+
+    get uploadingCount(): number {
+        return this.items.filter(x => x.status === ItemStatus.COMPLETED && x.type === Type.UPLOAD).length;
+    }
+
+    get toDownloadCount(): number {
+        return this.items.filter(x => x.type === Type.DOWNLOAD).length;
+    }
+
+    get toUploadCount(): number {
+        return this.items.filter(x => x.type === Type.UPLOAD).length;
+    }
 }
 
 const initialState: TransferableState = {
     count: 0,
     selectedCount: 0,
+    downloadingCount: 0,
+    uploadingCount: 0,
+    toDownloadCount: 0,
+    toUploadCount: 0,
     items: []
 };
 
@@ -91,22 +111,22 @@ export function TransferablesReducer(state = initialState, action: Action): Tran
             return new TransferableState(rem_item);
 
         case TransferablesActions.UPDATE_ITEM_PROGRESS:
-          state.items.filter(item => {
-            if (item.id === action.payload.id) {
-              item.progress = action.payload.progress;
-              item.transferred = action.payload.transferred;
-            }
-          });
-          return state;
+            state.items.filter(item => {
+                if (item.id === action.payload.id) {
+                    item.progress = action.payload.progress;
+                    item.transferred = action.payload.transferred;
+                }
+            });
+            return state;
 
         case TransferablesActions.UPDATE_ITEM_STATUS:
-          state.items.filter(item => {
-            if (item.id === action.payload.id) {
-                item.status = ItemStatus.COMPLETED;
-                item.transferred = action.payload.size;
-            }
-          });
-          return state;
+            state.items.filter(item => {
+                if (item.id === action.payload.id) {
+                    item.status = ItemStatus.COMPLETED;
+                    item.transferred = action.payload.size;
+                }
+            });
+            return state;
 
         case TransferablesActions.SELECT_ITEM:
             const sel_item = state.items.filter(item => {

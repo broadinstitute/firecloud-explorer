@@ -3,7 +3,7 @@
 <div class="flex-container space-between">
   <div class="status-box-left">
     <div class="flex-container space-between">
-      <h4 class="subtitle" style="display: inline;">Downloading {{filesDatabase.data.length}} files</h4>
+      <h4 class="subtitle" style="display: inline;">Downloaded: {{filesDatabase.downloadingCount + ' of ' + filesDatabase.toDownloadCount}} file(s)</h4>
       <h4 class="subtitle" style="float: right; text-align: right; display: inline;">{{generalProgress}}%</h4>
     </div>
 
@@ -23,7 +23,7 @@
 
   <div class="status-box-right">
     <div class="flex-container space-between">
-      <h4 class="subtitle">Uploading X of {{filesDatabase.data.length}} files</h4>
+      <h4 class="subtitle">Uploaded: {{filesDatabase.uploadingCount + ' of ' + filesDatabase.toUploadCount}} file(s)</h4>
       <h4 class="subtitle">X%</h4>
     </div>
 
