@@ -2,6 +2,7 @@
 import { Action } from '@app/core';
 import * as TransferablesActions from '../actions/transferables.actions';
 import { Item } from '../models/item';
+import { ItemStatus } from '@app/file-manager/models/item-status';
 
 export type Action = TransferablesActions.All;
 
@@ -83,11 +84,29 @@ export function TransferablesReducer(state = initialState, action: Action): Tran
         case TransferablesActions.UPDATE_ITEM:
             const upd_item = state.items.filter(item => item.id !== action.payload.id);
             const tmp1 = [...upd_item, action.payload];
-            return new TransferableState(upd_item);
+            return new TransferableState(tmp1);
 
         case TransferablesActions.REMOVE_ITEM:
             const rem_item = state.items.filter(item => item.id !== action.payload.id);
             return new TransferableState(rem_item);
+
+        case TransferablesActions.UPDATE_ITEM_PROGRESS:
+          state.items.filter(item => {
+            if (item.id === action.payload.id) {
+              item.progress = action.payload.progress;
+              item.transferred = action.payload.transferred;
+            }
+          });
+          return state;
+
+        case TransferablesActions.UPDATE_ITEM_STATUS:
+          state.items.filter(item => {
+            if (item.id === action.payload.id) {
+                item.status = ItemStatus.COMPLETED;
+                item.transferred = action.payload.size;
+            }
+          });
+          return state;
 
         case TransferablesActions.SELECT_ITEM:
             const sel_item = state.items.filter(item => {

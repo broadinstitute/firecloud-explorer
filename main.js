@@ -81,7 +81,7 @@ app.on('ready', function () {
     const myApiOauth = electronOauth2(this.googleConfig, windowParams);
     myApiOauth.getAccessToken(this.googleOptions)
       .then(token => {
-        // use your token.access_token 
+        // use your token.access_token
         win.webContents.send(constants.IPC_SEND_RENDERER, {
           result: token
         });
@@ -138,8 +138,4 @@ app.on('window-all-closed', function () {
 
 app.on('before-quit', () => {
   win = null;
-});
-
-process.on('unhandledRejection', (reason, p) => {
-  console.log('Unhandled Rej at Promise:', p, '', reason);
 });

@@ -5,6 +5,7 @@ import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs/Observable';
 import * as Transferables from '../actions/transferables.actions';
 import { Item } from '../models/item';
+import { AppState } from '../dbstate/app-state';
 import { TransferableState, TransferablesReducer } from '../reducers/transferables.reducer';
 import { FilesService } from '../services/files.service';
 import { FilterSizePipe } from '../filters/filesize-filter';
@@ -15,9 +16,6 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { Type } from '@app/file-manager/models/type';
 
 
-interface AppState {
-  downloadables: TransferableState;
-}
 @Component({
   selector: 'app-file-explorer',
   templateUrl: './file-explorer.component.html',

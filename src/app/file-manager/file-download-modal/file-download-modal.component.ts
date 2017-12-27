@@ -1,16 +1,17 @@
 import {Component, Inject, Output, EventEmitter} from '@angular/core';
-import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import {TreeNode} from 'primeng/primeng';
 import { Item } from '@app/file-manager/models/item';
 import * as Transferables from '../actions/transferables.actions';
 import { Store } from '@ngrx/store';
-import { AppState } from '@app/file-manager/transferables-grid/transferables-grid.component';
+import { AppState } from '../dbstate/app-state';
 import { TransferablesGridComponent } from '../transferables-grid/transferables-grid.component';
 import { Message } from 'primeng/components/common/api';
 import { DiskStatus } from '../models/diskStatus';
 import { DownloadValidatorService } from '@app/file-manager/services/download-validator.service';
 import { Type } from '@app/file-manager/models/type';
 import { Router } from '@angular/router';
+import { ItemStatus } from '@app/file-manager/models/item-status';
 
 @Component({
   selector: 'app-file-download-modal',
@@ -87,11 +88,16 @@ export class FileDownloadModalComponent  {
           preserveStructure: this.preserveStructure,
           mediaLink: file.data.mediaLink,
           path: file.data.path,
-          type: Type.DOWNLOAD
+          progress: 0,
+          type: Type.DOWNLOAD,
+          status: ItemStatus.DOWNLOADING,
+          transferred: 0,
+          remaining: 0
         };
         this.downloadFiles.push(dataFile);
         this.store.dispatch(new Transferables.AddItem(dataFile));
         this.done.emit(true);
+        this.router.navigate(['/status']);
       });
   }
 
