@@ -90,7 +90,7 @@ export class FileDownloadModalComponent  {
           path: file.data.path,
           progress: 0,
           type: Type.DOWNLOAD,
-          status: ItemStatus.UPLOADING,
+          status: ItemStatus.DOWNLOADING,
         };
         this.downloadFiles.push(dataFile);
         this.store.dispatch(new Transferables.AddItem(dataFile));
