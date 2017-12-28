@@ -19,16 +19,10 @@ export class LimitTransferablesService {
 
   }
 
-  private pendingItem(item: Item): Item {
-    if (item.status === ItemStatus.PENDING) {
-      return item;
-    }
-  }
-
   public controlLimitItems(files: Item[]): void {
     let maxFiles = [];
-    const pendingFiles = files.filter(item => this.pendingItem(item) );
-    console.log('Pending files ${pendingFiles}');
+    const pendingFiles = files.filter(item => item.status === ItemStatus.PENDING);
+    console.log('Pending Files ', pendingFiles);
 
     if (files.length > 10) {
       maxFiles = files.splice(0, 10);

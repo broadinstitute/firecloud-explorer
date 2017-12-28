@@ -36,7 +36,7 @@ Downloader.prototype._defaultOptions = {
 };
 
 Downloader.prototype.download = function (url, filePath, options) {
-  let options = extend({}, this._defaultOptions, options);
+  var options = extend({}, this._defaultOptions, options);
 
   let dl = new Download();
 
