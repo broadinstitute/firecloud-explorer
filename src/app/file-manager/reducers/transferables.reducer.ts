@@ -110,7 +110,6 @@ export function TransferablesReducer(state = initialState, action: Action): Tran
 
       case TransferablesActions.UPDATE_ITEM_DOWNLOADING:
         state.items.filter(item => {
-          console.log(item);
           if (item.id === action.payload.id) {
             item.status = ItemStatus.DOWNLOADING;
           }
