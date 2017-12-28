@@ -54,7 +54,7 @@ export class StatusService {
   private generalProgress(type: String): number {
     let totalSize = 0;
     let totalTransferred = 0;
-    const downloadItems = new FilesDatabase(this.store).data.
+    new FilesDatabase(this.store).data.
     filter(item => item.type === type)
     .forEach( item => {
       totalSize += item.size;
