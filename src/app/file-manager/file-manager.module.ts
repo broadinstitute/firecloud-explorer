@@ -9,7 +9,6 @@ import { TransferablesReducer } from './reducers/transferables.reducer';
 
 import { LoginComponent } from './login/login.component';
 import { FileExplorerComponent } from './file-explorer/file-explorer.component';
-import { TransferableItemComponent } from './transferable-item/transferable-item.component';
 import { TransferablesGridComponent } from './transferables-grid/transferables-grid.component';
 
 import { FilesService } from './services/files.service';
@@ -46,7 +45,6 @@ import { FileExplorerUploadComponent } from './file-explorer-upload/file-explore
   ],
   declarations: [
     FileExplorerComponent,
-    TransferableItemComponent,
     TransferablesGridComponent,
     LoginComponent,
     FileDownloadModalComponent,

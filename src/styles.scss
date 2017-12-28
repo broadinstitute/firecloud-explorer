@@ -1,80 +1,52 @@
-@import 'styles-variables';
-
 @import '~bootstrap/scss/bootstrap-reboot';
 @import '~bootstrap/scss/bootstrap-grid';
 @import '~bootstrap/scss/utilities';
-
 @import 'styles-reset';
-
-@import '~@angular/material/theming';
-
-@include mat-core();
-
-@import 'default-theme.scss';
-@import 'light-theme.scss';
-@import 'black-theme.scss';
-
-@import 'styles-reset.scss-theme';
 @import 'app/app.component.scss-theme';
+@import '~@angular/material/theming';
+@include mat-core();
+@import 'fcExplorer-theme';
 
-@mixin custom-components-theme($theme) {
-  @include fc-styles-reset-theme($theme);
-  @include fc-app-component-theme($theme);
+.fcExplorer-theme {
+    @include angular-material-theme($fcExplorer-theme);
 }
 
-.default-theme {
-  @include angular-material-theme($fc-theme);
-  @include custom-components-theme($fc-theme);
+@mixin Opacity($value){
+  $IEValue: $value*100;
+  opacity: $value;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity="+$IEValue+")";
+  filter: alpha(opacity=$IEValue);
 }
 
-.light-theme {
-  @include angular-material-theme($fc-light-theme);
-  @include custom-components-theme($fc-light-theme);
+@mixin breakpoint($class) {
+  @if $class == sm {
+    @media (max-width: 1366px) { @content; }
+  }
+ 
+  @else if $class == md {
+    @media (min-width: 1367px) and (max-width: 1600px) { @content; }
+  }
+ 
+  @else if $class == lg {
+    @media (min-width: 1601px) { @content; }
+  }
+ 
+  @else {
+    @warn "Breakpoint mixin supports: sm, md, lg";
+  }
 }
 
-.black-theme {
-  @include angular-material-theme($fc-black-theme);
-  @include custom-components-theme($fc-black-theme);
-}
-
-html,
-body {
+html, body, a, p, h1, h2, h3, h4, span, label, div {
   font-family: 'Roboto', sans-serif;
 }
 
-.button-primary.mat-raised-button {
-  background-color: #3f3f3f; 
-}
-
-.button-secondary.mat-raised-button {
-  border: 1px solid #3f3f3f; 
-}
-
-.button-primary,
-.button-secondary {
-  span {
-    font-family: 'Roboto', sans-serif;
-  }
-  i {
-    font-size: 1.1rem;
-    padding: 0 5px 3px 0;
-    vertical-align: top;
-  }
-}
-
-.button-primary span {
-  font-weight: 700;
-  color: #ffffff;  
-}
-
-.button-secondary span {
-  font-weight: 500;
+a:hover {
+  cursor: pointer;
 }
 
 p.aclaration {
-  font-family: 'Roboto', sans-serif;
   font-weight: 300;
-  color: #081c22;  
+  color: mat-color($fcExplorer-primary, 900); 
   margin: 0;
 }
 
@@ -86,10 +58,9 @@ h1 {
 
 h3.subtitle,
 h4.subtitle {
-  font-family: 'Roboto', sans-serif;
   margin: 0;
   line-height: 2rem;
-  color: #081c22;
+  color: mat-color($fcExplorer-primary, 900); 
 }
 
 .medium {
@@ -103,11 +74,6 @@ h4.subtitle {
 .italic {
   font-style: italic;
 }
-
-.logo {
-  font-family: 'Roboto', sans-serif;
-  font-weight: 300;
-} 
 
 .flex-container {
   display: flex;
@@ -137,18 +103,106 @@ h4.subtitle {
   width: 100% !important;
 }
 
+/*BUTTONS*/
+
+.button-primary,
+.button-secondary {
+  span {
+    font-size: 1rem;
+    line-height: 2.4rem;
+  }
+  i {
+    font-size: 1.1rem;
+    padding: 0 5px 3px 0;
+    vertical-align: top;
+  }
+}
+
+.button-primary span {
+  font-weight: 700;
+  color: white;  
+}
+
+.button-secondary span {
+  font-weight: 500;
+  color: mat-color($fcExplorer-accent);
+}
+
+.button-primary.mat-raised-button {
+  background-color: mat-color($fcExplorer-accent);
+  box-shadow: none !important;  
+}
+
+.button-secondary.mat-raised-button{
+  border: 1px solid mat-color($fcExplorer-accent);
+  background: transparent;
+  box-shadow: none !important;
+  transition: box-shadow .3s;  
+}
+
+.button-primary.mat-raised-button:hover,
+.button-secondary.mat-raised-button:hover {
+  box-shadow: 0 0 6px mat-color($fcExplorer-primary, 400) !important;
+}
+
+.button-primary.mat-raised-button:active{
+  background-color: mat-color($fcExplorer-accent, 700);
+}
+
+.button-secondary.mat-raised-button:active {
+  background-color: mat-color($fcExplorer-primary, 200);
+}
+
+[disabled].button-primary.mat-raised-button {
+  background-color: mat-color($fcExplorer-accent, 200);
+  box-shadow: none !important;  
+}
+
+[disabled].button-secondary.mat-raised-button {
+  border: 1px solid mat-color($fcExplorer-primary, 400);
+  box-shadow: none !important;
+  background: transparent !important;  
+  span {
+    color: mat-color($fcExplorer-primary, 400);    
+  }  
+}
+
+.button-icon,
+.mat-paginator-range-actions .mat-icon-button,
+.mat-paginator-navigation-next,
+.mat-paginator-navigation-prev {
+  background: transparent;
+} 
+
+[disabled].button-icon {
+  color: mat-color($fcExplorer-primary, 400);
+}
+
+[disabled] .mat-paginator-decrement,
+[disabled] .mat-paginator-increment {
+  border-top: 2px solid mat-color($fcExplorer-primary, 400) !important;
+  border-right: 2px solid mat-color($fcExplorer-primary, 400) !important;
+}
+
+.mat-paginator-decrement,
+.mat-paginator-increment {
+  border-top: 2px solid mat-color($fcExplorer-primary, 700) !important;
+  border-right: 2px solid mat-color($fcExplorer-primary, 700) !important;
+} 
+
 /*SIDENAV*/
 
 .sidenav-container, 
 mat-sidenav-content {
   height: 100vh;
   overflow: hidden;
+  background-color: white;
 }
 
 .sidenav,
 .sidenav-link {
   width: 80px;
-  background: #303030 !important;
+  background: mat-color($fcExplorer-primary, 700); 
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -158,17 +212,19 @@ a.sidenav-link {
   align-items: center;
   height: 80px;
   border: 0;
-  color: #979797;
+  color: white;
   cursor: pointer;
+  transition: all 0.2s ease;
+  @include Opacity(0.4);
 }
 
-a.sidenav-link:hover mat-icon,
-a.sidenav-link:hover p {
-  color: #cccccc;
+a.sidenav-link:hover{
+  @include Opacity(0.7);
 }
 
 a.sidenav-link.active{
-  color: #ffffff;
+  background-color: mat-color($fcExplorer-accent);
+  @include Opacity(1);
 }
 
 a.sidenav-link mat-icon {
@@ -178,7 +234,6 @@ a.sidenav-link mat-icon {
 }
 
 a.sidenav-link p {
-  font-family: 'Roboto', sans-serif;
   font-weight: 300;
   font-size: 0.8rem;
   text-align: center;
@@ -189,20 +244,30 @@ a.sidenav-link p {
 
 .tree-table {
   margin: 30px 0;
-  height: 55vh;
   overflow-y: scroll;
   overflow-x: hidden;
+  
+  @include breakpoint(sm) {
+    height: 55vh;
+  }
+  @include breakpoint(md) {
+    height: 58vh;
+  }
+  @include breakpoint(lg) {
+    height: 66vh;
+  }
 }
 
 .tree-table thead th,
 .tree-table thead tr {
-  color: #081c22;
+  color: mat-color($fcExplorer-primary, 900); 
   font-family: 'Roboto', sans-serif;
   font-weight: 700;
   font-size: 0.9rem;
   text-align: left;
   border-width: 0 0 2px 0;
-  border-color: #081c22;
+  border-color: mat-color($fcExplorer-primary, 900); 
+  background: white;
 }
 
 .tree-table thead th:first-child,
@@ -216,57 +281,65 @@ a.sidenav-link p {
 }
 
 .tree-table .ui-state-highlight {
-  border-color: rgba(1,96,160,0.3);
-  background:  rgba(1,96,160,0.3);
+  border-color: mat-color($fcExplorer-accent, 300); 
+  background: mat-color($fcExplorer-accent, 300);
 }
 
 /*TABLE*/
 
+.table-container,
+.table-container .table-common.mat-table {
+  @include breakpoint(sm) {
+    height: 55vh;
+  }
+  @include breakpoint(md) {
+    height: 60vh;
+  }
+  @include breakpoint(lg) {
+    height: 64vh;
+  }
+}
+
 .table-common.mat-table {
-  margin: 30px 0;
+  margin: 0 0 20px 0;
   background: transparent;
+  overflow: auto;
 }
 
 .table-common.mat-table .mat-header-row{
-  min-height: 30px;
   border-width: 0 0 2px 0;
-  border-color: #081c22;
+  border-color: mat-color($fcExplorer-primary, 900);
+  min-height: 35px; 
 
   .mat-header-cell {
     font-size: 0.9rem;    
     font-weight: 700;
-    color: #081c22;
+    color: mat-color($fcExplorer-primary, 900); 
   }
 }
 
 /*TOOLBAR*/
 
-.toolbar-accent.ui-toolbar,
-.toolbar-default.ui-toolbar {
+.toolbar-accent.ui-toolbar{
   padding: 20px;
 }
 
-.toolbar-accent.ui-toolbar.ui-widget-header {
-  background: #ffffff;
-  border: 2px solid #3f3f3f;
-}
-
-.toolbar-default.ui-toolbar.ui-widget-header {
-  background-color: transparent;
-  border: 1px solid #3f3f3f;
+.toolbar-accent.ui-toolbar.ui-widget-header,
+.status-box-left,
+.status-box-right {
+  background: mat-color($fcExplorer-primary, 100); 
+  border: 1px solid mat-color($fcExplorer-primary, 400); 
 }
 
 .toolbar-login {
   width: 600px;
-  border: 2px solid #081c22;
+  border: 2px solid mat-color($fcExplorer-primary, 900); 
   align-self: center;
   margin-top: 50px;
 }
 
 .status-box-left,
 .status-box-right {
-  border: 2px solid #081c22;
-  background: #ffffff;
   width: 50%;
   padding: 20px;
 }
@@ -281,8 +354,9 @@ a.sidenav-link p {
 
 /*EXPAND PANEL*/
 
-.expand-panel.mat-expansion-panel{
-  margin: 20px 0;
+.expand-panel.mat-expansion-panel {
+  margin: 0;
+  height: 50px !important;
   box-shadow: none;
   background: transparent;
 }
@@ -291,21 +365,36 @@ a.sidenav-link p {
   box-shadow: none;
 }
 
-.expand-panel.mat-expansion-panel .mat-expansion-panel-header{
-  padding-left: 0;
+.expand-panel.mat-expansion-panel .mat-expansion-panel-header.mat-expanded,
+.expand-panel.mat-expansion-panel .mat-expansion-panel-header,
+.mat-expansion-panel-header.ng-animating {
+  padding: 0 !important;
+  transition: all 0.2s ease;
+}
+
+.expand-panel.mat-expansion-panel .mat-expansion-panel-header:hover{
+  color: mat-color($fcExplorer-primary, 500); 
 }
 
 .expand-panel .mat-expansion-panel-body {
   margin: 0;
+  padding: 0;
 }
 
 /*PROGRESS BAR*/
 
 .progress-bar .ui-widget-content,
 .progress-bar-small .ui-widget-content, {
-  background: #e8e8e8;  
+  background: mat-color($fcExplorer-primary, 300);   
   border: none;
   height: 0.6em; 
+  border-radius: 1px;
+}
+
+.progress-bar .ui-widget-header,
+.progress-bar-small .ui-widget-header, {
+  background: mat-color($fcExplorer-accent); 
+  border-radius: 0;  
 }
 
 .progress-bar .ui-widget-content {
@@ -320,15 +409,14 @@ a.sidenav-link p {
 
 .error-messages .ui-messages {
   margin: 20px 0 0 0;
-  background: #ffffff;
-  border: 1px solid #081c22;
-  font-family: 'Roboto', sans-serif;
+  background: white;
+  border: 1px solid mat-color($fcExplorer-primary, 900); 
 }
 
 .error-messages .ui-messages,
 .error-messages .ui-messages-close,
 .error-messages .ui-messages-close:hover {
-  color: #081c22;  
+  color: mat-color($fcExplorer-primary, 900);  
 }
 
 .error-messages .ui-messages-close {
@@ -364,6 +452,7 @@ a.sidenav-link p {
 .mat-dialog-content {
   height: auto;
   overflow: hidden;
+  z-index: 100;
 
   hr {
       margin: 0 0 15px 0;
@@ -372,28 +461,35 @@ a.sidenav-link p {
 
 .browse-button,
 .browse-location {
-  font-family: 'Roboto', sans-serif;
   font-size: 0.9rem;
 }
 
 .browse-button label {
-  border: 1px solid #3f3f3f; 
+  border: 1px solid mat-color($fcExplorer-primary, 900); 
   font-weight: 500;
   padding: 5px 15px;
   text-align: center;
   cursor: pointer;
   border-radius: 2px;
-  box-shadow: 0 3px 1px -2px rgba(0,0,0,.2), 0 2px 2px 0 rgba(0,0,0,.14), 0 1px 5px 0 rgba(0,0,0,.12);
+  transition: all 0.2s ease;
 }
 
 .browse-button label:active {
-  background-color: #ECECEC;
+  background-color: mat-color($fcExplorer-primary, 200); 
+}
+
+.browse-button label:hover {
+  box-shadow: 0 0 6px mat-color($fcExplorer-primary, 400) !important;
 }
 
 .browse-location {
   padding-left: 15px;
   font-weight: 300;
   line-height: 35px;
+}
+
+.mat-dialog-container {
+  background: white;
 }
 
 .mat-dialog-actions {
@@ -405,4 +501,34 @@ a.sidenav-link p {
 .mat-dialog-actions .button-primary,
 .mat-dialog-actions .button-secondary{
   float: right;
+}
+
+.dialog-checkbox {
+  display: block;
+}
+
+.mat-checkbox-checked.mat-accent .mat-checkbox-background,
+.mat-checkbox-indeterminate.mat-accent .mat-checkbox-background {
+  background-color: mat-color($fcExplorer-accent) !important;
+}
+
+/*SELECT and AUTOCOMPLETE*/
+
+.mat-select-panel,
+.mat-autocomplete-panel {
+  background: white;
+}
+
+.mat-option:hover {
+  background-color: mat-color($fcExplorer-primary, 200);  
+}
+
+.mat-input-underline {
+  background-color: mat-color($fcExplorer-primary, 700);  
+}
+
+/*PAGINATOR*/
+
+.paginator.mat-paginator {
+  margin-bottom: 20px;
 }
