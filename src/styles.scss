@@ -56,10 +56,17 @@ h1 {
   margin-bottom: 20px;
 }
 
+h3.subtitle {
+  line-height: 2.4rem;
+}
+
+h4.subtitle {
+  line-height: 2rem;
+}
+
 h3.subtitle,
 h4.subtitle {
   margin: 0;
-  line-height: 2rem;
   color: mat-color($fcExplorer-primary, 900); 
 }
 
@@ -409,14 +416,15 @@ a.sidenav-link p {
 
 .error-messages .ui-messages {
   margin: 20px 0 0 0;
-  background: white;
-  border: 1px solid mat-color($fcExplorer-primary, 900); 
+  padding: 1em;
+  background: mat-color($fcExplorer-warn, 50); 
+  border: 1px solid mat-color($fcExplorer-warn, 900); 
 }
 
 .error-messages .ui-messages,
 .error-messages .ui-messages-close,
 .error-messages .ui-messages-close:hover {
-  color: mat-color($fcExplorer-primary, 900);  
+  color: mat-color($fcExplorer-warn, 900);   
 }
 
 .error-messages .ui-messages-close {
@@ -435,8 +443,8 @@ a.sidenav-link p {
 
 .error-messages .ui-messages-summary {
   font-size: 1rem;
-  font-weight: 500;
-  margin-left: 0;
+  font-weight: 700;
+  margin-left: 3px;
   vertical-align: middle;
 }
 

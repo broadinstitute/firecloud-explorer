@@ -7,9 +7,10 @@ import 'rxjs/add/operator/takeUntil';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/filter';
 import { Router } from '@angular/router';
+import { ElectronService } from 'ngx-electron';
 
 import { login, logout, selectorAuth, routerTransition } from '@app/core';
-import { environment as env } from '@env/environment';
+import { environment } from '@env/environment';
 
 import { selectorSettings } from './settings';
 @Component({
@@ -24,6 +25,7 @@ export class AppComponent implements OnInit, OnDestroy {
   unsubscribe$: Subject<void> = new Subject<void>();
   userEmail: String;
 
+  forumURL = environment.FORUM_URL;
   title = 'app';
 
   @HostBinding('class') componentCssClass;
@@ -34,7 +36,8 @@ export class AppComponent implements OnInit, OnDestroy {
   constructor(
     public overlayContainer: OverlayContainer,
     private store: Store<any>,
-    private router: Router
+    private router: Router,
+    private electronService: ElectronService
   ) {
     AppComponent.updateUserEmail.subscribe(email => {
       this.userEmail = email;
@@ -61,6 +64,10 @@ export class AppComponent implements OnInit, OnDestroy {
 
     this.unsubscribe$.next();
     this.unsubscribe$.complete();
+  }
+
+  openForumOnBrowser() {
+    this.electronService.shell.openExternal(this.forumURL);
   }
 
   onLogoutClick() {
