@@ -214,7 +214,7 @@ export class FileExplorerUploadComponent implements OnInit {
               path: file.data.path,
               type: Type.UPLOAD,
               progress: 0,
-              status: ItemStatus.UPLOADING,
+              status: ItemStatus.PENDING,
               transferred: 0,
               remaining: 0
             };

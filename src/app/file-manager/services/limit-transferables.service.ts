@@ -16,26 +16,33 @@ export class LimitTransferablesService {
     private store: Store<AppState>,
   ) { }
 
-  public completedItem(type: Type): void {
+  public pendingItem(type: Type, status: ItemStatus): void {
     let items = new FilesDatabase(this.store).data;
     items = items.filter(item => item.type === type && item.status === ItemStatus.PENDING);
-    console.log(items);
-    this.controlLimitItems(items);
+    console.log('Pending Items ', items);
+    this.controlLimitItems(items, type, status);
   }
 
-  public controlLimitItems(files: Item[]): void {
+  public controlLimitItems(files: Item[], type: Type, status: ItemStatus): void {
     let maxFiles = [];
 
-    if (files.length > 10 ) {
-      maxFiles = files.splice(0, 10);
+    if (files.length > 1 ) {
+      maxFiles = files.splice(0, 2);
     } else {
       maxFiles = files;
     }
 
+    console.log('Max files ', maxFiles);
+
     maxFiles.forEach(item => {
-      item.status = ItemStatus.DOWNLOADING;
+      item.status = status;
       this.store.dispatch(new Transferables.UpdateItem(item));
     });
-    this.gcsService.downloadFiles(maxFiles);
+
+    if (type === Type.DOWNLOAD) {
+      this.gcsService.downloadFiles(maxFiles);
+    } else {
+      this.gcsService.uploadFiles(localStorage.getItem('uploadBucket'), maxFiles);
+    }
   }
 }

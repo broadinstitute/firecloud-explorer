@@ -8,6 +8,7 @@ import { AppState } from '../dbstate/app-state';
 import { FilesDatabase } from '../dbstate/files-database';
 import { Type } from '@app/file-manager/models/type';
 import { LimitTransferablesService } from '@app/file-manager/services/limit-transferables.service';
+import {ItemStatus} from '@app/file-manager/models/item-status';
 
 /**
  * Download progress information service
@@ -19,11 +20,11 @@ export class StatusService {
     private limitTransferables: LimitTransferablesService,
     private electronService: ElectronService) { }
 
-  updateProgress(): Observable<any> {
+  updateDownloadProgress(): Observable<any> {
     this.electronService.ipcRenderer.removeAllListeners('download-status');
     return Observable.create((observer) => {
       this.electronService.ipcRenderer.on('download-status', (event, data) => {
-        this.updateItem(data, Type.DOWNLOAD);
+        this.updateItem(data, Type.DOWNLOAD, ItemStatus.DOWNLOADING);
         observer.next(this.generalProgress(Type.DOWNLOAD));
       });
     });
@@ -33,13 +34,13 @@ export class StatusService {
     this.electronService.ipcRenderer.removeAllListeners('upload-status');
     return Observable.create((observer) => {
       this.electronService.ipcRenderer.on('upload-status', (event, data) => {
-        this.updateItem(data, Type.UPLOAD);
+        this.updateItem(data, Type.UPLOAD, ItemStatus.UPLOADING);
         observer.next(this.generalProgress(Type.UPLOAD));
       });
     });
   }
 
-  private updateItem(data: Item, type: Type) {
+  private updateItem(data: Item, type: Type, status: ItemStatus) {
     const items = new FilesDatabase(this.store).data.
     filter(item => item.type === type);
     for (let i = 0; i < items.length; i++) {
@@ -48,7 +49,7 @@ export class StatusService {
       }
       if (data.progress === 100) {
         this.store.dispatch(new Transferables.UpdateItemCompleted(data));
-        this.limitTransferables.completedItem(type);
+        this.limitTransferables.pendingItem(type, status);
       }
     }
   }
