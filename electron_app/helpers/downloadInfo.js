@@ -13,10 +13,10 @@ const downloadStats = function(dl, item, win) {
 		} else if(dl.status === 3) {
 			item.progress = 100;
 			if (win !== undefined)
+			clearInterval(timer);
+			timer = null;
       win.webContents.send(constants.IPC_DOWNLOAD_STATUS, item);
-			return item;
-		}
-		if (dl.status === -1 || dl.status === 3 || dl.status === -3) {
+		} else if (dl.status === -1 || dl.status === 3 || dl.status === -3) {
 			clearInterval(timer);
 			timer = null;
 		}

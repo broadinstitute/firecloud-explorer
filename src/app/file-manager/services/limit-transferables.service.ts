@@ -6,6 +6,7 @@ import { AppState } from '../dbstate/app-state';
 import { FilesDatabase } from '../dbstate/files-database';
 import {ItemStatus} from '@app/file-manager/models/item-status';
 import {GcsService} from '@app/file-manager/services/gcs.service';
+import { Type } from '@app/file-manager/models/type';
 
 @Injectable()
 export class LimitTransferablesService {
@@ -15,16 +16,17 @@ export class LimitTransferablesService {
     private store: Store<AppState>,
   ) { }
 
-  public completedItem(item: Item): void {
-
+  public completedItem(type: Type): void {
+    let items = new FilesDatabase(this.store).data;
+    items = items.filter(item => item.type === type && item.status === ItemStatus.PENDING);
+    console.log(items);
+    this.controlLimitItems(items);
   }
 
   public controlLimitItems(files: Item[]): void {
     let maxFiles = [];
-    const pendingFiles = files.filter(item => item.status === ItemStatus.PENDING);
-    console.log('Pending Files ', pendingFiles);
 
-    if (files.length > 10) {
+    if (files.length > 10 ) {
       maxFiles = files.splice(0, 10);
     } else {
       maxFiles = files;

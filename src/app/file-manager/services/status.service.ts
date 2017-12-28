@@ -7,6 +7,7 @@ import { Store } from '@ngrx/store';
 import { AppState } from '../dbstate/app-state';
 import { FilesDatabase } from '../dbstate/files-database';
 import { Type } from '@app/file-manager/models/type';
+import { LimitTransferablesService } from '@app/file-manager/services/limit-transferables.service';
 
 /**
  * Download progress information service
@@ -15,6 +16,7 @@ import { Type } from '@app/file-manager/models/type';
 export class StatusService {
 
   constructor(private store: Store<AppState>,
+    private limitTransferables: LimitTransferablesService,
     private electronService: ElectronService) { }
 
   updateProgress(): Observable<any> {
@@ -37,7 +39,7 @@ export class StatusService {
     });
   }
 
-  private updateItem(data: Item, type: String) {
+  private updateItem(data: Item, type: Type) {
     const items = new FilesDatabase(this.store).data.
     filter(item => item.type === type);
     for (let i = 0; i < items.length; i++) {
@@ -46,11 +48,12 @@ export class StatusService {
       }
       if (data.progress === 100) {
         this.store.dispatch(new Transferables.UpdateItemCompleted(data));
+        this.limitTransferables.completedItem(type);
       }
     }
   }
 
-  private generalProgress(type: String): number {
+  private generalProgress(type: Type): number {
     let totalSize = 0;
     let totalTransferred = 0;
     new FilesDatabase(this.store).data.
