@@ -9,13 +9,12 @@ import { TransferablesReducer } from './reducers/transferables.reducer';
 
 import { LoginComponent } from './login/login.component';
 import { FileExplorerComponent } from './file-explorer/file-explorer.component';
-import { TransferableItemComponent } from './transferable-item/transferable-item.component';
 import { TransferablesGridComponent } from './transferables-grid/transferables-grid.component';
 
 import { FilesService } from './services/files.service';
 import { FirecloudService } from './services/firecloud.service';
 import { GcsService } from './services/gcs.service';
-import { DownloadStatusService } from './services/download-status.service';
+import { StatusService } from './services/status.service';
 import { FilesDatabase } from './dbstate/files-database';
 
 import { DownloadValidatorService } from './services/download-validator.service';
@@ -47,7 +46,6 @@ import {LimitTransferablesService} from '@app/file-manager/services/limit-transf
   ],
   declarations: [
     FileExplorerComponent,
-    TransferableItemComponent,
     TransferablesGridComponent,
     LoginComponent,
     FileDownloadModalComponent,
@@ -58,7 +56,7 @@ import {LimitTransferablesService} from '@app/file-manager/services/limit-transf
   providers: [
     FilterSizePipe,
     TransferablesGridComponent,
-    DownloadStatusService,
+    StatusService,
     FilesDatabase,
     FilesService,
     LimitTransferablesService,

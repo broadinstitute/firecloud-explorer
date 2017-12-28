@@ -2,7 +2,7 @@ import { Type } from './type';
 import { ItemStatus } from './item-status';
 
 export interface Item {
-    id: number;
+    id: string;
     name: string;
     created: Date;
     updated: Date;

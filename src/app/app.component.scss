@@ -1,4 +1,9 @@
-@import 'styles-variables';
+@import '~@angular/material/theming';
+@import 'fcExplorer-theme';
+
+.fcExplorer-theme {
+    @include angular-material-theme($fcExplorer-theme);
+}
 
 header {
   display: flex;
@@ -7,25 +12,24 @@ header {
   height: 5vh;
 }
 
-.nav-button {
-  margin: 0 10px 0 0;
-}
-
-.sign-in-button {
-  line-height: 35px;
-  margin-right: 10px;
-}
-
 .menu-item {
   margin: 0 25px;
-  padding: 0 10px 0 15px;
+  padding: 0 10px 0 20px;
+  text-align: right;
 }
 
 .menu-item,
 .submenu-item {
-  font-family: 'Roboto', sans-serif;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   font-weight: 300;
+  background: white;
+  border-radius: 0;
+  transition: all 0.2s ease;
+}
+
+.menu-item:hover,
+.submenu-item:hover {
+  background: mat-color($fcExplorer-primary, 100);
 }
 
 .menu-item mat-icon {
@@ -37,18 +41,6 @@ header {
   margin: 0;
   height: 20px;
   line-height: 20px;
-}
-
-@media (max-width: map-get($grid-breakpoints, lg)) {
-  .nav-button {
-    min-width: 0;
-    padding: 0 10px;
-  }
-  .sign-in-button {
-    min-width: 0;
-    padding: 0 10px;
-    margin: 0 5px 0 0;
-  }
 }
 
 .wrapper {
@@ -67,7 +59,7 @@ header {
 }
 
 .footer {
-  background-color: #000000;
+  background-color: black;
   padding: 0 20px;
   width: 100%;
   height: 30px;
@@ -78,7 +70,7 @@ header {
   z-index: 1;
 
   .footer-signature {
-    color: #ffffff;
+    color: white;
     font-size: 0.9rem;
     line-height: 2rem;
   }

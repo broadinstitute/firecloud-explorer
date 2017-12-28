@@ -7,8 +7,7 @@ import { Observable } from 'rxjs/Observable';
 
 @Component({
   selector: 'app-file-upload',
-  templateUrl: './file-upload-modal.component.html',
-  styleUrls: ['./file-upload-modal.component.scss']
+  templateUrl: './file-upload-modal.component.html'
 })
 export class FileUploadModalComponent {
 

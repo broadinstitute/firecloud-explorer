@@ -6,12 +6,13 @@ import * as Transferables from '../actions/transferables.actions';
 import { Store } from '@ngrx/store';
 import { AppState } from '../dbstate/app-state';
 import { FilesDatabase } from '../dbstate/files-database';
+import { Type } from '@app/file-manager/models/type';
 
 /**
  * Download progress information service
  */
 @Injectable()
-export class DownloadStatusService {
+export class StatusService {
 
   constructor(private store: Store<AppState>,
     private electronService: ElectronService) { }
@@ -20,16 +21,27 @@ export class DownloadStatusService {
     this.electronService.ipcRenderer.removeAllListeners('download-status');
     return Observable.create((observer) => {
       this.electronService.ipcRenderer.on('download-status', (event, data) => {
-        this.updateDownloadItem(data);
-        observer.next(this.generalProgress());
+        this.updateItem(data, Type.DOWNLOAD);
+        observer.next(this.generalProgress(Type.DOWNLOAD));
       });
     });
   }
 
-  private updateDownloadItem(data: Item) {
-    const downloadItems = new FilesDatabase(this.store);
-    for (let i = 0; i < downloadItems.data.length; i++) {
-      if (data.id === downloadItems.data[i].id) {
+  updateUploadProgress(): Observable<any> {
+    this.electronService.ipcRenderer.removeAllListeners('upload-status');
+    return Observable.create((observer) => {
+      this.electronService.ipcRenderer.on('upload-status', (event, data) => {
+        this.updateItem(data, Type.UPLOAD);
+        observer.next(this.generalProgress(Type.UPLOAD));
+      });
+    });
+  }
+
+  private updateItem(data: Item, type: String) {
+    const items = new FilesDatabase(this.store).data.
+    filter(item => item.type === type);
+    for (let i = 0; i < items.length; i++) {
+      if (data.id === items[i].id) {
         this.store.dispatch(new Transferables.UpdateItemProgress(data));
       }
       if (data.progress === 100) {
@@ -38,14 +50,16 @@ export class DownloadStatusService {
     }
   }
 
-  private generalProgress(): number {
-    const downloadItems = new FilesDatabase(this.store);
+  private generalProgress(type: String): number {
     let totalSize = 0;
     let totalTransferred = 0;
-    downloadItems.data.forEach( item => {
+    new FilesDatabase(this.store).data.
+    filter(item => item.type === type)
+    .forEach( item => {
       totalSize += item.size;
       totalTransferred += item.transferred;
     });
     return Math.floor((totalTransferred * 100) / totalSize);
   }
+
 }
