@@ -24,10 +24,10 @@
   <div class="status-box-right">
     <div class="flex-container space-between">
       <h4 class="subtitle">Uploaded: {{filesDatabase.uploadingCount + ' of ' + filesDatabase.toUploadCount}} file(s)</h4>
-      <h4 class="subtitle">X%</h4>
+      <h4 class="subtitle">{{generalUploadProgress}}%</h4>
     </div>
 
-    <p-progressBar mode="determinate" class="progress-bar" [value]="5" [showValue]="false"></p-progressBar>
+    <p-progressBar mode="determinate" class="progress-bar" [value]="generalUploadProgress" [showValue]="false"></p-progressBar>
 
     <p class="aclaration">
       <small>Estimated remaining time: </small>

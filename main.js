@@ -95,7 +95,7 @@ app.on('ready', function () {
   });
 
   ipcMain.on(constants.IPC_START_UPLOAD, (event, bucketName, files, access_token) => {
-    uploadManager(bucketName, files, access_token);
+    uploadManager(bucketName, files, access_token, win);
   });
 
   ipcMain.on(constants.IPC_GET_NODE_CONTENT, (event, nodePath) => {

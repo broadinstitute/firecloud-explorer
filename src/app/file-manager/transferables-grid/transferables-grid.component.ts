@@ -10,7 +10,7 @@ import 'rxjs/add/observable/forkJoin';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/observable/merge';
 import { GcsService } from '@app/file-manager/services/gcs.service';
-import { DownloadStatusService } from '../services/download-status.service';
+import { StatusService } from '../services/status.service';
 import { AppState } from '../dbstate/app-state';
 import { FilesDataSource } from '../dbstate/files-datasource';
 import { FilesDatabase } from '../dbstate/files-database';
@@ -29,9 +29,10 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   dataSource: FilesDataSource | null;
   filesDatabase: FilesDatabase;
   generalProgress = 0;
-
+  generalUploadProgress = 0;
+  
   constructor(
-    private downloadStatus: DownloadStatusService,
+    private downloadStatus: StatusService,
     private zone: NgZone,
     private store: Store<AppState>,
     private registerDownload: DownloadValidatorService,
@@ -85,6 +86,11 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
     this.downloadStatus.updateProgress().subscribe(data => {
       this.zone.run(() => {
         this.generalProgress = data;
+      });
+    });
+    this.downloadStatus.updateUploadProgress().subscribe(data => {
+      this.zone.run(() => {
+        this.generalUploadProgress = data;
       });
     });
   }
