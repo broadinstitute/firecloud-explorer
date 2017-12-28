@@ -1,15 +1,17 @@
-<h1>Select files to download</h1>
+<h1>Select file(s) to download</h1>
 
 <p-growl [value]="msgs"></p-growl>
 
-<button mat-raised-button (click)="selectAll()" class="button-secondary">
-  <i class="material-icons">check_box</i>Select all</button>
-<button mat-raised-button (click)="selectNone()" class="button-secondary">
-  <i class="material-icons">check_box_outline_blank</i>Select none</button>
-<button mat-raised-button (click)="expandAll()" class="button-secondary">
-  <i class="material-icons">add_to_queue</i>Expand all</button>
-<button mat-raised-button (click)="collapseAll()" class="button-secondary">
-  <i class="material-icons">airplay</i>Collapse all</button>
+<div class="full-width">
+  <button mat-raised-button (click)="selectAll()" class="button-secondary">
+    <i class="material-icons">check_box</i>Select all</button>
+  <button mat-raised-button (click)="selectNone()" class="button-secondary">
+    <i class="material-icons">check_box_outline_blank</i>Select none</button>
+  <button mat-raised-button (click)="expandAll()" class="button-secondary">
+    <i class="material-icons">add_to_queue</i>Expand all</button>
+  <button mat-raised-button (click)="collapseAll()" class="button-secondary">
+    <i class="material-icons">airplay</i>Collapse all</button>
+</div>
 
 <p-treeTable [value]="files" selectionMode="checkbox" [(selection)]="selectedFiles" styleClass="tree-table" (onNodeSelect)="nodeSelect($event)"
   (onNodeUnselect)="nodeUnselect($event)">
@@ -28,11 +30,11 @@
 
 <p-toolbar styleClass="toolbar-accent" color="primary">
   <div class="ui-toolbar-group-left">
-    <h3 class="subtitle">Selected: {{ fileCount }} files. Total size: {{ totalSize | filesize }} </h3>
+    <h3 class="subtitle">Selected: {{ fileCount }} file(s). Total size: {{ totalSize | filesize }} </h3>
   </div>
 
   <div class="ui-toolbar-group-right">
     <button mat-raised-button (click)="selectionDone()" class="button-primary" [disabled]="fileCount <= 0">
-      <i class="material-icons">vertical_align_bottom</i>Download selection</button>
+      <i class="material-icons">file_download</i>Download selection</button>
   </div>
 </p-toolbar>

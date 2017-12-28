@@ -25,12 +25,12 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
-  displayedColumns = ['selected', 'name', 'size', 'status', 'progress', 'actions'];
+  displayedColumns = ['name', 'size', 'status', 'progress', 'actions'];
   dataSource: FilesDataSource | null;
   filesDatabase: FilesDatabase;
   generalProgress = 0;
   generalUploadProgress = 0;
-  
+
   constructor(
     private downloadStatus: StatusService,
     private zone: NgZone,

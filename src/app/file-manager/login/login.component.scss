@@ -1,6 +1,14 @@
+@import '~@angular/material/theming';
+@import 'fcExplorer-theme';
+
+.fcExplorer-theme {
+    @include angular-material-theme($fcExplorer-theme);
+}
+
 .logo {
-    font-size: 35px;
-    color: #292b2c;
+    font-size: 2.4rem;
+    font-weight: 300;    
+    color: mat-color($fcExplorer-primary, 900);
     display: flex;
     justify-content: center;
     margin: 15px 0;
@@ -9,12 +17,14 @@
 .aclaration {
     font-size: 1.2rem;
     text-align: center;
+    color: mat-color($fcExplorer-primary, 900);  
 }
 
 .button-primary {
     margin: 25px 0 10px 0;
     line-height: 40px;
     padding: 0 30px;
+    box-shadow: none;
 }
 
 .login-message {
@@ -29,13 +39,10 @@
 
 .login-message,
 .login-message a {
-    color: #999999;
+    color: mat-color($fcExplorer-primary, 700);
 }
 
 .error-messages {
     width: 600px;
 }
 
-a:hover {
-    cursor:pointer;
-   }

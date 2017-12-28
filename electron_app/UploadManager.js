@@ -26,7 +26,7 @@ const uploadManager = (bucketName, fileList = [], access_token, win) => {
                     'X-Upload-Content-Type': contentType,
                     'X-Upload-Content-Length': size
                 },
-                uri: url + 'uploads/' + file.name,
+                uri: url + 'Uploads/' + file.name,
                 method: 'POST',
                 json: false,
                 resolveWithFullResponse: true
