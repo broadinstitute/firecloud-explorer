@@ -18,7 +18,6 @@ const uploadManager = (bucketName, fileList = [], access_token, win) => {
         str.on('progress', function(progress) {
             file.progress = Math.round(progress.percentage);
             file.transferred = progress.transferred;
-            file.size = progress.length;            
             win.webContents.send(constants.IPC_UPLOAD_STATUS, file);
         });
         req.post({
