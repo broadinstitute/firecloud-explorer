@@ -16,6 +16,7 @@ import { TreeTable } from 'primeng/primeng';
 import { ChangeDetectorRef } from '@angular/core';
 import { Type } from '@app/file-manager/models/type';
 import { ItemStatus } from '@app/file-manager/models/item-status';
+import { UUID } from 'angular2-uuid';
 
 @Component({
   selector: 'app-file-explorer-upload',
@@ -200,7 +201,7 @@ export class FileExplorerUploadComponent implements OnInit {
           .filter(file => file.data.type === 'File')
           .forEach(file => {
             this.dataFile = {
-              id: file.data.id,
+              id: UUID.UUID(),
               name: file.data.name,
               size: file.data.size,
               created: file.data.updated,

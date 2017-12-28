@@ -14,7 +14,7 @@ import { TransferablesGridComponent } from './transferables-grid/transferables-g
 import { FilesService } from './services/files.service';
 import { FirecloudService } from './services/firecloud.service';
 import { GcsService } from './services/gcs.service';
-import { DownloadStatusService } from './services/download-status.service';
+import { StatusService } from './services/status.service';
 import { FilesDatabase } from './dbstate/files-database';
 
 import { DownloadValidatorService } from './services/download-validator.service';
@@ -55,7 +55,7 @@ import { FileExplorerUploadComponent } from './file-explorer-upload/file-explore
   providers: [
     FilterSizePipe,
     TransferablesGridComponent,
-    DownloadStatusService,
+    StatusService,
     FilesDatabase,
     FilesService,
     {
