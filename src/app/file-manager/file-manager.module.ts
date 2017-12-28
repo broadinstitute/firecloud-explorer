@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { CoreModule } from '@app/core';
 import { SharedModule } from '@app/shared';
 
-import { StoreModule } from '@ngrx/store';
+import {Store, StoreModule} from '@ngrx/store';
 import { FileManagerRoutingModule } from './file-manager-routing.module';
 import { TransferablesReducer } from './reducers/transferables.reducer';
 
@@ -34,6 +34,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { FilterSizePipe } from './filters/filesize-filter';
 import { FileUploadModalComponent } from './file-upload-modal/file-upload-modal.component';
 import { FileExplorerUploadComponent } from './file-explorer-upload/file-explorer-upload.component';
+import {LimitTransferablesService} from '@app/file-manager/services/limit-transferables.service';
 
 @NgModule({
   imports: [
@@ -60,6 +61,7 @@ import { FileExplorerUploadComponent } from './file-explorer-upload/file-explore
     DownloadStatusService,
     FilesDatabase,
     FilesService,
+    LimitTransferablesService,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: RequestInterceptor,

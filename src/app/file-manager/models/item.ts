@@ -1,4 +1,5 @@
 import { Type } from './type';
+import { ItemStatus } from './item-status';
 
 export interface Item {
     id: number;
@@ -14,7 +15,7 @@ export interface Item {
     destination: string;
     progress: number;
     type: Type;
-    status: string;
+    status: ItemStatus;
     transferred: number;
     remaining: number;
 }

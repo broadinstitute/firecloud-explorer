@@ -11,7 +11,7 @@ import { DownloadValidatorService } from '@app/file-manager/services/download-va
 import { Type } from '@app/file-manager/models/type';
 import { Router } from '@angular/router';
 import { ItemStatus } from '@app/file-manager/models/item-status';
-import { GcsService } from '@app/file-manager/services/gcs.service';
+import { TransferablesGridComponent} from '@app/file-manager/transferables-grid/transferables-grid.component';
 
 @Component({
   selector: 'app-file-download-modal',
@@ -30,7 +30,7 @@ export class FileDownloadModalComponent  {
 
   constructor(
     private downloadValidator: DownloadValidatorService,
-    private gcsService: GcsService,
+    private transferablesGridComponent: TransferablesGridComponent,
     private store: Store<AppState>,
     public dialogRef: MatDialogRef<FileDownloadModalComponent>,
     public router: Router,
@@ -47,7 +47,7 @@ export class FileDownloadModalComponent  {
         this.verify = diskVerification;
         if (!this.verify.hasErr) {
           this.setItems();
-          this.gcsService.downloadFiles(this.downloadFiles);
+          this.transferablesGridComponent.startDownload(this.downloadFiles);
           this.dialogRef.close();
           this.router.navigate(['/status']);
         } else {
