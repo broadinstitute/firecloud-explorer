@@ -3,7 +3,7 @@
 <div class="flex-container space-between">
   <div class="status-box-left">
     <div class="flex-container space-between">
-      <h4 class="subtitle">Downloading {{filesDatabase.data.length}} files</h4>
+      <h4 class="subtitle">Downloaded: {{filesDatabase.downloadingCount + ' of ' + filesDatabase.toDownloadCount}} file(s)</h4>
       <h4 class="subtitle">{{generalProgress}}%</h4>
     </div>
 
@@ -19,11 +19,11 @@
 
   <div class="status-box-right">
     <div class="flex-container space-between">
-      <h4 class="subtitle">Uploading X of {{filesDatabase.data.length}} files</h4>
-      <h4 class="subtitle">X%</h4>
+      <h4 class="subtitle">Uploaded: {{filesDatabase.uploadingCount + ' of ' + filesDatabase.toUploadCount}} file(s)</h4>
+      <h4 class="subtitle">{{generalUploadProgress}}%</h4>
     </div>
 
-    <p-progressBar mode="determinate" class="progress-bar" [value]="5" [showValue]="false"></p-progressBar>
+    <p-progressBar mode="determinate" class="progress-bar" [value]="generalUploadProgress" [showValue]="false"></p-progressBar>
 
     <div class="flex-container end actions">
       <button mat-raised-button (click)="pauseSelected()" class="button-secondary">

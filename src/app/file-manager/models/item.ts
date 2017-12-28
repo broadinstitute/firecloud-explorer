@@ -1,7 +1,7 @@
 import { Type } from './type';
 
 export interface Item {
-    id: number;
+    id: string;
     name: string;
     created: Date;
     updated: Date;
