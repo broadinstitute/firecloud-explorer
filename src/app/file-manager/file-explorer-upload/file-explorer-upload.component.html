@@ -28,13 +28,14 @@
   </p-column>
 </p-treeTable>
 
-<p-toolbar styleClass="toolbar-accent" color="primary">
+<p-toolbar styleClass="toolbar-accent">
   <div class="ui-toolbar-group-left">
     <h3 class="subtitle">Selected: {{ fileCount }} file(s). Total size: {{ totalSize | filesize }} </h3>
   </div>
 
   <div class="ui-toolbar-group-right">
-    <button mat-raised-button (click)="selectionDone()" class="button-primary" [disabled]="fileCount <= 0">
+    <div *ngIf="uploadInProgress" class="warn-message">Please wait, upload in progress...</div>
+    <button mat-raised-button (click)="selectionDone()" class="button-primary" [disabled]="disableButton()">
       <i class="material-icons">file_upload</i>Upload selection</button>
   </div>
 </p-toolbar>
