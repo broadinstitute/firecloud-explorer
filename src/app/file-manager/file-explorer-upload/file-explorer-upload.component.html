@@ -1,15 +1,15 @@
+<h1>Select file(s) to upload</h1>
+
 <p-growl [value]="msgs"></p-growl>
 
-<h1>Select files to upload</h1>
-
 <div class="full-width">
-  <button mat-raised-button (click)="selectAll()" class="button-secondary">
+  <button mat-raised-button (click)="selectAll()" class="button-secondary" [disabled]="true">
     <i class="material-icons">check_box</i>Select all</button>
-  <button mat-raised-button (click)="selectNone()" class="button-secondary">
+  <button mat-raised-button (click)="selectNone()" class="button-secondary" [disabled]="true">
     <i class="material-icons">check_box_outline_blank</i>Select none</button>
-  <button mat-raised-button (click)="expandAll()" class="button-secondary">
+  <button mat-raised-button (click)="expandAll()" class="button-secondary" [disabled]="true">
     <i class="material-icons">add_to_queue</i>Expand all</button>
-  <button mat-raised-button (click)="collapseAll()" class="button-secondary">
+  <button mat-raised-button (click)="collapseAll()" class="button-secondary" [disabled]="true">
     <i class="material-icons">airplay</i>Collapse all</button>
 </div>
 

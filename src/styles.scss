@@ -150,12 +150,20 @@ h4.subtitle {
 }
 
 .button-secondary.mat-raised-button:active {
-  background-color: mat-color($fcExplorer-primary, 50);
+  background-color: mat-color($fcExplorer-primary, 200);
 }
 
 [disabled].button-primary.mat-raised-button {
   background-color: mat-color($fcExplorer-accent, 200);
   box-shadow: none !important;  
+}
+
+[disabled].button-secondary.mat-raised-button {
+  border: 1px solid mat-color($fcExplorer-primary, 400);
+  box-shadow: none !important;  
+  span {
+    color: mat-color($fcExplorer-primary, 400);    
+  }  
 }
 
 .button-icon,
