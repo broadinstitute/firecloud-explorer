@@ -44,84 +44,6 @@ a:hover {
   cursor: pointer;
 }
 
-.button-primary,
-.button-secondary {
-  span {
-    font-size: 1rem;
-    line-height: 2.4rem;
-  }
-  i {
-    font-size: 1.1rem;
-    padding: 0 5px 3px 0;
-    vertical-align: top;
-  }
-}
-
-.button-icon,
-.mat-paginator-range-actions .mat-icon-button,
-.mat-paginator-navigation-next,
-.mat-paginator-navigation-prev {
-  background: transparent;
-} 
-
-[disabled].button-icon {
-  cursor: not-allowed;
-  color: mat-color($fcExplorer-primary, 200);
-}
-
-.mat-paginator-decrement,
-.mat-paginator-increment {
-  border-top: 2px solid mat-color($fcExplorer-primary, 700) !important;
-  border-right: 2px solid mat-color($fcExplorer-primary, 700) !important;
-} 
-
-[disabled] .mat-paginator-decrement,
-[disabled] .mat-paginator-increment {
-  cursor: not-allowed;
-  border-top: 2px solid mat-color($fcExplorer-primary, 400) !important;
-  border-right: 2px solid mat-color($fcExplorer-primary, 400) !important;
-} 
-
-.button-primary.mat-raised-button {
-  background-color: mat-color($fcExplorer-accent);
-  box-shadow: none !important;  
-}
-
-.button-secondary.mat-raised-button{
-  border: 1px solid mat-color($fcExplorer-accent);
-  background: transparent;
-  box-shadow: none !important;
-  transition: box-shadow .3s;  
-}
-
-.button-primary.mat-raised-button:hover,
-.button-secondary.mat-raised-button:hover {
-  box-shadow: 0 0 6px mat-color($fcExplorer-primary, 400) !important;
-}
-
-.button-primary.mat-raised-button:active{
-  background-color: mat-color($fcExplorer-accent, 700);
-}
-
-.button-secondary.mat-raised-button:active {
-  background-color: mat-color($fcExplorer-primary, 50);
-}
-
-[disabled].button-primary.mat-raised-button {
-  cursor: not-allowed;
-  background-color: mat-color($fcExplorer-accent, 200);
-}
-
-.button-primary span {
-  font-weight: 700;
-  color: white;  
-}
-
-.button-secondary span {
-  font-weight: 500;
-  color: mat-color($fcExplorer-accent);
-}
-
 p.aclaration {
   font-weight: 300;
   color: mat-color($fcExplorer-primary, 900); 
@@ -181,6 +103,84 @@ h4.subtitle {
   width: 100% !important;
 }
 
+/*BUTTONS*/
+
+.button-primary,
+.button-secondary {
+  span {
+    font-size: 1rem;
+    line-height: 2.4rem;
+  }
+  i {
+    font-size: 1.1rem;
+    padding: 0 5px 3px 0;
+    vertical-align: top;
+  }
+}
+
+.button-primary span {
+  font-weight: 700;
+  color: white;  
+}
+
+.button-secondary span {
+  font-weight: 500;
+  color: mat-color($fcExplorer-accent);
+}
+
+.button-primary.mat-raised-button {
+  background-color: mat-color($fcExplorer-accent);
+  box-shadow: none !important;  
+}
+
+.button-secondary.mat-raised-button{
+  border: 1px solid mat-color($fcExplorer-accent);
+  background: transparent;
+  box-shadow: none !important;
+  transition: box-shadow .3s;  
+}
+
+.button-primary.mat-raised-button:hover,
+.button-secondary.mat-raised-button:hover {
+  box-shadow: 0 0 6px mat-color($fcExplorer-primary, 400) !important;
+}
+
+.button-primary.mat-raised-button:active{
+  background-color: mat-color($fcExplorer-accent, 700);
+}
+
+.button-secondary.mat-raised-button:active {
+  background-color: mat-color($fcExplorer-primary, 50);
+}
+
+[disabled].button-primary.mat-raised-button {
+  background-color: mat-color($fcExplorer-accent, 200);
+  box-shadow: none !important;  
+}
+
+.button-icon,
+.mat-paginator-range-actions .mat-icon-button,
+.mat-paginator-navigation-next,
+.mat-paginator-navigation-prev {
+  background: transparent;
+} 
+
+[disabled].button-icon {
+  color: mat-color($fcExplorer-primary, 400);
+}
+
+[disabled] .mat-paginator-decrement,
+[disabled] .mat-paginator-increment {
+  border-top: 2px solid mat-color($fcExplorer-primary, 400) !important;
+  border-right: 2px solid mat-color($fcExplorer-primary, 400) !important;
+}
+
+.mat-paginator-decrement,
+.mat-paginator-increment {
+  border-top: 2px solid mat-color($fcExplorer-primary, 700) !important;
+  border-right: 2px solid mat-color($fcExplorer-primary, 700) !important;
+} 
+
 /*SIDENAV*/
 
 .sidenav-container, 
@@ -205,7 +205,7 @@ a.sidenav-link {
   border: 0;
   color: white;
   cursor: pointer;
-  transition: all ease .2s;
+  transition: all 0.2s ease;
   @include Opacity(0.4);
 }
 
@@ -462,11 +462,15 @@ a.sidenav-link p {
   text-align: center;
   cursor: pointer;
   border-radius: 2px;
-  box-shadow: 0 3px 1px -2px rgba(0,0,0,.2), 0 2px 2px 0 rgba(0,0,0,.14), 0 1px 5px 0 rgba(0,0,0,.12);
+  transition: all 0.2s ease;
 }
 
 .browse-button label:active {
-  background-color: #ECECEC;
+  background-color: mat-color($fcExplorer-primary, 200); 
+}
+
+.browse-button label:hover {
+  box-shadow: 0 0 6px mat-color($fcExplorer-primary, 400) !important;
 }
 
 .browse-location {
@@ -490,12 +494,32 @@ a.sidenav-link p {
   float: right;
 }
 
-.mat-checkbox-checked.mat-accent .mat-checkbox-background, .mat-checkbox-indeterminate.mat-accent .mat-checkbox-background {
+.dialog-checkbox {
+  display: block;
+}
+
+.mat-checkbox-checked.mat-accent .mat-checkbox-background,
+.mat-checkbox-indeterminate.mat-accent .mat-checkbox-background {
   background-color: mat-color($fcExplorer-accent) !important;
 }
 
 /*SELECT and AUTOCOMPLETE*/
+
 .mat-select-panel,
 .mat-autocomplete-panel {
   background: white;
+}
+
+.mat-option:hover {
+  background-color: mat-color($fcExplorer-primary, 200);  
+}
+
+.mat-input-underline {
+  background-color: mat-color($fcExplorer-primary, 700);  
+}
+
+/*PAGINATOR*/
+
+.paginator.mat-paginator {
+  margin-bottom: 20px;
 }

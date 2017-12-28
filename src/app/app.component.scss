@@ -1,3 +1,10 @@
+@import '~@angular/material/theming';
+@import 'fcExplorer-theme';
+
+.fcExplorer-theme {
+    @include angular-material-theme($fcExplorer-theme);
+}
+
 header {
   display: flex;
   flex-direction: row;
@@ -7,16 +14,22 @@ header {
 
 .menu-item {
   margin: 0 25px;
-  padding: 0 10px 0 15px;
+  padding: 0 10px 0 20px;
   text-align: right;
-  background: white;
 }
 
 .menu-item,
 .submenu-item {
-  font-family: 'Roboto', sans-serif;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   font-weight: 300;
+  background: white;
+  border-radius: 0;
+  transition: all 0.2s ease;
+}
+
+.menu-item:hover,
+.submenu-item:hover {
+  background: mat-color($fcExplorer-primary, 100);
 }
 
 .menu-item mat-icon {

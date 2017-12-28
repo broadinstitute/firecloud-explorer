@@ -45,7 +45,6 @@ import { FileExplorerUploadComponent } from './file-explorer-upload/file-explore
   ],
   declarations: [
     FileExplorerComponent,
-    // TransferableItemComponent,
     TransferablesGridComponent,
     LoginComponent,
     FileDownloadModalComponent,

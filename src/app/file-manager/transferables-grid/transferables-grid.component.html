@@ -35,64 +35,56 @@
 </div>
 
 <mat-expansion-panel #expa class="expand-panel">
-
-  <mat-expansion-panel-header style="height: 50px;">
+  <mat-expansion-panel-header>
     <mat-panel-title>{{ expa.expanded ? 'Hide detailed transfer list' : 'Show detailed download list'}}</mat-panel-title>
   </mat-expansion-panel-header>
 
-
   <div class="table-container flex-container column">
     <mat-table #table [dataSource]="dataSource" matSort class="table-common">
+      <ng-container matColumnDef="id">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Id </mat-header-cell>
+        <mat-cell *matCellDef="let row"> {{row.id}} </mat-cell>
+      </ng-container>
 
-    <ng-container matColumnDef="id">
-      <mat-header-cell *matHeaderCellDef mat-sort-header> Id </mat-header-cell>
-      <mat-cell *matCellDef="let row"> {{row.id}} </mat-cell>
-    </ng-container>
+      <ng-container matColumnDef="name">
+        <mat-header-cell *matHeaderCellDef mat-sort-header style="flex: 0 0 40%;"> Name </mat-header-cell>
+        <mat-cell *matCellDef="let row" style="flex: 0 0 40%;"> {{row.name}} </mat-cell>
+      </ng-container>
 
+      <ng-container matColumnDef="size">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Size </mat-header-cell>
+        <mat-cell *matCellDef="let row"> {{row.size | filesize}} </mat-cell>
+      </ng-container>
 
-    <ng-container matColumnDef="name">
-      <mat-header-cell *matHeaderCellDef mat-sort-header style="flex: 0 0 40%;"> Name </mat-header-cell>
-      <mat-cell *matCellDef="let row" style="flex: 0 0 40%;"> {{row.name}} </mat-cell>
-    </ng-container>
+      <ng-container matColumnDef="status">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Status </mat-header-cell>
+        <mat-cell *matCellDef="let row"> {{row.status}} </mat-cell>
+      </ng-container>
 
-    <ng-container matColumnDef="size">
-      <mat-header-cell *matHeaderCellDef mat-sort-header> Size </mat-header-cell>
-      <mat-cell *matCellDef="let row"> {{row.size | filesize}} </mat-cell>
-    </ng-container>
+      <ng-container matColumnDef="progress">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Progress </mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          <p-progressBar mode="determinate" class="progress-bar-small" [value]=row.progress [showValue]="false"></p-progressBar>
+        </mat-cell>
+      </ng-container>
 
-    <ng-container matColumnDef="status">
-      <mat-header-cell *matHeaderCellDef mat-sort-header> Status </mat-header-cell>
-      <mat-cell *matCellDef="let row"> {{row.status}} </mat-cell>
-    </ng-container>
+      <ng-container matColumnDef="actions">
+        <mat-header-cell *matHeaderCellDef mat-sort-header style="flex: 0 0 85px; text-align: center;"> Actions </mat-header-cell>
+        <mat-cell *matCellDef="let row" style="flex: 0 0 85px;">
+          <button mat-icon-button class="button-icon" disabled>
+            <mat-icon aria-label="Cancel file download">highlight_off</mat-icon>
+          </button>
+          <button mat-icon-button class="button-icon" disabled>
+            <mat-icon aria-label="Pause file download">pause_circle_outline</mat-icon>
+          </button>
+        </mat-cell>
+      </ng-container>
 
-    <ng-container matColumnDef="progress">
-      <mat-header-cell *matHeaderCellDef mat-sort-header> Progress </mat-header-cell>
-      <mat-cell *matCellDef="let row">
-        <p-progressBar mode="determinate" class="progress-bar-small" [value]=row.progress [showValue]="false"></p-progressBar>
-      </mat-cell>
-    </ng-container>
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+    </mat-table>
 
-    <ng-container matColumnDef="actions">
-      <mat-header-cell *matHeaderCellDef mat-sort-header style="flex: 0 0 85px; text-align: center;"> Actions </mat-header-cell>
-      <mat-cell *matCellDef="let row" style="flex: 0 0 85px;">
-        <button mat-icon-button class="button-icon" disabled>
-          <mat-icon aria-label="Cancel file download">highlight_off</mat-icon>
-        </button>
-        <button mat-icon-button class="button-icon" disabled>
-          <mat-icon aria-label="Pause file download">pause_circle_outline</mat-icon>
-        </button>
-      </mat-cell>
-    </ng-container>
-
-
-    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-    <!-- <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="selectRow($event, row);$event.stopPropagation()" [ngClass]="{'ui-table-row-selected': isSelected(row)}"></mat-row> -->
-  </mat-table>
-
-
-  <mat-paginator #paginator [length]="filesDatabase.data.length" [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]" style="margin-bottom: 20px;"></mat-paginator>
-  
+    <mat-paginator #paginator [length]="filesDatabase.data.length" [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]"
+      class="paginator"></mat-paginator>
   </div>
-
 </mat-expansion-panel>
