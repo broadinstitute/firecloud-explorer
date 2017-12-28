@@ -12,10 +12,10 @@ const uploadManager = (bucketName, fileList = [], access_token, win) => {
     fileList.forEach(file => {
         const contentType = mime.lookup(file.path) ? mime.lookup(file.path) : 'application/octet-stream';
         const size = file.size;
-        var str = progress({
+        var progressConf = progress({
             length: size
         });
-        str.on('progress', function(progress) {
+        progressConf.on('progress', function(progress) {
             file.progress = Math.round(progress.percentage);
             file.transferred = progress.transferred;
             win.webContents.send(constants.IPC_UPLOAD_STATUS, file);
@@ -46,7 +46,7 @@ const uploadManager = (bucketName, fileList = [], access_token, win) => {
                               }
                           });
                           reqConfig.setHeader('Content-Length', size);
-                          fs.createReadStream(file.path).pipe(str).pipe(reqConfig);
+                          fs.createReadStream(file.path).pipe(progressConf).pipe(reqConfig);
                     } else {
                         console.log(JSON.stringify(resp));
                         console.error("There was an error trying to connect to google");

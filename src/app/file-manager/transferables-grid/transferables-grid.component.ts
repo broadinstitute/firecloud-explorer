@@ -32,7 +32,7 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   generalUploadProgress = 0;
 
   constructor(
-    private downloadStatus: StatusService,
+    private statusService: StatusService,
     private zone: NgZone,
     private store: Store<AppState>,
     private registerDownload: DownloadValidatorService,
@@ -83,12 +83,12 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.dataSource = new FilesDataSource(this.filesDatabase, this.store, this.sort, this.paginator);
-    this.downloadStatus.updateProgress().subscribe(data => {
+    this.statusService.updateProgress().subscribe(data => {
       this.zone.run(() => {
         this.generalProgress = data;
       });
     });
-    this.downloadStatus.updateUploadProgress().subscribe(data => {
+    this.statusService.updateUploadProgress().subscribe(data => {
       this.zone.run(() => {
         this.generalUploadProgress = data;
       });
