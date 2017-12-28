@@ -160,7 +160,8 @@ h4.subtitle {
 
 [disabled].button-secondary.mat-raised-button {
   border: 1px solid mat-color($fcExplorer-primary, 400);
-  box-shadow: none !important;  
+  box-shadow: none !important;
+  background: transparent !important;  
   span {
     color: mat-color($fcExplorer-primary, 400);    
   }  
