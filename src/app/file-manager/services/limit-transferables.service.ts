@@ -18,17 +18,16 @@ export class LimitTransferablesService {
 
   public pendingItem(type: Type, status: ItemStatus): void {
     let items = new FilesDatabase(this.store).data;
-    if (!this.maxDownloadsAtSameTime(items)) {
+    if (!this.maxDownloadsAtSameTime(items, status)) {
       items = items.filter(item => item.type === type && item.status === ItemStatus.PENDING);
-      console.log('Pending Items ', items);
       this.proceedNextItem(items, type, status);
     }
   }
 
-  private maxDownloadsAtSameTime(items: Item[]): boolean {
+  private maxDownloadsAtSameTime(items: Item[], status: ItemStatus): boolean {
     let max = 0;
     items.forEach(item => {
-      if (item.status === ItemStatus.DOWNLOADING) {
+      if (item.status === status) {
         max++;
       }
     });
@@ -48,8 +47,6 @@ export class LimitTransferablesService {
       maxFiles = files;
     }
 
-    console.log('Max files ', maxFiles);
-
     maxFiles.forEach(item => {
       item.status = status;
       this.store.dispatch(new Transferables.UpdateItem(item));
@@ -68,10 +65,8 @@ export class LimitTransferablesService {
     if (files.length > 1 || files.length === 1) {
       item = files.splice(0, 1)[0];
 
-      console.log('Item at a time ', item);
-
       item.status = status;
-      this.store.dispatch(new Transferables.UpdateItem([item]));
+      this.store.dispatch(new Transferables.UpdateItem(item));
 
       if (type === Type.DOWNLOAD) {
         this.gcsService.downloadFiles([item]);

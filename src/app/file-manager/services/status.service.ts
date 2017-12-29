@@ -43,16 +43,25 @@ export class StatusService {
   private updateItem(data: Item, type: Type, status: ItemStatus) {
     const items = new FilesDatabase(this.store).data.
     filter(item => item.type === type);
-    for (let i = 0; i < items.length; i++) {
-      if (data.id === items[i].id) {
+    items.forEach(item => {
+      if (data.id === item.id) {
         this.store.dispatch(new Transferables.UpdateItemProgress(data));
       }
       if (data.progress === 100) {
         this.store.dispatch(new Transferables.UpdateItemCompleted(data));
-        console.log(data.name);
         this.limitTransferables.pendingItem(type, status);
       }
-    }
+    });
+
+    // for (let i = 0; i < items.length; i++) {
+    //   if (data.id === items[i].id) {
+    //     this.store.dispatch(new Transferables.UpdateItemProgress(data));
+    //   }
+    //   if (data.progress === 100) {
+    //     this.store.dispatch(new Transferables.UpdateItemCompleted(data));
+    //     this.limitTransferables.pendingItem(type, status);
+    //   }
+    // }
   }
 
   private generalProgress(type: Type): number {
