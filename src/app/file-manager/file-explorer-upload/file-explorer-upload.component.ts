@@ -17,6 +17,7 @@ import { ChangeDetectorRef } from '@angular/core';
 import { Type } from '@app/file-manager/models/type';
 import { ItemStatus } from '@app/file-manager/models/item-status';
 import { UUID } from 'angular2-uuid';
+import { StatusService } from '@app/file-manager/services/status.service';
 
 @Component({
   selector: 'app-file-explorer-upload',
@@ -35,13 +36,16 @@ export class FileExplorerUploadComponent implements OnInit {
   selectedFiles: TreeNode[] = [];
   selectedFile: TreeNode;
   uploadFiles: Item[] = [];
+  uploadInProgress = false;
 
   fileCount = 0;
   totalSize = 0;
 
   cols: any[];
 
-  constructor(private store: Store<AppState>,
+  constructor(
+    private statusService: StatusService,
+    private store: Store<AppState>,
     private gcsService: GcsService,
     private electronService: ElectronService,
     private dialog: MatDialog,
@@ -78,6 +82,17 @@ export class FileExplorerUploadComponent implements OnInit {
     });
 
     this.registerUpload.getLazyNodeContent(homeFolder);
+
+    this.statusService.updateUploadProgress().subscribe(data => {
+      console.log('DATA ' + data);
+      this.zone.run(() => {
+        if (data === 100) {
+          this.uploadInProgress = false;
+        } else {
+          this.uploadInProgress = true;
+        }
+      });
+    });
   }
 
   countFiles() {
@@ -231,5 +246,9 @@ export class FileExplorerUploadComponent implements OnInit {
     const dialogRef = this.dialog.open(FileUploadModalComponent, {
       width: '500px'
     });
+  }
+
+  disableButton() {
+    return this.uploadInProgress || this.fileCount <= 0;
   }
 }

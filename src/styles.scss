@@ -345,6 +345,14 @@ a.sidenav-link p {
   margin-top: 50px;
 }
 
+.warn-message {
+  margin-right: 40px;
+  line-height: 2.4rem;
+  display: inline;
+  font-weight: 700;
+  color: mat-color($fcExplorer-warn, 900); 
+}
+
 .status-box-left,
 .status-box-right {
   width: 50%;
