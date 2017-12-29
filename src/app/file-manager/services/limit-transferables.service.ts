@@ -7,6 +7,7 @@ import { FilesDatabase } from '../dbstate/files-database';
 import {ItemStatus} from '@app/file-manager/models/item-status';
 import {GcsService} from '@app/file-manager/services/gcs.service';
 import { Type } from '@app/file-manager/models/type';
+import { environment } from '@env/environment';
 
 @Injectable()
 export class LimitTransferablesService {
@@ -32,7 +33,7 @@ export class LimitTransferablesService {
       }
     });
 
-    if (max === 9) {
+    if (max === environment.LIMIT_TRANSFERABLES - 1) {
       return true;
     }
     return false;
@@ -41,8 +42,8 @@ export class LimitTransferablesService {
   public controlLimitItems(files: Item[], type: Type, status: ItemStatus): void {
     let maxFiles = [];
 
-    if (files.length > 10 ) {
-      maxFiles = files.splice(0, 10);
+    if (files.length > environment.LIMIT_TRANSFERABLES) {
+      maxFiles = files.splice(0, environment.LIMIT_TRANSFERABLES);
     } else {
       maxFiles = files;
     }
