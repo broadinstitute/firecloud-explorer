@@ -62,6 +62,11 @@
           <mat-icon class="transfer-icon" *ngIf="row.type == 'Download'">file_download</mat-icon>
           <mat-icon class="transfer-icon" *ngIf="row.type == 'Upload'">file_upload</mat-icon>
           {{row.status}}
+          <div *ngIf="row.status == 'Downloading' || row.status == 'Uploading'" class="progress-dots transfer-status">
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+          </div>
         </mat-cell>
       </ng-container>
 
