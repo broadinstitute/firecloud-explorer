@@ -195,7 +195,15 @@ h4.subtitle {
 .mat-paginator-increment {
   border-top: 2px solid mat-color($fcExplorer-primary, 700) !important;
   border-right: 2px solid mat-color($fcExplorer-primary, 700) !important;
-} 
+}
+
+.transfer-icon {
+  vertical-align: middle;
+  font-size: 1.2rem;
+  height: auto !important;
+  width: auto !important;
+  color: mat-color($fcExplorer-primary, 700); 
+}
 
 /*SIDENAV*/
 
@@ -342,7 +350,7 @@ a.sidenav-link p {
   width: 600px;
   border: 2px solid mat-color($fcExplorer-primary, 900); 
   align-self: center;
-  margin-top: 50px;
+  margin-top: 85px;
 }
 
 .warn-message {

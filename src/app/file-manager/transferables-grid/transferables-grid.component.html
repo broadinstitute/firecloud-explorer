@@ -58,7 +58,11 @@
 
       <ng-container matColumnDef="status">
         <mat-header-cell *matHeaderCellDef mat-sort-header> Status </mat-header-cell>
-        <mat-cell *matCellDef="let row"> {{row.status}} </mat-cell>
+        <mat-cell *matCellDef="let row">
+          <mat-icon class="transfer-icon" *ngIf="row.type == 'Download'">file_download</mat-icon>
+          <mat-icon class="transfer-icon" *ngIf="row.type == 'Upload'">file_upload</mat-icon>
+          {{row.status}}
+        </mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="progress">

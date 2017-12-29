@@ -16,8 +16,13 @@
     </mat-sidenav>
 
     <mat-sidenav-content>
-      <header>
-        <button mat-button *ngIf="isAuthenticated" [matMenuTriggerFor]="toolbarUserMenu" class="menu-item">
+      <header *ngIf="isAuthenticated">
+        <mat-icon class="help-icon" [matMenuTriggerFor]="helpMenu">help</mat-icon>
+        <mat-menu #helpMenu="matMenu" xPosition="before" [overlapTrigger]="false">
+          <button mat-menu-item (click)="openForumOnBrowser()" class="submenu-item">FC-Explorer Forum</button>
+        </mat-menu>
+
+        <button mat-button [matMenuTriggerFor]="toolbarUserMenu" class="menu-item">
           {{this.userEmail}} <mat-icon>arrow_drop_down</mat-icon>
         </button>
         <mat-menu #toolbarUserMenu="matMenu" xPosition="before" [overlapTrigger]="false">
@@ -32,6 +37,6 @@
   </mat-sidenav-container>
 </div>
 <div class="footer">
-  <div class="forum-link"><a (click)="openForumOnBrowser()">Support Forum</a></div>
+  <div class="forum-link"><a (click)="openForumOnBrowser()">FC-Explorer Forum</a></div>
   <div class="signature">&#169; {{year}} - Broad Institute</div>
 </div>
