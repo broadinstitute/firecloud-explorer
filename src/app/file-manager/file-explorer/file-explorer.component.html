@@ -34,7 +34,15 @@
   </div>
 
   <div class="ui-toolbar-group-right">
-    <div *ngIf="downloadInProgress" class="warn-message">Please wait, download in progress...</div>
+    <div *ngIf="downloadInProgress" class="warn-message">
+      Please wait, download in progress
+      <div class="progress-dots">
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+      </div>
+    </div>
+
     <button mat-raised-button (click)="selectionDone()" class="button-primary" [disabled]="disableButton()">
       <i class="material-icons">file_download</i>Download selection</button>
   </div>
