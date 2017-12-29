@@ -58,7 +58,11 @@
 
       <ng-container matColumnDef="status">
         <mat-header-cell *matHeaderCellDef mat-sort-header> Status </mat-header-cell>
-        <mat-cell *matCellDef="let row"> {{row.status}} </mat-cell>
+        <mat-cell *matCellDef="let row">
+          <mat-icon class="transfer-icon" *ngIf="row.type == 'Download'">file_download</mat-icon>
+          <mat-icon class="transfer-icon" *ngIf="row.type == 'Upload'">file_upload</mat-icon>
+          {{row.status}}
+        </mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="progress">
@@ -84,7 +88,7 @@
       <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
     </mat-table>
 
-    <mat-paginator #paginator [length]="filesDatabase.data.length" [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]"
+    <mat-paginator #paginator [length]="filesDatabase.data.length" [pageIndex]="0" [pageSize]="10" [pageSizeOptions]="[5, 10, 25, 50, 100]"
       class="paginator"></mat-paginator>
   </div>
 </mat-expansion-panel>

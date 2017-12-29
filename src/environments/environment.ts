@@ -16,5 +16,6 @@ export const environment = {
   TOKEN_URL: 'https://www.googleapis.com/oauth2/v4/token',
   GOOGLE_PROFILE_URL: 'https://www.googleapis.com/userinfo/v2/me',
   FIRECLOUD_API: 'https://api.firecloud.org/',
-  FIRECLOUD_URL: 'https://portal.firecloud.org/'
+  FIRECLOUD_URL: 'https://portal.firecloud.org/',
+  FORUM_URL: 'https://gatkforums.broadinstitute.org/firecloud/categories/fc-explorer'
 };

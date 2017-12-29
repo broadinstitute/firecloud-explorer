@@ -9,12 +9,23 @@ header {
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
+  align-items: center;
   height: 5vh;
 }
 
+.mat-icon.help-icon {
+  cursor: pointer;
+  font-size: 1.4rem !important;
+  transition: all 0.2s ease;
+}
+
+.mat-icon.help-icon:hover {
+  color: mat-color($fcExplorer-primary, 400);
+ }
+
 .menu-item {
-  margin: 0 25px;
-  padding: 0 10px 0 20px;
+  margin: 0 25px 0 10px;
+  padding: 0 5px 0 15px;
   text-align: right;
 }
 
@@ -68,10 +79,24 @@ header {
   position: absolute;  
   bottom: 0;
   z-index: 1;
-
-  .footer-signature {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 300;
+  
+  .signature {
     color: white;
     font-size: 0.9rem;
     line-height: 2rem;
+  }
+
+  .forum-link {
+    color: mat-color($fcExplorer-accent, 200);
+    font-size: 0.9rem;
+    line-height: 2rem;
+    margin-right: 25px;
+    transition: all 0.2s ease;
+
+    :hover {
+      color: mat-color($fcExplorer-accent);
+    }
   }
 }

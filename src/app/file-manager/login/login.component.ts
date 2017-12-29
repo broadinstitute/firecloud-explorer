@@ -73,7 +73,7 @@ export class LoginComponent implements OnInit {
         this.msgs.push({
           severity: 'warn',
           summary: 'Sorry, your Google account is not associated with FireCloud.',
-          detail: 'Sorry, your Google account is not associated with FireCloud. Please go to ' + this.fireCloudURL + ' to create one.'
+          detail: 'Please go to ' + this.fireCloudURL + ' to create one.'
         });
         break;
       default:
