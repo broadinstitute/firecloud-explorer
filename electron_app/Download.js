@@ -127,7 +127,7 @@ Download.prototype._computeDownloaded = function () {
     return 0;
   }
 
-  let downloaded = 0;
+  var downloaded = 0;
   this.meta.threads.forEach(function (thread) {
     downloaded += thread.position - thread.start;
   });
@@ -152,7 +152,7 @@ Download.prototype._computePastDownloaded = function () {
 
 // Should be called on start compute total size
 Download.prototype._computeTotalSize = function () {
-  let threads = this.meta.threads;
+  var threads = this.meta.threads;
 
   if (!threads) {
     return 0;
@@ -206,7 +206,7 @@ Download.prototype._computeFutureEta = function () {
 };
 
 Download.prototype._computeThreadStatus = function () {
-  let self = this;
+  var self = this;
 
   this.stats.threadStatus = {
     idle: 0,
@@ -249,14 +249,14 @@ Download.prototype.stop = function () {
 };
 
 Download.prototype.destroy = function () {
-  let self = this;
+  var self = this;
 
   this._destroyThreads();
 
   this.setStatus(-3);
 
-  let filePath = this.filePath;
-  let tmpFilePath = filePath;
+  var filePath = this.filePath;
+  var tmpFilePath = filePath;
   if (!filePath.match(/\.mtd$/)) {
     tmpFilePath += '.mtd';
   } else {
@@ -271,7 +271,7 @@ Download.prototype.destroy = function () {
 };
 
 Download.prototype.start = function () {
-  let self = this;
+  var self = this;
 
   self._reset();
   self._retryOptions._nbRetries = 0;
@@ -333,7 +333,7 @@ Download.prototype.start = function () {
 Download.prototype.resume = function () {
   this._reset();
 
-  let filePath = this.filePath;
+  var filePath = this.filePath;
   if (!filePath.match(/\.mtd$/)) {
     filePath += '.mtd';
   }

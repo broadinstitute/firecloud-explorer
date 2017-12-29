@@ -2,10 +2,10 @@ const Download = require('./Download');
 const Formatters = require('./Formatters');
 const util = require('util');
 
-let extend = function (target) {
-  let sources = [].slice.call(arguments, 1);
+var extend = function (target) {
+  var sources = [].slice.call(arguments, 1);
   sources.forEach(function (source) {
-    for (let prop in source) {
+    for (var prop in source) {
       target[prop] = source[prop];
     }
   });
@@ -38,7 +38,7 @@ Downloader.prototype._defaultOptions = {
 Downloader.prototype.download = function (url, filePath, options) {
   var options = extend({}, this._defaultOptions, options);
 
-  let dl = new Download();
+  var dl = new Download();
 
   dl.setUrl(url);
   dl.setFilePath(filePath);
@@ -49,7 +49,7 @@ Downloader.prototype.download = function (url, filePath, options) {
 };
 
 Downloader.prototype.resumeDownload = function (filePath) {
-  let dl = new Download();
+  var dl = new Download();
 
   if (!filePath.match(/\.mtd$/)) {
     filePath += '.mtd';
@@ -70,7 +70,7 @@ Downloader.prototype.restart = util.deprecate(function (filePath) {
 }, 'Downloader `restart(filePath)` is deprecated, please use `resumeDownload(filePath)` instead.');
 
 Downloader.prototype.getDownloadByUrl = function (url) {
-  let dlFound = null;
+  var dlFound = null;
 
   this._downloads.forEach(function (dl) {
     if (dl.url === url || (dl.meta && dl.meta.url && dl.meta.url == url)) {
@@ -82,14 +82,14 @@ Downloader.prototype.getDownloadByUrl = function (url) {
 };
 
 Downloader.prototype.getDownloadByFilePath = function (filePath) {
-  let dlFound = null;
+  var dlFound = null;
 
-  let mtdRegex = new RegExp('(.mtd)*$', 'g');
+  var mtdRegex = new RegExp('(.mtd)*$', 'g');
 
   filePath = filePath.replace(mtdRegex, '');
 
   this._downloads.forEach(function (dl) {
-    let dlFilePath = dl.filePath.replace(mtdRegex, '');
+    var dlFilePath = dl.filePath.replace(mtdRegex, '');
 
     if (dlFilePath === filePath) {
       dlFound = dl;
@@ -100,14 +100,14 @@ Downloader.prototype.getDownloadByFilePath = function (filePath) {
 };
 
 Downloader.prototype.removeDownloadByFilePath = function (filePath) {
-  let dlFound = false;
+  var dlFound = false;
 
-  let mtdRegex = new RegExp('(.mtd)*$', 'g');
+  var mtdRegex = new RegExp('(.mtd)*$', 'g');
 
   filePath = filePath.replace(mtdRegex, '');
 
-  for (let i = 0; i < this._downloads.length; i++) {
-    let dlFilePath = this._downloads[i].filePath.replace(mtdRegex, '');
+  for (var i = 0; i < this._downloads.length; i++) {
+    var dlFilePath = this._downloads[i].filePath.replace(mtdRegex, '');
 
     if (dlFilePath === filePath) {
       this._downloads.splice(i, 1);
