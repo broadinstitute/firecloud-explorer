@@ -32,9 +32,10 @@ export class FileUploadModalComponent {
       .map(name => name ? this.filterWorkspaces(name) : this.writableWorkspaces.slice());
   }
 
-  filterWorkspaces(selectedWorkspace: Workspace) {
-    if (selectedWorkspace.name != null && selectedWorkspace.name !== '') {
-      const workspaceName = selectedWorkspace.name.toLowerCase();
+  filterWorkspaces(selectedWorkspace) {
+    let workspaceName = selectedWorkspace.name !== undefined ? selectedWorkspace.name : selectedWorkspace;
+    if (workspaceName != null && workspaceName !== '') {
+       workspaceName = workspaceName.toLowerCase();
       return this.writableWorkspaces
       .filter(workspace => workspace.name.toLowerCase().includes(workspaceName));
     } else {
@@ -68,7 +69,8 @@ export class FileUploadModalComponent {
   }
 
   changeWorkspace() {
-    if (this.workspaceCtrl.value !== null && this.workspaceCtrl.value !== '' && this.workspaceCtrl.value !== undefined) {
+    if (this.workspaceCtrl.value !== null && this.workspaceCtrl.value !== '' &&
+        this.workspaceCtrl.value !== undefined && this.workspaceCtrl.value.bucketName !== undefined) {
       this.disableUpload = false;
     } else {
       this.disableUpload = true;
