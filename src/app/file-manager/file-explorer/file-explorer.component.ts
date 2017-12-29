@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, NgZone } from '@angular/core';
 import { Message, TreeNode, MenuItem } from 'primeng/primeng';
 import { HttpEventType, HttpResponse } from '@angular/common/http';
 import { Store } from '@ngrx/store';
@@ -14,6 +14,7 @@ import { GcsService } from '../services/gcs.service';
 import { FileDownloadModalComponent } from '../file-download-modal/file-download-modal.component';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { Type } from '@app/file-manager/models/type';
+import { StatusService } from '../services/status.service';
 
 
 @Component({
@@ -27,6 +28,7 @@ export class FileExplorerComponent implements OnInit {
   dataFile: Item;
   selectedFiles: TreeNode[] = [];
   selectedFile: TreeNode;
+  downloadInProgress = false;
 
   color = 'primary';
   mode = 'indeterminate';
@@ -38,6 +40,8 @@ export class FileExplorerComponent implements OnInit {
   cols: any[];
 
   constructor(
+    private statusService: StatusService,
+    private zone: NgZone,
     private filesService: FilesService,
     private firecloudService: FirecloudService,
     private dialog: MatDialog,
@@ -56,6 +60,15 @@ export class FileExplorerComponent implements OnInit {
         }
       }
     );
+    this.statusService.updateProgress().subscribe(data => {
+      this.zone.run(() => {
+        if (data === 100) {
+          this.downloadInProgress = false;
+        } else {
+          this.downloadInProgress = true;
+        }
+      });
+    });
   }
 
   countFiles() {
@@ -155,6 +168,10 @@ export class FileExplorerComponent implements OnInit {
       data: items
 
     });
+  }
+
+  disableButton() {
+    return this.downloadInProgress || this.fileCount <= 0;
   }
 
 }
