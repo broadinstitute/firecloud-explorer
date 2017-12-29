@@ -18,28 +18,30 @@
     <mat-sidenav-content>
       <header *ngIf="isAuthenticated">
         <mat-spinner *ngIf="false" class="progress-spinner" [diameter]="25"></mat-spinner>
-          
+
         <mat-icon class="help-icon" [matMenuTriggerFor]="helpMenu">help</mat-icon>
         <mat-menu #helpMenu="matMenu" xPosition="before" [overlapTrigger]="false">
           <button mat-menu-item (click)="openForumOnBrowser()" class="submenu-item">FC-Explorer Forum</button>
         </mat-menu>
 
         <button mat-button [matMenuTriggerFor]="toolbarUserMenu" class="menu-item">
-          {{this.userEmail}} <mat-icon>arrow_drop_down</mat-icon>
+          {{this.userEmail}}
+          <mat-icon>arrow_drop_down</mat-icon>
         </button>
         <mat-menu #toolbarUserMenu="matMenu" xPosition="before" [overlapTrigger]="false">
           <button mat-menu-item (click)="onLogoutClick()" class="submenu-item">Sign Out</button>
         </mat-menu>
       </header>
 
-
-      <div class="content">          
+      <div class="content">
         <router-outlet></router-outlet>
       </div>
     </mat-sidenav-content>
   </mat-sidenav-container>
 </div>
 <div class="footer">
-  <div class="forum-link"><a (click)="openForumOnBrowser()">FC-Explorer Forum</a></div>
+  <div class="forum-link">
+    <a (click)="openForumOnBrowser()">FC-Explorer Forum</a>
+  </div>
   <div class="signature">&#169; {{year}} - Broad Institute</div>
 </div>
