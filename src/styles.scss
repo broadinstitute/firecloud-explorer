@@ -404,7 +404,7 @@ a.sidenav-link p {
   padding: 0;
 }
 
-/*PROGRESS BAR*/
+/*PROGRESS*/
 
 .progress-bar .ui-widget-content,
 .progress-bar-small .ui-widget-content, {
@@ -427,6 +427,19 @@ a.sidenav-link p {
 .progress-bar-small .ui-widget-content {
   margin: 0 10px 0 0;
 }
+
+.progress-spinner,
+.mat-progress-spinner {
+  position: absolute !important;
+  top: 0;
+  left: 25px;
+}
+
+.progress-spinner circle,
+.mat-spinner circle {
+  stroke: mat-color($fcExplorer-accent);
+}
+
 
 /*ERROR MESSAGES*/
 

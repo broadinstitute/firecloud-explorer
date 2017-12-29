@@ -17,6 +17,8 @@
 
     <mat-sidenav-content>
       <header *ngIf="isAuthenticated">
+        <mat-spinner *ngIf="false" class="progress-spinner" [diameter]="25"></mat-spinner>
+          
         <mat-icon class="help-icon" [matMenuTriggerFor]="helpMenu">help</mat-icon>
         <mat-menu #helpMenu="matMenu" xPosition="before" [overlapTrigger]="false">
           <button mat-menu-item (click)="openForumOnBrowser()" class="submenu-item">FC-Explorer Forum</button>
@@ -30,7 +32,8 @@
         </mat-menu>
       </header>
 
-      <div class="content">
+
+      <div class="content">          
         <router-outlet></router-outlet>
       </div>
     </mat-sidenav-content>
