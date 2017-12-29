@@ -12,6 +12,7 @@ export const environment = {
   GOOGLE_PROFILE_URL: 'https://www.googleapis.com/userinfo/v2/me',
   FIRECLOUD_API: 'https://api.firecloud.org/',
   FIRECLOUD_URL: 'https://portal.firecloud.org/',
-  LIMIT_TRANSFERABLES: 10
+  LIMIT_TRANSFERABLES: 10,
+  FORUM_URL: 'https://gatkforums.broadinstitute.org/firecloud/categories/fc-explorer'
 };
 
