@@ -60,7 +60,7 @@ export class FileExplorerComponent implements OnInit {
         }
       }
     );
-    this.statusService.updateProgress().subscribe(data => {
+    this.statusService.updateDownloadProgress().subscribe(data => {
       this.zone.run(() => {
         if (data === 100) {
           this.downloadInProgress = false;

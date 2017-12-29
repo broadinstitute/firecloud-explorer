@@ -49,6 +49,7 @@ export class StatusService {
       }
       if (data.progress === 100) {
         this.store.dispatch(new Transferables.UpdateItemCompleted(data));
+        console.log(data.name);
         this.limitTransferables.pendingItem(type, status);
       }
     }

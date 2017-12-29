@@ -18,16 +18,32 @@ export class LimitTransferablesService {
 
   public pendingItem(type: Type, status: ItemStatus): void {
     let items = new FilesDatabase(this.store).data;
-    items = items.filter(item => item.type === type && item.status === ItemStatus.PENDING);
-    console.log('Pending Items ', items);
-    this.proceedNextItem(items, type, status);
+    if (!this.maxDownloadsAtSameTime(items)) {
+      items = items.filter(item => item.type === type && item.status === ItemStatus.PENDING);
+      console.log('Pending Items ', items);
+      this.proceedNextItem(items, type, status);
+    }
+  }
+
+  private maxDownloadsAtSameTime(items: Item[]): boolean {
+    let max = 0;
+    items.forEach(item => {
+      if (item.status === ItemStatus.DOWNLOADING) {
+        max++;
+      }
+    });
+
+    if (max === 9) {
+      return true;
+    }
+    return false;
   }
 
   public controlLimitItems(files: Item[], type: Type, status: ItemStatus): void {
     let maxFiles = [];
 
-    if (files.length > 1 ) {
-      maxFiles = files.splice(0, 2);
+    if (files.length > 10 ) {
+      maxFiles = files.splice(0, 10);
     } else {
       maxFiles = files;
     }
@@ -47,26 +63,21 @@ export class LimitTransferablesService {
   }
 
   private proceedNextItem(files: Item[], type: Type, status: ItemStatus): void {
-    let maxFiles = [];
+    let item: Item;
 
-    if (files.length > 1 ) {
-      maxFiles = files.splice(0, 1);
-    } else {
-      maxFiles = files;
-    }
+    if (files.length > 1 || files.length === 1) {
+      item = files.splice(0, 1)[0];
 
-    console.log('Max files ', maxFiles);
+      console.log('Item at a time ', item);
 
-    maxFiles.forEach(item => {
       item.status = status;
-      this.store.dispatch(new Transferables.UpdateItem(item));
-    });
+      this.store.dispatch(new Transferables.UpdateItem([item]));
 
-    if (type === Type.DOWNLOAD) {
-      this.gcsService.downloadFiles(maxFiles);
-    } else {
-      this.gcsService.uploadFiles(localStorage.getItem('uploadBucket'), maxFiles);
+      if (type === Type.DOWNLOAD) {
+        this.gcsService.downloadFiles([item]);
+      } else {
+        this.gcsService.uploadFiles(localStorage.getItem('uploadBucket'), [item]);
+      }
     }
-
   }
 }
