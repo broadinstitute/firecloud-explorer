@@ -52,16 +52,6 @@ export class StatusService {
         this.limitTransferables.pendingItem(type, status);
       }
     });
-
-    // for (let i = 0; i < items.length; i++) {
-    //   if (data.id === items[i].id) {
-    //     this.store.dispatch(new Transferables.UpdateItemProgress(data));
-    //   }
-    //   if (data.progress === 100) {
-    //     this.store.dispatch(new Transferables.UpdateItemCompleted(data));
-    //     this.limitTransferables.pendingItem(type, status);
-    //   }
-    // }
   }
 
   private generalProgress(type: Type): number {

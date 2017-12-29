@@ -117,6 +117,9 @@ export function TransferablesReducer(state = initialState, action: Action): Tran
                     item.transferred = action.payload.transferred;
                 }
             });
+            state.items.sort((item_1, item_2) => {
+              return item_1.progress - item_2.progress;
+            });
             return state;
 
         case TransferablesActions.UPDATE_ITEM_COMPLETED:
@@ -126,6 +129,9 @@ export function TransferablesReducer(state = initialState, action: Action): Tran
                 item.transferred = action.payload.size;
             }
           });
+          // state.items.sort((item_1, item_2) => {
+          //   return item_1.progress - item_2.progress;
+          // });
           return state;
 
       case TransferablesActions.UPDATE_ITEM_DOWNLOADING:
