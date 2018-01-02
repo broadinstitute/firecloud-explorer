@@ -119,14 +119,22 @@ export function TransferablesReducer(state = initialState, action: Action): Tran
             });
             return state;
 
-        case TransferablesActions.UPDATE_ITEM_STATUS:
-            state.items.filter(item => {
-                if (item.id === action.payload.id) {
-                    item.status = ItemStatus.COMPLETED;
-                    item.transferred = action.payload.size;
-                }
-            });
-            return state;
+        case TransferablesActions.UPDATE_ITEM_COMPLETED:
+          state.items.filter(item => {
+            if (item.id === action.payload.id) {
+                item.status = ItemStatus.COMPLETED;
+                item.transferred = action.payload.size;
+            }
+          });
+          return state;
+
+      case TransferablesActions.UPDATE_ITEM_DOWNLOADING:
+        state.items.filter(item => {
+          if (item.id === action.payload.id) {
+            item.status = ItemStatus.DOWNLOADING;
+          }
+        });
+        return state;
 
         case TransferablesActions.SELECT_ITEM:
             const sel_item = state.items.filter(item => {

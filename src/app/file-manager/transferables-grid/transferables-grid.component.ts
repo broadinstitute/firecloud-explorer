@@ -14,6 +14,9 @@ import { StatusService } from '../services/status.service';
 import { AppState } from '../dbstate/app-state';
 import { FilesDataSource } from '../dbstate/files-datasource';
 import { FilesDatabase } from '../dbstate/files-database';
+import { LimitTransferablesService } from '../services/limit-transferables.service';
+import { Type } from '@app/file-manager/models/type';
+import {ItemStatus} from '@app/file-manager/models/item-status';
 
 @Component({
   selector: 'app-transferalbes-grid',
@@ -36,7 +39,8 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
     private zone: NgZone,
     private store: Store<AppState>,
     private registerDownload: DownloadValidatorService,
-    private gcsService: GcsService
+    private gcsService: GcsService,
+    private limitTransferables: LimitTransferablesService
   ) {
     this.filesDatabase = new FilesDatabase(store);
   }
@@ -83,7 +87,7 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.dataSource = new FilesDataSource(this.filesDatabase, this.store, this.sort, this.paginator);
-    this.statusService.updateProgress().subscribe(data => {
+    this.statusService.updateDownloadProgress().subscribe(data => {
       this.zone.run(() => {
         this.generalProgress = data;
       });
@@ -131,11 +135,11 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   }
 
   startDownload(files: Item[]) {
-    this.gcsService.downloadFiles(files);
+    this.limitTransferables.controlLimitItems(files, Type.DOWNLOAD, ItemStatus.DOWNLOADING);
   }
 
   startUpload(files: Item[]) {
-    this.gcsService.uploadFiles(localStorage.getItem('uploadBucket'), files);
+    this.limitTransferables.controlLimitItems(files, Type.UPLOAD, ItemStatus.UPLOADING);
   }
 
 }

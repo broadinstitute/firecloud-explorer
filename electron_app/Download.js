@@ -70,7 +70,7 @@ Download.prototype.setFilePath = function (filePath) {
 };
 
 Download.prototype.setOptions = function (options) {
-  if (!options || options == {}) {
+  if (!options || options === {}) {
     return this.options = {};
   }
 
@@ -169,7 +169,7 @@ Download.prototype._computeStats = function () {
   this._computeFutureRemaining();
 
   // Only compute those stats when downloading
-  if (this.status == 1) {
+  if (this.status === 1) {
     this._computePresentTime();
     this._computePresentSpeed();
     this._computeFutureEta();
@@ -291,12 +291,12 @@ Download.prototype.start = function () {
 
   this.options.onEnd = function (err, result) {
     // If stopped or destroyed, do nothing
-    if (self.status == -2 || self.status == -3) {
+    if (self.status === -2 || self.status === -3) {
       return;
     }
 
     // If we encountered an error and it's not an "Invalid file path" error, we try to resume download "maxRetries" times
-    if (err && ('' + err).indexOf('Invalid file path') == -1 && self._retryOptions._nbRetries < self._retryOptions.maxRetries) {
+    if (err && ('' + err).indexOf('Invalid file path') === -1 && self._retryOptions._nbRetries < self._retryOptions.maxRetries) {
       self.setStatus(2);
       self._retryOptions._nbRetries++;
 

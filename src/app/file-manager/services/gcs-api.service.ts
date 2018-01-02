@@ -13,7 +13,8 @@ import 'rxjs/add/operator/retry';
 @Injectable()
 export class GcsApiService extends GcsService {
 
-  constructor(private http: HttpClient, private electronService: ElectronService) {
+  constructor(private http: HttpClient,
+              private electronService: ElectronService) {
     super();
   }
 
@@ -29,7 +30,7 @@ export class GcsApiService extends GcsService {
   }
 
   public downloadFiles(files: Item[]) {
-      this.electronService.ipcRenderer.send('start-download', files, SecurityService.getAccessToken());
+    this.electronService.ipcRenderer.send('start-download', files, SecurityService.getAccessToken());
   }
 
 }

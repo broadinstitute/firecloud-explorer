@@ -2,6 +2,7 @@ const Downloader = require('./Downloader');
 const path = require('path');
 const { handleFolder } = require('./helpers/handleDisk');
 const downloadStats = require('./helpers/downloadInfo').downloadStats;
+const handleEvents = require('./helpers/handleEvents');
 
 let filePath = '';
 
@@ -24,6 +25,7 @@ const processDownload = (access_token, item, folder, win) => {
   let dl = dl_test.download(item.mediaLink, filePath, setHeader(access_token));
   dl.start();
   downloadStats(dl, item, win);
+  handleEvents(dl, item);
 };
 
 const setHeader = (access_token) => {

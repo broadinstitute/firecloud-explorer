@@ -48,10 +48,10 @@ app.on('ready', function () {
   }
   // Show dev tools
   // Remove this line before distributing
-  // win.webContents.openDevTools()
+  //  win.webContents.openDevTools()
 
   // Remove window once app is closed
-  win.on('closed', function () {
+  win.on('close', function (event) {
     app.quit();
     win = null;
   });
@@ -138,4 +138,8 @@ app.on('window-all-closed', function () {
 
 app.on('before-quit', () => {
   win = null;
+});
+
+process.on('unhandledRejection', (reason, p) => {
+  console.log('Unhandled Rej at Promise:', p, '',reason);
 });
