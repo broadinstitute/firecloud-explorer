@@ -35,7 +35,7 @@ Downloader.prototype._defaultOptions = {
   range: '0-100', //(Default: '0-100')
 };
 
-Downloader.prototype.download = function (url, filePath, options) {
+Downloader.prototype.download = function (url, filePath, options, id) {
   var options = extend({}, this._defaultOptions, options);
 
   var dl = new Download();

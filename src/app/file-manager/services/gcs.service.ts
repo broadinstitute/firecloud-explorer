@@ -3,10 +3,16 @@ import { Item } from '../models/item';
 
 export abstract class GcsService {
 
-   abstract getBucketFiles(bucketName: String): Observable<any>;
+  abstract getBucketFiles(bucketName: String): Observable<any>;
 
-   abstract uploadFiles(bucketName: String, files: any[]);
+  abstract uploadFiles(bucketName: String, files: any[]);
 
-   abstract downloadFiles(files: Item[]);
+  abstract downloadFiles(files: Item[]);
+
+  abstract cancelAll();
+
+  abstract cancelDownloads();
+
+  abstract cancelUploads();
 
 }

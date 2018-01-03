@@ -29,11 +29,13 @@ import { RequestInterceptor } from './services/request.interceptor';
 import { environment } from '@env/environment';
 import { HttpClient } from '@angular/common/http';
 import { FileDownloadModalComponent } from './file-download-modal/file-download-modal.component';
+import { WarningModalComponent } from './warning-modal/warning-modal.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { FilterSizePipe } from './filters/filesize-filter';
 import { FileUploadModalComponent } from './file-upload-modal/file-upload-modal.component';
 import { FileExplorerUploadComponent } from './file-explorer-upload/file-explorer-upload.component';
 import {LimitTransferablesService} from '@app/file-manager/services/limit-transferables.service';
+import { MatDialog } from '@angular/material';
 
 @NgModule({
   imports: [
@@ -52,6 +54,7 @@ import {LimitTransferablesService} from '@app/file-manager/services/limit-transf
     FilterSizePipe,
     FileUploadModalComponent,
     FileExplorerUploadComponent,
+    WarningModalComponent,
   ],
   providers: [
     FilterSizePipe,
@@ -78,12 +81,12 @@ import {LimitTransferablesService} from '@app/file-manager/services/limit-transf
     },
     {
       provide: GcsService,
-      deps: [HttpClient, ElectronService],
-      useFactory(http: HttpClient, electronService: ElectronService) {
+      deps: [HttpClient, ElectronService, Store, MatDialog],
+      useFactory(http: HttpClient, electronService: ElectronService, store: Store<any>, dialog: MatDialog) {
         if (environment.testing) {
           return new GcsApiMockService();
         } else {
-          return new GcsApiService(http, electronService);
+          return new GcsApiService(http, electronService, store,  dialog);
         }
       }
     },
@@ -98,7 +101,8 @@ import {LimitTransferablesService} from '@app/file-manager/services/limit-transf
   ],
   entryComponents: [
     FileDownloadModalComponent,
-    FileUploadModalComponent
+    FileUploadModalComponent,
+    WarningModalComponent
   ],
 })
 export class FileManagerModule { }

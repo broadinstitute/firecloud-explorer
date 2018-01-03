@@ -8,15 +8,20 @@ const {
 const path = require('path');
 const url = require('url');
 const electronOauth2 = require('electron-oauth2');
-const downloadManager = require('./electron_app/DownloadManager');
+const {
+  downloadManager,
+  destroyDownloads
+} = require('./electron_app/DownloadManager');
 const lazyNodeReader = require('./electron_app/FileSystemReader').lazyNodeReader;
 const constants = require('./electron_app/helpers/enviroment');
-const uploadManager = require('./electron_app/UploadManager');
-const fs = require('fs');
 const os = require('os');
 const {
   handleDiskSpace
 } = require('./electron_app/helpers/handleDisk');
+const {
+    uploadManager,
+    uploadManagerCancel
+} = require('./electron_app/UploadManager');
 
 require('dotenv').config();
 
@@ -50,12 +55,6 @@ app.on('ready', function () {
   // Remove this line before distributing
   //  win.webContents.openDevTools()
 
-  // Remove window once app is closed
-  win.on('close', function (event) {
-    app.quit();
-    win = null;
-  });
-
   // ----- Google auth -----
   var googleConfig = {};
   var googleOptions = {};
@@ -70,7 +69,7 @@ app.on('ready', function () {
     webPreferences: {
       nodeIntegration: false
     }
-  }
+  };
 
   ipcMain.on(constants.IPC_CONFIRGURE_ACCOUNT, (event, googleConfig, googleOptions) => {
     this.googleConfig = googleConfig;
@@ -96,6 +95,14 @@ app.on('ready', function () {
 
   ipcMain.on(constants.IPC_START_UPLOAD, (event, bucketName, files, access_token) => {
     uploadManager(bucketName, files, access_token, win);
+  });
+  
+  ipcMain.on(constants.IPC_UPLOAD_CANCEL, (event, file, access_token) => {
+    uploadManagerCancel(file, access_token);
+  });
+  
+  ipcMain.on(constants.IPC_DOWNLOAD_CANCEL, (event) => {
+    destroyDownloads();
   });
 
   ipcMain.on(constants.IPC_GET_NODE_CONTENT, (event, nodePath) => {
@@ -126,7 +133,7 @@ app.on('activate', () => {
   if (win === null) {
     createWindow();
   }
-})
+});
 
 app.on('window-all-closed', function () {
   if (process.platform != 'darwin') {
@@ -134,10 +141,6 @@ app.on('window-all-closed', function () {
   }
   process.exit();
   app.exit(0);
-});
-
-app.on('before-quit', () => {
-  win = null;
 });
 
 process.on('unhandledRejection', (reason, p) => {

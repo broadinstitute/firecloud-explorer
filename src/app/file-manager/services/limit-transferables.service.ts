@@ -33,7 +33,7 @@ export class LimitTransferablesService {
       }
     });
 
-    if (max === environment.LIMIT_TRANSFERABLES - 1) {
+    if (max === environment.LIMIT_TRANSFERABLES) {
       return true;
     }
     return false;

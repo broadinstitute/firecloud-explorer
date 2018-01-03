@@ -1,4 +1,4 @@
-import { Component, HostBinding, OnDestroy, OnInit, NgZone } from '@angular/core';
+import { Component, HostBinding, OnDestroy, OnInit, NgZone, HostListener } from '@angular/core';
 import { OverlayContainer } from '@angular/cdk/overlay';
 import { Store } from '@ngrx/store';
 import { Subject } from 'rxjs/Subject';
@@ -13,6 +13,12 @@ import { login, logout, selectorAuth, routerTransition } from '@app/core';
 import { environment } from '@env/environment';
 
 import { selectorSettings } from './settings';
+import { MatDialog, MAT_DIALOG_DATA  } from '@angular/material';
+import { WarningModalComponent } from '@app/file-manager/warning-modal/warning-modal.component';
+import { FilesDatabase } from '@app/file-manager/dbstate/files-database';
+import { ItemStatus } from '@app/file-manager/models/item-status';
+import { GcsService } from '@app/file-manager/services/gcs.service';
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -34,15 +40,39 @@ export class AppComponent implements OnInit, OnDestroy {
   isAuthenticated;
 
   constructor(
+    private dialog: MatDialog,
     public overlayContainer: OverlayContainer,
     private store: Store<any>,
     private router: Router,
-    private electronService: ElectronService
+    private electronService: ElectronService,
+    private gcsService: GcsService
   ) {
     AppComponent.updateUserEmail.subscribe(email => {
       this.userEmail = email;
     });
    }
+
+  @HostListener('window:beforeunload')
+  checkBeforeClose() {
+    event.preventDefault();
+    const items = new FilesDatabase(this.store).data.
+    filter(item => item.status === ItemStatus.DOWNLOADING || item.status === ItemStatus.UPLOADING);
+    if (items.length > 0) {
+      const dialogRef = this.dialog.open(WarningModalComponent, {
+        width: '500px',
+        disableClose: false,
+        data: 'quit'
+      });
+      dialogRef.afterClosed().subscribe(result => {
+        if (result.exit) {
+          this.gcsService.cancelAll();
+          this.electronService.process.exit(0);
+        }
+      });
+     return false;
+    }
+   return true;
+  }
 
   ngOnInit(): void {
     this.store
@@ -71,10 +101,28 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   onLogoutClick() {
+    const items = new FilesDatabase(this.store).data.
+    filter(item => item.status === ItemStatus.DOWNLOADING || item.status === ItemStatus.UPLOADING);
+    if (items.length > 0) {
+      const dialogRef = this.dialog.open(WarningModalComponent, {
+        width: '500px',
+        disableClose: false,
+        data: 'logout'
+      });
+      dialogRef.afterClosed().subscribe(result => {
+        if (result.exit) {
+          this.gcsService.cancelAll();
+          this.logout();
+        }
+      });
+    } else {
+      this.logout();
+    }
+  }
+  logout() {
     const redirect = '/login';
     SecurityService.removeAccessToken();
     this.store.dispatch(logout());
     this.router.navigate([redirect]);
   }
-
 }
