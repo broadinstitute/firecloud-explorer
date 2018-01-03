@@ -10,7 +10,7 @@
     <p-progressBar mode="determinate" class="progress-bar" [value]="generalProgress" [showValue]="false"></p-progressBar>
 
     <div class="flex-container end actions">
-      <button mat-raised-button (click)="pauseSelected()" class="button-secondary">
+      <button mat-raised-button (click)="pauseSelected()" class="button-secondary" [disabled]="!downloadInProgress">
         <i class="material-icons">highlight_off</i>Cancel Download</button>
       <!-- <button mat-raised-button (click)="resumeSelected()" class="button-primary">
         <i class="material-icons">pause_circle_outline</i>Pause all</button> -->
@@ -26,7 +26,7 @@
     <p-progressBar mode="determinate" class="progress-bar" [value]="generalUploadProgress" [showValue]="false"></p-progressBar>
 
     <div class="flex-container end actions">
-      <button mat-raised-button (click)="pauseSelected()" class="button-secondary">
+      <button mat-raised-button (click)="pauseSelected()" class="button-secondary" [disabled]="!uploadInProgress">
         <i class="material-icons">highlight_off</i>Cancel Upload</button>
       <!-- <button mat-raised-button (click)="resumeSelected()" class="button-primary">
         <i class="material-icons">pause_circle_outline</i>Pause all</button> -->
@@ -36,7 +36,10 @@
 
 <mat-expansion-panel #expa class="expand-panel">
   <mat-expansion-panel-header>
-    <mat-panel-title>{{ expa.expanded ? 'Hide detailed transfer list' : 'Show detailed download list'}}</mat-panel-title>
+        <mat-panel-title>
+          <mat-icon>{{expa.expanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}</mat-icon>
+          {{ expa.expanded ? 'Hide detailed transfer list' : 'Show detailed transfer list'}}
+        </mat-panel-title>
   </mat-expansion-panel-header>
 
   <div class="table-container flex-container column">

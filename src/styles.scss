@@ -393,10 +393,19 @@ a.sidenav-link p {
 .mat-expansion-panel-header.ng-animating {
   padding: 0 !important;
   transition: all 0.2s ease;
+  font-size: 1rem;
 }
 
 .expand-panel.mat-expansion-panel .mat-expansion-panel-header:hover{
-  color: mat-color($fcExplorer-primary, 500); 
+  color: mat-color($fcExplorer-accent); 
+}
+
+.expand-panel .mat-expansion-panel-header .mat-expansion-indicator {
+  display: none;
+}
+
+.expand-panel .mat-expansion-panel-header .mat-icon {
+  margin-right: 5px;
 }
 
 .expand-panel .mat-expansion-panel-body {

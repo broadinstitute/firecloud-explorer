@@ -16,7 +16,7 @@ const lazyNodeReader = (dir, fileList = []) => {
             data: {
               name: file,
               path: path.join(dir, file),
-              size: getSizeFromFolder(path.join(dir, file)),
+              size: '-',
               type: 'Folder',
               created: stat.birthTime,
               updated: stat.mtime

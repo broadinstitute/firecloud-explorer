@@ -1,4 +1,4 @@
-<h1>Select file(s) to download</h1>
+<h1>Select files to download</h1>
 
 <p-growl [value]="msgs"></p-growl>
 
@@ -30,7 +30,7 @@
 
 <p-toolbar styleClass="toolbar-accent">
   <div class="ui-toolbar-group-left">
-    <h3 class="subtitle">Selected: {{ fileCount }} file(s). Total size: {{ totalSize | filesize }} </h3>
+    <h3 class="subtitle">Selected: {{ fileCount }} file<span *ngIf="fileCount !== 1">s</span>. Total size: {{ totalSize | filesize }} </h3>
   </div>
 
   <div class="ui-toolbar-group-right">

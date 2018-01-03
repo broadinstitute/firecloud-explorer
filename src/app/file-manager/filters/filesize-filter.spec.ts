@@ -25,8 +25,8 @@ describe('FilterSizePipe', () => {
     expect(filterSizePipe.transform(1530492)).toBe(1.46 +  filterSizePipe.MB);
   }));
 
-  it('returns 0 when the value is not valid', inject([FilterSizePipe], (filterSizePipe: FilterSizePipe) => {
-    expect(filterSizePipe.transform('Test')).toBe(0 +  filterSizePipe.BYTES);
+  it('returns - when the value is not valid', inject([FilterSizePipe], (filterSizePipe: FilterSizePipe) => {
+    expect(filterSizePipe.transform('Test')).toBe(' - ');
   }));
 
 });

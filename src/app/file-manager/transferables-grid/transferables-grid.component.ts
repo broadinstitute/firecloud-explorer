@@ -33,6 +33,8 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   filesDatabase: FilesDatabase;
   generalProgress = 0;
   generalUploadProgress = 0;
+  uploadInProgress = false;
+  downloadInProgress = false;
 
   constructor(
     private statusService: StatusService,
@@ -90,11 +92,21 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
     this.statusService.updateDownloadProgress().subscribe(data => {
       this.zone.run(() => {
         this.generalProgress = data;
+        if (data === 100) {
+          this.downloadInProgress = false;
+        } else {
+          this.downloadInProgress = true;
+        }
       });
     });
     this.statusService.updateUploadProgress().subscribe(data => {
       this.zone.run(() => {
         this.generalUploadProgress = data;
+        if (data === 100) {
+          this.uploadInProgress = false;
+        } else {
+          this.uploadInProgress = true;
+        }
       });
     });
   }

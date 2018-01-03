@@ -13,7 +13,7 @@ export class FilterSizePipe implements PipeTransform {
 
     transform(size): string {
     if (isNaN(size)) {
-      return 0 +  this.BYTES;
+      return ' - ';
     } else if (size < this.LIMIT) {
       return size + this.BYTES;
     }
