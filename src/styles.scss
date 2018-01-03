@@ -147,6 +147,11 @@ h4.subtitle {
   transition: box-shadow .3s;  
 }
 
+.button-secondary.mat-raised-button .mat-button-focus-overlay {
+  background: transparent !important;
+  color: mat-color($fcExplorer-accent) !important;
+}
+
 .button-primary.mat-raised-button:hover,
 .button-secondary.mat-raised-button:hover {
   box-shadow: 0 0 6px mat-color($fcExplorer-primary, 400) !important;

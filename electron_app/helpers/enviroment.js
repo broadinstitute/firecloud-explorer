@@ -10,5 +10,7 @@ module.exports = Object.freeze({
   IPC_START_UPLOAD: 'start-upload',
   GOOGLE_API: 'https://www.googleapis.com/upload/storage/v1/b/',
   IPC_VERIFY_BEFORE_DOWNLOAD: 'verify-before-download',
-  IPC_UPLOAD_STATUS: 'upload-status'
+  IPC_UPLOAD_STATUS: 'upload-status',
+  IPC_UPLOAD_CANCEL: 'upload-cancel',
+  IPC_DOWNLOAD_CANCEL: 'download-cancel',
 });

@@ -15,6 +15,7 @@ export const SELECT_ITEM = '[Transferables] Select Item';
 export const UPDATE_ITEM_PROGRESS = '[Transferables] Update Item Progress';
 export const UPDATE_ITEM_COMPLETED = '[Transferables] Update Item Completed';
 export const UPDATE_ITEM_DOWNLOADING = '[Transferables] Update Item Downloading';
+export const UPDATE_ITEM_CANCELED =  '[Transferables] Update Item Canceled';
 
 export class Load implements Action {
     readonly type = LOAD;
@@ -87,6 +88,12 @@ export class UpdateItemDownloading implements Action {
   constructor(public payload: any) { }
 }
 
+
+export class UpdateItemCanceled implements Action {
+    readonly type = UPDATE_ITEM_CANCELED;
+
+    constructor(public payload: any) { }
+  }
 export type All
     = Load
     | Filter
@@ -102,4 +109,5 @@ export type All
     | UpdateItemProgress
     | UpdateItemCompleted
     | UpdateItemDownloading
+    | UpdateItemCanceled
     ;

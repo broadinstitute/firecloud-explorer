@@ -21,4 +21,9 @@ export class GcsApiMockService extends GcsService {
 
   public downloadFiles(files: Item[]) {}
 
+  public cancelAll() {}
+
+  public cancelDownloads() {}
+
+  public cancelUploads() {}
 }

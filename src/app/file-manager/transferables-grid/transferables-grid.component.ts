@@ -127,7 +127,12 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   retrySelected() {
   }
 
-  abortSelected() {
+  cancelUploads() {
+    this.gcsService.cancelUploads();
+  }
+
+  cancelDownloads() {
+    this.gcsService.cancelDownloads();
   }
 
   stopAll() {

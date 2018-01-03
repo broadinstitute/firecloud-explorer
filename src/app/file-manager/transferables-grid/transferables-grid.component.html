@@ -10,7 +10,8 @@
     <p-progressBar mode="determinate" class="progress-bar" [value]="generalProgress" [showValue]="false"></p-progressBar>
 
     <div class="flex-container end actions">
-      <button mat-raised-button (click)="pauseSelected()" class="button-secondary" [disabled]="!downloadInProgress">
+      <button mat-raised-button (click)="cancelDownloads()" class="button-secondary" [disabled]="!downloadInProgress">
+
         <i class="material-icons">highlight_off</i>Cancel Download</button>
       <!-- <button mat-raised-button (click)="resumeSelected()" class="button-primary">
         <i class="material-icons">pause_circle_outline</i>Pause all</button> -->
@@ -26,7 +27,7 @@
     <p-progressBar mode="determinate" class="progress-bar" [value]="generalUploadProgress" [showValue]="false"></p-progressBar>
 
     <div class="flex-container end actions">
-      <button mat-raised-button (click)="pauseSelected()" class="button-secondary" [disabled]="!uploadInProgress">
+      <button mat-raised-button (click)="cancelUploads()" class="button-secondary" [disabled]="!uploadInProgress">
         <i class="material-icons">highlight_off</i>Cancel Upload</button>
       <!-- <button mat-raised-button (click)="resumeSelected()" class="button-primary">
         <i class="material-icons">pause_circle_outline</i>Pause all</button> -->
