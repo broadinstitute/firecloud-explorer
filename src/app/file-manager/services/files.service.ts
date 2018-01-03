@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { TreeNode } from 'primeng/primeng';
-import { environment } from '@env/environment';
-import { Observable } from 'rxjs/Observable';
+import { GcsService } from './gcs.service';
+import { Observable } from 'rxjs/Rx';
+import { FirecloudService } from './firecloud.service';
+import { FileData } from '../models/filedata';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/retry';
@@ -13,33 +14,28 @@ export class FilesService {
     files = {};
     isBottom = true;
 
-    constructor(private http: HttpClient) { }
+    constructor(private gcsService: GcsService, private firecloudService: FirecloudService) { }
 
-    getFiles() {
-        return this.http.get<any>('assets/demo/files.json')
-            .toPromise()
-            .then(res => <TreeNode[]>res.data);
-    }
-
-    public getBucketFiles(): Observable<any> {
-        const url = 'https://www.googleapis.com/storage/v1/b/consent-bucket/o';
-        return this.http.get(url)
-            .map((resp: any) => {
-                let arbol: TreeNode[] = [];
-
-                resp.items.forEach(item => {
-                    this.isBottom = true;
-                    arbol = [...this.processTree(arbol, item)];
-                    const files = {};
+    public getBucketFiles(isWorkspacePublic: boolean): Observable<Observable<TreeNode[]>> {
+        return this.firecloudService.getUserFirecloudWorkspaces(isWorkspacePublic).map(
+            resp => {
+             if (resp != null && resp.length > 0) {
+                const observables: Observable<any>[] = [];
+                const workspacesNameMap: Map<string, string> = new Map<string, string>();
+                localStorage.setItem('workspaces', JSON.stringify(resp));
+                resp.forEach(workspace => {
+                    workspacesNameMap.set(workspace.bucketName, workspace.name);
+                    observables.push(this.gcsService.getBucketFiles(workspace.bucketName));
                 });
-                return arbol;
-            });
+
+                const rootTree: TreeNode[] = [];
+                return this.processBucketContent(observables, rootTree, workspacesNameMap);
+             }
+          });
     }
 
     private processTree(arbol: TreeNode[], item: any): TreeNode[] {
         const path: string = 'root/' + item.name;
-
-        const paths: string[] = path.split('/');
         return this.controlTree(arbol, item, path);
     }
 
@@ -88,19 +84,74 @@ export class FilesService {
         return node;
     }
 
-    createNode(item: any, path: string): TreeNode {
+    /**
+     * This method is for the case in which the GCS
+     * don't send us the file structure
+     * @param treeLocal
+     * @param item
+     */
+    private createFileNode(treeLocal: TreeNode[], item: any): TreeNode[] {
         const node: TreeNode = {};
-        node.data = {
+        const fileData: FileData = this.getFileData(item, item.name.split('/')[item.name.split('/').length - 1]);
+        node.data = fileData;
+        treeLocal.push(node);
+        return treeLocal;
+    }
+
+    private createNode(item: any, path: string): TreeNode {
+        return {data: this.getFileData(item, path)};
+    }
+
+    private getFileData(item: any, name: string) {
+        const fileData: FileData = {
             id: item.id,
             selfLink: item.selfLink,
+            name: name,
+            mediaLink: item.mediaLink,
             bucket: item.bucket,
-            name: item.name,
-            path: path,
-            size: item.size,
+            created: item.timeCreated,
+            updated: item.updated,
+            path: item.workspaceName + '/' + item.name,
+            size: parseFloat(item.size),
             type: (<string>item.name).endsWith('/') ? 'Folder' : 'File',
             leaf: true
         };
-        return node;
+        return fileData;
     }
 
+    private initializeContentBucket(contentBucket, workspaceName, bucketSize): TreeNode {
+        contentBucket.data = {
+            name: workspaceName,
+            leaf: true,
+            size: bucketSize
+        };
+        return contentBucket;
+    }
+
+    private processBucketContent(observables: Observable<any>[], rootTree: TreeNode[], workspacesMap: Map<string, string>) {
+      return Observable.forkJoin(observables)
+        .map((results: any) => {
+         results.forEach(bucket => {
+            if (bucket.items !== undefined) {
+                const contentBucket: TreeNode = {};
+                let filesBucket: TreeNode[] = [];
+                const bucketName = bucket.items[0].bucket;
+                const workspaceName = workspacesMap.get(bucketName);
+                let bucketSize = 0;
+                bucket.items.forEach(item => {
+                    this.isBottom = true;
+                    item.workspaceName = workspaceName;
+                    bucketSize += parseFloat(item.size);
+                    if (!item.name.endsWith('/')) {
+                        filesBucket = [...this.createFileNode(filesBucket, item)];
+                    }
+                });
+                contentBucket.children = [...filesBucket];
+                this.initializeContentBucket(contentBucket, workspaceName, bucketSize);
+                rootTree.push(contentBucket);
+            }
+        });
+        return rootTree;
+      });
+    }
 }

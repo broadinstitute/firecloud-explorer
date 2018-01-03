@@ -1,6 +1,6 @@
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
   MatButtonModule,
   MatToolbarModule,
@@ -9,6 +9,7 @@ import {
   MatTabsModule,
   MatInputModule,
   MatProgressSpinnerModule,
+  MatProgressBarModule,
   MatChipsModule,
   MatSidenavModule,
   MatCheckboxModule,
@@ -18,13 +19,13 @@ import {
   MatTooltipModule,
   MatExpansionModule,
   MatPaginatorModule,
-  MatRadioModule
+  MatRadioModule,
+  MatTableModule,
+  MatAutocompleteModule
 } from '@angular/material';
 
 // primeng
 import {
-  ButtonModule,
-  CheckboxModule,
   ProgressBarModule,
   ToolbarModule,
   TabViewModule,
@@ -33,20 +34,22 @@ import {
   TreeTableModule,
   TreeNode,
   SharedModule as PrimeNgSharedModule,
-  MenuModule
+  MenuModule,
+  MessagesModule
 } from 'primeng/primeng';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
-
+    ReactiveFormsModule,
     MatButtonModule,
     MatToolbarModule,
     MatSelectModule,
     MatTabsModule,
     MatInputModule,
     MatProgressSpinnerModule,
+    MatProgressBarModule,
     MatChipsModule,
     MatCardModule,
     MatSidenavModule,
@@ -58,45 +61,9 @@ import {
     MatExpansionModule,
     MatPaginatorModule,
     MatRadioModule,
+    MatTableModule,
+    MatAutocompleteModule,
 
-    ButtonModule,
-    CheckboxModule,
-    ProgressBarModule,
-    ToolbarModule,
-    TabViewModule,
-    DataListModule,
-    // SidebarModule,
-    TreeTableModule,
-    PrimeNgSharedModule,
-    MenuModule
-  ],
-  declarations: [
-
-  ],
-  exports: [
-    CommonModule,
-    FormsModule,
-
-    MatButtonModule,
-    MatMenuModule,
-    MatTabsModule,
-    MatChipsModule,
-    MatInputModule,
-    MatProgressSpinnerModule,
-    MatCheckboxModule,
-    MatCardModule,
-    MatSidenavModule,
-    MatListModule,
-    MatSelectModule,
-    MatToolbarModule,
-    MatIconModule,
-    MatTooltipModule,
-    MatExpansionModule,
-    MatPaginatorModule,
-    MatRadioModule,
-
-    ButtonModule,
-    CheckboxModule,
     ProgressBarModule,
     ToolbarModule,
     TabViewModule,
@@ -105,6 +72,45 @@ import {
     TreeTableModule,
     PrimeNgSharedModule,
     MenuModule,
+    MessagesModule
+  ],
+  declarations: [
+
+  ],
+  exports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatButtonModule,
+    MatMenuModule,
+    MatTabsModule,
+    MatChipsModule,
+    MatInputModule,
+    MatProgressSpinnerModule,
+    MatProgressBarModule,
+    MatCheckboxModule,
+    MatCardModule,
+    MatSidenavModule,
+    MatListModule,
+    MatSelectModule,
+    MatToolbarModule,
+    MatIconModule,
+    MatTooltipModule,
+    MatExpansionModule,
+    MatPaginatorModule,
+    MatRadioModule,
+    MatTableModule,
+    MatAutocompleteModule,
+
+    ProgressBarModule,
+    ToolbarModule,
+    TabViewModule,
+    DataListModule,
+    // SidebarModule,
+    TreeTableModule,
+    PrimeNgSharedModule,
+    MenuModule,
+    MessagesModule,
 
   ],
   schemas: [

@@ -1,0 +1,22 @@
+<div class="flex-container center">
+    <p-toolbar styleClass="toolbar-accent toolbar-login">
+        <div id="title" class="logo">
+            <span class="bold">FC</span>Explorer
+        </div>
+        <p class="aclaration">Login using your Google account associated with
+            <span class="medium">FireCloud</span>
+        </p>
+        <div class="flex-container center">
+            <button [disabled]="isSubmitted" mat-raised-button class="button-primary" (click)="logIn()">Sign In</button>
+        </div>
+    </p-toolbar>
+</div>
+
+<div class="flex-container center">
+    <p-messages class="error-messages" [(value)]="msgs"></p-messages>
+</div>
+
+<div class="flex-container center">
+    <p class="login-message">Not a FireCloud user yet? Please go to:
+        <span class="bold"><a (click)="openFcOnBrowser()">{{fireCloudURL}}</a></span> to create a user account.</p>
+</div>

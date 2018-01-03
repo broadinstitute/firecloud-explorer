@@ -1,20 +1,22 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, NgZone } from '@angular/core';
 import { Message, TreeNode, MenuItem } from 'primeng/primeng';
-
 import { HttpEventType, HttpResponse } from '@angular/common/http';
-
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs/Observable';
-import * as Downloadables from '../actions/downloadables.actions';
+import * as Transferables from '../actions/transferables.actions';
 import { Item } from '../models/item';
-import { DownloadableState, DownloadablesReducer } from '../reducers/downloadables.reducer';
-
+import { AppState } from '../dbstate/app-state';
+import { TransferableState, TransferablesReducer } from '../reducers/transferables.reducer';
 import { FilesService } from '../services/files.service';
+import { FilterSizePipe } from '../filters/filesize-filter';
+import { FirecloudService } from '../services/firecloud.service';
 import { GcsService } from '../services/gcs.service';
+import { FileDownloadModalComponent } from '../file-download-modal/file-download-modal.component';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { Type } from '@app/file-manager/models/type';
+import { StatusService } from '../services/status.service';
 
-interface AppState {
-  downloadables: DownloadableState;
-}
+
 @Component({
   selector: 'app-file-explorer',
   templateUrl: './file-explorer.component.html',
@@ -22,92 +24,72 @@ interface AppState {
 })
 export class FileExplorerComponent implements OnInit {
   msgs: Message[];
-
-  @Output('done') done: EventEmitter<any> = new EventEmitter();
-
-  // files: Observable<TreeNode[]>;
   files: TreeNode[];
-  workspaces: any[];
-
-  selectedFiles: TreeNode[];
+  dataFile: Item;
+  selectedFiles: TreeNode[] = [];
   selectedFile: TreeNode;
+  downloadInProgress = false;
+
+  color = 'primary';
+  mode = 'indeterminate';
+  value = 50;
 
   fileCount = 0;
-  fileSize = 0;
+  totalSize = 0;
 
-  archivos: TreeNode[];
-
-  items: MenuItem[];
   cols: any[];
 
-  constructor(private store: Store<AppState>,
+  constructor(
+    private statusService: StatusService,
+    private zone: NgZone,
     private filesService: FilesService,
-    private gcsService: GcsService
+    private firecloudService: FirecloudService,
+    private dialog: MatDialog,
+    private filterSize: FilterSizePipe,
+    private store: Store<AppState>
   ) {
 
   }
   ngOnInit() {
-
-    // this.files = this.gcsService.getBucketFiles();
-
-    // this.filesService.getWorkspaces(false)
-    //   .subscribe(
-    //   event => {
-
-    //     if (event.type === HttpEventType.Sent) {
-    //       console.log("Request Sent ...");
-    //     }
-    //     if (event.type === HttpEventType.ResponseHeader) {
-    //       console.log("Response Headers received ...");
-    //     }
-
-    //     if (event.type === HttpEventType.UploadProgress) {
-    //       // This is an upload progress event. Compute and show the % done:
-    //       const percentDone = Math.round(100 * event.loaded / event.total);
-    //       console.log(`File is ${percentDone}% uploaded.`);
-    //     }
-
-    //     if (event.type === HttpEventType.DownloadProgress) {
-    //       // This is an upload progress event. Compute and show the % done:
-    //       const percentDone = Math.round(100 * event.loaded / event.total);
-    //       console.log(JSON.stringify(event));
-    //       console.log(`File is ${percentDone}% downloaded.`);
-    //     }
-
-    //     if (event instanceof HttpResponse) {
-    //       console.log('File is completely uploaded!');
-    //       this.workspaces = event.body;
-    //     }
-    //   },
-    //   error => {
-    //     console.log("-----------------> " + JSON.stringify(error));
-    //   });
-
-    this.filesService.getBucketFiles().subscribe(
+    this.filesService.getBucketFiles(false).subscribe(
       resp => {
-        this.files = resp;
+        if (resp !== undefined) {
+          resp.subscribe(r => {
+            this.files = r;
+          });
+        }
       }
     );
+    this.statusService.updateDownloadProgress().subscribe(data => {
+      this.zone.run(() => {
+        if (data === 100) {
+          this.downloadInProgress = false;
+        } else {
+          this.downloadInProgress = true;
+        }
+      });
+    });
+  }
 
-    this.cols = [
-      { field: 'path', header: 'Path', footer: 'Path' },
-      { field: 'name', header: 'Name', footer: 'Name' },
-      { field: 'size', header: 'Size', footer: 'Size' },
-      { field: 'type', header: 'Type', footer: 'Type' }
-    ];
-
-    this.items = [
-      { label: 'View', icon: 'fa-search', command: (event) => this.viewNode(this.selectedFile) },
-      { label: 'Delete', icon: 'fa-close', command: (event) => this.deleteNode(this.selectedFile) }
-    ];
+  countFiles() {
+    this.fileCount = 0;
+    this.totalSize = 0;
+    this.selectedFiles.forEach(f => {
+      if (f.data.type === 'File') {
+        this.fileCount++;
+        this.totalSize += f.data.size;
+      }
+    });
   }
 
   nodeSelect(event) {
+    this.countFiles();
     this.msgs = [];
     this.msgs.push({ severity: 'info', summary: 'Node Selected', detail: event.node.data.name });
   }
 
   nodeUnselect(event) {
+    this.countFiles();
     this.msgs = [];
     this.msgs.push({ severity: 'info', summary: 'Node Unselected', detail: event.node.data.name });
   }
@@ -120,12 +102,6 @@ export class FileExplorerComponent implements OnInit {
   viewNode(node: TreeNode) {
     this.msgs = [];
     this.msgs.push({ severity: 'info', summary: 'Node Selected', detail: node.data.name });
-  }
-
-  deleteNode(node: TreeNode) {
-    node.parent.children = node.parent.children.filter(n => n.data !== node.data);
-    this.msgs = [];
-    this.msgs.push({ severity: 'info', summary: 'Node Deleted', detail: node.data.name });
   }
 
   expandAll() {
@@ -154,10 +130,12 @@ export class FileExplorerComponent implements OnInit {
     this.files.forEach(node => {
       this.selectRecursive(node, true);
     });
+    this.countFiles();
   }
 
   selectNone() {
     this.selectedFiles = [];
+    this.countFiles();
   }
 
   toggleSelection() {
@@ -170,6 +148,7 @@ export class FileExplorerComponent implements OnInit {
       }
     });
     this.selectedFiles = newSelection;
+    this.countFiles();
   }
 
   private selectRecursive(node: TreeNode, isExpand: boolean) {
@@ -182,17 +161,17 @@ export class FileExplorerComponent implements OnInit {
   }
 
   selectionDone() {
-    this.selectedFiles.forEach(file => {
-      const item = {
-        id: file.data.id,
-        name: file.data.name,
-        size: file.data.size,
-        updated: new Date('1/1/16'),
-        icon: file.data.type === 'Folder' ? 'folder' : 'cloud',
-        selected: false
-      };
-      this.store.dispatch(new Downloadables.AddItem(item));
-      this.done.emit(true);
+    const items = {selectedFiles: this.selectedFiles, totalSize: this.totalSize };
+    const dialogRef = this.dialog.open(FileDownloadModalComponent, {
+      width: '500px',
+      disableClose: true,
+      data: items
+
     });
   }
+
+  disableButton() {
+    return this.downloadInProgress || this.fileCount <= 0;
+  }
+
 }

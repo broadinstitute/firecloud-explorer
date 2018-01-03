@@ -1,71 +1,47 @@
-<mat-sidenav-container>
-
-  <mat-sidenav #sidenav mode="push">
-    <div class="branding"><img src="assets/broad_logo.png"/> <span>FireCloud Download Manager</span></div>
-
-    <mat-nav-list>
-      <a mat-list-item *ngFor="let item of navigationSideMenu" (click)="sidenav.close()"
-         [routerLink]="[item.link]" routerLinkActive="active">
-        {{item.label}}
+<div class="wrapper">
+  <mat-sidenav-container class="sidenav-container">
+    <mat-sidenav mode="side" opened="true" class="sidenav" *ngIf="isAuthenticated">
+      <a class="sidenav-link" [routerLink]="['/file-download']" [routerLinkActive]="['active']">
+        <mat-icon>file_download</mat-icon>
+        <p>Download</p>
       </a>
-    </mat-nav-list>
+      <a class="sidenav-link" [routerLink]="['/file-upload']" [routerLinkActive]="['active']">
+        <mat-icon>file_upload</mat-icon>
+        <p>Upload</p>
+      </a>
+      <a class="sidenav-link" [routerLink]="['/status']" [routerLinkActive]="['active']">
+        <mat-icon>schedule</mat-icon>
+        <p>Status</p>
+      </a>
+    </mat-sidenav>
 
-  </mat-sidenav>
+    <mat-sidenav-content>
+      <header *ngIf="isAuthenticated">
+        <mat-spinner *ngIf="false" class="progress-spinner" [diameter]="25"></mat-spinner>
 
-  <div class="wrapper">
+        <mat-icon class="help-icon" [matMenuTriggerFor]="helpMenu">help</mat-icon>
+        <mat-menu #helpMenu="matMenu" xPosition="before" [overlapTrigger]="false">
+          <button mat-menu-item (click)="openForumOnBrowser()" class="submenu-item">FC-Explorer Forum</button>
+        </mat-menu>
 
-    <mat-toolbar color="primary">
-      <button mat-icon-button class="hidden-md-up" (click)="sidenav.open()">
-        <mat-icon>menu</mat-icon>
-      </button>
-
-      <span routerLink="" class="branding spacer hidden-md-up text-center"><img
-        src="assets/broad_logo.png"/><strong>    FC</strong>Explorer</span>
-
-      <span routerLink="" class="branding spacer hidden-sm-down"><img
-        src="assets/broad_logo.svg"/><strong>    FC</strong>Explorer</span>
-
-      <span class="hidden-sm-down">
-        <button mat-button class="nav-button" *ngFor="let item of navigation"
-            [routerLink]="[item.link]" routerLinkActive="active">
-          {{item.label}}
+        <button mat-button [matMenuTriggerFor]="toolbarUserMenu" class="menu-item">
+          {{this.userEmail}}
+          <mat-icon>arrow_drop_down</mat-icon>
         </button>
-      </span>
+        <mat-menu #toolbarUserMenu="matMenu" xPosition="before" [overlapTrigger]="false">
+          <button mat-menu-item (click)="onLogoutClick()" class="submenu-item">Sign Out</button>
+        </mat-menu>
+      </header>
 
-      <button mat-button class="sign-in-button"
-              *ngIf="!isAuthenticated"
-              (click)="onLoginClick()">
-        Sign in
-      </button>
-
-      <button *ngIf="isAuthenticated"
-              mat-icon-button
-              [matMenuTriggerFor]="toolbarUserMenu">
-        <mat-icon>person</mat-icon>
-      </button>
-      
-      <mat-menu #toolbarUserMenu="matMenu">
-        <button mat-menu-item (click)="onLogoutClick()">
-          <mat-icon>power_settings_new</mat-icon>
-          <span>Logout</span>
-        </button>
-      </mat-menu>
-
-    </mat-toolbar>
-
-    <div class="content"
-         [@routerTransition]="o.isActivated && o.activatedRoute.routeConfig.path">
-      <router-outlet #o="outlet"></router-outlet>
-    </div>
-
-    <div class="footer">
-      <div class="row">
-        <div class="col-12 signature">
-          &#169; {{year}} - Broad Institute
-        </div>
+      <div class="content">
+        <router-outlet></router-outlet>
       </div>
-    </div>
-
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</div>
+<div class="footer">
+  <div class="forum-link">
+    <a (click)="openForumOnBrowser()">FC-Explorer Forum</a>
   </div>
-
-</mat-sidenav-container>
+  <div class="signature">&#169; {{year}} - Broad Institute</div>
+</div>

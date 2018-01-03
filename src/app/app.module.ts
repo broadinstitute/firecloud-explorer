@@ -10,12 +10,14 @@ import { SettingsModule } from './settings';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { NgxElectronModule } from 'ngx-electron';
 
 @NgModule({
   imports: [
     // angular
     BrowserAnimationsModule,
     BrowserModule,
+    NgxElectronModule,
 
     // core & shared
     CoreModule,

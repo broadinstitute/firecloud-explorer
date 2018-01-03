@@ -1,0 +1,49 @@
+<h1>Select files to upload</h1>
+
+<p-growl [value]="msgs"></p-growl>
+
+<div class="full-width">
+  <button mat-raised-button (click)="selectAll()" class="button-secondary" [disabled]="true">
+    <i class="material-icons">check_box</i>Select all</button>
+  <button mat-raised-button (click)="selectNone()" class="button-secondary" [disabled]="true">
+    <i class="material-icons">check_box_outline_blank</i>Select none</button>
+  <button mat-raised-button (click)="expandAll()" class="button-secondary" [disabled]="true">
+    <i class="material-icons">add_to_queue</i>Expand all</button>
+  <button mat-raised-button (click)="collapseAll()" class="button-secondary" [disabled]="true">
+    <i class="material-icons">airplay</i>Collapse all</button>
+</div>
+
+<p-treeTable [value]="files" selectionMode="checkbox" [(selection)]="selectedFiles" styleClass="tree-table" (onNodeSelect)="nodeSelect($event)"
+  (onNodeUnselect)="nodeUnselect($event)" (onNodeExpand)="nodeExpand($event)" (onNodeCollapse)="nodeCollapse($event)">
+  <p-column field="name" header="Name"></p-column>
+  <p-column header="Size">
+    <ng-template let-node="rowData" pTemplate="body">
+      <span>{{node.data.size | filesize}}</span>
+    </ng-template>
+  </p-column>
+  <p-column header="Last Modified">
+    <ng-template let-node="rowData" pTemplate="body">
+      <span>{{node.data.updated | date: 'MMM d, y, h:mm a'}}</span>
+    </ng-template>
+  </p-column>
+</p-treeTable>
+
+<p-toolbar styleClass="toolbar-accent">
+  <div class="ui-toolbar-group-left">
+    <h3 class="subtitle">Selected: {{ fileCount }} file<span *ngIf="fileCount !== 1">s</span>. Total size: {{ totalSize | filesize }} </h3>
+  </div>
+
+  <div class="ui-toolbar-group-right">
+    <div *ngIf="uploadInProgress" class="warn-message">
+      Please wait, upload in progress
+      <div class="progress-dots">
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+      </div>
+    </div>
+
+    <button mat-raised-button (click)="selectionDone()" class="button-primary" [disabled]="disableButton()">
+      <i class="material-icons">file_upload</i>Upload selection</button>
+  </div>
+</p-toolbar>

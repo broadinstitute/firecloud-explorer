@@ -1,69 +1,80 @@
-import { Component, HostBinding, OnDestroy, OnInit } from '@angular/core';
+import { Component, HostBinding, OnDestroy, OnInit, NgZone } from '@angular/core';
 import { OverlayContainer } from '@angular/cdk/overlay';
 import { Store } from '@ngrx/store';
 import { Subject } from 'rxjs/Subject';
+import { SecurityService } from '@app/file-manager/services/security.service.ts';
 import 'rxjs/add/operator/takeUntil';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/filter';
+import { Router } from '@angular/router';
+import { ElectronService } from 'ngx-electron';
 
 import { login, logout, selectorAuth, routerTransition } from '@app/core';
-import { environment as env } from '@env/environment';
+import { environment } from '@env/environment';
 
 import { selectorSettings } from './settings';
 @Component({
-  selector: 'fc-root',
+  selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
-  animations: [routerTransition]
+  animations: [routerTransition],
 })
 export class AppComponent implements OnInit, OnDestroy {
 
-  private unsubscribe$: Subject<void> = new Subject<void>();
+  static updateUserEmail: Subject<string> = new Subject();
+  unsubscribe$: Subject<void> = new Subject<void>();
+  userEmail: String;
+
+  forumURL = environment.FORUM_URL;
+  title = 'app';
 
   @HostBinding('class') componentCssClass;
 
   year = new Date().getFullYear();
-//  logo = require('../assets/logo.png');
-  navigation = [
-    { link: 'home', label: 'Workspaces' }
-  ];
-
-  navigationSideMenu = [
-    ...this.navigation,
-  ];
   isAuthenticated;
 
   constructor(
     public overlayContainer: OverlayContainer,
-    private store: Store<any>
-  ) {}
+    private store: Store<any>,
+    private router: Router,
+    private electronService: ElectronService
+  ) {
+    AppComponent.updateUserEmail.subscribe(email => {
+      this.userEmail = email;
+    });
+   }
 
   ngOnInit(): void {
     this.store
-    .select(selectorSettings)
-    .takeUntil(this.unsubscribe$)
-    .map(({ theme }) => theme.toLowerCase())
-    .subscribe(theme => {
-      this.componentCssClass = theme;
-      this.overlayContainer.getContainerElement().classList.add(theme);
-    });
+      .select(selectorSettings)
+      .takeUntil(this.unsubscribe$)
+      .map(({ theme }) => theme.toLowerCase())
+      .subscribe(theme => {
+        this.componentCssClass = theme;
+        this.overlayContainer.getContainerElement().classList.add(theme);
+      });
     this.store
       .select(selectorAuth)
       .takeUntil(this.unsubscribe$)
       .subscribe(auth => this.isAuthenticated = auth.isAuthenticated);
+    this.onLogoutClick();
   }
 
   ngOnDestroy(): void {
+
     this.unsubscribe$.next();
     this.unsubscribe$.complete();
   }
 
-  onLoginClick() {
-    this.store.dispatch(login());
+  openForumOnBrowser() {
+    this.electronService.shell.openExternal(this.forumURL);
   }
 
   onLogoutClick() {
+    const redirect = '/login';
+    SecurityService.removeAccessToken();
     this.store.dispatch(logout());
+    this.router.navigate([redirect]);
   }
 
 }
