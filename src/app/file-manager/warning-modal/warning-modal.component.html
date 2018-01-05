@@ -9,7 +9,7 @@
 <mat-dialog-content>
   <div class="flex-container">
     <p>All current
-      <span *ngIf="data == 'exit' || data == 'logout'">transfers</span>
+      <span *ngIf="data == 'quit' || data == 'logout'">transfers</span>
       <span *ngIf="data == 'cancelAllUploads'">Uploads</span>
       <span *ngIf="data == 'cancelAllDownloads'">Downloads</span>
       will be canceled.
@@ -19,11 +19,11 @@
 
 <mat-dialog-actions>
   <button mat-raised-button (click)="cancel()" class="button-secondary">
-    <span *ngIf="data == 'exit' || data == 'logout'">Cancel</span>
+    <span *ngIf="data == 'quit' || data == 'logout'">Cancel</span>
     <span *ngIf="data == 'cancelAllUploads' || data == 'cancelAllDownloads'">No</span>
   </button>
   <button mat-raised-button (click)="proceed()" class="button-primary">
-    <span *ngIf="data == 'exit'">Exit anyway</span>
+    <span *ngIf="data == 'quit'">Exit anyway</span>
     <span *ngIf="data == 'logout'">Sign Out</span>
     <span *ngIf="data == 'cancelAllUploads' || data == 'cancelAllDownloads'">OK</span>
   </button>
