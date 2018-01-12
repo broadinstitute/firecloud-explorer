@@ -25,7 +25,7 @@ global.before(function () {
     LoginPage.setApp(app);
 });
 
-describe('FCExplorer', function () {
+describe('FireCloud Explorer', function () {
 
     this.timeout(10000);
 
@@ -43,7 +43,7 @@ describe('FCExplorer', function () {
     });
 
     it('shows title', function () {
-        return LoginPage.getTitleText().should.eventually.equal("FCExplorer");
+        return LoginPage.getTitleText().should.eventually.equal("FireCloud Explorer");
     }); 
 
     it('check button text', function () {

@@ -53,7 +53,7 @@ app.on('ready', function () {
   }
   // Show dev tools
   // Remove this line before distributing
-  //  win.webContents.openDevTools()
+  // win.webContents.openDevTools()
 
   // ----- Google auth -----
   var googleConfig = {};
@@ -71,7 +71,7 @@ app.on('ready', function () {
     }
   };
 
-  ipcMain.on(constants.IPC_CONFIRGURE_ACCOUNT, (event, googleConfig, googleOptions) => {
+  ipcMain.on(constants.IPC_CONFIGURE_ACCOUNT, (event, googleConfig, googleOptions) => {
     this.googleConfig = googleConfig;
     this.googleOptions = googleOptions;
   });
