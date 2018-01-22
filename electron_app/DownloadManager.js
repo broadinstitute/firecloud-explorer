@@ -1,29 +1,42 @@
 const Downloader = require('./Downloader');
 const path = require('path');
-const { handleFolder } = require('./helpers/handleDisk');
+const { handleFolder, fileAlreadyExists } = require('./helpers/handleDisk');
 const downloadStats = require('./helpers/downloadInfo').downloadStats;
 const handleEvents = require('./helpers/handleEvents');
 
 let filePath = '';
 let allDownloads = [];
+let fileExists = true;
 
-const downloadManager = (items, access_token, win) => {
+const downloadManager = (items, access_token, electronWin) => {
   items.forEach(item => {
-    if (item.preserveStructure) {
-      const structurePath = item.path.substring(item.path.lastIndexOf('/'), 0);
-      handleFolder(path.join(item.destination, structurePath)).then(result => {
-        allDownloads.push(processDownload(access_token, item, result, win));
-      });
-    } else {
-      allDownloads.push(processDownload(access_token, item, item.destination, win));
-    }
+    let count = 0;
+    let fileName = item.name;
+    const destination = item.preserveStructure ?
+      path.join(item.destination, item.path.substring(item.path.lastIndexOf('/'), 0)) : item.destination;
+    do {
+      fileExists = fileAlreadyExists(path.join(destination, fileName));
+      if (fileExists) {
+        count++;
+        fileName = item.name.substring(0, item.name.indexOf('.')) + '(' + (count) + ')' +
+          item.name.substring(item.name.indexOf('.'));
+      }
+    } while (fileExists);
+    item.name = fileName;
+    processItem(item, destination, access_token, electronWin);
+  });
+};
+
+const processItem = (item, itemDestination, token, win) => {
+  handleFolder(itemDestination, (result) => {
+    allDownloads.push(processDownload(token, item, result, win));
   });
 };
 
 const processDownload = (access_token, item, folder, win) => {
   filePath = path.join(folder, item.name);
-  let dloader = new Downloader();
-  let dl = dloader.download(item.mediaLink, filePath, setHeader(access_token));
+  const dloader = new Downloader();
+  const dl = dloader.download(item.mediaLink, filePath, setHeader(access_token));
   dl.start();
   downloadStats(dl, item, win);
   handleEvents(dl, item);
@@ -32,7 +45,7 @@ const processDownload = (access_token, item, folder, win) => {
 
 const stopAllDownloads = () => {
   allDownloads.forEach(dl => {
-    if(dl.status !== 3) {
+    if (dl.status !== 3) {
       dl.stop();
     }
   });
@@ -41,7 +54,7 @@ const stopAllDownloads = () => {
 const destroyDownloads = () => {
   stopAllDownloads();
   allDownloads.forEach(dl => {
-    if(dl.status === -2){
+    if (dl.status === -2) {
       dl.destroy();
     }
   });
