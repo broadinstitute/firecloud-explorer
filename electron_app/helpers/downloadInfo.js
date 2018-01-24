@@ -1,4 +1,4 @@
-const constants = require('./enviroment');
+const constants = require('./enviroment').constants;
 
 const downloadStats = function(dl, item, win) {
   item = item || 1;

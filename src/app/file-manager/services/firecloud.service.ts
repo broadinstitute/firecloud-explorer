@@ -1,5 +1,4 @@
 import { Observable } from 'rxjs/Observable';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Workspace } from '@app/file-manager/models/workspace';
 
 

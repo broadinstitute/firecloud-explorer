@@ -12,7 +12,6 @@ import { FileExplorerComponent } from './file-explorer/file-explorer.component';
 import { TransferablesGridComponent } from './transferables-grid/transferables-grid.component';
 
 import { FilesService } from './services/files.service';
-import { FirecloudService } from './services/firecloud.service';
 import { GcsService } from './services/gcs.service';
 import { StatusService } from './services/status.service';
 import { FilesDatabase } from './dbstate/files-database';
@@ -22,7 +21,6 @@ import { RegisterUploadService } from './services/register-upload.service';
 import { GcsApiService } from './services/gcs-api.service';
 import { GcsApiMockService } from './services/gcs-api-mock.service';
 import { FirecloudApiService } from './services/firecloud-api.service';
-import { FirecloudApiMockService } from './services/firecloud-api-mock.service';
 import { ElectronService } from 'ngx-electron';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { RequestInterceptor } from './services/request.interceptor';
@@ -36,6 +34,8 @@ import { FileUploadModalComponent } from './file-upload-modal/file-upload-modal.
 import { FileExplorerUploadComponent } from './file-explorer-upload/file-explorer-upload.component';
 import {LimitTransferablesService} from '@app/file-manager/services/limit-transferables.service';
 import { MatDialog } from '@angular/material';
+import { ElectronIpcApiService } from '@app/file-manager/services/electron-ipc.api.service';
+import { LoginApiService } from '@app/file-manager/services/login-api.service';
 
 @NgModule({
   imports: [
@@ -62,23 +62,14 @@ import { MatDialog } from '@angular/material';
     StatusService,
     FilesDatabase,
     FilesService,
+    LoginApiService,
     LimitTransferablesService,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: RequestInterceptor,
       multi: true
     },
-    {
-      provide: FirecloudService,
-      deps: [HttpClient],
-      useFactory(http: HttpClient) {
-        if (environment.testing) {
-          return new FirecloudApiMockService();
-        } else {
-          return new FirecloudApiService(http);
-        }
-      }
-    },
+    FirecloudApiService,
     {
       provide: GcsService,
       deps: [HttpClient, ElectronService, Store, MatDialog],
@@ -91,7 +82,8 @@ import { MatDialog } from '@angular/material';
       }
     },
     DownloadValidatorService,
-    RegisterUploadService
+    RegisterUploadService,
+    ElectronIpcApiService,
   ],
   exports: [
 

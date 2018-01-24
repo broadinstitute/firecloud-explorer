@@ -2,19 +2,19 @@ import { Injectable } from '@angular/core';
 import { TreeNode } from 'primeng/primeng';
 import { GcsService } from './gcs.service';
 import { Observable } from 'rxjs/Rx';
-import { FirecloudService } from './firecloud.service';
 import { FileData } from '../models/filedata';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/retry';
 import 'rxjs/add/operator/toPromise';
+import { FirecloudApiService } from '@app/file-manager/services/firecloud-api.service';
 
 @Injectable()
 export class FilesService {
     files = {};
     isBottom = true;
 
-    constructor(private gcsService: GcsService, private firecloudService: FirecloudService) { }
+    constructor(private gcsService: GcsService, private firecloudService: FirecloudApiService) { }
 
     public getBucketFiles(isWorkspacePublic: boolean): Observable<Observable<TreeNode[]>> {
         return this.firecloudService.getUserFirecloudWorkspaces(isWorkspacePublic).map(

@@ -9,6 +9,7 @@ import { FilesDatabase } from '../dbstate/files-database';
 import { Type } from '@app/file-manager/models/type';
 import { LimitTransferablesService } from '@app/file-manager/services/limit-transferables.service';
 import {ItemStatus} from '@app/file-manager/models/item-status';
+const constants = require('../../../../electron_app/helpers/enviroment').constants;
 
 /**
  * Download progress information service
@@ -21,9 +22,9 @@ export class StatusService {
     private electronService: ElectronService) { }
 
   updateDownloadProgress(): Observable<any> {
-    this.electronService.ipcRenderer.removeAllListeners('download-status');
+    this.electronService.ipcRenderer.removeAllListeners(constants.IPC_DOWNLOAD_STATUS);
     return Observable.create((observer) => {
-      this.electronService.ipcRenderer.on('download-status', (event, data) => {
+      this.electronService.ipcRenderer.on(constants.IPC_DOWNLOAD_STATUS, (event, data) => {
         this.updateItem(data, Type.DOWNLOAD, ItemStatus.DOWNLOADING);
         observer.next(this.generalProgress(Type.DOWNLOAD));
       });

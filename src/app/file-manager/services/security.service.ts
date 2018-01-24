@@ -6,7 +6,6 @@ export class SecurityService {
   constructor() { }
 
   public static ACCESS_TOKEN = 'access_token';
-  private authUrl: string;
 
   public static getAccessToken(): string {
     return localStorage.getItem(SecurityService.ACCESS_TOKEN);

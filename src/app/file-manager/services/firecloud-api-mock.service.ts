@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { FirecloudService } from './firecloud.service';
 import { Observable } from 'rxjs/Observable';
 import * as workspaces from 'assets/demo/workspaces';

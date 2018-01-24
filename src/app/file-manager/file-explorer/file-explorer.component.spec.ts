@@ -4,7 +4,7 @@ import { FileExplorerComponent } from './file-explorer.component';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule } from '@angular/router';
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { SharedModule } from '@app/shared';
 import { CoreModule } from '@app/core';
 import { SettingsModule } from '../../settings';
@@ -18,6 +18,8 @@ import { FirecloudApiMockService } from '../services/firecloud-api-mock.service'
 import { FilterSizePipe } from '../filters/filesize-filter';
 import { MatDialogModule } from '@angular/material/dialog';
 import { FileDownloadModalComponent } from '../file-download-modal/file-download-modal.component';
+import { ElectronIpcService } from '@app/file-manager/services/electron-ipc.service';
+import { ElectronIpcMockService } from '@app/file-manager/services/electron-ipc.mock.service';
 
 
 describe('FileExplorerComponent', () => {
@@ -52,6 +54,7 @@ describe('FileExplorerComponent', () => {
         FilesService,
         { provide: GcsService, useClass: GcsApiMockService },
         { provide: FirecloudService, useClass: FirecloudApiMockService },
+        { provide: ElectronIpcService, useClass: ElectronIpcMockService}
       ]
     })
       .compileComponents();

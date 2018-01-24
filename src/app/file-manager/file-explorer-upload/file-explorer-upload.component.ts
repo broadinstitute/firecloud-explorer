@@ -84,7 +84,6 @@ export class FileExplorerUploadComponent implements OnInit {
     this.registerUpload.getLazyNodeContent(homeFolder);
 
     this.statusService.updateUploadProgress().subscribe(data => {
-      console.log('DATA ' + data);
       this.zone.run(() => {
         if (data === 100) {
           this.uploadInProgress = false;

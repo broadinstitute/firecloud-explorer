@@ -6,7 +6,7 @@ import { FileExplorerComponent } from './file-explorer/file-explorer.component';
 import { FileExplorerUploadComponent } from './file-explorer-upload/file-explorer-upload.component';
 import { TransferablesGridComponent } from './transferables-grid/transferables-grid.component';
 
-const routes: Routes = [
+export const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'file-download', component: FileExplorerComponent },
   { path: 'file-upload', component: FileExplorerUploadComponent },

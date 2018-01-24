@@ -15,6 +15,7 @@ import { FileDownloadModalComponent } from '../file-download-modal/file-download
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { Type } from '@app/file-manager/models/type';
 import { StatusService } from '../services/status.service';
+import { FirecloudApiService } from '@app/file-manager/services/firecloud-api.service';
 
 
 @Component({
@@ -43,7 +44,7 @@ export class FileExplorerComponent implements OnInit {
     private statusService: StatusService,
     private zone: NgZone,
     private filesService: FilesService,
-    private firecloudService: FirecloudService,
+    private firecloudService: FirecloudApiService,
     private dialog: MatDialog,
     private filterSize: FilterSizePipe,
     private store: Store<AppState>

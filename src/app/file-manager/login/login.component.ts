@@ -1,16 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { environment } from '@env/environment';
 import { Router } from '@angular/router';
-import { LoginService } from '../services/login.service';
 import { Message } from 'primeng/components/common/api';
 import { AppComponent } from '../../app.component';
-import { ElectronService } from 'ngx-electron';
+import { ElectronIpcApiService } from '@app/file-manager/services/electron-ipc.api.service';
+import { LoginApiService } from '@app/file-manager/services/login-api.service';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
-  providers: [LoginService]
 })
 export class LoginComponent implements OnInit {
 
@@ -21,8 +20,8 @@ export class LoginComponent implements OnInit {
   isSubmitted = false;
 
   constructor(
-    private electronService: ElectronService,
-    private loginService: LoginService,
+    private electronIpcService: ElectronIpcApiService,
+    private loginService: LoginApiService,
     private router: Router
   ) { }
 
@@ -48,8 +47,8 @@ export class LoginComponent implements OnInit {
   }
 
   openFcOnBrowser() {
-      this.electronService.shell.openExternal(this.fireCloudURL);
-    }
+      this.electronIpcService.openExternalURL(this.fireCloudURL);
+  }
 
   showError(errorCode: number) {
     this.msgs = [];

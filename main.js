@@ -13,7 +13,7 @@ const {
   destroyDownloads
 } = require('./electron_app/DownloadManager');
 const lazyNodeReader = require('./electron_app/FileSystemReader').lazyNodeReader;
-const constants = require('./electron_app/helpers/enviroment');
+const constants = require('./electron_app/helpers/enviroment').constants;
 const os = require('os');
 const {
   handleDiskSpace
@@ -35,7 +35,8 @@ app.on('ready', function () {
     height: 768,
     minWidth: 1024,
     minHeight: 768,
-    icon: path.join(__dirname, 'src/assets/icons/png/64x64.png')
+    icon: path.join(__dirname, 'src/assets/icons/png/64x64.png'),
+    show: false
   });
 
   win.maximize();
@@ -54,6 +55,9 @@ app.on('ready', function () {
   // Show dev tools
   // Remove this line before distributing
   // win.webContents.openDevTools()
+  win.once('ready-to-show', () => {
+    win.show();
+  });
 
   // ----- Google auth -----
   var googleConfig = {};
@@ -81,7 +85,7 @@ app.on('ready', function () {
     myApiOauth.getAccessToken(this.googleOptions)
       .then(token => {
         // use your token.access_token
-        win.webContents.send(constants.IPC_SEND_RENDERER, {
+        win.webContents.send(constants.IPC_GOOGLE_LOGIN, {
           result: token
         });
       })

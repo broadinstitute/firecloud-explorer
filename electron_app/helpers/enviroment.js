@@ -1,6 +1,6 @@
-module.exports = Object.freeze({
+const constants ={
   IPC_GOOGLE_AUTH: 'google-oauth',
-  IPC_SEND_RENDERER: 'sendRendererMessage',
+  IPC_GOOGLE_LOGIN: 'google-login',
   IPC_START_DOWNLOAD: 'start-download',
   IPC_CONFIGURE_ACCOUNT: 'configure-gaccount',
   IPC_DOWNLOAD_STATUS: 'download-status',
@@ -13,4 +13,6 @@ module.exports = Object.freeze({
   IPC_UPLOAD_STATUS: 'upload-status',
   IPC_UPLOAD_CANCEL: 'upload-cancel',
   IPC_DOWNLOAD_CANCEL: 'download-cancel',
-});
+};
+
+module.exports = { constants };
