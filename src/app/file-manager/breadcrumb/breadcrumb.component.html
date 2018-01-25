@@ -1,0 +1,8 @@
+<ul class="breadcrumb">
+  <li>
+    <a (click)="homeClicked($event)">Workspaces</a>
+  </li>
+  <li *ngFor="let segment of segments">
+    <a (click)="stepClicked($event, segment)">{{segment.label}}</a>
+  </li>
+</ul>

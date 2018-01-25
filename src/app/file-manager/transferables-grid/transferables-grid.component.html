@@ -43,8 +43,8 @@
         </mat-panel-title>
   </mat-expansion-panel-header>
 
-  <div class="table-container flex-container column">
-    <mat-table #table [dataSource]="dataSource" matSort class="table-common">
+  <div class="table-container flex-container column table-common">
+    <mat-table #table [dataSource]="dataSource" matSort>
       <ng-container matColumnDef="id">
         <mat-header-cell *matHeaderCellDef mat-sort-header> Id </mat-header-cell>
         <mat-cell *matCellDef="let row"> {{row.id}} </mat-cell>

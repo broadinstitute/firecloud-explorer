@@ -16,7 +16,7 @@ export class FirecloudApiMockService extends FirecloudService {
       .map((resp: any) => {
         const workspacesList: any[] = new Array();
         resp.forEach(item => {
-          const workspace = super.getWorkspaceData(item, optional);
+          const workspace = super.getWorkspaces(item, optional);
           if (workspace !== null) {
             workspacesList.push(workspace);
           }

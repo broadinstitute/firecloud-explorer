@@ -15,6 +15,7 @@ import { FilesService } from './services/files.service';
 import { GcsService } from './services/gcs.service';
 import { StatusService } from './services/status.service';
 import { FilesDatabase } from './dbstate/files-database';
+import { BucketService } from './services/bucket.service';
 
 import { DownloadValidatorService } from './services/download-validator.service';
 import { RegisterUploadService } from './services/register-upload.service';
@@ -34,6 +35,7 @@ import { FileUploadModalComponent } from './file-upload-modal/file-upload-modal.
 import { FileExplorerUploadComponent } from './file-explorer-upload/file-explorer-upload.component';
 import {LimitTransferablesService} from '@app/file-manager/services/limit-transferables.service';
 import { MatDialog } from '@angular/material';
+import { BreadcrumbComponent } from './breadcrumb/breadcrumb.component';
 import { ElectronIpcApiService } from '@app/file-manager/services/electron-ipc.api.service';
 import { LoginApiService } from '@app/file-manager/services/login-api.service';
 
@@ -55,6 +57,7 @@ import { LoginApiService } from '@app/file-manager/services/login-api.service';
     FileUploadModalComponent,
     FileExplorerUploadComponent,
     WarningModalComponent,
+    BreadcrumbComponent,
   ],
   providers: [
     FilterSizePipe,
@@ -62,6 +65,7 @@ import { LoginApiService } from '@app/file-manager/services/login-api.service';
     StatusService,
     FilesDatabase,
     FilesService,
+    BucketService,
     LoginApiService,
     LimitTransferablesService,
     {

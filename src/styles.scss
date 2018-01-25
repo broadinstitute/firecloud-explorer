@@ -22,15 +22,15 @@
   @if $class == sm {
     @media (max-width: 1366px) { @content; }
   }
- 
+
   @else if $class == md {
     @media (min-width: 1367px) and (max-width: 1600px) { @content; }
   }
- 
+
   @else if $class == lg {
     @media (min-width: 1601px) { @content; }
   }
- 
+
   @else {
     @warn "Breakpoint mixin supports: sm, md, lg";
   }
@@ -46,7 +46,7 @@ a:hover {
 
 p.aclaration {
   font-weight: 300;
-  color: mat-color($fcExplorer-primary, 900); 
+  color: mat-color($fcExplorer-primary, 900);
   margin: 0;
 }
 
@@ -67,7 +67,7 @@ h4.subtitle {
 h3.subtitle,
 h4.subtitle {
   margin: 0;
-  color: mat-color($fcExplorer-primary, 900); 
+  color: mat-color($fcExplorer-primary, 900);
 }
 
 .medium {
@@ -127,7 +127,7 @@ h4.subtitle {
 
 .button-primary span {
   font-weight: 700;
-  color: white;  
+  color: white;
 }
 
 .button-secondary span {
@@ -137,14 +137,14 @@ h4.subtitle {
 
 .button-primary.mat-raised-button {
   background-color: mat-color($fcExplorer-accent);
-  box-shadow: none !important;  
+  box-shadow: none !important;
 }
 
 .button-secondary.mat-raised-button{
   border: 1px solid mat-color($fcExplorer-accent);
   background: transparent;
   box-shadow: none !important;
-  transition: box-shadow .3s;  
+  transition: box-shadow .3s;
 }
 
 .button-secondary.mat-raised-button .mat-button-focus-overlay {
@@ -167,16 +167,16 @@ h4.subtitle {
 
 [disabled].button-primary.mat-raised-button {
   background-color: mat-color($fcExplorer-accent, 200);
-  box-shadow: none !important;  
+  box-shadow: none !important;
 }
 
 [disabled].button-secondary.mat-raised-button {
   border: 1px solid mat-color($fcExplorer-primary, 400);
   box-shadow: none !important;
-  background: transparent !important;  
+  background: transparent !important;
   span {
-    color: mat-color($fcExplorer-primary, 400);    
-  }  
+    color: mat-color($fcExplorer-primary, 400);
+  }
 }
 
 .button-icon,
@@ -184,7 +184,7 @@ h4.subtitle {
 .mat-paginator-navigation-next,
 .mat-paginator-navigation-prev {
   background: transparent;
-} 
+}
 
 [disabled].button-icon {
   color: mat-color($fcExplorer-primary, 400);
@@ -207,12 +207,12 @@ h4.subtitle {
   font-size: 1.2rem;
   height: auto !important;
   width: auto !important;
-  color: mat-color($fcExplorer-primary, 700); 
+  color: mat-color($fcExplorer-primary, 700);
 }
 
 /*SIDENAV*/
 
-.sidenav-container, 
+.sidenav-container,
 mat-sidenav-content {
   height: 100vh;
   overflow: hidden;
@@ -222,7 +222,7 @@ mat-sidenav-content {
 .sidenav,
 .sidenav-link {
   width: 80px;
-  background: mat-color($fcExplorer-primary, 700); 
+  background: mat-color($fcExplorer-primary, 700);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -266,7 +266,7 @@ a.sidenav-link p {
   margin: 30px 0;
   overflow-y: scroll;
   overflow-x: hidden;
-  
+
   @include breakpoint(sm) {
     height: 55vh;
   }
@@ -280,13 +280,13 @@ a.sidenav-link p {
 
 .tree-table thead th,
 .tree-table thead tr {
-  color: mat-color($fcExplorer-primary, 900); 
+  color: mat-color($fcExplorer-primary, 900);
   font-family: 'Roboto', sans-serif;
   font-weight: 700;
   font-size: 0.9rem;
   text-align: left;
   border-width: 0 0 2px 0;
-  border-color: mat-color($fcExplorer-primary, 900); 
+  border-color: mat-color($fcExplorer-primary, 900);
   background: white;
 }
 
@@ -301,14 +301,14 @@ a.sidenav-link p {
 }
 
 .tree-table .ui-state-highlight {
-  border-color: mat-color($fcExplorer-accent, 300); 
+  border-color: mat-color($fcExplorer-accent, 300);
   background: mat-color($fcExplorer-accent, 300);
 }
 
 /*TABLE*/
 
-.table-container,
-.table-container .table-common.mat-table {
+.table-common,
+.table-common .mat-table {
   @include breakpoint(sm) {
     height: 55vh;
   }
@@ -320,22 +320,44 @@ a.sidenav-link p {
   }
 }
 
-.table-common.mat-table {
+.table-downloads,
+.table-downloads .mat-table {
+  @include breakpoint(sm) {
+    height: 62vh;
+  }
+  @include breakpoint(md) {
+    height: 68vh;
+  }
+  @include breakpoint(lg) {
+    height: 71vh;
+  }
+}
+
+.table-common .mat-table,
+.table-downloads .mat-table {
   margin: 0 0 20px 0;
   background: transparent;
   overflow: auto;
 }
 
-.table-common.mat-table .mat-header-row{
+.table-common .mat-table .mat-header-row,
+.table-downloads .mat-table .mat-header-row {
   border-width: 0 0 2px 0;
   border-color: mat-color($fcExplorer-primary, 900);
-  min-height: 35px; 
+  min-height: 35px;
 
   .mat-header-cell {
-    font-size: 0.9rem;    
+    font-size: 0.9rem;
     font-weight: 700;
-    color: mat-color($fcExplorer-primary, 900); 
+    color: mat-color($fcExplorer-primary, 900);
   }
+}
+
+.table-common .mat-table .mat-row,
+.table-common .mat-table .mat-header-row,
+.table-downloads .mat-table .mat-row,
+.table-downloads .mat-table .mat-header-row {
+  padding: 0 15px;
 }
 
 /*TOOLBAR*/
@@ -347,13 +369,13 @@ a.sidenav-link p {
 .toolbar-accent.ui-toolbar.ui-widget-header,
 .status-box-left,
 .status-box-right {
-  background: mat-color($fcExplorer-primary, 100); 
-  border: 1px solid mat-color($fcExplorer-primary, 400); 
+  background: mat-color($fcExplorer-primary, 100);
+  border: 1px solid mat-color($fcExplorer-primary, 400);
 }
 
 .toolbar-login {
   width: 600px;
-  border: 2px solid mat-color($fcExplorer-primary, 900); 
+  border: 2px solid mat-color($fcExplorer-primary, 900);
   align-self: center;
   margin-top: 85px;
 }
@@ -363,7 +385,7 @@ a.sidenav-link p {
   line-height: 2.4rem;
   display: inline;
   font-weight: 700;
-  color: mat-color($fcExplorer-warn, 900); 
+  color: mat-color($fcExplorer-warn, 900);
 }
 
 .status-box-left,
@@ -402,7 +424,7 @@ a.sidenav-link p {
 }
 
 .expand-panel.mat-expansion-panel .mat-expansion-panel-header:hover{
-  color: mat-color($fcExplorer-accent); 
+  color: mat-color($fcExplorer-accent);
 }
 
 .expand-panel .mat-expansion-panel-header .mat-expansion-indicator {
@@ -422,16 +444,16 @@ a.sidenav-link p {
 
 .progress-bar .ui-widget-content,
 .progress-bar-small .ui-widget-content, {
-  background: mat-color($fcExplorer-primary, 300);   
+  background: mat-color($fcExplorer-primary, 300);
   border: none;
-  height: 0.6em; 
+  height: 0.6em;
   border-radius: 1px;
 }
 
 .progress-bar .ui-widget-header,
 .progress-bar-small .ui-widget-header, {
-  background: mat-color($fcExplorer-accent); 
-  border-radius: 0;  
+  background: mat-color($fcExplorer-accent);
+  border-radius: 0;
 }
 
 .progress-bar .ui-widget-content {
@@ -502,14 +524,14 @@ a.sidenav-link p {
 .error-messages .ui-messages {
   margin: 20px 0 0 0;
   padding: 1em;
-  background: mat-color($fcExplorer-warn, 50); 
-  border: 1px solid mat-color($fcExplorer-warn, 900); 
+  background: mat-color($fcExplorer-warn, 50);
+  border: 1px solid mat-color($fcExplorer-warn, 900);
 }
 
 .error-messages .ui-messages,
 .error-messages .ui-messages-close,
 .error-messages .ui-messages-close:hover {
-  color: mat-color($fcExplorer-warn, 900);   
+  color: mat-color($fcExplorer-warn, 900);
 }
 
 .error-messages .ui-messages-close {
@@ -558,7 +580,7 @@ a.sidenav-link p {
 }
 
 .browse-button label {
-  border: 1px solid mat-color($fcExplorer-primary, 900); 
+  border: 1px solid mat-color($fcExplorer-primary, 900);
   font-weight: 500;
   padding: 5px 15px;
   text-align: center;
@@ -568,7 +590,7 @@ a.sidenav-link p {
 }
 
 .browse-button label:active {
-  background-color: mat-color($fcExplorer-primary, 200); 
+  background-color: mat-color($fcExplorer-primary, 200);
 }
 
 .browse-button label:hover {
@@ -576,9 +598,10 @@ a.sidenav-link p {
 }
 
 .browse-location {
-  padding-left: 15px;
+  width: 360px;
+  padding: 5px 0 0 10px;
   font-weight: 300;
-  line-height: 35px;
+  overflow-wrap: break-word;
 }
 
 .mat-dialog-container {
@@ -605,6 +628,11 @@ a.sidenav-link p {
   background-color: mat-color($fcExplorer-accent) !important;
 }
 
+[disabled].mat-accent .mat-checkbox-frame,
+.mat-checkbox-disabled:not(.mat-checkbox-checked) .mat-checkbox-frame {
+  border-color: mat-color($fcExplorer-primary, 300);
+}
+
 /*SELECT and AUTOCOMPLETE*/
 
 .mat-select-panel,
@@ -613,11 +641,11 @@ a.sidenav-link p {
 }
 
 .mat-option:hover {
-  background-color: mat-color($fcExplorer-primary, 200);  
+  background-color: mat-color($fcExplorer-primary, 200);
 }
 
 .mat-input-underline {
-  background-color: mat-color($fcExplorer-primary, 700);  
+  background-color: mat-color($fcExplorer-primary, 700);
 }
 
 /*PAGINATOR*/

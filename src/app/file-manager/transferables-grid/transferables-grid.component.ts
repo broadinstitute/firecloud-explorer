@@ -1,5 +1,4 @@
 import { Component, OnInit, NgZone, AfterViewInit, Input, ViewChild, ChangeDetectionStrategy } from '@angular/core';
-
 import { Store } from '@ngrx/store';
 import * as Transferables from '../actions/transferables.actions';
 import { DownloadValidatorService } from '../services/download-validator.service';
@@ -88,7 +87,7 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-    this.dataSource = new FilesDataSource(this.filesDatabase, this.store, this.sort, this.paginator);
+    this.dataSource = new FilesDataSource(this.filesDatabase, this.paginator);
     this.statusService.updateDownloadProgress().subscribe(data => {
       this.zone.run(() => {
         this.generalProgress = data;

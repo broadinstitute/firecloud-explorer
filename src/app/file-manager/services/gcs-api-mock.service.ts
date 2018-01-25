@@ -26,4 +26,8 @@ export class GcsApiMockService extends GcsService {
   public cancelDownloads() {}
 
   public cancelUploads() {}
+
+  public getBucketFilesWithMaxResult(bucketName: String, delimiter: String, token: String) {
+    return Observable.of();
+  }
 }

@@ -1,0 +1,35 @@
+@import '~@angular/material/theming';
+@import 'fcExplorer-theme';
+
+.fcExplorer-theme {
+    @include angular-material-theme($fcExplorer-theme);
+}
+
+.col-select {
+    flex: 0 0 40px; 
+    overflow: inherit;
+}
+
+.col-name {
+    flex: 0 0 50%;
+}
+
+.type-folder{
+    cursor: pointer;
+}
+
+.type-folder:hover{
+    color: mat-color($fcExplorer-accent);
+}
+
+.type-file{
+    cursor: default;
+}
+
+.col-name mat-icon{
+    font-size: 1.2rem;
+    line-height: 1.5rem;
+    vertical-align: middle;
+    color: mat-color($fcExplorer-primary, 700);
+}
+

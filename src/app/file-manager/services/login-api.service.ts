@@ -50,11 +50,9 @@ export class LoginApiService extends LoginService {
         this.firecloudService.getUserRegistrationStatus().subscribe(
           registered => {
             this.store.dispatch(login());
-            console.log(JSON.stringify(registered));
             resolve(registered.userInfo.userEmail);
           },
           notRegistered => {
-            console.log(JSON.stringify(notRegistered));
             SecurityService.removeAccessToken();
             reject(notRegistered);
           });

@@ -4,7 +4,7 @@ export const mockResponseWorkspace = [
     'accessLevel': 'READER',
     'owners': ['user_1@broadinstitute.org'],
     'public': true, 'workspace': {
-      'workspaceId': '0111f819-ab9e-4d2c-ac16-0b5d92227c6e',
+      'workspaceId': '5b3e0063-060f-e42b-1291-7a5f601145e7',
       'name': 'TARGET_RT_hg38_OpenAccess_GDCDR-8-0_DATA',
       'isLocked': true,
       'lastModified': '2017-09-25T18:18:35.344Z',

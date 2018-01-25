@@ -1,18 +1,12 @@
-import { Store } from '@ngrx/store';
-import { MatPaginator, MatSort } from '@angular/material';
+import { MatPaginator } from '@angular/material';
 import { DataSource } from '@angular/cdk/collections';
 import { Observable } from 'rxjs/Observable';
-import { AppState } from './app-state';
-import { FilesDatabase } from './files-database';
 import { Item } from '../models/item';
 
 export class FilesDataSource extends DataSource<Item> {
 
-  constructor(private filesDB: FilesDatabase,
-    private store: Store<AppState>,
-    private _sort: MatSort,
+  constructor(private filesDB,
     private _paginator: MatPaginator) {
-
     super();
   }
 
@@ -20,8 +14,7 @@ export class FilesDataSource extends DataSource<Item> {
 
     const displayDataChanges = [
       this.filesDB.dataChange,
-      this._paginator.page,
-      this.filesDB.selectionChange
+      this._paginator.page
     ];
 
     return Observable.merge(...displayDataChanges).map(() => {

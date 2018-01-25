@@ -15,4 +15,6 @@ export abstract class GcsService {
 
   abstract cancelUploads();
 
+  abstract getBucketFilesWithMaxResult(bucketName: String, delimiter: String, token: String): Observable<any>;
+
 }

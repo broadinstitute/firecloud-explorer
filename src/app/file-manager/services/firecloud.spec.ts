@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { mockResponseWorkspace, mockResponseFailedLogin, mockResponseAllPublic } from '../../../assets/demo/workspaceMockData';
 import { getTestBed, inject, TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { Item } from '@app/file-manager/models/item';
 
 describe('FireCloud service for Workspace', () => {
   beforeEach(() => {
@@ -20,20 +21,30 @@ describe('FireCloud service for Workspace', () => {
   describe('Gets workspaces', () => {
     it('returns private workspaces', inject([HttpClient, HttpTestingController],
       (http: HttpClient, httpMock: HttpTestingController) => {
-        const dataWorkspace = [{
-          'public': false,
-          'accessLevel': 'WRITER',
-          'bucketName': 'fc-cc2c469c-0cf7-4a46-bed5-d1a7f7ab1264',
-          'name': 'FCDownloadClient_Workspace1'
-        }];
-
+        const dataWorkspace = new Item(
+          '5b3e0063-060f-e42b-1291-7a5f601145e7',
+          'FCDownloadClient_Workspace1',
+          null,
+          null,
+          NaN,
+          '',
+          '',
+          '',
+          'Folder',
+          '',
+          'fc-cc2c469c-0cf7-4a46-bed5-d1a7f7ab1264',
+          '/FCDownloadClient_Workspace1',
+          '/',
+          true,
+          false
+      );
 
         const firecloudService = getTestBed().get(FirecloudApiService);
         firecloudService.constructor(http);
         firecloudService.getUserFirecloudWorkspaces(false).subscribe(
           workspaces => {
             expect(workspaces.length).toBe(1);
-            expect(workspaces).toEqual(dataWorkspace);
+            expect( workspaces[0].name).toEqual(dataWorkspace.name);
           });
 
         const req = httpMock.expectOne(environment.FIRECLOUD_API + 'api/workspaces');

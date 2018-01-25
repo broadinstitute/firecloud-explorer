@@ -34,7 +34,6 @@ export class FileExplorerUploadComponent implements OnInit {
   files: TreeNode[];
   dataFile: Item;
   selectedFiles: TreeNode[] = [];
-  selectedFile: TreeNode;
   uploadFiles: Item[] = [];
   uploadInProgress = false;
 
@@ -212,26 +211,11 @@ export class FileExplorerUploadComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result !== undefined) {
         this.selectedFiles
-          .filter(file => file.data.type === 'File')
+          .filter(file => file.data.type === Type.FILE)
           .forEach(file => {
-            this.dataFile = {
-              id: UUID.UUID(),
-              name: file.data.name,
-              size: file.data.size,
-              created: file.data.updated,
-              updated: file.data.updated,
-              icon: file.data.type === 'Folder' ? 'folder' : 'cloud',
-              selected: false,
-              destination: result.directory,
-              preserveStructure: result.preserveStructure,
-              mediaLink: '',
-              path: file.data.path,
-              type: Type.UPLOAD,
-              progress: 0,
-              status: ItemStatus.PENDING,
-              transferred: 0,
-              remaining: 0
-            };
+            this.dataFile =  new Item(UUID.UUID(),  file.data.name, file.data.updated, file.data.updated, file.data.size,
+                          '', file.data.path, result.directory, Type.UPLOAD, ItemStatus.PENDING, '',
+              '', '', result.preserveStructure, false);
             this.uploadFiles.push(this.dataFile);
             this.store.dispatch(new Transferables.AddItem(this.dataFile));
           });

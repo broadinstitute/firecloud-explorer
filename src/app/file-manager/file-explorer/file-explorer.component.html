@@ -1,32 +1,55 @@
 <h1>Select files to download</h1>
 
-<p-growl [value]="msgs"></p-growl>
-
 <div class="full-width">
-  <button mat-raised-button (click)="selectAll()" class="button-secondary">
-    <i class="material-icons">check_box</i>Select all</button>
-  <button mat-raised-button (click)="selectNone()" class="button-secondary">
-    <i class="material-icons">check_box_outline_blank</i>Select none</button>
-  <button mat-raised-button (click)="expandAll()" class="button-secondary">
-    <i class="material-icons">add_to_queue</i>Expand all</button>
-  <button mat-raised-button (click)="collapseAll()" class="button-secondary">
-    <i class="material-icons">airplay</i>Collapse all</button>
+  <app-breadcrumb [path]="breadcrumbPath" (home)="goRoot()" (change)="pathChanged($event)"></app-breadcrumb>
 </div>
 
-<p-treeTable [value]="files" selectionMode="checkbox" [(selection)]="selectedFiles" styleClass="tree-table" (onNodeSelect)="nodeSelect($event)"
-  (onNodeUnselect)="nodeUnselect($event)">
-  <p-column field="name" header="Name"></p-column>
-  <p-column header="Size">
-    <ng-template let-node="rowData" pTemplate="body">
-      <span>{{node.data.size | filesize}}</span>
-    </ng-template>
-  </p-column>
-  <p-column header="Last Modified">
-    <ng-template let-node="rowData" pTemplate="body">
-      <span>{{node.data.updated | date: 'MMM d, y, h:mm a'}}</span>
-    </ng-template>
-  </p-column>
-</p-treeTable>
+<div class="table-container flex-container column table-downloads">
+    <mat-table #download [dataSource]="dataSource">
+
+    <!-- Checkbox Column -->
+    <ng-container matColumnDef="select">
+      <mat-header-cell *matHeaderCellDef class="col-select">
+        <mat-checkbox (change)="$event ? masterToggle() : null" [checked]="selection.hasValue() && isAllSelected()" [indeterminate]="selection.hasValue() && !isAllSelected()">
+        </mat-checkbox>
+      </mat-header-cell>
+      <mat-cell *matCellDef="let row" class="col-select">
+            <mat-checkbox (change)="toggleRow($event, row)" [checked]="isChecked(row)"  [disabled]="row.type === 'Folder'">
+        </mat-checkbox>
+      </mat-cell>
+    </ng-container>
+
+    <!-- Name Column -->
+    <ng-container matColumnDef="name">
+        <mat-header-cell *matHeaderCellDef class="col-name"> Name </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="col-name" [ngClass]="{'type-folder': element.type === 'Folder', 'type-file': element.type === 'File'}" (click)="clickOnRow(element)">
+          <mat-icon *ngIf="element.type === 'Folder'">folder</mat-icon>
+          <mat-icon *ngIf="element.type === 'File'">insert_drive_file</mat-icon>
+          {{element.name}}
+        </mat-cell>
+    </ng-container>
+
+    <!-- Size Column -->
+    <ng-container matColumnDef="size">
+        <mat-header-cell *matHeaderCellDef> Size </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.size | filesize}} </mat-cell>
+    </ng-container>
+
+    <!-- Last Modified Date Column -->
+    <ng-container matColumnDef="lastdate">
+      <mat-header-cell *matHeaderCellDef> Last Modified </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.updated | date: 'MMM d, y, h:mm a'}} </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+
+    <mat-row *matRowDef="let row; columns: displayedColumns;">
+    </mat-row>
+
+  </mat-table>
+
+  <mat-paginator #paginator [length]="bucketObjects.data.length" [pageIndex]="0" [pageSize]="25" [pageSizeOptions]="[10, 25, 50, 100, 250, 500, 1000]"></mat-paginator>
+</div>
 
 <p-toolbar styleClass="toolbar-accent">
   <div class="ui-toolbar-group-left">

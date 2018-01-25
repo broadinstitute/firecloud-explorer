@@ -1,44 +1,34 @@
-import { Component, OnInit, NgZone } from '@angular/core';
-import { Message, TreeNode, MenuItem } from 'primeng/primeng';
-import { HttpEventType, HttpResponse } from '@angular/common/http';
-import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs/Observable';
-import * as Transferables from '../actions/transferables.actions';
+import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { Item } from '../models/item';
-import { AppState } from '../dbstate/app-state';
-import { TransferableState, TransferablesReducer } from '../reducers/transferables.reducer';
-import { FilesService } from '../services/files.service';
+import { BucketObjectsDB } from '../models/bucket-object-db';
 import { FilterSizePipe } from '../filters/filesize-filter';
-import { FirecloudService } from '../services/firecloud.service';
-import { GcsService } from '../services/gcs.service';
 import { FileDownloadModalComponent } from '../file-download-modal/file-download-modal.component';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { Type } from '@app/file-manager/models/type';
+import { MatDialog, MatPaginator } from '@angular/material';
 import { StatusService } from '../services/status.service';
+import { BucketService } from '../services/bucket.service';
+import { SelectionModel } from '@angular/cdk/collections';
 import { FirecloudApiService } from '@app/file-manager/services/firecloud-api.service';
-
+import { FilesDataSource } from '@app/file-manager/dbstate/files-datasource';
+import { FilesService } from '@app/file-manager/services/files.service';
 
 @Component({
   selector: 'app-file-explorer',
   templateUrl: './file-explorer.component.html',
-  styleUrls: ['./file-explorer.component.css']
+  styleUrls: ['./file-explorer.component.scss']
 })
 export class FileExplorerComponent implements OnInit {
-  msgs: Message[];
-  files: TreeNode[];
-  dataFile: Item;
-  selectedFiles: TreeNode[] = [];
-  selectedFile: TreeNode;
+  isHome: Boolean = false;
+  bucketObjects = new BucketObjectsDB();
+  breadcrumbPath = '';
+  displayedColumns = ['select', 'name', 'size', 'lastdate'];
+  dataSource: FilesDataSource | null;
+  selection = new SelectionModel<Item>(true, []);
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   downloadInProgress = false;
-
-  color = 'primary';
-  mode = 'indeterminate';
-  value = 50;
-
   fileCount = 0;
   totalSize = 0;
-
-  cols: any[];
+  data = null;
+  readonly DELIMITER = '/';
 
   constructor(
     private statusService: StatusService,
@@ -47,20 +37,13 @@ export class FileExplorerComponent implements OnInit {
     private firecloudService: FirecloudApiService,
     private dialog: MatDialog,
     private filterSize: FilterSizePipe,
-    private store: Store<AppState>
-  ) {
+    private bucketService: BucketService) {
 
   }
+
   ngOnInit() {
-    this.filesService.getBucketFiles(false).subscribe(
-      resp => {
-        if (resp !== undefined) {
-          resp.subscribe(r => {
-            this.files = r;
-          });
-        }
-      }
-    );
+    this.dataSource = new FilesDataSource(this.bucketObjects, this.paginator);
+    this.goRoot();
     this.statusService.updateDownloadProgress().subscribe(data => {
       this.zone.run(() => {
         if (data === 100) {
@@ -75,104 +58,159 @@ export class FileExplorerComponent implements OnInit {
   countFiles() {
     this.fileCount = 0;
     this.totalSize = 0;
-    this.selectedFiles.forEach(f => {
-      if (f.data.type === 'File') {
+    this.selection.selected.forEach(f => {
+      if (f.type === 'File') {
         this.fileCount++;
-        this.totalSize += f.data.size;
+        this.totalSize += Number(f.size);
       }
     });
   }
 
-  nodeSelect(event) {
-    this.countFiles();
-    this.msgs = [];
-    this.msgs.push({ severity: 'info', summary: 'Node Selected', detail: event.node.data.name });
-  }
 
-  nodeUnselect(event) {
-    this.countFiles();
-    this.msgs = [];
-    this.msgs.push({ severity: 'info', summary: 'Node Unselected', detail: event.node.data.name });
-  }
-
-  nodeExpand(event) {
-    if (event.node) {
+  /** Whether the number of selected elements matches the total number of rows. */
+  isAllSelected() {
+    const numSelected = this.selection.selected.length;
+    const numRows = this.bucketObjects.data.length;
+    let isAllSelected: Boolean = true;
+    let iterate = true;
+    if (numSelected < numRows || numRows === 0) {
+      isAllSelected = false;
+    } else {
+      let i = 0;
+      do {
+        const file = this.bucketObjects.data[i];
+        if (this.selection.selected.find(selected => selected.id === file.id) === undefined) {
+          isAllSelected = false;
+        }
+        i++;
+        if (isAllSelected === false) {
+          iterate = false;
+        } else if (i <= this.bucketObjects.data.length) {
+          iterate = false;
+        }
+      } while (iterate);
     }
+    return isAllSelected;
   }
 
-  viewNode(node: TreeNode) {
-    this.msgs = [];
-    this.msgs.push({ severity: 'info', summary: 'Node Selected', detail: node.data.name });
+  isChecked(row) {
+    return this.selection.selected.find(selected => selected.id === row.id) !== undefined;
   }
 
-  expandAll() {
-    this.files.forEach(node => {
-      this.expandRecursive(node, true);
-    });
-  }
-
-  collapseAll() {
-    this.files.forEach(node => {
-      this.expandRecursive(node, false);
-    });
-  }
-
-  private expandRecursive(node: TreeNode, isExpand: boolean) {
-    node.expanded = isExpand;
-    if (node.children) {
-      node.children.forEach(childNode => {
-        this.expandRecursive(childNode, isExpand);
-      });
-    }
-  }
-
-  selectAll() {
-    this.selectedFiles = [];
-    this.files.forEach(node => {
-      this.selectRecursive(node, true);
-    });
-    this.countFiles();
-  }
-
-  selectNone() {
-    this.selectedFiles = [];
-    this.countFiles();
-  }
-
-  toggleSelection() {
-    const newSelection = [];
-    this.files.forEach(x => {
-      if (this.selectedFiles.includes(x)) {
-        // do nothing
-      } else {
-        newSelection.push(x);
+  clearSelection() {
+    this.bucketObjects.data.forEach(data => {
+      const row = this.selection.selected.find(selected => selected.id === data.id);
+      if (row !== undefined) {
+        this.selection.deselect(row);
       }
     });
-    this.selectedFiles = newSelection;
+  }
+
+  /** Selects all rows if they are not all selected; otherwise clear selection. */
+  masterToggle() {
+    this.isAllSelected() ?
+      this.clearSelection() :
+      this.bucketObjects.data.forEach(row => {
+        if (row.type === 'File') {
+          this.selection.select(row);
+        }
+      });
     this.countFiles();
   }
 
-  private selectRecursive(node: TreeNode, isExpand: boolean) {
-    this.selectedFiles = [...this.selectedFiles, node];
-    if (node.children) {
-      node.children.forEach(childNode => {
-        this.selectRecursive(childNode, isExpand);
+  public goRoot() {
+    if (!this.isHome) {
+      this.isHome = true;
+      this.paginator.pageIndex = 0;
+      this.breadcrumbPath = '';
+      this.bucketObjects.data = [];
+      this.firecloudService.getUserFirecloudWorkspaces(false).subscribe(workspaces => {
+        this.bucketObjects.data = workspaces;
       });
     }
+  }
+
+  clickOnRow(elem) {
+    this.isHome = false;
+    if (elem.type === 'Folder') {
+      this.paginator.pageIndex = 0;
+      this.bucketObjects.data = [];
+      BucketService.delimiter = elem.delimiter;
+      const workspaceName = this.getWorkspaceName(elem.bucketName);
+      this.getBucketObjects(elem.bucketName, BucketService.delimiter, workspaceName);
+      this.breadcrumbPath = elem.prefix;
+    }
+  }
+
+  pathChanged(event) {
+    this.isHome = false;
+    this.paginator.pageIndex = 0;
+    let delimiter = event.label !== event.path ? this.getDelimiter(event.label) : this.DELIMITER;
+    const workspace = this.breadcrumbPath.substr(0, this.breadcrumbPath.indexOf(this.DELIMITER));
+    const bucket = FirecloudApiService.workspaces.get(workspace);
+    delimiter = delimiter.substring(delimiter.length - 1, delimiter.length) === this.DELIMITER
+      ? delimiter.substr(0, delimiter.lastIndexOf(this.DELIMITER)) : delimiter;
+    const path = this.breadcrumbPath.endsWith('/') && delimiter !== '' ? workspace + this.DELIMITER + delimiter + this.DELIMITER
+      : workspace + this.DELIMITER + delimiter;
+    if (!this.breadcrumbPath.startsWith('/') && this.breadcrumbPath !== path) {
+      this.bucketObjects.data = [];
+      BucketService.delimiter = delimiter;
+      this.getBucketObjects(bucket, delimiter, workspace);
+      this.breadcrumbPath = workspace + this.DELIMITER + delimiter;
+    }
+  }
+
+  getBucketObjects(bucket: String, delimiter: String, workspace: String) {
+    this.data = this.bucketService.getBucketData(bucket, delimiter, null, workspace).subscribe(
+      elements => {
+        this.bucketObjects.data = elements;
+      });
   }
 
   selectionDone() {
-    const items = {selectedFiles: this.selectedFiles, totalSize: this.totalSize };
-    const dialogRef = this.dialog.open(FileDownloadModalComponent, {
+    const items = { selectedFiles: this.selection.selected, totalSize: this.totalSize };
+    this.dialog.open(FileDownloadModalComponent, {
       width: '500px',
       disableClose: true,
       data: items
-
     });
   }
 
   disableButton() {
-    return this.downloadInProgress || this.fileCount <= 0;
+    return this.downloadInProgress || this.selection.selected.length === 0;
+  }
+
+  toggleRow(event, row) {
+    const selectedItem = this.selection.selected.find(item => item.id === row.id);
+    if (event.checked && selectedItem === undefined) {
+      this.selection.toggle(row);
+    } else if (selectedItem !== undefined) {
+      this.selection.deselect(selectedItem);
+    }
+    this.countFiles();
+  }
+
+  getWorkspaceName(bucketName) {
+    let workspaceName: String = '';
+    for (const key of Array.from(FirecloudApiService.workspaces.keys())) {
+      if (FirecloudApiService.workspaces.get(key) === bucketName) {
+        workspaceName = key;
+        break;
+      }
+    }
+    return workspaceName;
+  }
+
+  getDelimiter(selectedFolder) {
+    const path = this.breadcrumbPath.substring(this.breadcrumbPath.indexOf(this.DELIMITER), this.breadcrumbPath.length);
+    const index = path.lastIndexOf('/' + selectedFolder + '/');
+    const indexSelectedFolder = index !== -1 ? index + 1
+      : path.lastIndexOf(selectedFolder);
+    return path.substring(1, indexSelectedFolder) + selectedFolder;
   }
 
 }
+
+
+
+

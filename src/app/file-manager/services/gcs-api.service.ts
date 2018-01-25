@@ -33,6 +33,15 @@ export class GcsApiService extends GcsService {
     return this.http.get(url);
   }
 
+  public getBucketFilesWithMaxResult(bucketName: String, delimiter: String, pageToken: String): Observable<any> {
+    let url = environment.GOOGLE_URL + 'storage/v1/b/' + bucketName + '/o?maxResults=' + environment.BUCKETS_MAX_RESULT
+              + '&delimiter=' + '/';
+    url =  pageToken !== null ? url.concat('&pageToken=' + pageToken) : url;
+    url =  delimiter !== '/' ? url.concat('&prefix=' + delimiter) : url;
+    return this.http.get(url);
+  }
+
+
   public uploadFiles(bucketName: String, files: any[]) {
     if (files !== null && files.length > 0) {
       this.electronService.ipcRenderer.send('start-upload', bucketName, files, SecurityService.getAccessToken());
@@ -101,4 +110,5 @@ export class GcsApiService extends GcsService {
           (item.status === ItemStatus.PENDING && item.type === Type.UPLOAD));
     return items;
   }
+
 }

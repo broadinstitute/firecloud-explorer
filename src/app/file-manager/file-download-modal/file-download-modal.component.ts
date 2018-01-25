@@ -74,26 +74,11 @@ export class FileDownloadModalComponent  {
   }
 
   setItems() {
-    this.data.selectedFiles.filter(file => file.data.type === 'File')
+    this.data.selectedFiles.filter(file => file.type === 'File')
       .forEach(file => {
-        const dataFile = {
-          id: file.data.id,
-          name: file.data.name,
-          size: file.data.size,
-          created: file.data.updated,
-          updated: file.data.updated,
-          icon: file.data.type === 'Folder' ? 'folder' : 'cloud',
-          selected: false,
-          destination: this.directory,
-          preserveStructure: this.preserveStructure,
-          mediaLink: file.data.mediaLink,
-          path: file.data.path,
-          progress: 0,
-          type: Type.DOWNLOAD,
-          status: ItemStatus.PENDING,
-          transferred: 0,
-          remaining: 0
-        };
+        const dataFile: Item = new Item(file.id, file.name, file.updated, file.created,
+          file.size, file.mediaLink, file.path, this.directory,
+          Type.DOWNLOAD, ItemStatus.PENDING, '', '', '', this.preserveStructure, false);
         this.downloadFiles.push(dataFile);
         this.store.dispatch(new Transferables.AddItem(dataFile));
         this.done.emit(true);

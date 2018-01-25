@@ -1,0 +1,46 @@
+@import '~@angular/material/theming';
+@import 'fcExplorer-theme';
+
+.fcExplorer-theme {
+    @include angular-material-theme($fcExplorer-theme);
+}
+
+.breadcrumb {
+    padding: 0 0 5px 0;
+    white-space: nowrap;
+    overflow: auto;
+    height: 50px;
+    margin-bottom: 0;
+}
+
+.breadcrumb li {
+    display: inline;
+    list-style: none;
+    font-weight: 300;
+    color: mat-color($fcExplorer-primary, 900);
+}
+
+.breadcrumb li a{
+    transition: all 0.2s ease;
+    color: mat-color($fcExplorer-accent);
+}
+
+.breadcrumb li a:hover {
+    color: mat-color($fcExplorer-accent, 900);
+}
+
+.breadcrumb li::after { 
+    content: "/";
+    padding: 0 3px;
+}
+
+.breadcrumb li:last-child a,
+.breadcrumb li:last-child a:hover {
+    font-weight: 700;
+    color: mat-color($fcExplorer-primary, 900) !important;
+    cursor: default;
+}
+
+.breadcrumb li:last-child::after {
+    display: none;
+}

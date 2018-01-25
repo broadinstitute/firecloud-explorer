@@ -61,8 +61,8 @@ export class StatusService {
     new FilesDatabase(this.store).data.
     filter(item => item.type === type)
     .forEach( item => {
-      totalSize += item.size;
-      totalTransferred += item.transferred;
+      totalSize += Number(item.size);
+      totalTransferred += Number(item.transferred);
     });
     return Math.floor((totalTransferred * 100) / totalSize);
   }
