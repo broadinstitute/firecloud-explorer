@@ -12,7 +12,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build && tsc main.ts",
+    "build": "ng build && tsc main.ts --target es2015",
     "test": "npm run lint && ng test --single-run",
     "lint": "ng lint",
     "e2e": "./node_modules/mocha/bin/mocha",
@@ -80,7 +80,6 @@
     "devtron": "^1.4.0",
     "electron": "1.7.11",
     "electron-builder": "^19.50.0",
-    "electron-installer-debian": "^0.8.0",
     "electron-installer-dmg": "^0.2.1",
     "electron-packager": "9.1.0",
     "electron-squirrel-startup": "^1.0.0",

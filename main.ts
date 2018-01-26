@@ -1,5 +1,5 @@
 // ./main.js
-import { app, BrowserWindow, Menu, ipcMain } from 'electron';
+const { app, BrowserWindow, Menu, ipcMain } = require('electron');
 import * as path from 'path';
 import * as url from 'url';
 import * as electronOauth2 from 'electron-oauth2';
@@ -68,7 +68,6 @@ app.on('ready', function () {
   };
 
   const promiseTimeout = function (ms, promise) {
-
     // Create a promise that rejects in <ms> milliseconds
     const timeout = new Promise((resolve, reject) => {
       const id = setTimeout(() => {
