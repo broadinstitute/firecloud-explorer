@@ -48,7 +48,6 @@
     "dialog": "^0.3.1",
     "diskspace": "^2.0.0",
     "dotenv": "^4.0.0",
-    "electron-installer-debian": "^0.8.0",
     "electron-oauth2": "^3.0.0",
     "file-loader": "^1.1.5",
     "font-awesome": "^4.7.0",
