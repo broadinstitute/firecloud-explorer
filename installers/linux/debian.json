@@ -1,0 +1,13 @@
+{
+  "options.name":"firecloud-explorer",
+  "dest": "app/linux/installers/",
+  "icon": "src/assets/icons/png/1024x1024.png",
+  "categories": [
+    "Utility"
+  ],
+  "lintianOverrides": [
+    "changelog-file-missing-in-native-package"
+  ],
+  "bin":"FireCloud Explorer"
+}
+

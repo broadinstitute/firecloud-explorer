@@ -1,3 +1,5 @@
+if(require('electron-squirrel-startup')) return;
+
 // ./main.js
 const {
   app,
@@ -7,6 +9,7 @@ const {
 } = require('electron')
 const path = require('path');
 const url = require('url');
+const dialog = require('dialog');
 const electronOauth2 = require('electron-oauth2');
 const {
   downloadManager,
@@ -14,7 +17,10 @@ const {
 } = require('./electron_app/DownloadManager');
 const lazyNodeReader = require('./electron_app/FileSystemReader').lazyNodeReader;
 const constants = require('./electron_app/helpers/enviroment').constants;
+const progress_stream = require('./node_modules/progress-stream');
+const fs = require('fs');
 const os = require('os');
+
 const {
   handleDiskSpace
 } = require('./electron_app/helpers/handleDisk');
@@ -43,15 +49,12 @@ app.on('ready', function () {
   win.setMenu(null);
 
   // Specify entry point
-  if (process.env.PACKAGE === 'true') {
-    win.loadURL(url.format({
-      pathname: path.join(__dirname, 'dist/index.html'),
-      protocol: 'file:',
-      slashes: true
-    }));
-  } else {
-    win.loadURL(process.env.HOST);
-  }
+  win.loadURL(url.format({
+    pathname: path.join(__dirname, 'dist/index.html'),
+    protocol: 'file:',
+    slashes: true
+  }));
+
   // Show dev tools
   // Remove this line before distributing
   // win.webContents.openDevTools()
@@ -75,22 +78,58 @@ app.on('ready', function () {
     }
   };
 
+  const promiseTimeout = function (ms, promise) {
+
+    // Create a promise that rejects in <ms> milliseconds
+    let timeout = new Promise((resolve, reject) => {
+      let id = setTimeout(() => {
+        clearTimeout(id);
+        reject('Timed out in ' + ms + 'ms.')
+      }, ms)
+    });
+
+    // Returns a race between our timeout and the passed in promise
+    return Promise.race([
+      promise,
+      timeout
+    ]);
+  };
+
   ipcMain.on(constants.IPC_CONFIGURE_ACCOUNT, (event, googleConfig, googleOptions) => {
     this.googleConfig = googleConfig;
     this.googleOptions = googleOptions;
   });
 
-  ipcMain.on(constants.IPC_GOOGLE_AUTH, (event) => {
-    const myApiOauth = electronOauth2(this.googleConfig, windowParams);
-    myApiOauth.getAccessToken(this.googleOptions)
-      .then(token => {
+  ipcMain.on(constants.IPC_GOOGLE_AUTH, (event, googleConfig, googleOptions) => {
+    const myApiOauth = electronOauth2(googleConfig, windowParams);
+
+    let doLogin = function () {
+      return myApiOauth.getAccessToken(googleOptions);
+    };
+
+    // Apply a timeout of 15 seconds to doLogin
+    let doIt = promiseTimeout(150000, doLogin());
+
+    // Wait for the promise to get resolved
+    doIt.then(
+      token => {
         // use your token.access_token
         win.webContents.send(constants.IPC_GOOGLE_LOGIN, {
           result: token
         });
-      })
-      .catch((reason) => console.warn('Google Pop-up Warning ' + reason));
+      },
+      reason => {
+        dialog.warn('There was an error while trying to connect to Google. Please check your internet connection and try again.', function (exitCode) {
+          if (process.platform !== 'darwin') {
+            app.quit();
+          }
+          process.exit();
+          app.exit(0);
+        });
+      }
+    );
   });
+
   // ----- Google auth -----
 
   ipcMain.on(constants.IPC_START_DOWNLOAD, (event, items, access_token) => {
@@ -148,5 +187,6 @@ app.on('window-all-closed', function () {
 });
 
 process.on('unhandledRejection', (reason, p) => {
-  console.log('Unhandled Rej at Promise:', p, '',reason);
+  console.log('Unhandled Rej at Promise:', p, '', reason);
 });
+

@@ -1,6 +1,6 @@
 # FireCloud Explorer
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.5.0-rc.0.
+This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.6.5
 
 ## Development server
 
@@ -23,9 +23,12 @@ Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.
 Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
 
 ## Running as an Electron app
-npm install
-npm run build
-npm run electron
+
+`npm install`
+
+`npm run build`
+
+`npm run electron`
 
 ## Further help
 
@@ -33,12 +36,48 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
 
 ## Packaging 
 
-# for use in npm scripts
-npm install electron-packager --save-dev
+### Note regarding packaging
+Currently it is not possible to build Mac packages under other OS than Mac OS's. 
+It is recommended to build Windows packages under Windows OS, even if could be done
+under Linux with Wine. 
 
-# for use from cli
-npm install electron-packager -g
+Due to incompatibilities with Windows OS, electron-installer-debian is not specified in package.json. It will be automated in next versions. Meanwhile, please install it by 
+hand (npm install --save-dev electron-installer-debian) before creating Linux packages.
 
-npm install --save-dev electron
+### Common steps
+Before creating installable packages, regardless of OS, some steps must be performed:
 
-electron-packager . firecloud-explorer --overwrite --asar=true --platform=linux --arch=x64 --icon=assets/broad-icon.png --prune=true --out=release-builds
+`npm install` 
+
+`npm run build`
+
+Then, a package can be build for each OS.
+
+### Mac OS packaging
+Before running the script, a certificate for signing the app should have been imported and the script should have been edited to add certificate ID. 
+
+This script needs to be run in a Mac OS instance:
+
+`./scripts/mac-creator.sh `
+
+Resulting .dmg file will be located in app/mac/installers.
+
+### Windows OS packaging
+Before running the script, a certificate file should be placed in a accessible place and the script should reflect where certificate is. 
+
+This script needs to be run in a Windows OS instance. We have tested running under git-bash (we have it anyway since git for windows was installed first) :
+
+`./scripts/win-creator.sh `
+
+Resulting .dmg file will be located in app/windows/installers.
+
+### Linux (debian) packaging
+First, ensure electron-installer-debian is installed locally:
+
+`npm install --save-dev electron-installer-debian`
+
+This script needs to be run in a Linux OS instance:
+
+`./scripts/linux-creator.sh `
+
+Resulting .dmg file will be located in app/linux/installers.
