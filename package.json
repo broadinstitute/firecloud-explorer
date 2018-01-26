@@ -12,7 +12,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build && tsc main.ts --target es2015",
+    "build": "ng build && tsc main.ts --lib es2015",
     "test": "npm run lint && ng test --single-run",
     "lint": "ng lint",
     "e2e": "./node_modules/mocha/bin/mocha",
