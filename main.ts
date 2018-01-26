@@ -1,37 +1,26 @@
-if(require('electron-squirrel-startup')) return;
-
 // ./main.js
-const {
-  app,
-  BrowserWindow,
-  Menu,
-  ipcMain
-} = require('electron')
-const path = require('path');
-const url = require('url');
+import { app, BrowserWindow, Menu, ipcMain } from 'electron';
+import * as path from 'path';
+import * as url from 'url';
+import * as electronOauth2 from 'electron-oauth2';
+import * as os from 'os';
+import { UploadManagerClass } from './electron_app/UploadManager';
+import { DownloadManagerClass } from './electron_app/DownloadManager';
 const dialog = require('dialog');
-const electronOauth2 = require('electron-oauth2');
-const {
-  downloadManager,
-  destroyDownloads
-} = require('./electron_app/DownloadManager');
 const lazyNodeReader = require('./electron_app/FileSystemReader').lazyNodeReader;
 const constants = require('./electron_app/helpers/enviroment').constants;
 const progress_stream = require('./node_modules/progress-stream');
 const fs = require('fs');
-const os = require('os');
 
 const {
   handleDiskSpace
 } = require('./electron_app/helpers/handleDisk');
-const {
-    uploadManager,
-    uploadManagerCancel
-} = require('./electron_app/UploadManager');
 
 require('dotenv').config();
 
 let win = null;
+const downloadManager = new DownloadManagerClass();
+const uploadManager = new UploadManagerClass();
 
 app.on('ready', function () {
 
@@ -63,8 +52,8 @@ app.on('ready', function () {
   });
 
   // ----- Google auth -----
-  var googleConfig = {};
-  var googleOptions = {};
+  const googleConfig = {};
+  const googleOptions = {};
 
   const windowParams = {
     parent: win,
@@ -81,11 +70,11 @@ app.on('ready', function () {
   const promiseTimeout = function (ms, promise) {
 
     // Create a promise that rejects in <ms> milliseconds
-    let timeout = new Promise((resolve, reject) => {
-      let id = setTimeout(() => {
+    const timeout = new Promise((resolve, reject) => {
+      const id = setTimeout(() => {
         clearTimeout(id);
-        reject('Timed out in ' + ms + 'ms.')
-      }, ms)
+        reject('Timed out in ' + ms + 'ms.');
+      }, ms);
     });
 
     // Returns a race between our timeout and the passed in promise
@@ -95,20 +84,20 @@ app.on('ready', function () {
     ]);
   };
 
-  ipcMain.on(constants.IPC_CONFIGURE_ACCOUNT, (event, googleConfig, googleOptions) => {
-    this.googleConfig = googleConfig;
-    this.googleOptions = googleOptions;
+  ipcMain.on(constants.IPC_CONFIGURE_ACCOUNT, (event, config, opt) => {
+    this.googleConfig = config;
+    this.googleOptions = opt;
   });
 
-  ipcMain.on(constants.IPC_GOOGLE_AUTH, (event, googleConfig, googleOptions) => {
-    const myApiOauth = electronOauth2(googleConfig, windowParams);
+  ipcMain.on(constants.IPC_GOOGLE_AUTH, (event, config, options) => {
+    const myApiOauth = electronOauth2(config, windowParams);
 
-    let doLogin = function () {
-      return myApiOauth.getAccessToken(googleOptions);
+    const doLogin = function () {
+      return myApiOauth.getAccessToken(options);
     };
 
     // Apply a timeout of 15 seconds to doLogin
-    let doIt = promiseTimeout(150000, doLogin());
+    const doIt = promiseTimeout(150000, doLogin());
 
     // Wait for the promise to get resolved
     doIt.then(
@@ -119,7 +108,8 @@ app.on('ready', function () {
         });
       },
       reason => {
-        dialog.warn('There was an error while trying to connect to Google. Please check your internet connection and try again.', function (exitCode) {
+        dialog.warn('There was an error while trying to connect to Google. ' +
+        'Please check your internet connection and try again.', function (exitCode) {
           if (process.platform !== 'darwin') {
             app.quit();
           }
@@ -133,26 +123,26 @@ app.on('ready', function () {
   // ----- Google auth -----
 
   ipcMain.on(constants.IPC_START_DOWNLOAD, (event, items, access_token) => {
-    downloadManager(items, access_token, win);
+    downloadManager.downloadManager(items, access_token, win);
   });
 
   ipcMain.on(constants.IPC_START_UPLOAD, (event, bucketName, files, access_token) => {
-    uploadManager(bucketName, files, access_token, win);
+    uploadManager.uploadManager(bucketName, files, access_token, win);
   });
-  
+
   ipcMain.on(constants.IPC_UPLOAD_CANCEL, (event, file, access_token) => {
-    uploadManagerCancel(file, access_token);
+    uploadManager.uploadManagerCancel();
   });
-  
+
   ipcMain.on(constants.IPC_DOWNLOAD_CANCEL, (event) => {
-    destroyDownloads();
+    downloadManager.destroyDownloads();
   });
 
   ipcMain.on(constants.IPC_GET_NODE_CONTENT, (event, nodePath) => {
     if (nodePath === '/') {
       nodePath = os.homedir();
     }
-    var files = lazyNodeReader(nodePath, []);
+    const files = lazyNodeReader(nodePath, []);
 
     win.webContents.send(constants.IPC_GET_NODE_CONTENT, {
       result: files,
@@ -172,21 +162,14 @@ app.on('ready', function () {
   });
 });
 
-app.on('activate', () => {
-  if (win === null) {
-    createWindow();
-  }
-});
-
 app.on('window-all-closed', function () {
-  if (process.platform != 'darwin') {
+  if (process.platform !== 'darwin') {
     app.quit();
   }
   process.exit();
   app.exit(0);
 });
 
-process.on('unhandledRejection', (reason, p) => {
+process.on('loaded', (reason, p) => {
   console.log('Unhandled Rej at Promise:', p, '', reason);
 });
-
