@@ -11,12 +11,9 @@ const lazyNodeReader = require('./electron_app/FileSystemReader').lazyNodeReader
 const constants = require('./electron_app/helpers/enviroment').constants;
 const progress_stream = require('./node_modules/progress-stream');
 const fs = require('fs');
-
-const {
-  handleDiskSpace
-} = require('./electron_app/helpers/handleDisk');
-
+const { handleDiskSpace } = require('./electron_app/helpers/handleDisk');
 require('dotenv').config();
+if (require('electron-squirrel-startup')) { app.quit(); }
 
 let win = null;
 const downloadManager = new DownloadManagerClass();
