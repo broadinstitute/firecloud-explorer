@@ -11,12 +11,14 @@ import { Item } from '@app/file-manager/models/item';
 export class FirecloudApiService extends FirecloudService {
 
   public static workspaces: Map<String, String>;
+  public isResponseComplete = false;
   constructor(private http: HttpClient) {
     super();
   }
 
   public getUserFirecloudWorkspaces(optional: boolean) {
     const workspaceAPI = 'api/workspaces';
+    this.isResponseComplete = false;
     FirecloudApiService.workspaces = new Map();
     return this.http.get(environment.FIRECLOUD_API + workspaceAPI)
       .map((resp: any) => {
@@ -32,6 +34,7 @@ export class FirecloudApiService extends FirecloudService {
           }
         });
         localStorage.setItem('workspaces', JSON.stringify(workspaces));
+        this.isResponseComplete = true;
         return items;
       });
   }
@@ -42,5 +45,9 @@ export class FirecloudApiService extends FirecloudService {
       .map((resp: Response) => {
         return resp;
       });
+  }
+
+  public getIsResponseComplete() {
+    return this.isResponseComplete;
   }
 }

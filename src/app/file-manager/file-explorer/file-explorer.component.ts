@@ -210,6 +210,11 @@ export class FileExplorerComponent implements OnInit {
     return path.substring(1, indexSelectedFolder) + selectedFolder;
   }
 
+  dataFinishedLoading() {
+    return (this.isHome && this.firecloudService.getIsResponseComplete())
+          || !this.isHome && this.bucketService.getIsResponseComplete();
+  }
+
   cleanSelection(): void {
     const dialogRef = this.dialog.open(WarningModalComponent, {
       width: '550px',

@@ -9,12 +9,14 @@ import { Type } from '@app/file-manager/models/type';
 export class BucketService {
 
   static delimiter: string;
+  public isResponseComplete;
   constructor(private gcsService: GcsService) { }
   elements: Item[] = [];
   readonly DELIMITER = '/';
 
   public getBucketData(bucketName: String, delimiter: String, token: String, workspaceName: String): Observable<Item[]> {
     this.elements = [];
+    this.isResponseComplete = false;
     return this.getBucketFiles(bucketName, token, workspaceName, delimiter);
   }
 
@@ -28,6 +30,8 @@ export class BucketService {
               this.getBucketFiles(bucketName, response.nextPageToken, workspaceName, delimiter).subscribe(result => {
               return this.elements;
             });
+          } else {
+            this.isResponseComplete = true;
           }
         } else {
           this.elements = [];
@@ -59,6 +63,10 @@ export class BucketService {
   private getName(prefix): string {
     const prefixSegments = prefix.split(this.DELIMITER);
     return prefixSegments[prefixSegments.length - 2];
+  }
+
+  public getIsResponseComplete() {
+    return this.isResponseComplete;
   }
 
 }
