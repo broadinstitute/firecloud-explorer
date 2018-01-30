@@ -196,6 +196,16 @@ h4.subtitle {
   border-right: 2px solid mat-color($fcExplorer-primary, 400) !important;
 }
 
+.ui-toolbar-group-right .button-primary,
+.ui-toolbar-group-right .button-secondary {
+  margin-left: 5px;
+}
+
+.ui-toolbar-group-left .button-primary,
+.ui-toolbar-group-left .button-secondary {
+  margin-right: 5px;
+}
+
 .mat-paginator-decrement,
 .mat-paginator-increment {
   border-top: 2px solid mat-color($fcExplorer-primary, 700) !important;

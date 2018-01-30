@@ -4,11 +4,12 @@
   <span *ngIf="data == 'quit'"> leave?</span>
   <span *ngIf="data == 'logout'"> Sign out?</span>
   <span *ngIf="data == 'cancelAllUploads' || data == 'cancelAllDownloads'"> cancel?</span>
+  <span *ngIf="data == 'clearSelection'"> clear your selection?</span>
 </h2>
 
 <mat-dialog-content>
   <div class="flex-container">
-    <p>All current
+    <p *ngIf="data == 'quit' || data == 'logout' || data == 'cancelAllUploads' || data == 'cancelAllDownloads'">All current
       <span *ngIf="data == 'quit' || data == 'logout'">transfers</span>
       <span *ngIf="data == 'cancelAllUploads'">Uploads</span>
       <span *ngIf="data == 'cancelAllDownloads'">Downloads</span>
@@ -19,12 +20,13 @@
 
 <mat-dialog-actions>
   <button mat-raised-button (click)="cancel()" class="button-secondary">
-    <span *ngIf="data == 'quit' || data == 'logout'">Cancel</span>
+    <span *ngIf="data == 'quit' || data == 'logout' || data == 'clearSelection'">Cancel</span>
     <span *ngIf="data == 'cancelAllUploads' || data == 'cancelAllDownloads'">No</span>
   </button>
   <button mat-raised-button (click)="proceed()" class="button-primary">
     <span *ngIf="data == 'quit'">Exit anyway</span>
     <span *ngIf="data == 'logout'">Sign Out</span>
     <span *ngIf="data == 'cancelAllUploads' || data == 'cancelAllDownloads'">OK</span>
+    <span *ngIf="data == 'clearSelection'">OK</span>
   </button>
 </mat-dialog-actions>

@@ -53,10 +53,6 @@
 
 <p-toolbar styleClass="toolbar-accent">
   <div class="ui-toolbar-group-left">
-    <h3 class="subtitle">Selected: {{ fileCount }} file<span *ngIf="fileCount !== 1">s</span>. Total size: {{ totalSize | filesize }} </h3>
-  </div>
-
-  <div class="ui-toolbar-group-right">
     <div *ngIf="downloadInProgress" class="warn-message">
       Please wait, download in progress
       <div class="progress-dots">
@@ -65,7 +61,11 @@
         <span class="dot"></span>
       </div>
     </div>
+  </div>
 
+  <div class="ui-toolbar-group-right">
+    <button mat-raised-button (click)="cleanSelection()" class="button-secondary" [disabled]="disableButton()">
+      <i class="material-icons">clear</i>Clear selection</button>
     <button mat-raised-button (click)="selectionDone()" class="button-primary" [disabled]="disableButton()">
       <i class="material-icons">file_download</i>Download selection</button>
   </div>
