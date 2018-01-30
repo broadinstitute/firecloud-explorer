@@ -10,6 +10,7 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { FirecloudApiService } from '@app/file-manager/services/firecloud-api.service';
 import { FilesDataSource } from '@app/file-manager/dbstate/files-datasource';
 import { FilesService } from '@app/file-manager/services/files.service';
+import { WarningModalComponent } from '@app/file-manager/warning-modal/warning-modal.component';
 
 @Component({
   selector: 'app-file-explorer',
@@ -209,8 +210,21 @@ export class FileExplorerComponent implements OnInit {
     return path.substring(1, indexSelectedFolder) + selectedFolder;
   }
 
+  dataFinishedLoading() {
+    return (this.isHome && this.firecloudService.getIsResponseComplete())
+          || !this.isHome && this.bucketService.getIsResponseComplete();
+  }
+
+  cleanSelection(): void {
+    const dialogRef = this.dialog.open(WarningModalComponent, {
+      width: '550px',
+      disableClose: false,
+      data: 'clearSelection'
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result.exit) {
+        this.selection.clear();
+      }
+    });
+  }
 }
-
-
-
-
