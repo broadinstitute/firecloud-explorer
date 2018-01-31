@@ -370,6 +370,14 @@ a.sidenav-link p {
   padding: 0 15px;
 }
 
+.mat-header-row,
+.tree-table thead th {
+  position: sticky;
+  top: 0;
+  background: white;
+  z-index: 9999;
+}
+
 /*TOOLBAR*/
 
 .toolbar-accent.ui-toolbar{

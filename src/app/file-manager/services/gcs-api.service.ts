@@ -65,17 +65,19 @@ export class GcsApiService extends GcsService {
     }
   }
 
-  public cancelDownloads() {
+  public cancelDownloads(): Promise<boolean> {
     const items = this.getDownloadingFiles();
     if (items.length > 0) {
       this.openModal('download-cancel', items, 'cancelAllDownloads');
+      return Promise.resolve(true);
     }
   }
 
-  public cancelUploads() {
+  public cancelUploads(): Promise<boolean> {
     const items = this.getUploadingFiles();
     if (items.length > 0) {
       this.openModal('upload-cancel', items, 'cancelAllUploads');
+      return Promise.resolve(true);
     }
   }
 

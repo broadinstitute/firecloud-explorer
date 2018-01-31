@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { GcsService } from './gcs.service';
 import { Observable } from 'rxjs/Observable';
 import { Item } from '../models/item';
@@ -23,9 +22,9 @@ export class GcsApiMockService extends GcsService {
 
   public cancelAll() {}
 
-  public cancelDownloads() {}
+  public cancelDownloads(): Promise<boolean> { return; }
 
-  public cancelUploads() {}
+  public cancelUploads(): Promise<boolean> { return; }
 
   public getBucketFilesWithMaxResult(bucketName: String, delimiter: String, token: String) {
     return Observable.of();
