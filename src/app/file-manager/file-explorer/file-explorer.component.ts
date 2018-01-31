@@ -218,7 +218,7 @@ export class FileExplorerComponent implements OnInit {
   cleanSelection(): void {
     const dialogRef = this.dialog.open(WarningModalComponent, {
       width: '550px',
-      disableClose: false,
+      disableClose: true,
       data: 'clearSelection'
     });
     dialogRef.afterClosed().subscribe(result => {
