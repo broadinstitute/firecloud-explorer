@@ -1,4 +1,4 @@
-import { Component, OnInit, NgZone, AfterViewInit, Input, ViewChild, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, NgZone, AfterViewInit, ViewChild, } from '@angular/core';
 import { Store } from '@ngrx/store';
 import * as Transferables from '../actions/transferables.actions';
 import { DownloadValidatorService } from '../services/download-validator.service';
@@ -34,6 +34,8 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   generalUploadProgress = 0;
   uploadInProgress = false;
   downloadInProgress = false;
+  disabledDownload = false;
+  disabledUpload = false;
 
   constructor(
     private statusService: StatusService,
@@ -91,7 +93,7 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
     this.statusService.updateDownloadProgress().subscribe(data => {
       this.zone.run(() => {
         this.generalProgress = data;
-        if (data === 100) {
+        if (data === 100 || this.disabledDownload) {
           this.downloadInProgress = false;
         } else {
           this.downloadInProgress = true;
@@ -101,7 +103,7 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
     this.statusService.updateUploadProgress().subscribe(data => {
       this.zone.run(() => {
         this.generalUploadProgress = data;
-        if (data === 100) {
+        if (data === 100 || this.disabledUpload) {
           this.uploadInProgress = false;
         } else {
           this.uploadInProgress = true;
@@ -127,11 +129,19 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   }
 
   cancelUploads() {
-    this.gcsService.cancelUploads();
+    this.gcsService.cancelUploads().then( value => {
+      this.zone.run(() => {
+        this.disabledUpload = value;
+      });
+    });
   }
 
   cancelDownloads() {
-    this.gcsService.cancelDownloads();
+    this.gcsService.cancelDownloads().then( value => {
+      this.zone.run(() => {
+        this.disabledDownload = value;
+      });
+    });
   }
 
   stopAll() {
