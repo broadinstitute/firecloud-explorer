@@ -29,4 +29,6 @@ export class ElectronIpcMockService extends ElectronIpcService {
   public removeAllListeners(channel: string): void { }
 
   public openExternalURL(URL: string): void { }
+
+  public logout(): void { }
 }

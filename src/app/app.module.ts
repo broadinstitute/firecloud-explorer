@@ -11,6 +11,7 @@ import { SettingsModule } from './settings';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { NgxElectronModule } from 'ngx-electron';
+import { GoogleLoginService } from '@app/file-manager/services/login-google.service';
 
 @NgModule({
   imports: [
@@ -36,7 +37,9 @@ import { NgxElectronModule } from 'ngx-electron';
   schemas: [
     CUSTOM_ELEMENTS_SCHEMA
   ],
-  providers: [],
+  providers: [
+    GoogleLoginService,
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

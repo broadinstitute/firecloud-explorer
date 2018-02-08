@@ -13,7 +13,7 @@ import { ElectronIpcMockService } from '@app/file-manager/services/electron-ipc.
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { FirecloudApiService } from '@app/file-manager/services/firecloud-api.service';
-import { LoginApiService } from '@app/file-manager/services/login-api.service';
+import { GoogleLoginService } from '@app/file-manager/services/login-google.service';
 import { ElectronIpcApiService } from '@app/file-manager/services/electron-ipc.api.service';
 
 class RouterStub {
@@ -68,7 +68,7 @@ describe('LoginComponent', () => {
       ],
       providers: [
         FirecloudApiService,
-        LoginApiService,
+        GoogleLoginService,
         ElectronIpcApiService,
         RouterStub
       ]
@@ -78,7 +78,7 @@ describe('LoginComponent', () => {
       set: {
         providers: [
           {provide: FirecloudApiService, useClass: FirecloudApiMockService},
-          {provide: LoginApiService, useClass: LoginMockService},
+          {provide: GoogleLoginService, useClass: LoginMockService},
           {provide: ElectronIpcApiService, useClass: ElectronIpcMockService},
           {provide: Router, useClass: RouterStub}
         ]
@@ -90,7 +90,7 @@ describe('LoginComponent', () => {
     loginComponent.detectChanges();
     // electronIpc should be the mocked class
     electronIpc = loginComponent.debugElement.injector.get(ElectronIpcApiService);
-    loginService = loginComponent.debugElement.injector.get(LoginApiService);
+    loginService = loginComponent.debugElement.injector.get(GoogleLoginService);
     routerMod = loginComponent.debugElement.injector.get(Router);
 
     location = TestBed.get(Location);

@@ -13,6 +13,8 @@ const constants ={
   IPC_UPLOAD_STATUS: 'upload-status',
   IPC_UPLOAD_CANCEL: 'upload-cancel',
   IPC_DOWNLOAD_CANCEL: 'download-cancel',
+  IPC_GOOGLE_LOGOUT: 'google-revoke-auth',
+  GOOGLE_LOGOUT_URL: 'https://accounts.google.com/logout?continue=http://google.com',
 };
 
 module.exports = { constants };

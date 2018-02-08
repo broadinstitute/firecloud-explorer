@@ -34,5 +34,9 @@ export class ElectronIpcApiService extends ElectronIpcService {
   public openExternalURL(URL: string): void {
     this.electronService.shell.openExternal(URL);
   }
+
+  public logout(): void {
+    this.electronService.ipcRenderer.send(constants.IPC_GOOGLE_LOGOUT);
+  }
 }
 

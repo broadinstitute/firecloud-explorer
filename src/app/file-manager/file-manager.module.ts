@@ -37,7 +37,7 @@ import {LimitTransferablesService} from '@app/file-manager/services/limit-transf
 import { MatDialog } from '@angular/material';
 import { BreadcrumbComponent } from './breadcrumb/breadcrumb.component';
 import { ElectronIpcApiService } from '@app/file-manager/services/electron-ipc.api.service';
-import { LoginApiService } from '@app/file-manager/services/login-api.service';
+import { GoogleLoginService } from '@app/file-manager/services/login-google.service';
 
 @NgModule({
   imports: [
@@ -66,7 +66,7 @@ import { LoginApiService } from '@app/file-manager/services/login-api.service';
     FilesDatabase,
     FilesService,
     BucketService,
-    LoginApiService,
+    GoogleLoginService,
     LimitTransferablesService,
     {
       provide: HTTP_INTERCEPTORS,

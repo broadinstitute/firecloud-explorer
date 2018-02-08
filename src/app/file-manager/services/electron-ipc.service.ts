@@ -14,4 +14,6 @@ export abstract class ElectronIpcService {
 
   abstract openExternalURL(URL: string): void;
 
+  abstract logout(): void;
+
 }

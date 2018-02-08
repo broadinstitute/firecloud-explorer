@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { Message } from 'primeng/components/common/api';
 import { AppComponent } from '../../app.component';
 import { ElectronIpcApiService } from '@app/file-manager/services/electron-ipc.api.service';
-import { LoginApiService } from '@app/file-manager/services/login-api.service';
+import { GoogleLoginService } from '@app/file-manager/services/login-google.service';
 
 @Component({
   selector: 'app-login',
@@ -21,7 +21,7 @@ export class LoginComponent implements OnInit {
 
   constructor(
     private electronIpcService: ElectronIpcApiService,
-    private loginService: LoginApiService,
+    private loginService: GoogleLoginService,
     private router: Router
   ) { }
 
@@ -74,6 +74,7 @@ export class LoginComponent implements OnInit {
           summary: 'Sorry, your Google account is not associated with FireCloud.',
           detail: 'Please go to ' + this.fireCloudURL + ' to create one.'
         });
+        this.loginService.logOut();
         break;
       default:
         this.msgs.push({

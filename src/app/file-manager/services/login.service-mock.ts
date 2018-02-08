@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { environment } from '@env/environment';
+import { Observable } from 'rxjs/Observable';
 
 @Injectable()
 export class LoginMockService {
@@ -54,4 +55,6 @@ export class LoginMockService {
   public isLogged(): boolean {
     return true;
   }
+
+  public logOut(): void { }
 }

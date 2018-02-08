@@ -1,4 +1,4 @@
-import { Component, HostBinding, OnDestroy, OnInit, NgZone, HostListener } from '@angular/core';
+import { Component, HostBinding, OnDestroy, OnInit, HostListener } from '@angular/core';
 import { OverlayContainer } from '@angular/cdk/overlay';
 import { Store } from '@ngrx/store';
 import { Subject } from 'rxjs/Subject';
@@ -9,15 +9,16 @@ import 'rxjs/add/operator/filter';
 import { Router } from '@angular/router';
 import { ElectronService } from 'ngx-electron';
 
-import { login, logout, selectorAuth, routerTransition } from '@app/core';
+import { logout, selectorAuth, routerTransition } from '@app/core';
 import { environment } from '@env/environment';
 
 import { selectorSettings } from './settings';
-import { MatDialog, MAT_DIALOG_DATA  } from '@angular/material';
+import { MatDialog } from '@angular/material';
 import { WarningModalComponent } from '@app/file-manager/warning-modal/warning-modal.component';
 import { FilesDatabase } from '@app/file-manager/dbstate/files-database';
 import { ItemStatus } from '@app/file-manager/models/item-status';
 import { GcsService } from '@app/file-manager/services/gcs.service';
+import { GoogleLoginService } from '@app/file-manager/services/login-google.service';
 
 @Component({
   selector: 'app-root',
@@ -45,7 +46,8 @@ export class AppComponent implements OnInit, OnDestroy {
     private store: Store<any>,
     private router: Router,
     private electronService: ElectronService,
-    private gcsService: GcsService
+    private gcsService: GcsService,
+    private loginService: GoogleLoginService,
   ) {
     AppComponent.updateUserEmail.subscribe(email => {
       this.userEmail = email;
@@ -120,9 +122,9 @@ export class AppComponent implements OnInit, OnDestroy {
     }
   }
   logout() {
-    const redirect = '/login';
     SecurityService.removeAccessToken();
+    this.loginService.logOut();
     this.store.dispatch(logout());
-    this.router.navigate([redirect]);
+    this.router.navigate(['/login']);
   }
 }

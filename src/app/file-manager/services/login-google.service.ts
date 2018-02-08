@@ -6,6 +6,7 @@ import { SecurityService } from '../services/security.service';
 import { LoginService } from '@app/file-manager/services/login.service';
 import { ElectronIpcApiService } from '@app/file-manager/services/electron-ipc.api.service';
 import { FirecloudApiService } from '@app/file-manager/services/firecloud-api.service';
+import { HttpClient } from '@angular/common/http';
 
 const constants = require('../../../../electron_app/helpers/enviroment').constants;
 
@@ -27,11 +28,11 @@ const googleOptions = {
 };
 
 @Injectable()
-export class LoginApiService extends LoginService {
-  constructor(
-    private electronIpc: ElectronIpcApiService,
-    private store: Store<any>,
-    private firecloudService: FirecloudApiService) {
+export class GoogleLoginService extends LoginService {
+  constructor(private electronIpc: ElectronIpcApiService,
+              private store: Store<any>,
+              private http: HttpClient,
+              private firecloudService: FirecloudApiService) {
     super();
   }
 
@@ -65,6 +66,12 @@ export class LoginApiService extends LoginService {
     if (SecurityService.getAccessToken() !== null) {
       this.store.dispatch(login());
       logged = true;
-    } return logged;
+    }
+    return logged;
+  }
+
+  public logOut(): void {
+    this.electronIpc.logout();
+    this.http.head(constants.GOOGLE_LOGOUT_URL).subscribe();
   }
 }
