@@ -1,5 +1,5 @@
-const psjon = require('../../package.json');
-const userAgent = psjon.productName + '/' + psjon.appVersion;
+const psjon = require('../../package-lock.json');
+const userAgent = psjon.name + '/' + psjon.version;
 const constants ={
   IPC_GOOGLE_AUTH: 'google-oauth',
   IPC_GOOGLE_LOGIN: 'google-login',
