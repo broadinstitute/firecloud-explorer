@@ -42,6 +42,9 @@ app.on('ready', function () {
     show: false
   });
 
+  const ses = win.webContents.session;
+  ses.setUserAgent(constants.USER_AGENT);
+
   win.maximize();
   win.setMenu(null);
 

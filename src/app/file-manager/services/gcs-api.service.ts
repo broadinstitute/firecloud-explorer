@@ -7,7 +7,6 @@ import { GcsService } from './gcs.service';
 import { ElectronService } from 'ngx-electron';
 import { Item } from '../models/item';
 import * as Transferables from '../actions/transferables.actions';
-import { AppState } from '../dbstate/app-state';
 import { Store } from '@ngrx/store';
 import { FilesDatabase } from '../dbstate/files-database';
 import 'rxjs/add/operator/map';
