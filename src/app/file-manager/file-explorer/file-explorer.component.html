@@ -1,7 +1,7 @@
 <h1>Select files to download</h1>
 
 <div class="full-width">
-  <app-breadcrumb [path]="breadcrumbPath" (home)="goRoot()" (change)="pathChanged($event)"></app-breadcrumb>
+  <app-breadcrumb [path]="displayNamespace()" (home)="goRoot()" (change)="pathChanged($event)"></app-breadcrumb>
 </div>
 
 <div class="table-container flex-container column table-downloads">
@@ -23,9 +23,12 @@
     <ng-container matColumnDef="name">
         <mat-header-cell *matHeaderCellDef class="col-name"> Name </mat-header-cell>
         <mat-cell *matCellDef="let element" class="col-name" [ngClass]="{'type-folder': element.type === 'Folder', 'type-file': element.type === 'File'}" (click)="clickOnRow(element)">
-          <mat-icon *ngIf="element.type === 'Folder'">folder</mat-icon>
+          <mat-icon *ngIf="element.type === 'Folder' && !element.namespace">folder</mat-icon>
           <mat-icon *ngIf="element.type === 'File'">insert_drive_file</mat-icon>
-          {{element.name}}
+          <p class="col-name-text" [ngClass]="{'workspace': element.namespace}">
+            <small *ngIf="element.namespace">{{element.namespace}}</small>
+            <span>{{element.name}}</span>
+          </p>
         </mat-cell>
     </ng-container>
 

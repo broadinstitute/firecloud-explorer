@@ -44,8 +44,9 @@ export class BucketService {
     if (resp.prefixes !== undefined) {
       resp.prefixes.forEach(prefix => {
         const currentName = this.getName(prefix);
-        this.elements.push( new Item(UUID.UUID(), currentName, null, null, NaN, '', '', '',
-        'Folder', '', bucketName, workspaceName + this.DELIMITER + prefix, prefix, true, false));
+        const id = bucketName + currentName;
+        this.elements.push( new Item(id, currentName, null, null, NaN, '', '', '',
+        'Folder', '', bucketName, workspaceName + this.DELIMITER + prefix, prefix, true, false, ''));
       });
     }
     if (resp.items !== undefined) {
@@ -53,7 +54,7 @@ export class BucketService {
         const path =  workspaceName + this.DELIMITER + item.name;
         const name = item.name.split(this.DELIMITER)[item.name.split(this.DELIMITER).length - 1];
         this.elements.push(new Item(item.id, name, item.created, item.updated, item.size, item.mediaLink, path, '',
-        'File', '', bucketName, this.DELIMITER, this.DELIMITER, true, false));
+        'File', '', bucketName, this.DELIMITER, this.DELIMITER, true, false, ''));
       });
     }
     return this.elements;

@@ -22,9 +22,10 @@ export class Item {
   prefix: string;
   delimiter: string;
   open: boolean;
+  namespace: string;
 
   constructor(id, name, created, updated, size, mediaLink, path, destination,
-              type, status, bucketName, prefix, delimiter, preserveStructure, open) {
+              type, status, bucketName, prefix, delimiter, preserveStructure, open, namespace) {
     this.id = id;
     this.name = name;
     this.created = created;
@@ -42,6 +43,7 @@ export class Item {
     this.selected = false;
     this.open = open;
     this.setProgressData();
+    this.namespace = namespace;
     }
 
   setProgressData() {

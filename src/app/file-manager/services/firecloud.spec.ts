@@ -36,7 +36,8 @@ describe('FireCloud service for Workspace', () => {
           '/FCDownloadClient_Workspace1',
           '/',
           true,
-          false
+          false,
+          ''
       );
 
         const firecloudService = getTestBed().get(FirecloudApiService);

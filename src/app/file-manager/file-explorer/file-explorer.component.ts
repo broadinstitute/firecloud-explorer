@@ -28,8 +28,10 @@ export class FileExplorerComponent implements OnInit {
   downloadInProgress = false;
   fileCount = 0;
   totalSize = 0;
+  nameSpace: String = '';
   data = null;
   readonly DELIMITER = '/';
+  readonly SEPARATOR = ' | ';
 
   constructor(
     private statusService: StatusService,
@@ -124,6 +126,7 @@ export class FileExplorerComponent implements OnInit {
       this.isHome = true;
       this.paginator.pageIndex = 0;
       this.breadcrumbPath = '';
+      this.nameSpace = '';
       this.bucketObjects.data = [];
       this.firecloudService.getUserFirecloudWorkspaces(false).subscribe(workspaces => {
         this.bucketObjects.data = workspaces;
@@ -140,7 +143,17 @@ export class FileExplorerComponent implements OnInit {
       const workspaceName = this.getWorkspaceName(elem.bucketName);
       this.getBucketObjects(elem.bucketName, BucketService.delimiter, workspaceName);
       this.breadcrumbPath = elem.prefix;
+      this.nameSpace = elem.namespace ? elem.namespace : this.nameSpace;
     }
+  }
+
+  displayNamespace(): String {
+    if (this.breadcrumbPath.startsWith(this.DELIMITER)) {
+      return this.DELIMITER + this.nameSpace + this.SEPARATOR + this.breadcrumbPath.substr(1);
+    } else if (this.breadcrumbPath !== '') {
+      return this.nameSpace + this.SEPARATOR + this.breadcrumbPath;
+    }
+    return this.breadcrumbPath;
   }
 
   pathChanged(event) {
@@ -218,7 +231,7 @@ export class FileExplorerComponent implements OnInit {
   cleanSelection(): void {
     const dialogRef = this.dialog.open(WarningModalComponent, {
       width: '550px',
-      disableClose: false,
+      disableClose: true,
       data: 'clearSelection'
     });
     dialogRef.afterClosed().subscribe(result => {

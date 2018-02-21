@@ -83,7 +83,7 @@ export class GcsApiService extends GcsService {
   openModal(action: string, items: Item[], type: string) {
     const dialogRef = this.dialog.open(WarningModalComponent, {
       width: '500px',
-      disableClose: false,
+      disableClose: true,
       data: type
     });
     dialogRef.afterClosed().subscribe(result => {

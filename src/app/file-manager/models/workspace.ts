@@ -3,4 +3,5 @@ export interface Workspace {
     bucketName: string;
     name: string;
     accessLevel: string;
+    namespace: string;
 }

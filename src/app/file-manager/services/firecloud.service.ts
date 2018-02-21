@@ -35,14 +35,15 @@ export abstract class FirecloudService {
       public: item.public,
       accessLevel: item.accessLevel,
       bucketName: item.workspace.bucketName,
-      name: item.workspace.name
+      name: item.workspace.name,
+      namespace: item.workspace.namespace
     };
 
   }
 
   private createItem(item): Item {
-    return new Item(UUID.UUID(), item.workspace.name, null, null, NaN, '', '', '',
-    'Folder', '', item.workspace.bucketName, '/' +  item.workspace.name, '/', true, item.public);
+    return new Item(item.workspace.name +  item.workspace.bucketName, item.workspace.name, null, null, NaN, '', '', '',
+    'Folder', '', item.workspace.bucketName, '/' +  item.workspace.name, '/', true, item.public, item.workspace.namespace);
   }
   abstract getUserFirecloudWorkspaces(optional: boolean): Observable<any>;
 

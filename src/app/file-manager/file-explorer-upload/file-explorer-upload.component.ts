@@ -215,7 +215,7 @@ export class FileExplorerUploadComponent implements OnInit {
           .forEach(file => {
             this.dataFile =  new Item(UUID.UUID(),  file.data.name, file.data.updated, file.data.updated, file.data.size,
                           '', file.data.path, result.directory, Type.UPLOAD, ItemStatus.PENDING, '',
-              '', '', result.preserveStructure, false);
+              '', '', result.preserveStructure, false, '');
             this.uploadFiles.push(this.dataFile);
             this.store.dispatch(new Transferables.AddItem(this.dataFile));
           });

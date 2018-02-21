@@ -78,7 +78,7 @@ export class FileDownloadModalComponent  {
       .forEach(file => {
         const dataFile: Item = new Item(file.id, file.name, file.updated, file.created,
           file.size, file.mediaLink, file.path, this.directory,
-          Type.DOWNLOAD, ItemStatus.PENDING, '', '', '', this.preserveStructure, false);
+          Type.DOWNLOAD, ItemStatus.PENDING, '', '', '', this.preserveStructure, false, '');
         this.downloadFiles.push(dataFile);
         this.store.dispatch(new Transferables.AddItem(dataFile));
         this.done.emit(true);
