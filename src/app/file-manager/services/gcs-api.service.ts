@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '@env/environment';
 import { Observable } from 'rxjs/Observable';
 import { SecurityService } from './security.service';
@@ -21,9 +21,9 @@ import { MatDialog } from '@angular/material';
 export class GcsApiService extends GcsService {
 
   constructor(private http: HttpClient,
-              private electronService: ElectronService,
-              private store: Store<any>,
-              private dialog: MatDialog) {
+    private electronService: ElectronService,
+    private store: Store<any>,
+    private dialog: MatDialog) {
     super();
   }
 
@@ -32,14 +32,16 @@ export class GcsApiService extends GcsService {
     return this.http.get(url);
   }
 
-  public getBucketFilesWithMaxResult(bucketName: String, delimiter: String, pageToken: String): Observable<any> {
-    let url = environment.GOOGLE_URL + 'storage/v1/b/' + bucketName + '/o?maxResults=' + environment.BUCKETS_MAX_RESULT
-              + '&delimiter=' + '/';
-    url =  pageToken !== null ? url.concat('&pageToken=' + pageToken) : url;
-    url =  delimiter !== '/' ? url.concat('&prefix=' + delimiter) : url;
+  public getBucketFilesWithMaxResult(bucketName: String, prefix: String, pageToken: String, useDelimiter: Boolean): Observable<any> {
+    let url = environment.GOOGLE_URL + 'storage/v1/b/'
+      + bucketName + '/o?maxResults=' + environment.BUCKETS_MAX_RESULT
+      + '&fields=nextPageToken,prefixes,items(id,name,bucket,timeCreated,updated,size,mediaLink)';
+
+    url = useDelimiter ? url.concat('&delimiter=' + '/') : url;
+    url = pageToken !== null ? url.concat('&pageToken=' + pageToken) : url;
+    url = prefix !== '/' ? url.concat('&prefix=' + prefix) : url;
     return this.http.get(url);
   }
-
 
   public uploadFiles(bucketName: String, files: any[]) {
     if (files !== null && files.length > 0) {
@@ -89,10 +91,12 @@ export class GcsApiService extends GcsService {
     dialogRef.afterClosed().subscribe(result => {
       if (result.exit) {
         this.electronService.ipcRenderer.send(action);
-        this.cancelItemsStatus(items);        }
+        this.cancelItemsStatus(items);
+      }
     });
   }
-  cancelItemsStatus(items: Item []) {
+
+  cancelItemsStatus(items: Item[]) {
     items.forEach(item => {
       this.store.dispatch(new Transferables.UpdateItemCanceled(item));
     });
@@ -100,15 +104,15 @@ export class GcsApiService extends GcsService {
 
   getDownloadingFiles() {
     const items = new FilesDatabase(this.store).data.
-    filter(item => item.status === ItemStatus.DOWNLOADING ||
-      (item.status === ItemStatus.PENDING && item.type === Type.DOWNLOAD));
+      filter(item => item.status === ItemStatus.DOWNLOADING ||
+        (item.status === ItemStatus.PENDING && item.type === Type.DOWNLOAD));
     return items;
   }
 
   getUploadingFiles() {
     const items = new FilesDatabase(this.store).data.
-    filter(item => item.status === ItemStatus.UPLOADING ||
-          (item.status === ItemStatus.PENDING && item.type === Type.UPLOAD));
+      filter(item => item.status === ItemStatus.UPLOADING ||
+        (item.status === ItemStatus.PENDING && item.type === Type.UPLOAD));
     return items;
   }
 

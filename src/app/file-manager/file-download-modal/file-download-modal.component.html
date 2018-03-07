@@ -2,19 +2,33 @@
 
 <mat-dialog-content>
   <div class="flex-container">
-      <div class="browse-button">
-          <label class="label-button" for="directorypicker">Browse...</label>
-          <input type="file" id="directorypicker" (change)="directoryChanged($event)" style="display: none;" webkitdirectory directory multiple required/>
-      </div>
+    <div class="browse-button">
+      <label class="label-button" for="directorypicker">Browse...</label>
+      <input type="file" id="directorypicker" (change)="directoryChanged($event)" style="display: none;" webkitdirectory directory
+        multiple required/>
+    </div>
     <p class="browse-location">{{directory}}</p>
-    
   </div>
-  <hr>
+  <p-toolbar styleClass="toolbar-accent toolbar-modal">
+    <h4 class="subtitle">Selected: {{fileCountObservable | async }} files.
+      <span *ngIf="!isLoading()">Total size: {{ totalSizeObservable | async | filesize}}</span>
+      <span *ngIf="isLoading()">Running size: {{ totalSizeObservable | async | filesize}}</span>
+    </h4>
+    <div *ngIf="isLoading()">
+      <small>Please wait, loading selected content</small>
+      <div class="progress-dots download-modal">
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+      </div>
+    </div>
+  </p-toolbar>
 </mat-dialog-content>
 
-<mat-checkbox [checked]="preserveStructure" aria-label="Preserve folder structure" (change)="selectionChanged($event)" class="dialog-checkbox" disableRipple>Preserve folder structure</mat-checkbox>
+<mat-checkbox [checked]="preserveStructure" aria-label="Preserve folder structure" (change)="selectionChanged($event)" class="dialog-checkbox"
+  disableRipple>Preserve folder structure</mat-checkbox>
 <p-messages class="error-messages" [(value)]="msgs"></p-messages>
 <mat-dialog-actions>
-  <button mat-raised-button (click)="cancel()" class="button-secondary">Cancel</button>
-  <button mat-raised-button [disabled]="!isValid" (click)="startDownload()" class="button-primary">Start Download!</button>
+  <button mat-raised-button [disabled]="isLoading()" (click)="cancel()" class="button-secondary">Cancel</button>
+  <button mat-raised-button [disabled]="(!isValid || isLoading())" (click)="startDownload()" class="button-primary">Start Download!</button>
 </mat-dialog-actions>

@@ -11,18 +11,18 @@ let fileExists = true;
 const downloadManager = (items, access_token, electronWin) => {
   items.forEach(item => {
     let count = 0;
-    let fileName = item.name;
+    let fileName = item.displayName;
     const destination = item.preserveStructure ?
       path.join(item.destination, item.path.substring(item.path.lastIndexOf('/'), 0)) : item.destination;
     do {
       fileExists = fileAlreadyExists(path.join(destination, fileName));
       if (fileExists) {
         count++;
-        fileName = item.name.substring(0, item.name.indexOf('.')) + '(' + (count) + ')' +
-          item.name.substring(item.name.indexOf('.'));
+        fileName = item.displayName.substring(0, item.displayName.indexOf('.')) + '(' + (count) + ')' +
+          item.displayName.substring(item.displayName.indexOf('.'));
       }
     } while (fileExists);
-    item.name = fileName;
+    item.displayName = fileName;
     processItem(item, destination, access_token, electronWin);
   });
 };
@@ -34,7 +34,7 @@ const processItem = (item, itemDestination, token, win) => {
 };
 
 const processDownload = (access_token, item, folder, win) => {
-  filePath = path.join(folder, item.name);
+  filePath = path.join(folder, item.displayName);
   const dloader = new Downloader();
   const dl = dloader.download(item.mediaLink, filePath, setHeader(access_token));
   dl.start();

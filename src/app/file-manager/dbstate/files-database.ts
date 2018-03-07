@@ -50,13 +50,14 @@ export class FilesDatabase {
   }
 
   constructor(private store: Store<AppState>) {
-
     this.itemsObs = store.select('transferables');
-    this.itemsObs.subscribe(data => {
-      this.dataChange.next(data.items);
-      this.selectionChange.next(data.selectedCount);
-      this.stateChange.next(data);
-      this.totalCount = data.count;
-    });
+    this.itemsObs
+      .subscribe(
+        data => {
+          this.dataChange.next(data.items);
+          this.selectionChange.next(data.selectedCount);
+          this.stateChange.next(data);
+          this.totalCount = data.count;
+        });
   }
 }

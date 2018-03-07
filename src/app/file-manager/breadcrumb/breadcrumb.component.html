@@ -2,7 +2,7 @@
   <li>
     <a (click)="homeClicked($event)">Workspaces</a>
   </li>
-  <li *ngFor="let segment of segments">
-    <a (click)="stepClicked($event, segment)">{{segment.label}}</a>
+  <li *ngFor="let crumb of crumbs; let ix = index">
+    <a (click)="crumbClicked($event, ix)">{{crumb.label}}</a>
   </li>
 </ul>

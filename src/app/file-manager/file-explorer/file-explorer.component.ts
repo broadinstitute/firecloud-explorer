@@ -1,37 +1,47 @@
-import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
+import { Component, OnInit, NgZone, ViewChild, AfterViewInit } from '@angular/core';
 import { Item } from '../models/item';
-import { BucketObjectsDB } from '../models/bucket-object-db';
+
 import { FilterSizePipe } from '../filters/filesize-filter';
 import { FileDownloadModalComponent } from '../file-download-modal/file-download-modal.component';
-import { MatDialog, MatPaginator } from '@angular/material';
+import { MatDialog, MatPaginator, MAT_CHECKBOX_CLICK_ACTION } from '@angular/material';
+import { MatTableDataSource, MatSort } from '@angular/material';
 import { StatusService } from '../services/status.service';
 import { BucketService } from '../services/bucket.service';
-import { SelectionModel } from '@angular/cdk/collections';
 import { FirecloudApiService } from '@app/file-manager/services/firecloud-api.service';
 import { FilesDataSource } from '@app/file-manager/dbstate/files-datasource';
 import { FilesService } from '@app/file-manager/services/files.service';
 import { WarningModalComponent } from '@app/file-manager/warning-modal/warning-modal.component';
+import { ItemStatus } from '@app/file-manager/models/item-status';
+import { List } from 'lodash';
+
+import { NgxSpinnerComponent } from 'ngx-spinner';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { applySourceSpanToStatementIfNeeded } from '@angular/compiler/src/output/output_ast';
+import { SelectionService } from '@app/file-manager/services/selection.service';
 
 @Component({
   selector: 'app-file-explorer',
   templateUrl: './file-explorer.component.html',
-  styleUrls: ['./file-explorer.component.scss']
+  styleUrls: ['./file-explorer.component.scss'],
+  providers: [
+    { provide: MAT_CHECKBOX_CLICK_ACTION, useValue: 'check-indeterminate' }
+  ]
 })
-export class FileExplorerComponent implements OnInit {
+export class FileExplorerComponent implements OnInit, AfterViewInit {
+
   isHome: Boolean = false;
-  bucketObjects = new BucketObjectsDB();
-  breadcrumbPath = '';
-  displayedColumns = ['select', 'name', 'size', 'lastdate'];
-  dataSource: FilesDataSource | null;
-  selection = new SelectionModel<Item>(true, []);
+  displayedColumns = ['select', 'displayName', 'size', 'updated'];
+
+  dataSource = new MatTableDataSource([]);
+  @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
+
+  breadcrumbItems: Item[];
+  headerItem: Item;
+  rootItem: Item;
   downloadInProgress = false;
-  fileCount = 0;
-  totalSize = 0;
-  nameSpace: String = '';
-  data = null;
+
   readonly DELIMITER = '/';
-  readonly SEPARATOR = ' | ';
 
   constructor(
     private statusService: StatusService,
@@ -40,149 +50,250 @@ export class FileExplorerComponent implements OnInit {
     private firecloudService: FirecloudApiService,
     private dialog: MatDialog,
     private filterSize: FilterSizePipe,
-    private bucketService: BucketService) {
-
+    private bucketService: BucketService,
+    private spinner: NgxSpinnerService,
+    private selectionService: SelectionService) {
+    this.breadcrumbItems = [];
   }
 
   ngOnInit() {
-    this.dataSource = new FilesDataSource(this.bucketObjects, this.paginator);
-    this.goRoot();
-    this.statusService.updateDownloadProgress().subscribe(data => {
-      this.zone.run(() => {
-        if (data === 100) {
-          this.downloadInProgress = false;
-        } else {
-          this.downloadInProgress = true;
-        }
+    this.rootItem = new Item(
+      'workspaces', 'workspaces', null, null, 0, '', '', '',
+      'Folder', '', '', '', '', true, false, '', '', '');
+
+    this.getWorkspacesObjects(this.rootItem);
+
+    this.statusService.updateDownloadProgress()
+      .subscribe(data => {
+        this.zone.run(() => {
+          if (data === 100) {
+            this.downloadInProgress = false;
+          } else {
+            this.downloadInProgress = true;
+          }
+        });
       });
-    });
   }
 
-  countFiles() {
-    this.fileCount = 0;
-    this.totalSize = 0;
-    this.selection.selected.forEach(f => {
-      if (f.type === 'File') {
-        this.fileCount++;
-        this.totalSize += Number(f.size);
-      }
-    });
+  ngAfterViewInit() {
+    this.dataSource.sort = this.sort;
+    this.dataSource.paginator = this.paginator;
   }
 
-
-  /** Whether the number of selected elements matches the total number of rows. */
-  isAllSelected() {
-    const numSelected = this.selection.selected.length;
-    const numRows = this.bucketObjects.data.length;
-    let isAllSelected: Boolean = true;
-    let iterate = true;
-    if (numSelected < numRows || numRows === 0) {
-      isAllSelected = false;
-    } else {
-      let i = 0;
-      do {
-        const file = this.bucketObjects.data[i];
-        if (this.selection.selected.find(selected => selected.id === file.id) === undefined) {
-          isAllSelected = false;
-        }
-        i++;
-        if (isAllSelected === false) {
-          iterate = false;
-        } else if (i <= this.bucketObjects.data.length) {
-          iterate = false;
-        }
-      } while (iterate);
-    }
-    return isAllSelected;
-  }
-
-  isChecked(row) {
-    return this.selection.selected.find(selected => selected.id === row.id) !== undefined;
-  }
-
-  clearSelection() {
-    this.bucketObjects.data.forEach(data => {
-      const row = this.selection.selected.find(selected => selected.id === data.id);
-      if (row !== undefined) {
-        this.selection.deselect(row);
-      }
-    });
-  }
-
-  /** Selects all rows if they are not all selected; otherwise clear selection. */
-  masterToggle() {
-    this.isAllSelected() ?
-      this.clearSelection() :
-      this.bucketObjects.data.forEach(row => {
-        if (row.type === 'File') {
-          this.selection.select(row);
-        }
-      });
-    this.countFiles();
-  }
-
-  public goRoot() {
-    if (!this.isHome) {
-      this.isHome = true;
-      this.paginator.pageIndex = 0;
-      this.breadcrumbPath = '';
-      this.nameSpace = '';
-      this.bucketObjects.data = [];
-      this.firecloudService.getUserFirecloudWorkspaces(false).subscribe(workspaces => {
-        this.bucketObjects.data = workspaces;
-      });
-    }
-  }
-
-  clickOnRow(elem) {
-    this.isHome = false;
-    if (elem.type === 'Folder') {
-      this.paginator.pageIndex = 0;
-      this.bucketObjects.data = [];
-      BucketService.delimiter = elem.delimiter;
-      const workspaceName = this.getWorkspaceName(elem.bucketName);
-      this.getBucketObjects(elem.bucketName, BucketService.delimiter, workspaceName);
-      this.breadcrumbPath = elem.prefix;
-      this.nameSpace = elem.namespace ? elem.namespace : this.nameSpace;
-    }
-  }
-
-  displayNamespace(): String {
-    if (this.breadcrumbPath.startsWith(this.DELIMITER)) {
-      return this.DELIMITER + this.nameSpace + this.SEPARATOR + this.breadcrumbPath.substr(1);
-    } else if (this.breadcrumbPath !== '') {
-      return this.nameSpace + this.SEPARATOR + this.breadcrumbPath;
-    }
-    return this.breadcrumbPath;
-  }
-
-  pathChanged(event) {
-    this.isHome = false;
+  /*
+  * Find all workspaces / buckets from FireCloud
+  * Response is an Array of buckets formatted as Item
+  */
+  public getWorkspacesObjects(node) {
+    this.spinner.show();
+    this.isHome = true;
+    this.breadcrumbItems = [];
     this.paginator.pageIndex = 0;
-    let delimiter = event.label !== event.path ? this.getDelimiter(event.label) : this.DELIMITER;
-    const workspace = this.breadcrumbPath.substr(0, this.breadcrumbPath.indexOf(this.DELIMITER));
-    const bucket = FirecloudApiService.workspaces.get(workspace);
-    delimiter = delimiter.substring(delimiter.length - 1, delimiter.length) === this.DELIMITER
-      ? delimiter.substr(0, delimiter.lastIndexOf(this.DELIMITER)) : delimiter;
-    const path = this.breadcrumbPath.endsWith('/') && delimiter !== '' ? workspace + this.DELIMITER + delimiter + this.DELIMITER
-      : workspace + this.DELIMITER + delimiter;
-    if (!this.breadcrumbPath.startsWith('/') && this.breadcrumbPath !== path) {
-      this.bucketObjects.data = [];
-      BucketService.delimiter = delimiter;
-      this.getBucketObjects(bucket, delimiter, workspace);
-      this.breadcrumbPath = workspace + this.DELIMITER + delimiter;
+    let data = [];
+
+    this.headerItem = node;
+
+    this.firecloudService.getUserFirecloudWorkspaces(this.headerItem, false)
+      .subscribe(
+        workspaces => {
+          data = workspaces;
+        },
+        error => {
+          console.log('firecloudService error ....', error);
+        },
+        () => {
+          this.headerItem.children = data;
+          this.dataSource.data = this.headerItem.children;
+          this.spinner.hide();
+        });
+  }
+
+  /*
+  * find bucket objects starting with a prefix
+  * Response is an Array of bucket objects formatted as Item
+  */
+  private getBucketObjects(node: Item) {
+    this.spinner.show();
+    this.paginator.pageIndex = 0;
+    let data = [];
+
+    this.headerItem = node;
+
+    this.bucketService.getBucketData(node, null, true, true)
+      .subscribe(
+        elements => {
+          data = elements;
+        },
+        error => {
+          console.log(JSON.stringify(error, null, 2));
+        },
+        () => {
+          this.headerItem.children = data;
+          this.dataSource.data = this.headerItem.children;
+          this.spinner.hide();
+        });
+  }
+
+  /*
+  * Handler when clicking on breadcrumb home (worspaces)
+  */
+  goHome(event) {
+    this.breadcrumbItems = [];
+    this.getWorkspacesObjects(this.rootItem);
+  }
+
+  /*
+  * Handler when clicking on breadcrumb segment, to change folder ...
+  */
+  pathChanged(event) {
+    this.breadcrumbItems = this.breadcrumbItems.slice(0, event.index);
+    this.clickOnRow(event.item);
+  }
+
+  /*
+  * Handler when clicking on a table row, to change folder ...
+  */
+  clickOnRow(elem) {
+    if (elem.type === 'Folder') {
+      this.breadcrumbItems = [...this.breadcrumbItems, elem];
+      this.getBucketObjects(elem);
     }
   }
 
-  getBucketObjects(bucket: String, delimiter: String, workspace: String) {
-    this.data = this.bucketService.getBucketData(bucket, delimiter, null, workspace).subscribe(
-      elements => {
-        this.bucketObjects.data = elements;
+  /*
+  * handle selection through row's checkbox click
+  */
+  private selectByRow(event, row: Item) {
+    event.checked ? this.selectionService.selectRow(row) : this.selectionService.deselectRow(row);
+    this.updateHeaderItems();
+  }
+
+  /*
+  * handle selection through header's checkbox click
+  */
+  private selectByHeader(event) {
+    event.checked ? this.selectTableRows() : this.deselectTableRows();
+    this.updateHeaderItems();
+  }
+
+  private selectTableRows() {
+    this.toggleAllRows(true);
+  }
+
+  private deselectTableRows() {
+    this.toggleAllRows(false);
+  }
+
+  toggleAllRows(selected: boolean) {
+    // change selection state of all table' rows.
+    this.zone.run(() => {
+      this.spinner.show();
+    });
+    this.headerItem.children
+      .forEach(
+        row => {
+          if (selected) {
+            this.selectionService.selectRow(row);
+          } else {
+            this.selectionService.deselectRow(row);
+          }
+        }
+      );
+    this.zone.run(() => {
+      this.spinner.hide();
+    });
+  }
+
+  // filtering method
+  applyFilter(filterValue: string) {
+    filterValue = filterValue.trim();
+    filterValue = filterValue.toLowerCase();
+    this.dataSource.filter = filterValue;
+  }
+
+  updateHeaderItems() {
+    const n = this.breadcrumbItems.length - 1;
+
+    for (let i = n; i >= 0; i--) {
+
+      const parent = this.breadcrumbItems[i];
+
+      let someIndeterminate = false;
+      let allSelected = true;
+      let someSelected = false;
+
+      parent.children.forEach(child => {
+
+        if (child.indeterminate) {
+          someIndeterminate = true;
+        }
+
+        if (child.selected) {
+          someSelected = true;
+        } else {
+          allSelected = false;
+        }
       });
+
+      parent.selected = someSelected;
+      parent.indeterminate = someIndeterminate || (someSelected && !allSelected);
+
+      const found = this.selectionService.findSelected(parent);
+      if (found !== undefined) {
+        this.selectionService.rawDeselect(found);
+      }
+
+      if (parent.selected) {
+        this.selectionService.rawSelect(parent);
+      } else {
+        this.selectionService.rawDeselect(parent);
+      }
+    }
+    this.updateRootItem();
+  }
+
+  updateRootItem() {
+    const parent = this.rootItem;
+
+    let someIndeterminate = false;
+    let allSelected = true;
+    let someSelected = false;
+
+    parent.children.forEach(child => {
+
+      if (child.indeterminate) {
+        someIndeterminate = true;
+      }
+
+      if (child.selected) {
+        someSelected = true;
+      } else {
+        allSelected = false;
+      }
+    });
+
+    parent.selected = someSelected;
+    parent.indeterminate = someIndeterminate || (someSelected && !allSelected);
+
+    const found = this.selectionService.findSelected(parent);
+    if (found !== undefined) {
+      this.selectionService.rawDeselect(found);
+    }
+
+    if (parent.selected) {
+      this.selectionService.rawSelect(parent);
+    } else {
+      this.selectionService.rawDeselect(parent);
+    }
   }
 
   selectionDone() {
-    const items = { selectedFiles: this.selection.selected, totalSize: this.totalSize };
+
+    const items = {
+      selectedFiles: this.selectionService.selectedItems(),
+      totalSize: 0
+    };
+
     this.dialog.open(FileDownloadModalComponent, {
       width: '500px',
       disableClose: true,
@@ -191,41 +302,7 @@ export class FileExplorerComponent implements OnInit {
   }
 
   disableButton() {
-    return this.downloadInProgress || this.selection.selected.length === 0;
-  }
-
-  toggleRow(event, row) {
-    const selectedItem = this.selection.selected.find(item => item.id === row.id);
-    if (event.checked && selectedItem === undefined) {
-      this.selection.toggle(row);
-    } else if (selectedItem !== undefined) {
-      this.selection.deselect(selectedItem);
-    }
-    this.countFiles();
-  }
-
-  getWorkspaceName(bucketName) {
-    let workspaceName: String = '';
-    for (const key of Array.from(FirecloudApiService.workspaces.keys())) {
-      if (FirecloudApiService.workspaces.get(key) === bucketName) {
-        workspaceName = key;
-        break;
-      }
-    }
-    return workspaceName;
-  }
-
-  getDelimiter(selectedFolder) {
-    const path = this.breadcrumbPath.substring(this.breadcrumbPath.indexOf(this.DELIMITER), this.breadcrumbPath.length);
-    const index = path.lastIndexOf('/' + selectedFolder + '/');
-    const indexSelectedFolder = index !== -1 ? index + 1
-      : path.lastIndexOf(selectedFolder);
-    return path.substring(1, indexSelectedFolder) + selectedFolder;
-  }
-
-  dataFinishedLoading() {
-    return (this.isHome && this.firecloudService.getIsResponseComplete())
-          || !this.isHome && this.bucketService.getIsResponseComplete();
+    return (this.downloadInProgress || this.selectionService.nothingSelected());
   }
 
   cleanSelection(): void {
@@ -234,9 +311,29 @@ export class FileExplorerComponent implements OnInit {
       disableClose: true,
       data: 'clearSelection'
     });
+
     dialogRef.afterClosed().subscribe(result => {
       if (result.exit) {
-        this.selection.clear();
+
+        this.rootItem.selected = false;
+        this.rootItem.indeterminate = false;
+
+        this.breadcrumbItems.forEach(item => {
+          item.selected = false;
+          item.indeterminate = false;
+          item.children.forEach(child => {
+            child.selected = false;
+            child.indeterminate = false;
+          });
+        });
+
+        this.headerItem.children.forEach(item => {
+          item.selected = false;
+          item.indeterminate = false;
+        });
+        this.headerItem.selected = false;
+        this.headerItem.indeterminate = false;
+        this.selectionService.clearSelection();
       }
     });
   }

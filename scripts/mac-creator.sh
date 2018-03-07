@@ -12,7 +12,7 @@ mkdir -p app/mac/installers
 # Sign generated .app 
 # <identity> is the hex id of imported certificate
 #cd app/mac/builds/FireCloud Explorer-darwin-x64
-codesign --deep --force --verbose --sign <identityId> app/mac/builds/FireCloud Explorer-darwin-x64/FireCloud\ Explorer.app
+codesign --deep --force --verbose --sign <identityId> app/mac/builds/FireCloud\ Explorer-darwin-x64/FireCloud\ Explorer.app
 
 
 # create .dmg installer

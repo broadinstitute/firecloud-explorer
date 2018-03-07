@@ -17,7 +17,7 @@ export class FilesService {
     constructor(private gcsService: GcsService, private firecloudService: FirecloudApiService) { }
 
     public getBucketFiles(isWorkspacePublic: boolean): Observable<Observable<TreeNode[]>> {
-        return this.firecloudService.getUserFirecloudWorkspaces(isWorkspacePublic).map(
+        return this.firecloudService.getUserFirecloudWorkspaces(null, isWorkspacePublic).map(
             resp => {
              if (resp != null && resp.length > 0) {
                 const observables: Observable<any>[] = [];

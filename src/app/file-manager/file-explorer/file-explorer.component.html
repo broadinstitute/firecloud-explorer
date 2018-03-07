@@ -1,57 +1,69 @@
+<ngx-spinner #spin bdOpacity="0.6" bdColor="#fff" size="medium" color="#1e88e5" type="ball-circus" style="z-index:10000"></ngx-spinner>
+
 <h1>Select files to download</h1>
 
-<div class="full-width">
-  <app-breadcrumb [path]="displayNamespace()" (home)="goRoot()" (change)="pathChanged($event)"></app-breadcrumb>
+<div class="flex-container space-between align-start">
+  <div class="breadcrumb-container">
+    <app-breadcrumb [items]="breadcrumbItems" (home)="goHome($event)" (change)="pathChanged($event)"></app-breadcrumb>
+  </div>
+  <mat-form-field class="search-container">
+    <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Search...">
+  </mat-form-field>
 </div>
 
 <div class="table-container flex-container column table-downloads">
-    <mat-table #download [dataSource]="dataSource">
+  <mat-table #download matSort [dataSource]="dataSource">
 
     <!-- Checkbox Column -->
     <ng-container matColumnDef="select">
+
       <mat-header-cell *matHeaderCellDef class="col-select">
-        <mat-checkbox (change)="$event ? masterToggle() : null" [checked]="selection.hasValue() && isAllSelected()" [indeterminate]="selection.hasValue() && !isAllSelected()" [disabled]="!dataFinishedLoading()">
+        <mat-checkbox (click)="$event.stopPropagation()" (change)="selectByHeader($event)" [checked]="headerItem.selected" [indeterminate]="headerItem.indeterminate">
         </mat-checkbox>
       </mat-header-cell>
+
       <mat-cell *matCellDef="let row" class="col-select">
-            <mat-checkbox (change)="toggleRow($event, row)" [checked]="isChecked(row)"  [disabled]="row.type === 'Folder'">
+        <mat-checkbox (click)="$event.stopPropagation()" (change)="selectByRow($event, row)" [checked]="row.selected" [indeterminate]="row.indeterminate">
         </mat-checkbox>
       </mat-cell>
+
     </ng-container>
 
     <!-- Name Column -->
-    <ng-container matColumnDef="name">
-        <mat-header-cell *matHeaderCellDef class="col-name"> Name </mat-header-cell>
-        <mat-cell *matCellDef="let element" class="col-name" [ngClass]="{'type-folder': element.type === 'Folder', 'type-file': element.type === 'File'}" (click)="clickOnRow(element)">
-          <mat-icon *ngIf="element.type === 'Folder' && !element.namespace">folder</mat-icon>
-          <mat-icon *ngIf="element.type === 'File'">insert_drive_file</mat-icon>
-          <p class="col-name-text" [ngClass]="{'workspace': element.namespace}">
-            <small *ngIf="element.namespace">{{element.namespace}}</small>
-            <span>{{element.name}}</span>
-          </p>
-        </mat-cell>
+    <ng-container matColumnDef="displayName">
+      <mat-header-cell *matHeaderCellDef class="col-name" mat-sort-header> Name </mat-header-cell>
+      <mat-cell *matCellDef="let element" class="col-name" [ngClass]="{'type-folder': element.type === 'Folder', 'type-file': element.type === 'File'}"
+        (click)="clickOnRow(element)">
+        <mat-icon *ngIf="element.type === 'Folder' && !element.namespace">folder</mat-icon>
+        <mat-icon *ngIf="element.type === 'File'">insert_drive_file</mat-icon>
+        <p class="col-name-text" [ngClass]="{'workspace': element.namespace}">
+          <small *ngIf="element.namespace">{{element.namespace}}</small>
+          <span>{{element.displayName}}</span>
+        </p>
+      </mat-cell>
+
     </ng-container>
 
     <!-- Size Column -->
     <ng-container matColumnDef="size">
-        <mat-header-cell *matHeaderCellDef> Size </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{element.size | filesize}} </mat-cell>
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Size </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.size | filesize}} </mat-cell>
     </ng-container>
 
     <!-- Last Modified Date Column -->
-    <ng-container matColumnDef="lastdate">
-      <mat-header-cell *matHeaderCellDef> Last Modified </mat-header-cell>
+    <ng-container matColumnDef="updated">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Last Modified </mat-header-cell>
       <mat-cell *matCellDef="let element"> {{element.updated | date: 'MMM d, y, h:mm a'}} </mat-cell>
     </ng-container>
 
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-
     <mat-row *matRowDef="let row; columns: displayedColumns;">
+
     </mat-row>
 
   </mat-table>
 
-  <mat-paginator #paginator [length]="bucketObjects.data.length" [pageIndex]="0" [pageSize]="25" [pageSizeOptions]="[10, 25, 50, 100, 250, 500, 1000]"></mat-paginator>
+  <mat-paginator #paginator [length]="headerItem.children.length" [pageIndex]="0" [pageSize]="25" [pageSizeOptions]="[10, 25, 50, 100, 250, 500, 1000]"></mat-paginator>
 </div>
 
 <p-toolbar styleClass="toolbar-accent">

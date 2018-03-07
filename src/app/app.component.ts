@@ -20,6 +20,8 @@ import { ItemStatus } from '@app/file-manager/models/item-status';
 import { GcsService } from '@app/file-manager/services/gcs.service';
 import { GoogleLoginService } from '@app/file-manager/services/login-google.service';
 
+import { NgxSpinnerService } from 'ngx-spinner';
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -48,6 +50,7 @@ export class AppComponent implements OnInit, OnDestroy {
     private electronService: ElectronService,
     private gcsService: GcsService,
     private loginService: GoogleLoginService,
+    private spinner: NgxSpinnerService
   ) {
     AppComponent.updateUserEmail.subscribe(email => {
       this.userEmail = email;

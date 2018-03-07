@@ -28,9 +28,10 @@ export function getInitialState() {
   ],
   declarations: [],
   providers: [LocalStorageService]
+
 })
 export class CoreModule {
-  constructor (
+  constructor(
     @Optional() @SkipSelf() parentModule: CoreModule
   ) {
     if (parentModule) {

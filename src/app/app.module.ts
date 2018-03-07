@@ -22,7 +22,7 @@ import { GoogleLoginService } from '@app/file-manager/services/login-google.serv
 
     // core & shared
     CoreModule,
-    SharedModule,
+    SharedModule.forRoot(),
 
     // features
     SettingsModule,

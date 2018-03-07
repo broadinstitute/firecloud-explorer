@@ -1,4 +1,4 @@
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA, ModuleWithProviders } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
@@ -21,6 +21,7 @@ import {
   MatPaginatorModule,
   MatRadioModule,
   MatTableModule,
+  MatSortModule,
   MatAutocompleteModule
 } from '@angular/material';
 
@@ -37,6 +38,9 @@ import {
   MenuModule,
   MessagesModule
 } from 'primeng/primeng';
+
+import { NgxSpinnerModule } from 'ngx-spinner';
+import { NgxSpinnerService } from 'ngx-spinner';
 
 @NgModule({
   imports: [
@@ -62,6 +66,7 @@ import {
     MatPaginatorModule,
     MatRadioModule,
     MatTableModule,
+    MatSortModule,
     MatAutocompleteModule,
 
     ProgressBarModule,
@@ -72,7 +77,9 @@ import {
     TreeTableModule,
     PrimeNgSharedModule,
     MenuModule,
-    MessagesModule
+    MessagesModule,
+
+    NgxSpinnerModule
   ],
   declarations: [
 
@@ -100,6 +107,7 @@ import {
     MatPaginatorModule,
     MatRadioModule,
     MatTableModule,
+    MatSortModule,
     MatAutocompleteModule,
 
     ProgressBarModule,
@@ -112,9 +120,17 @@ import {
     MenuModule,
     MessagesModule,
 
+    NgxSpinnerModule
   ],
   schemas: [
     CUSTOM_ELEMENTS_SCHEMA
   ]
 })
-export class SharedModule { }
+export class SharedModule {
+  static forRoot(): ModuleWithProviders {
+    return {
+      ngModule: SharedModule,
+      providers: [NgxSpinnerService]
+    };
+  }
+}

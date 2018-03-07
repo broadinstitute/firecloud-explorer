@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { CoreModule } from '@app/core';
 import { SharedModule } from '@app/shared';
 
-import {Store, StoreModule} from '@ngrx/store';
+import { Store, StoreModule } from '@ngrx/store';
 import { FileManagerRoutingModule } from './file-manager-routing.module';
 import { TransferablesReducer } from './reducers/transferables.reducer';
 
@@ -33,11 +33,12 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { FilterSizePipe } from './filters/filesize-filter';
 import { FileUploadModalComponent } from './file-upload-modal/file-upload-modal.component';
 import { FileExplorerUploadComponent } from './file-explorer-upload/file-explorer-upload.component';
-import {LimitTransferablesService} from '@app/file-manager/services/limit-transferables.service';
+import { LimitTransferablesService } from '@app/file-manager/services/limit-transferables.service';
 import { MatDialog } from '@angular/material';
 import { BreadcrumbComponent } from './breadcrumb/breadcrumb.component';
 import { ElectronIpcApiService } from '@app/file-manager/services/electron-ipc.api.service';
 import { GoogleLoginService } from '@app/file-manager/services/login-google.service';
+import { SelectionService } from '@app/file-manager/services/selection.service';
 
 @NgModule({
   imports: [
@@ -46,7 +47,8 @@ import { GoogleLoginService } from '@app/file-manager/services/login-google.serv
     SharedModule,
     FileManagerRoutingModule,
     StoreModule.forFeature('transferables', TransferablesReducer),
-    MatDialogModule
+    MatDialogModule,
+
   ],
   declarations: [
     FileExplorerComponent,
@@ -81,13 +83,14 @@ import { GoogleLoginService } from '@app/file-manager/services/login-google.serv
         if (environment.testing) {
           return new GcsApiMockService();
         } else {
-          return new GcsApiService(http, electronService, store,  dialog);
+          return new GcsApiService(http, electronService, store, dialog);
         }
       }
     },
     DownloadValidatorService,
     RegisterUploadService,
     ElectronIpcApiService,
+    SelectionService,
   ],
   exports: [
 

@@ -98,6 +98,10 @@ h4.subtitle {
   align-content: space-between;
 }
 
+.flex-container.align-start {
+  align-content: flex-start;
+}
+
 .flex-container.center {
   justify-content: center;
 }
@@ -333,19 +337,19 @@ a.sidenav-link p {
 .table-downloads,
 .table-downloads .mat-table {
   @include breakpoint(sm) {
-    height: 62vh;
+    height: 63vh;
   }
   @include breakpoint(md) {
-    height: 68vh;
+    height: 70vh;
   }
   @include breakpoint(lg) {
-    height: 71vh;
+    height: 72vh;
   }
 }
 
 .table-common .mat-table,
 .table-downloads .mat-table {
-  margin: 0 0 20px 0;
+  margin: 0 0 5px 0;
   background: transparent;
   overflow: auto;
 }
@@ -367,7 +371,7 @@ a.sidenav-link p {
 .table-common .mat-table .mat-header-row,
 .table-downloads .mat-table .mat-row,
 .table-downloads .mat-table .mat-header-row {
-  padding: 0 15px;
+  padding: 0 15px; 
 }
 
 .mat-header-row,
@@ -396,6 +400,18 @@ a.sidenav-link p {
   border: 2px solid mat-color($fcExplorer-primary, 900);
   align-self: center;
   margin-top: 85px;
+}
+
+.toolbar-modal {
+  padding: 10px 15px !important;
+  margin: 5px 0 10px 0;
+}
+
+.toolbar-modal small {
+  color: black;
+  display: inline;
+  font-style: italic;
+  font-weight: 500;
 }
 
 .warn-message {
@@ -498,6 +514,11 @@ a.sidenav-link p {
   display: inline;
 }
 
+.progress-dots.download-modal {
+  margin-left: 4px;
+  display: inline;
+}
+
 .progress-dots .dot {
   width: 3px;
   height: 3px;
@@ -510,6 +531,10 @@ a.sidenav-link p {
   width: 2px;
   height: 2px;
   background-color: mat-color($fcExplorer-primary, 700);
+}
+
+.progress-dots.download-modal .dot {
+  background-color: black;
 }
 
 .progress-dots .dot:first-child,
@@ -646,6 +671,10 @@ a.sidenav-link p {
   background-color: mat-color($fcExplorer-accent) !important;
 }
 
+.mat-checkbox-indeterminate.mat-accent .mat-checkbox-mixedmark {
+  background-color: white !important;
+}
+
 [disabled].mat-accent .mat-checkbox-frame,
 .mat-checkbox-disabled:not(.mat-checkbox-checked) .mat-checkbox-frame {
   border-color: mat-color($fcExplorer-primary, 300);
@@ -670,4 +699,13 @@ a.sidenav-link p {
 
 .paginator.mat-paginator {
   margin-bottom: 20px;
+}
+
+/*SEARCH CONTAINER*/
+.search-container .mat-form-field-infix{
+  border-top: 0 !important;
+}
+
+.search-container > .mat-form-field-wrapper{
+  padding-bottom: 1em !important;
 }

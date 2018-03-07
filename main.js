@@ -1,4 +1,4 @@
-if(require('electron-squirrel-startup')) return;
+if (require('electron-squirrel-startup')) return;
 
 // ./main.js
 const {
@@ -15,14 +15,16 @@ const {
 const lazyNodeReader = require('./electron_app/FileSystemReader').lazyNodeReader;
 const constants = require('./electron_app/helpers/enviroment').constants;
 const os = require('os');
-const { GoogleLoginWindow } = require('./electron_app/GoogleLoginWindow');
+const {
+  GoogleLoginWindow
+} = require('./electron_app/GoogleLoginWindow');
 
 const {
   handleDiskSpace
 } = require('./electron_app/helpers/handleDisk');
 const {
-    uploadManager,
-    uploadManagerCancel
+  uploadManager,
+  uploadManagerCancel
 } = require('./electron_app/UploadManager');
 
 require('dotenv').config();
@@ -57,7 +59,8 @@ app.on('ready', function () {
 
   // Show dev tools
   // Remove this line before distributing
-  // win.webContents.openDevTools()
+  // win.webContents.openDevTools();
+
   win.once('ready-to-show', () => {
     win.show();
   });

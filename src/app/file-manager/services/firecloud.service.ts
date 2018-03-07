@@ -1,8 +1,7 @@
 import { Observable } from 'rxjs/Observable';
 import { Workspace } from '@app/file-manager/models/workspace';
-import { UUID } from 'angular2-uuid';
 import { Item } from '@app/file-manager/models/item';
-
+import { SelectionService } from '@app/file-manager/services/selection.service';
 
 export abstract class FirecloudService {
 
@@ -40,12 +39,46 @@ export abstract class FirecloudService {
     };
 
   }
-
+  // id,
+  // name,
+  // created,
+  // updated,
+  // size,
+  // mediaLink,
+  // path,
+  // destination,
+  // type,
+  // status,
+  // bucketName,
+  // prefix,
+  // delimiter,
+  // preserveStructure,
+  // open,
+  // workspaceName
   private createItem(item): Item {
-    return new Item(item.workspace.name +  item.workspace.bucketName, item.workspace.name, null, null, NaN, '', '', '',
-    'Folder', '', item.workspace.bucketName, '/' +  item.workspace.name, '/', true, item.public, item.workspace.namespace);
+
+    return new Item(
+      item.workspace.name + item.workspace.bucketName, // id
+      item.workspace.name, // name
+      null, // created
+      null, // updated
+      NaN, // size
+      '', // mediaLink
+      item.workspace.name + '/', // path
+      '', // destination
+      'Folder', // type
+      '', // status
+      item.workspace.bucketName, // bucketName
+      '/', // + item.workspace.name, // prefix
+      '/', // delimiter
+      true, // preserveStructure
+      item.public, // open
+      item.workspace.name, // workspaceName
+      item.workspace.name,
+      item.workspace.namespace
+    );
   }
-  abstract getUserFirecloudWorkspaces(optional: boolean): Observable<any>;
+  abstract getUserFirecloudWorkspaces(item: Item, optional: boolean): Observable<any>;
 
   abstract getUserRegistrationStatus(): Observable<any>;
 }
