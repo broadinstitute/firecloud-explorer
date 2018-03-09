@@ -52,7 +52,7 @@
 
       <ng-container matColumnDef="name">
         <mat-header-cell *matHeaderCellDef mat-sort-header style="flex: 0 0 40%;"> Name </mat-header-cell>
-        <mat-cell *matCellDef="let row" style="flex: 0 0 40%;"> {{row.displayName}} </mat-cell>
+        <mat-cell *matCellDef="let row" style="flex: 0 0 40%;" title="{{row.displayName}}"> {{row.displayName}} </mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="size">

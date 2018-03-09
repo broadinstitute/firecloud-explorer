@@ -18,11 +18,12 @@
     margin: 5px 0;
 }
 
+.col-name-text:not(.workspace) {
+    padding-left: 30px;
+}
+
 .col-name-text.workspace {
     font-size: 1rem;
-    small {
-        display: block;
-    }
     span {
         font-weight: 700;
     }
@@ -45,6 +46,8 @@
     line-height: 1.5rem;
     vertical-align: middle;
     color: mat-color($fcExplorer-primary, 700);
+    position: absolute;
+    top: 4px;
 }
 
 .breadcrumb-container {

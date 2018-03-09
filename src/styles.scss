@@ -374,6 +374,18 @@ a.sidenav-link p {
   padding: 0 15px; 
 }
 
+.table-common .mat-cell,
+.table-downloads .mat-cell {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  position: relative;
+  padding-right: 20px;
+}
+
+.table-common .mat-cell {
+  cursor: default;
+}
+
 .mat-header-row,
 .tree-table thead th {
   position: sticky;

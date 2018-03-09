@@ -33,11 +33,11 @@
     <ng-container matColumnDef="displayName">
       <mat-header-cell *matHeaderCellDef class="col-name" mat-sort-header> Name </mat-header-cell>
       <mat-cell *matCellDef="let element" class="col-name" [ngClass]="{'type-folder': element.type === 'Folder', 'type-file': element.type === 'File'}"
-        (click)="clickOnRow(element)">
+        (click)="clickOnRow(element)" title="{{element.displayName}}">
         <mat-icon *ngIf="element.type === 'Folder' && !element.namespace">folder</mat-icon>
         <mat-icon *ngIf="element.type === 'File'">insert_drive_file</mat-icon>
         <p class="col-name-text" [ngClass]="{'workspace': element.namespace}">
-          <small *ngIf="element.namespace">{{element.namespace}}</small>
+          <small *ngIf="element.namespace">{{element.namespace}}<br></small>
           <span>{{element.displayName}}</span>
         </p>
       </mat-cell>
@@ -53,7 +53,7 @@
     <!-- Last Modified Date Column -->
     <ng-container matColumnDef="updated">
       <mat-header-cell *matHeaderCellDef mat-sort-header> Last Modified </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.updated | date: 'MMM d, y, h:mm a'}} </mat-cell>
+      <mat-cell *matCellDef="let element" title="{{element.updated | date: 'MMM d, y, h:mm a'}}"> {{element.updated | date: 'MMM d, y, h:mm a'}} </mat-cell>
     </ng-container>
 
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
