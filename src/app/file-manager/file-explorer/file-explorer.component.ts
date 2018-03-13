@@ -8,7 +8,6 @@ import { MatTableDataSource, MatSort } from '@angular/material';
 import { StatusService } from '../services/status.service';
 import { BucketService } from '../services/bucket.service';
 import { FirecloudApiService } from '@app/file-manager/services/firecloud-api.service';
-import { FilesDataSource } from '@app/file-manager/dbstate/files-datasource';
 import { FilesService } from '@app/file-manager/services/files.service';
 import { WarningModalComponent } from '@app/file-manager/warning-modal/warning-modal.component';
 import { ItemStatus } from '@app/file-manager/models/item-status';
@@ -78,6 +77,8 @@ export class FileExplorerComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     this.dataSource.sort = this.sort;
     this.dataSource.paginator = this.paginator;
+    this.dataSource.filterPredicate = (data: Item, filter: string) =>
+      data.name.toLowerCase().indexOf(filter) !== -1 || data.namespace.toLowerCase().indexOf(filter) !== -1;
   }
 
   /*

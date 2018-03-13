@@ -455,10 +455,15 @@ a.sidenav-link p {
   height: 50px !important;
   box-shadow: none;
   background: transparent;
+  position: relative;
 }
 
 .expand-panel.mat-expansion-panel:not([class*=mat-elevation-z]) {
   box-shadow: none;
+}
+
+.expand-panel.mat-expansion-panel .mat-expansion-panel-header {
+  width: 50%;
 }
 
 .expand-panel.mat-expansion-panel .mat-expansion-panel-header.mat-expanded,
@@ -714,6 +719,7 @@ a.sidenav-link p {
 }
 
 /*SEARCH CONTAINER*/
+
 .search-container .mat-form-field-infix{
   border-top: 0 !important;
 }

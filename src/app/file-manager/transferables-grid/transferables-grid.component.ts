@@ -3,7 +3,7 @@ import { Store } from '@ngrx/store';
 import * as Transferables from '../actions/transferables.actions';
 import { DownloadValidatorService } from '../services/download-validator.service';
 import { Item } from '../models/item';
-import { MatPaginator, MatSort } from '@angular/material';
+import { MatPaginator, MatSort, MatTableDataSource } from '@angular/material';
 import 'rxjs/add/operator/startWith';
 import 'rxjs/add/observable/forkJoin';
 import 'rxjs/add/operator/map';
@@ -11,11 +11,10 @@ import 'rxjs/add/observable/merge';
 import { GcsService } from '@app/file-manager/services/gcs.service';
 import { StatusService } from '../services/status.service';
 import { AppState } from '../dbstate/app-state';
-import { FilesDataSource } from '../dbstate/files-datasource';
 import { FilesDatabase } from '../dbstate/files-database';
 import { LimitTransferablesService } from '../services/limit-transferables.service';
 import { Type } from '@app/file-manager/models/type';
-import {ItemStatus} from '@app/file-manager/models/item-status';
+import { ItemStatus } from '@app/file-manager/models/item-status';
 
 @Component({
   selector: 'app-transferalbes-grid',
@@ -28,7 +27,8 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort) sort: MatSort;
 
   displayedColumns = ['name', 'size', 'status', 'progress', 'actions'];
-  dataSource: FilesDataSource | null;
+
+  dataSource = new MatTableDataSource([]);
   filesDatabase: FilesDatabase;
   generalProgress = 0;
   generalUploadProgress = 0;
@@ -54,6 +54,13 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
 
   filter() {
 
+  }
+
+  // filtering method
+  applyFilter(filterValue: string) {
+    filterValue = filterValue.trim();
+    filterValue = filterValue.toLowerCase();
+    this.dataSource.filter = filterValue;
   }
 
   reset() {
@@ -89,7 +96,7 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-    this.dataSource = new FilesDataSource(this.filesDatabase, this.paginator);
+    this.dataSource.data = this.filesDatabase.data;
     this.statusService.updateDownloadProgress().subscribe(data => {
       this.zone.run(() => {
         this.generalProgress = data;
@@ -113,6 +120,9 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
+    this.dataSource.sort = this.sort;
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.filterPredicate = (data: Item, filter: string) => data.name.toLowerCase().indexOf(filter) !== -1;
   }
 
   trackSelection(event) {
@@ -129,7 +139,7 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   }
 
   cancelUploads() {
-    this.gcsService.cancelUploads().then( value => {
+    this.gcsService.cancelUploads().then(value => {
       this.zone.run(() => {
         this.disabledUpload = value;
       });
@@ -137,7 +147,7 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   }
 
   cancelDownloads() {
-    this.gcsService.cancelDownloads().then( value => {
+    this.gcsService.cancelDownloads().then(value => {
       this.zone.run(() => {
         this.disabledDownload = value;
       });

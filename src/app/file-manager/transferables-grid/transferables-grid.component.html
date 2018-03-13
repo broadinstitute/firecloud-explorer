@@ -36,13 +36,17 @@
 </div>
 
 <mat-expansion-panel #expa class="expand-panel">
+  <mat-form-field class="search-container">
+    <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Search...">
+  </mat-form-field>
+  
   <mat-expansion-panel-header>
-        <mat-panel-title>
-          <mat-icon>{{expa.expanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}</mat-icon>
-          {{ expa.expanded ? 'Hide detailed transfer list' : 'Show detailed transfer list'}}
-        </mat-panel-title>
-  </mat-expansion-panel-header>
-
+    <mat-panel-title>
+      <mat-icon>{{expa.expanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}</mat-icon>
+      {{ expa.expanded ? 'Hide detailed transfer list' : 'Show detailed transfer list'}}
+    </mat-panel-title>
+  </mat-expansion-panel-header>  
+  
   <div class="table-container flex-container column table-common">
     <mat-table #table [dataSource]="dataSource" matSort>
       <ng-container matColumnDef="id">
@@ -75,14 +79,14 @@
       </ng-container>
 
       <ng-container matColumnDef="progress">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> Progress </mat-header-cell>
+        <mat-header-cell *matHeaderCellDef> Progress </mat-header-cell>
         <mat-cell *matCellDef="let row">
           <p-progressBar mode="determinate" class="progress-bar-small" [value]=row.progress [showValue]="false"></p-progressBar>
         </mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="actions">
-        <mat-header-cell *matHeaderCellDef mat-sort-header style="flex: 0 0 85px; text-align: center;"> Actions </mat-header-cell>
+        <mat-header-cell *matHeaderCellDef style="flex: 0 0 85px; text-align: center;"> Actions </mat-header-cell>
         <mat-cell *matCellDef="let row" style="flex: 0 0 85px;">
           <button mat-icon-button class="button-icon" disabled>
             <mat-icon aria-label="Cancel file download">highlight_off</mat-icon>
