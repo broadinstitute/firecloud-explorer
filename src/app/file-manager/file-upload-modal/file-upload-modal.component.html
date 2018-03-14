@@ -1,6 +1,6 @@
 <h2 mat-dialog-title>Where do you want to upload to?</h2>
 
-<mat-dialog-content>
+<mat-dialog-content *ngIf="writableWorkspaces.length !== 0">
   <div class="flex-container">
     <mat-form-field class="full-width">
       <input type="text" matInput placeholder="Select workspace..." [formControl]="workspaceCtrl" [matAutocomplete]="auto">
@@ -13,6 +13,8 @@
   </div>
   <span class="italic">Files will be stored into "Uploads" folder</span>
 </mat-dialog-content>
+
+<p-messages class="error-messages" [(value)]="msgs" [closable]="false"></p-messages>
 
 <mat-dialog-actions>
   <button mat-raised-button (click)="cancel()" class="button-secondary">Cancel</button>

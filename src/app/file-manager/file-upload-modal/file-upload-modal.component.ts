@@ -1,20 +1,22 @@
 
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { Workspace } from '../models/workspace';
 import { FormControl } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { Observable } from 'rxjs/Observable';
+import { Message } from 'primeng/components/common/api';
 
 @Component({
   selector: 'app-file-upload',
   templateUrl: './file-upload-modal.component.html'
 })
-export class FileUploadModalComponent {
+export class FileUploadModalComponent implements OnInit {
 
   workspaceCtrl: FormControl;
   file;
   readonly WRITER = 'WRITER';
   readonly OWNER = 'OWNER';
+  msgs: Message[] = [];
 
   writableWorkspaces: Workspace[] = [];
   filteredWorkspaces: Observable<any>;
@@ -30,6 +32,15 @@ export class FileUploadModalComponent {
     this.filteredWorkspaces = this.workspaceCtrl.valueChanges
       .startWith(this.workspaceCtrl.value)
       .map(name => name ? this.filterWorkspaces(name) : this.writableWorkspaces.slice());
+  }
+
+  ngOnInit() {
+    if (this.writableWorkspaces.length === 0) {
+      this.msgs.push({
+        severity: 'warn',
+        summary: 'Sorry, you don\'t have permission to upload data to any workspace ',
+      });
+    }
   }
 
   filterWorkspaces(selectedWorkspace) {
