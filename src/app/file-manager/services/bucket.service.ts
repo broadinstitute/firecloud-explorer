@@ -59,6 +59,11 @@ export class BucketService {
 
     if (resp.items !== undefined) {
       resp.items.forEach(item => {
+
+        if (item.size === '0' && item.name.endsWith('/')) {
+          return;
+        }
+
         const path = workspaceName + this.DELIMITER + item.name;
         const name = item.name.split(this.DELIMITER)[item.name.split(this.DELIMITER).length - 1];
 
