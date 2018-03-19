@@ -100,3 +100,13 @@ header {
     }
   }
 }
+
+.sidenav-link.export-to-cloud i {
+  content: url(../assets/export_to_cloud_white.svg);
+  width: 35px;
+  height: 35px;
+}
+
+.sidenav-link.export-to-cloud p {
+  margin-top: 0;
+}

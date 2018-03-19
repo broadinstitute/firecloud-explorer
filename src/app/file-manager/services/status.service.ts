@@ -8,7 +8,8 @@ import { AppState } from '../dbstate/app-state';
 import { FilesDatabase } from '../dbstate/files-database';
 import { Type } from '@app/file-manager/models/type';
 import { LimitTransferablesService } from '@app/file-manager/services/limit-transferables.service';
-import {ItemStatus} from '@app/file-manager/models/item-status';
+import { ItemStatus } from '@app/file-manager/models/item-status';
+import { OnInit } from '@angular/core/src/metadata/lifecycle_hooks';
 const constants = require('../../../../electron_app/helpers/enviroment').constants;
 
 /**
@@ -20,6 +21,7 @@ export class StatusService {
   constructor(private store: Store<AppState>,
     private limitTransferables: LimitTransferablesService,
     private electronService: ElectronService) { }
+
 
   updateDownloadProgress(): Observable<any> {
     this.electronService.ipcRenderer.removeAllListeners(constants.IPC_DOWNLOAD_STATUS);
@@ -42,29 +44,31 @@ export class StatusService {
   }
 
   private updateItem(data: Item, type: Type, status: ItemStatus) {
-    const items = new FilesDatabase(this.store).data.
-    filter(item => item.type === type);
-    items.forEach(item => {
-      if (data.id === item.id) {
-        this.store.dispatch(new Transferables.UpdateItemProgress(data));
-      }
-      if (data.progress === 100) {
-        this.store.dispatch(new Transferables.UpdateItemCompleted(data));
-        this.limitTransferables.pendingItem(type, status);
-      }
-    });
+    if (data.progress === 100) {
+      this.store.dispatch(new Transferables.UpdateItemCompleted(data));
+      this.limitTransferables.pendingItem(type, status);
+    } else {
+      this.store.dispatch(new Transferables.UpdateItemProgress(data));
+    }
   }
 
   private generalProgress(type: Type): number {
     let totalSize = 0;
     let totalTransferred = 0;
     new FilesDatabase(this.store).data.
-    filter(item => item.type === type)
-    .forEach( item => {
-      totalSize += Number(item.size);
-      totalTransferred += Number(item.transferred);
-    });
+      filter(item => item.type === type)
+      .forEach(item => {
+        totalSize += Number(item.size);
+        totalTransferred += Number(item.transferred);
+      });
     return Math.floor((totalTransferred * 100) / totalSize);
   }
 
+  public generalExportProgress(): Observable<any> {
+    return Observable.create((observer) => {
+      const items = new FilesDatabase(this.store).data.
+        filter(item => item.type === Type.EXPORT_GCP && (item.status === ItemStatus.EXPORTING_GCP || item.status === ItemStatus.PENDING));
+      observer.next(items.length === 0 ? 'determinate' : 'indeterminate');
+    });
+  }
 }

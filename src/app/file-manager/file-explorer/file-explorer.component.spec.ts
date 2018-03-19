@@ -18,6 +18,7 @@ import { FirecloudApiMockService } from '../services/firecloud-api-mock.service'
 import { FilterSizePipe } from '../filters/filesize-filter';
 import { MatDialogModule } from '@angular/material/dialog';
 import { FileDownloadModalComponent } from '../file-download-modal/file-download-modal.component';
+import { FileExportModalComponent } from '../file-export-modal/file-export-modal.component';
 import { ElectronIpcService } from '@app/file-manager/services/electron-ipc.service';
 import { ElectronIpcMockService } from '@app/file-manager/services/electron-ipc.mock.service';
 import { SelectionService } from '@app/file-manager/services/selection.service';
@@ -32,6 +33,8 @@ describe('FileExplorerComponent', () => {
         FileExplorerComponent,
         FilterSizePipe,
         FileDownloadModalComponent,
+        FileExportModalComponent
+
       ],
       imports: [
         BrowserAnimationsModule,

@@ -13,5 +13,6 @@ export const environment = {
   FIRECLOUD_API: 'https://api.firecloud.org/',
   FIRECLOUD_URL: 'https://portal.firecloud.org/',
   LIMIT_TRANSFERABLES: 3,
+  LIMIT_EXPORTABLES: 500,
   FORUM_URL: 'https://gatkforums.broadinstitute.org/firecloud/categories/fc-explorer'
 };

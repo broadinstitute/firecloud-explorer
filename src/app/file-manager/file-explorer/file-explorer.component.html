@@ -1,6 +1,9 @@
 <ngx-spinner #spin bdOpacity="0.6" bdColor="#fff" size="medium" color="#1e88e5" type="ball-circus" style="z-index:10000"></ngx-spinner>
 
-<h1>Select files to download</h1>
+<h1>Select files to 
+  <span *ngIf="router.url === '/file-download'">download</span>
+  <span *ngIf="router.url === '/file-export'">export</span>
+</h1>
 
 <div class="flex-container space-between align-start">
   <div class="breadcrumb-container">
@@ -81,7 +84,9 @@
   <div class="ui-toolbar-group-right">
     <button mat-raised-button (click)="cleanSelection()" class="button-secondary" [disabled]="disableButton()">
       <i class="material-icons">clear</i>Clear selection</button>
-    <button mat-raised-button (click)="selectionDone()" class="button-primary" [disabled]="disableButton()">
+    <button *ngIf="router.url === '/file-download'" mat-raised-button (click)="selectionDone()" class="button-primary" [disabled]="disableButton()">
       <i class="material-icons">file_download</i>Download selection</button>
+    <button *ngIf="router.url === '/file-export'" mat-raised-button (click)="exportSelectionDone()" class="button-primary" [disabled]="disableButton()">
+      <i class="export-icon"></i>Export selection</button>
   </div>
 </p-toolbar>

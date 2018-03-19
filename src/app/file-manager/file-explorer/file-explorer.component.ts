@@ -8,15 +8,21 @@ import { MatTableDataSource, MatSort } from '@angular/material';
 import { StatusService } from '../services/status.service';
 import { BucketService } from '../services/bucket.service';
 import { FirecloudApiService } from '@app/file-manager/services/firecloud-api.service';
-import { FilesService } from '@app/file-manager/services/files.service';
 import { WarningModalComponent } from '@app/file-manager/warning-modal/warning-modal.component';
 import { ItemStatus } from '@app/file-manager/models/item-status';
 import { List } from 'lodash';
-
+import { Router } from '@angular/router';
 import { NgxSpinnerComponent } from 'ngx-spinner';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { applySourceSpanToStatementIfNeeded } from '@angular/compiler/src/output/output_ast';
 import { SelectionService } from '@app/file-manager/services/selection.service';
+import { FileExportModalComponent } from '@app/file-manager/file-export-modal/file-export-modal.component';
+import { TransferablesGridComponent } from '@app/file-manager/transferables-grid/transferables-grid.component';
+import { FilesDatabase } from '@app/file-manager/dbstate/files-database';
+import { Type } from '@app/file-manager/models/type';
+import { AppState } from '../dbstate/app-state';
+import { Store } from '@ngrx/store';
+import * as Transferables from '../actions/transferables.actions';
 
 @Component({
   selector: 'app-file-explorer',
@@ -39,20 +45,22 @@ export class FileExplorerComponent implements OnInit, AfterViewInit {
   headerItem: Item;
   rootItem: Item;
   downloadInProgress = false;
-
   readonly DELIMITER = '/';
 
   constructor(
     private statusService: StatusService,
     private zone: NgZone,
-    private filesService: FilesService,
     private firecloudService: FirecloudApiService,
     private dialog: MatDialog,
     private filterSize: FilterSizePipe,
     private bucketService: BucketService,
     private spinner: NgxSpinnerService,
-    private selectionService: SelectionService) {
+    private selectionService: SelectionService,
+    public router: Router,
+    private transferablesGridComponent: TransferablesGridComponent,
+    private store: Store<AppState>) {
     this.breadcrumbItems = [];
+
   }
 
   ngOnInit() {
@@ -65,9 +73,7 @@ export class FileExplorerComponent implements OnInit, AfterViewInit {
     this.statusService.updateDownloadProgress()
       .subscribe(data => {
         this.zone.run(() => {
-          if (data === 100) {
-            this.downloadInProgress = false;
-          } else {
+          if (this.router.routerState.snapshot.url === '/file-download' && data !== 100) {
             this.downloadInProgress = true;
           }
         });
@@ -96,17 +102,17 @@ export class FileExplorerComponent implements OnInit, AfterViewInit {
 
     this.firecloudService.getUserFirecloudWorkspaces(this.headerItem, false)
       .subscribe(
-        workspaces => {
-          data = workspaces;
-        },
-        error => {
-          console.log('firecloudService error ....', error);
-        },
-        () => {
-          this.headerItem.children = data;
-          this.dataSource.data = this.headerItem.children;
-          this.spinner.hide();
-        });
+      workspaces => {
+        data = workspaces;
+      },
+      error => {
+        console.log('firecloudService error ....', error);
+      },
+      () => {
+        this.headerItem.children = data;
+        this.dataSource.data = this.headerItem.children;
+        this.spinner.hide();
+      });
   }
 
   /*
@@ -122,17 +128,17 @@ export class FileExplorerComponent implements OnInit, AfterViewInit {
 
     this.bucketService.getBucketData(node, null, true, true)
       .subscribe(
-        elements => {
-          data = elements;
-        },
-        error => {
-          console.log(JSON.stringify(error, null, 2));
-        },
-        () => {
-          this.headerItem.children = data;
-          this.dataSource.data = this.headerItem.children;
-          this.spinner.hide();
-        });
+      elements => {
+        data = elements;
+      },
+      error => {
+        console.log(JSON.stringify(error, null, 2));
+      },
+      () => {
+        this.headerItem.children = data;
+        this.dataSource.data = this.headerItem.children;
+        this.spinner.hide();
+      });
   }
 
   /*
@@ -192,13 +198,13 @@ export class FileExplorerComponent implements OnInit, AfterViewInit {
     });
     this.headerItem.children
       .forEach(
-        row => {
-          if (selected) {
-            this.selectionService.selectRow(row);
-          } else {
-            this.selectionService.deselectRow(row);
-          }
+      row => {
+        if (selected) {
+          this.selectionService.selectRow(row);
+        } else {
+          this.selectionService.deselectRow(row);
         }
+      }
       );
     this.zone.run(() => {
       this.spinner.hide();
@@ -338,4 +344,25 @@ export class FileExplorerComponent implements OnInit, AfterViewInit {
       }
     });
   }
+
+  exportSelectionDone() {
+    const items = { selectedFiles: this.selectionService.selectedItems() };
+    const dialogRef = this.dialog.open(FileExportModalComponent, {
+      width: '500px',
+      disableClose: true,
+      data: items
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result.cancel === undefined) {
+        this.transferablesGridComponent.startExportToGCP(result.preserveStructure);
+      } else {
+        const itemsToRemove = new FilesDatabase(this.store).data
+                              .filter(item => item.type === Type.EXPORT_GCP && item.status === ItemStatus.PENDING);
+        itemsToRemove.forEach(item => {
+          this.store.dispatch(new Transferables.RemoveItem(item));
+        });
+      }
+    });
+  }
 }
+

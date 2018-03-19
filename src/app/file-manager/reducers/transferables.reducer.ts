@@ -31,12 +31,20 @@ export class TransferableState {
         return this.items.filter(x => x.status === ItemStatus.COMPLETED && x.type === Type.UPLOAD).length;
     }
 
+    get exportingGCPCount(): number {
+        return this.items.filter(x => x.status === ItemStatus.COMPLETED && x.type === Type.EXPORT_GCP).length;
+    }
+
     get toDownloadCount(): number {
         return this.items.filter(x => x.type === Type.DOWNLOAD).length;
     }
 
     get toUploadCount(): number {
         return this.items.filter(x => x.type === Type.UPLOAD).length;
+    }
+
+    get toExportGCPCount(): number {
+        return this.items.filter(x => x.type === Type.EXPORT_GCP).length;
     }
 }
 function sortList(items: Item[]) {
@@ -56,10 +64,18 @@ function sortList(items: Item[]) {
             } else {
                 return -1;
             }
+          case ItemStatus.EXPORTING_GCP:
+            if (b.status === a.status) {
+                return 0;
+            } else if (b.status === ItemStatus.DOWNLOADING || ItemStatus.UPLOADING) {
+                return 1;
+            } else {
+                return -1;
+          }
           case ItemStatus.PENDING:
             if (b.status === a.status) {
                 return 0;
-            } else if (b.status === ItemStatus.DOWNLOADING || b.status === ItemStatus.UPLOADING) {
+            } else if (b.status === ItemStatus.DOWNLOADING || b.status === ItemStatus.UPLOADING || b.status === ItemStatus.EXPORTING_GCP) {
                 return 1;
             } else {
                 return -1;
@@ -87,8 +103,10 @@ const initialState: TransferableState = {
     selectedCount: 0,
     downloadingCount: 0,
     uploadingCount: 0,
+    exportingGCPCount: 0,
     toDownloadCount: 0,
     toUploadCount: 0,
+    toExportGCPCount: 0,
     items: []
 };
 
@@ -166,6 +184,7 @@ export function TransferablesReducer(state = initialState, action: Action): Tran
           state.items.filter(item => {
             if (item.id === action.payload.id) {
                 item.status = ItemStatus.COMPLETED;
+                item.progress = 100;
                 item.transferred = action.payload.size;
             }
           });

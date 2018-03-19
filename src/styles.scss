@@ -224,6 +224,12 @@ h4.subtitle {
   color: mat-color($fcExplorer-primary, 700);
 }
 
+.export-icon {
+  content: url(assets/export_to_cloud_white.svg);
+  width: 25px;
+  height: 25px;    
+}
+
 /*SIDENAV*/
 
 .sidenav-container,
@@ -622,6 +628,20 @@ a.sidenav-link p {
   font-weight: 300;
 }
 
+.mat-form-field-invalid .mat-input-element,
+.mat-warn .mat-input-element {
+  caret-color: mat-color($fcExplorer-warn, 500);
+}
+
+.mat-form-field-invalid .mat-input-underline {
+  background-color: mat-color($fcExplorer-warn, 500);
+}
+
+.mat-form-field-invalid .mat-form-field-label,
+mat-error {
+  color: mat-color($fcExplorer-warn, 500);
+}
+
 /*MODALS*/
 
 .mat-dialog-content {
@@ -666,6 +686,8 @@ a.sidenav-link p {
 
 .mat-dialog-container {
   background: white;
+  display: inline-block !important;
+  overflow: visible !important;
 }
 
 .mat-dialog-actions {

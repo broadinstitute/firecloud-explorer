@@ -10,6 +10,7 @@ export const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'file-download', component: FileExplorerComponent },
   { path: 'file-upload', component: FileExplorerUploadComponent },
+  { path: 'file-export', component: FileExplorerComponent },
   { path: 'status', component: TransferablesGridComponent },
 ];
 

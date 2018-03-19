@@ -4,8 +4,8 @@ import { Item } from '../models/item';
 import { Store } from '@ngrx/store';
 import { AppState } from '../dbstate/app-state';
 import { FilesDatabase } from '../dbstate/files-database';
-import {ItemStatus} from '@app/file-manager/models/item-status';
-import {GcsService} from '@app/file-manager/services/gcs.service';
+import { ItemStatus } from '@app/file-manager/models/item-status';
+import { GcsService } from '@app/file-manager/services/gcs.service';
 import { Type } from '@app/file-manager/models/type';
 import { environment } from '@env/environment';
 
@@ -13,7 +13,7 @@ import { environment } from '@env/environment';
 export class LimitTransferablesService {
 
   constructor(
-    private gcsService: GcsService,
+    public gcsService: GcsService,
     private store: Store<AppState>,
   ) { }
 
@@ -55,9 +55,15 @@ export class LimitTransferablesService {
 
     if (type === Type.DOWNLOAD) {
       this.gcsService.downloadFiles(maxFiles);
-    } else {
+    } else if (type === Type.UPLOAD) {
       this.gcsService.uploadFiles(localStorage.getItem('uploadBucket'), maxFiles);
     }
+  }
+
+
+  public exportItems(files: Item[]): void {
+    const maxFiles = files.splice(0, environment.LIMIT_EXPORTABLES);
+    this.gcsService.exportToGCPFiles(localStorage.getItem('destinationBucket'), maxFiles);
   }
 
   private proceedNextItem(files: Item[], type: Type, status: ItemStatus): void {
@@ -71,7 +77,7 @@ export class LimitTransferablesService {
 
       if (type === Type.DOWNLOAD) {
         this.gcsService.downloadFiles([item]);
-      } else {
+      } else if (type === Type.UPLOAD) {
         this.gcsService.uploadFiles(localStorage.getItem('uploadBucket'), [item]);
       }
     }

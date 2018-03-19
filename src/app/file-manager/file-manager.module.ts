@@ -22,6 +22,7 @@ import { RegisterUploadService } from './services/register-upload.service';
 import { GcsApiService } from './services/gcs-api.service';
 import { GcsApiMockService } from './services/gcs-api-mock.service';
 import { FirecloudApiService } from './services/firecloud-api.service';
+import { PreflightService } from './services/preflight.service';
 import { ElectronService } from 'ngx-electron';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { RequestInterceptor } from './services/request.interceptor';
@@ -38,7 +39,9 @@ import { MatDialog } from '@angular/material';
 import { BreadcrumbComponent } from './breadcrumb/breadcrumb.component';
 import { ElectronIpcApiService } from '@app/file-manager/services/electron-ipc.api.service';
 import { GoogleLoginService } from '@app/file-manager/services/login-google.service';
+import { FileExportModalComponent } from './file-export-modal/file-export-modal.component';
 import { SelectionService } from '@app/file-manager/services/selection.service';
+import { NgZone } from '@angular/core';
 
 @NgModule({
   imports: [
@@ -60,6 +63,7 @@ import { SelectionService } from '@app/file-manager/services/selection.service';
     FileExplorerUploadComponent,
     WarningModalComponent,
     BreadcrumbComponent,
+    FileExportModalComponent,
   ],
   providers: [
     FilterSizePipe,
@@ -67,6 +71,7 @@ import { SelectionService } from '@app/file-manager/services/selection.service';
     StatusService,
     FilesDatabase,
     FilesService,
+    PreflightService,
     BucketService,
     GoogleLoginService,
     LimitTransferablesService,
@@ -78,12 +83,12 @@ import { SelectionService } from '@app/file-manager/services/selection.service';
     FirecloudApiService,
     {
       provide: GcsService,
-      deps: [HttpClient, ElectronService, Store, MatDialog],
-      useFactory(http: HttpClient, electronService: ElectronService, store: Store<any>, dialog: MatDialog) {
+      deps: [HttpClient, ElectronService, Store, MatDialog, NgZone],
+      useFactory(http: HttpClient, electronService: ElectronService, store: Store<any>, dialog: MatDialog, zone: NgZone) {
         if (environment.testing) {
           return new GcsApiMockService();
         } else {
-          return new GcsApiService(http, electronService, store, dialog);
+          return new GcsApiService(http, electronService, store, dialog, zone);
         }
       }
     },
@@ -101,6 +106,7 @@ import { SelectionService } from '@app/file-manager/services/selection.service';
   entryComponents: [
     FileDownloadModalComponent,
     FileUploadModalComponent,
+    FileExportModalComponent,
     WarningModalComponent
   ],
 })

@@ -15,6 +15,8 @@ import { FilesDatabase } from '../dbstate/files-database';
 import { LimitTransferablesService } from '../services/limit-transferables.service';
 import { Type } from '@app/file-manager/models/type';
 import { ItemStatus } from '@app/file-manager/models/item-status';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { Observable } from 'rxjs/Observable';
 
 @Component({
   selector: 'app-transferalbes-grid',
@@ -23,9 +25,9 @@ import { ItemStatus } from '@app/file-manager/models/item-status';
 })
 export class TransferablesGridComponent implements OnInit, AfterViewInit {
 
+  static isExporting: Boolean = false;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
-
   displayedColumns = ['name', 'size', 'status', 'progress', 'actions'];
 
   dataSource = new MatTableDataSource([]);
@@ -36,6 +38,11 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   downloadInProgress = false;
   disabledDownload = false;
   disabledUpload = false;
+  modeVariable = 'determinate';
+  generalExportToGCPProgress = 0;
+  exportToGCPInProgress = false;
+  INDETERMINATE = 'indeterminate';
+  DETERMINATE = 'determinate';
 
   constructor(
     private statusService: StatusService,
@@ -43,7 +50,8 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
     private store: Store<AppState>,
     private registerDownload: DownloadValidatorService,
     private gcsService: GcsService,
-    private limitTransferables: LimitTransferablesService
+    private limitTransferables: LimitTransferablesService,
+    private spinner: NgxSpinnerService
   ) {
     this.filesDatabase = new FilesDatabase(store);
   }
@@ -107,6 +115,7 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
         }
       });
     });
+
     this.statusService.updateUploadProgress().subscribe(data => {
       this.zone.run(() => {
         this.generalUploadProgress = data;
@@ -117,6 +126,25 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
         }
       });
     });
+    this.gcsService.exportItemCompleted.subscribe(data => {
+      const items = new FilesDatabase(this.store).data
+        .filter(item => item.type === Type.EXPORT_GCP && item.status === ItemStatus.PENDING);
+      if (items.length === 0 && TransferablesGridComponent.isExporting) {
+        this.modeVariable = this.DETERMINATE;
+        this.generalExportToGCPProgress = 100;
+        TransferablesGridComponent.isExporting = false;
+      } else if (TransferablesGridComponent.isExporting) {
+        this.modeVariable = this.INDETERMINATE;
+        this.limitTransferables.exportItems(items);
+      }
+    });
+    Observable.timer(2000, 1000).subscribe(t => {
+      this.zone.run(() => { });
+    });
+    if (localStorage.getItem('displaySpinner') === 'true') {
+      this.spinner.show();
+      localStorage.removeItem('displaySpinner');
+    }
   }
 
   ngAfterViewInit() {
@@ -154,6 +182,19 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
     });
   }
 
+  cancelExportsToGCP() {
+    this.gcsService.cancelExportsToGCP().subscribe(value => {
+      this.zone.run(() => {
+        this.exportToGCPInProgress = true;
+        if (!value) {
+          this.spinner.show();
+        } else {
+          this.spinner.hide();
+        }
+      });
+    });
+  }
+
   stopAll() {
   }
 
@@ -178,4 +219,13 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
     this.limitTransferables.controlLimitItems(files, Type.UPLOAD, ItemStatus.UPLOADING);
   }
 
+  startExportToGCP(preserveStructure: Boolean) {
+    const files = new FilesDatabase(this.store).data
+      .filter(item => item.type === Type.EXPORT_GCP && item.status === ItemStatus.PENDING);
+    this.modeVariable = this.INDETERMINATE;
+    TransferablesGridComponent.isExporting = true;
+    localStorage.setItem('preserveStructure', preserveStructure.toString());
+    this.spinner.hide();
+    this.limitTransferables.exportItems(files);
+  }
 }

@@ -26,7 +26,14 @@ export class GcsApiMockService extends GcsService {
 
   public cancelUploads(): Promise<boolean> { return; }
 
+  public cancelExportsToGCP() { }
+
   public getBucketFilesWithMaxResult(bucketName: String, delimiter: String, token: String, useDelimiter: Boolean) {
     return Observable.of();
   }
+
+  public exportToGCPFiles(destinationBucket: String, files: Item[]) { }
+
+  public checkBucketPermissions(bucketName: String): Observable<any> { return; }
+
 }

@@ -17,7 +17,7 @@ const constants ={
   IPC_DOWNLOAD_CANCEL: 'download-cancel',
   IPC_GOOGLE_LOGOUT: 'google-revoke-auth',
   GOOGLE_LOGOUT_URL: 'https://accounts.google.com/logout?continue=http://google.com',
-  USER_AGENT: userAgent + '/Electron',
+  USER_AGENT: userAgent + '/Electron'
 };
 
 module.exports = { constants };

@@ -2,6 +2,14 @@
   margin-top: 20px;
 }
 
+.export-icon-dark {
+  content: url(../../../assets/export_to_cloud_grey.svg);
+  width: 18px;
+  height: 18px;  
+  vertical-align: middle;
+  margin-right: 5px;
+}
+
 .search-container{
   width: 30%;
   position: absolute;

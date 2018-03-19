@@ -1,8 +1,5 @@
 import { NgModule } from '@angular/core';
-import { Routes, RouterModule, PreloadAllModules, ExtraOptions } from '@angular/router';
-import { LoginComponent } from '@app/file-manager';
-import { FileExplorerComponent } from '@app/file-manager/file-explorer/file-explorer.component';
-import { TransferablesGridComponent } from '@app/file-manager/transferables-grid/transferables-grid.component';
+import { Routes, RouterModule, PreloadAllModules } from '@angular/router';
 
 const routes: Routes = [
   {
@@ -20,6 +17,10 @@ const routes: Routes = [
   },
   {
     path: 'file-upload',
+    loadChildren: './file-manager/file-manager.module#FileManagerModule',
+  },
+  {
+    path: 'file-export',
     loadChildren: './file-manager/file-manager.module#FileManagerModule',
   },
   {
