@@ -6,7 +6,7 @@ export abstract class GcsService {
 
   exportItemCompleted: BehaviorSubject<Boolean> = new BehaviorSubject(false);
 
-  itemExported: BehaviorSubject<number> = new BehaviorSubject(0);
+  cancelGCPExports = false;
 
   abstract getBucketFiles(bucketName: String): Observable<any>;
 

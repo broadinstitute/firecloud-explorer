@@ -8,6 +8,7 @@ import { ItemStatus } from '@app/file-manager/models/item-status';
 import { GcsService } from '@app/file-manager/services/gcs.service';
 import { Type } from '@app/file-manager/models/type';
 import { environment } from '@env/environment';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 @Injectable()
 export class LimitTransferablesService {

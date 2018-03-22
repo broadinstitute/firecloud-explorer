@@ -33,6 +33,6 @@
 <p-messages class="error-messages" [(value)]="msgs"></p-messages>
 
 <mat-dialog-actions>
-  <button mat-raised-button (click)="cancel()" class="button-secondary">Cancel</button>
+  <button mat-raised-button (click)="cancel()" class="button-secondary" [disabled]="isLoading() || disable">Cancel</button>
   <button mat-raised-button (click)="exportToGCPFiles()" [disabled]="!exportForm.valid || isLoading() || disable" class="button-primary">Start Export!</button>
 </mat-dialog-actions>

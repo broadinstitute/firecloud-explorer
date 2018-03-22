@@ -4,7 +4,6 @@ import { environment } from '@env/environment';
 import { Observable } from 'rxjs/Observable';
 import { SecurityService } from './security.service';
 import { GcsService } from './gcs.service';
-import { LimitTransferablesService } from './limit-transferables.service';
 import { ElectronService } from 'ngx-electron';
 import { Item } from '../models/item';
 import * as Transferables from '../actions/transferables.actions';
@@ -17,13 +16,10 @@ import { Type } from '@app/file-manager/models/type';
 import { ItemStatus } from '@app/file-manager/models/item-status';
 import { WarningModalComponent } from '@app/file-manager/warning-modal/warning-modal.component';
 import { MatDialog } from '@angular/material';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+const constants = require('../../../../electron_app/helpers/enviroment').constants;
 
 @Injectable()
 export class GcsApiService extends GcsService {
-  modalResponse = false;
-  modalObservable: BehaviorSubject<boolean> = new BehaviorSubject(this.modalResponse);
-
   constructor(private http: HttpClient,
     private electronService: ElectronService,
     private store: Store<any>,
@@ -59,44 +55,41 @@ export class GcsApiService extends GcsService {
   }
 
   public cancelAll() {
-    const itemsToDownload = this.getDownloadingFiles();
-    const itemsToUpload = this.getUploadingFiles();
-    const itemsToExport = this.getExportPendingFiles();
-    if (itemsToDownload.length > 0) {
-      this.electronService.ipcRenderer.send('download-cancel');
-      this.cancelItemsStatus(itemsToDownload);
-    }
-    if (itemsToUpload.length > 0) {
-      this.electronService.ipcRenderer.send('upload-cancel');
-      this.cancelItemsStatus(itemsToUpload);
-    }
-    if (itemsToExport.length > 0) {
-      this.electronService.ipcRenderer.send('export-gcp-cancel');
-      this.cancelItemsStatus(itemsToExport);
+    if (new FilesDatabase(this.store).data.filter(item =>
+           item.status === ItemStatus.PENDING
+        || item.status === ItemStatus.DOWNLOADING
+        || item.status === ItemStatus.UPLOADING
+        || item.status === ItemStatus.EXPORTING_GCP).length > 0) {
+
+      this.electronService.ipcRenderer.send(constants.IPC_DOWNLOAD_CANCEL);
+      // IPC_DOWNLOAD_CANCEL: 'download-cancelGCPExports',
+      this.cancelItemsStatus(Type.DOWNLOAD);
+
+      this.electronService.ipcRenderer.send(constants.IPC_UPLOAD_CANCEL);
+      this.cancelItemsStatus(Type.UPLOAD);
+
+      this.cancelItemsStatus(Type.EXPORT_GCP);
     }
   }
 
   public cancelDownloads(): Promise<boolean> {
-    const items = this.getDownloadingFiles();
-    if (items.length > 0) {
-      this.openModal('download-cancel', 'cancelAllDownloads', Type.DOWNLOAD);
+    if (this.getFiles(Type.DOWNLOAD).length > 0) {
+      this.openModal(constants.IPC_DOWNLOAD_CANCEL, 'cancelAllDownloads', Type.DOWNLOAD);
       return Promise.resolve(true);
     }
   }
 
   public cancelUploads(): Promise<boolean> {
-    const items = this.getUploadingFiles();
-    if (items.length > 0) {
-      this.openModal('upload-cancel', 'cancelAllUploads', Type.UPLOAD);
+    if (this.getFiles(Type.UPLOAD).length > 0) {
+      this.openModal(constants.IPC_UPLOAD_CANCEL, 'cancelAllUploads', Type.UPLOAD);
       return Promise.resolve(true);
     }
   }
 
-  public cancelExportsToGCP(): Observable<boolean> {
-    const items = this.getExportPendingFiles();
-    if (items.length > 0) {
-      this.openModal('export-gcp-cancel', 'cancelAllExportsToGCP', Type.EXPORT_GCP);
-      return this.modalObservable;
+  public cancelExportsToGCP() {
+    this.cancelGCPExports = true;
+    if (this.getFiles(Type.EXPORT_GCP).length > 0) {
+      this.cancelItemsStatus(Type.EXPORT_GCP);
     }
   }
 
@@ -106,59 +99,36 @@ export class GcsApiService extends GcsService {
       disableClose: true,
       data: data
     });
+
     dialogRef.afterClosed().subscribe(result => {
       if (result.exit) {
         this.electronService.ipcRenderer.send(action);
-        this.cancelItemsStatus(this.getFiles(type));
-        this.modalObservable.next(result.exit);
+        this.cancelItemsStatus(type);
       }
     });
   }
 
-  cancelItemsStatus(items: Item[]) {
-    items.forEach(item => {
+  cancelItemsStatus(type: string) {
+    this.getFiles(type).forEach(item => {
       this.store.dispatch(new Transferables.UpdateItemCanceled(item));
     });
   }
 
   getFiles(type: String): Item[] {
+    let currentStatus = null;
     switch (type) {
       case Type.EXPORT_GCP:
-        return this.getExportingFiles();
+        currentStatus = ItemStatus.EXPORTING_GCP;
+        break;
       case Type.DOWNLOAD:
-        return this.getDownloadingFiles();
+        currentStatus = ItemStatus.DOWNLOADING;
+        break;
       default:
-        return this.getUploadingFiles();
+        currentStatus = ItemStatus.UPLOADING;
     }
+    return new FilesDatabase(this.store).data.filter(item => item.status === currentStatus ||
+      (item.status === ItemStatus.PENDING && item.type === type));
   }
-
-  getDownloadingFiles() {
-    const items = new FilesDatabase(this.store).data.
-      filter(item => item.status === ItemStatus.DOWNLOADING ||
-        (item.status === ItemStatus.PENDING && item.type === Type.DOWNLOAD));
-    return items;
-  }
-
-  getUploadingFiles() {
-    const items = new FilesDatabase(this.store).data.
-      filter(item => item.status === ItemStatus.UPLOADING ||
-        (item.status === ItemStatus.PENDING && item.type === Type.UPLOAD));
-    return items;
-  }
-
-  getExportingFiles() {
-    const items = new FilesDatabase(this.store).data.
-      filter(item => item.status === ItemStatus.EXPORTING_GCP ||
-        (item.status === ItemStatus.PENDING && item.type === Type.EXPORT_GCP));
-    return items;
-  }
-
-  getExportPendingFiles() {
-    const items = new FilesDatabase(this.store).data.
-    filter(item => item.type === Type.EXPORT_GCP && item.status === ItemStatus.PENDING);
-    return items;
-  }
-
 
   public checkBucketPermissions(bucketName: String): Observable<any> {
     const url = environment.GOOGLE_URL + 'storage/v1/b/' + bucketName + '/iam/testPermissions?permissions=storage.objects.create';
@@ -201,9 +171,4 @@ export class GcsApiService extends GcsService {
         });
     });
   }
-
-  public getExportItemCompleted(): Observable<Boolean> {
-    return this.exportItemCompleted;
-  }
-
 }

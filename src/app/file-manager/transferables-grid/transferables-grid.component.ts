@@ -1,9 +1,9 @@
-import { Component, OnInit, NgZone, AfterViewInit, ViewChild, } from '@angular/core';
+import { Component, OnInit, NgZone, AfterViewInit, ViewChild, HostListener, } from '@angular/core';
 import { Store } from '@ngrx/store';
 import * as Transferables from '../actions/transferables.actions';
 import { DownloadValidatorService } from '../services/download-validator.service';
 import { Item } from '../models/item';
-import { MatPaginator, MatSort, MatTableDataSource } from '@angular/material';
+import { MatPaginator, MatSort, MatTableDataSource, MatDialog } from '@angular/material';
 import 'rxjs/add/operator/startWith';
 import 'rxjs/add/observable/forkJoin';
 import 'rxjs/add/operator/map';
@@ -17,14 +17,15 @@ import { Type } from '@app/file-manager/models/type';
 import { ItemStatus } from '@app/file-manager/models/item-status';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Observable } from 'rxjs/Observable';
+import { WarningModalComponent } from '../warning-modal/warning-modal.component';
 
 @Component({
   selector: 'app-transferalbes-grid',
   templateUrl: './transferables-grid.component.html',
   styleUrls: ['./transferables-grid.component.css']
 })
-export class TransferablesGridComponent implements OnInit, AfterViewInit {
 
+export class TransferablesGridComponent implements OnInit, AfterViewInit {
   static isExporting: Boolean = false;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -38,11 +39,10 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   downloadInProgress = false;
   disabledDownload = false;
   disabledUpload = false;
-  modeVariable = 'determinate';
   generalExportToGCPProgress = 0;
-  exportToGCPInProgress = false;
   INDETERMINATE = 'indeterminate';
   DETERMINATE = 'determinate';
+  exportItems = [];
 
   constructor(
     private statusService: StatusService,
@@ -51,8 +51,9 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
     private registerDownload: DownloadValidatorService,
     private gcsService: GcsService,
     private limitTransferables: LimitTransferablesService,
-    private spinner: NgxSpinnerService
-  ) {
+    private spinner: NgxSpinnerService,
+    private dialog: MatDialog,
+) {
     this.filesDatabase = new FilesDatabase(store);
   }
 
@@ -104,6 +105,8 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
+    this.generalExportToGCPProgress = 0;
+
     this.dataSource.data = this.filesDatabase.data;
     this.statusService.updateDownloadProgress().subscribe(data => {
       this.zone.run(() => {
@@ -126,25 +129,35 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
         }
       });
     });
-    this.gcsService.exportItemCompleted.subscribe(data => {
-      const items = new FilesDatabase(this.store).data
-        .filter(item => item.type === Type.EXPORT_GCP && item.status === ItemStatus.PENDING);
-      if (items.length === 0 && TransferablesGridComponent.isExporting) {
-        this.modeVariable = this.DETERMINATE;
-        this.generalExportToGCPProgress = 100;
-        TransferablesGridComponent.isExporting = false;
-      } else if (TransferablesGridComponent.isExporting) {
-        this.modeVariable = this.INDETERMINATE;
-        this.limitTransferables.exportItems(items);
-      }
-    });
+
+    this.gcsService.exportItemCompleted.subscribe(() => {
+        this.exportItems = new FilesDatabase(this.store).data
+          .filter(item => item.type === Type.EXPORT_GCP && item.status === ItemStatus.PENDING);
+
+        if (this.exportItems.length !== 0) {
+          this.generalExportToGCPProgress =
+            ((this.filesDatabase.data.length - this.exportItems.length ) * 100 ) / this.filesDatabase.data.length;
+        }
+
+        if (this.exportItems.length === 0 && TransferablesGridComponent.isExporting) {
+          // execute this condition when all exports are completed
+          TransferablesGridComponent.isExporting = false;
+          this.generalExportToGCPProgress = 100;
+          this.spinner.hide();
+        } else if (TransferablesGridComponent.isExporting) {
+          // execute this condition when exports are still in progress
+          if (!this.gcsService.cancelGCPExports) {
+            this.limitTransferables.exportItems(this.exportItems);
+          } else {
+            this.generalExportToGCPProgress = 100;
+            TransferablesGridComponent.isExporting = false;
+          }
+        }
+      });
+
     Observable.timer(2000, 1000).subscribe(t => {
       this.zone.run(() => { });
     });
-    if (localStorage.getItem('displaySpinner') === 'true') {
-      this.spinner.show();
-      localStorage.removeItem('displaySpinner');
-    }
   }
 
   ngAfterViewInit() {
@@ -183,11 +196,19 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   }
 
   cancelExportsToGCP() {
-    this.gcsService.cancelExportsToGCP().subscribe(value => {
+    this.spinner.show();
+    const dialogRef = this.dialog.open(WarningModalComponent, {
+        width: '500px',
+        disableClose: true,
+        data: 'cancelAllExportsToGCP'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
       this.zone.run(() => {
-        this.exportToGCPInProgress = true;
-        if (!value) {
-          this.spinner.show();
+        if (result.exit) {
+          this.gcsService.cancelExportsToGCP();
+          this.gcsService.cancelGCPExports = true;
+          this.gcsService.exportItemCompleted.next(true);
         } else {
           this.spinner.hide();
         }
@@ -220,12 +241,16 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   }
 
   startExportToGCP(preserveStructure: Boolean) {
+    this.gcsService.cancelGCPExports = false;
     const files = new FilesDatabase(this.store).data
       .filter(item => item.type === Type.EXPORT_GCP && item.status === ItemStatus.PENDING);
-    this.modeVariable = this.INDETERMINATE;
     TransferablesGridComponent.isExporting = true;
     localStorage.setItem('preserveStructure', preserveStructure.toString());
     this.spinner.hide();
     this.limitTransferables.exportItems(files);
+  }
+
+  getExportingStatus() {
+    return TransferablesGridComponent.isExporting;
   }
 }

@@ -17,6 +17,7 @@ import { MatDialog } from '@angular/material';
 import { WarningModalComponent } from '@app/file-manager/warning-modal/warning-modal.component';
 import { FilesDatabase } from '@app/file-manager/dbstate/files-database';
 import { ItemStatus } from '@app/file-manager/models/item-status';
+import { Type } from '@app/file-manager/models/type';
 import { GcsService } from '@app/file-manager/services/gcs.service';
 import { GoogleLoginService } from '@app/file-manager/services/login-google.service';
 
@@ -49,9 +50,7 @@ export class AppComponent implements OnInit, OnDestroy {
     private router: Router,
     private electronService: ElectronService,
     private gcsService: GcsService,
-    private loginService: GoogleLoginService,
-    private spinner: NgxSpinnerService
-  ) {
+    private loginService: GoogleLoginService) {
     AppComponent.updateUserEmail.subscribe(email => {
       this.userEmail = email;
     });
@@ -61,7 +60,10 @@ export class AppComponent implements OnInit, OnDestroy {
   checkBeforeClose() {
     event.preventDefault();
     const items = new FilesDatabase(this.store).data.
-    filter(item => item.status === ItemStatus.DOWNLOADING || item.status === ItemStatus.UPLOADING);
+    filter(item =>
+         item.status === ItemStatus.DOWNLOADING
+      || item.status === ItemStatus.UPLOADING
+      || (item.status === ItemStatus.PENDING && Type.EXPORT_GCP));
     if (items.length > 0) {
       const dialogRef = this.dialog.open(WarningModalComponent, {
         width: '500px',
@@ -96,7 +98,6 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-
     this.unsubscribe$.next();
     this.unsubscribe$.complete();
   }
@@ -107,7 +108,9 @@ export class AppComponent implements OnInit, OnDestroy {
 
   onLogoutClick() {
     const items = new FilesDatabase(this.store).data.
-    filter(item => item.status === ItemStatus.DOWNLOADING || item.status === ItemStatus.UPLOADING);
+    filter(item => item.status === ItemStatus.DOWNLOADING
+      || item.status === ItemStatus.UPLOADING
+      || (item.status === ItemStatus.PENDING && Type.EXPORT_GCP));
     if (items.length > 0) {
       const dialogRef = this.dialog.open(WarningModalComponent, {
         width: '500px',

@@ -13,8 +13,8 @@ const constants ={
   GOOGLE_API: 'https://www.googleapis.com/upload/storage/v1/b/',
   IPC_VERIFY_BEFORE_DOWNLOAD: 'verify-before-download',
   IPC_UPLOAD_STATUS: 'upload-status',
-  IPC_UPLOAD_CANCEL: 'upload-cancel',
-  IPC_DOWNLOAD_CANCEL: 'download-cancel',
+  IPC_UPLOAD_CANCEL: 'upload-cancelGCPExports',
+  IPC_DOWNLOAD_CANCEL: 'download-cancelGCPExports',
   IPC_GOOGLE_LOGOUT: 'google-revoke-auth',
   GOOGLE_LOGOUT_URL: 'https://accounts.google.com/logout?continue=http://google.com',
   USER_AGENT: userAgent + '/Electron'

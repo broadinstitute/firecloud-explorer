@@ -39,10 +39,9 @@
       <h4 class="subtitle">Exported: {{filesDatabase.exportingCount + ' of ' + filesDatabase.toExportGCPCount}} file(s)</h4>
     </div>
 
-    <p-progressBar mode="{{modeVariable}}" class="progress-bar" [value]="generalExportToGCPProgress" [showValue]="false"></p-progressBar>
-
+    <p-progressBar mode="determinate" class="progress-bar" [value]="generalExportToGCPProgress" [showValue]="false"></p-progressBar>
     <div class="flex-container end actions">
-      <button mat-raised-button (click)="cancelExportsToGCP()" class="button-secondary" >
+      <button mat-raised-button (click)="cancelExportsToGCP()" class="button-secondary" [disabled]="!getExportingStatus()" >
         <i class="material-icons">highlight_off</i>Cancel Export</button>
     </div>
   </div>
