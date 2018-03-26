@@ -37,11 +37,7 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   generalUploadProgress = 0;
   uploadInProgress = false;
   downloadInProgress = false;
-  disabledDownload = false;
-  disabledUpload = false;
   generalExportToGCPProgress = 0;
-  INDETERMINATE = 'indeterminate';
-  DETERMINATE = 'determinate';
   exportItems = [];
 
   constructor(
@@ -111,8 +107,9 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
     this.statusService.updateDownloadProgress().subscribe(data => {
       this.zone.run(() => {
         this.generalProgress = data;
-        if (data === 100 || this.disabledDownload) {
+        if (data === 100 ) {
           this.downloadInProgress = false;
+          this.generalProgress = 100;
         } else {
           this.downloadInProgress = true;
         }
@@ -122,8 +119,9 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
     this.statusService.updateUploadProgress().subscribe(data => {
       this.zone.run(() => {
         this.generalUploadProgress = data;
-        if (data === 100 || this.disabledUpload) {
+        if (data === 100 ) {
           this.uploadInProgress = false;
+          this.generalUploadProgress = 100;
         } else {
           this.uploadInProgress = true;
         }
@@ -180,17 +178,23 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   }
 
   cancelUploads() {
-    this.gcsService.cancelUploads().then(value => {
+    this.gcsService.cancelUploads().afterClosed().subscribe(value => {
       this.zone.run(() => {
-        this.disabledUpload = value;
+        this.uploadInProgress = !value;
+        if (value) {
+          this.generalUploadProgress = 100;
+        }
       });
     });
   }
 
   cancelDownloads() {
-    this.gcsService.cancelDownloads().then(value => {
+    this.gcsService.cancelDownloads().afterClosed().subscribe(value => {
       this.zone.run(() => {
-        this.disabledDownload = value;
+        this.downloadInProgress = !value;
+        if (value) {
+          this.generalProgress = 100;
+        }
       });
     });
   }

@@ -15,7 +15,7 @@ import 'rxjs/add/operator/retry';
 import { Type } from '@app/file-manager/models/type';
 import { ItemStatus } from '@app/file-manager/models/item-status';
 import { WarningModalComponent } from '@app/file-manager/warning-modal/warning-modal.component';
-import { MatDialog } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material';
 const constants = require('../../../../electron_app/helpers/enviroment').constants;
 
 @Injectable()
@@ -62,7 +62,6 @@ export class GcsApiService extends GcsService {
         || item.status === ItemStatus.EXPORTING_GCP).length > 0) {
 
       this.electronService.ipcRenderer.send(constants.IPC_DOWNLOAD_CANCEL);
-      // IPC_DOWNLOAD_CANCEL: 'download-cancelGCPExports',
       this.cancelItemsStatus(Type.DOWNLOAD);
 
       this.electronService.ipcRenderer.send(constants.IPC_UPLOAD_CANCEL);
@@ -72,17 +71,15 @@ export class GcsApiService extends GcsService {
     }
   }
 
-  public cancelDownloads(): Promise<boolean> {
+  public cancelDownloads(): MatDialogRef<WarningModalComponent, any> {
     if (this.getFiles(Type.DOWNLOAD).length > 0) {
-      this.openModal(constants.IPC_DOWNLOAD_CANCEL, 'cancelAllDownloads', Type.DOWNLOAD);
-      return Promise.resolve(true);
+      return this.openModal(constants.IPC_DOWNLOAD_CANCEL, 'cancelAllDownloads', Type.DOWNLOAD);
     }
   }
 
-  public cancelUploads(): Promise<boolean> {
+  public cancelUploads(): MatDialogRef<WarningModalComponent, any> {
     if (this.getFiles(Type.UPLOAD).length > 0) {
-      this.openModal(constants.IPC_UPLOAD_CANCEL, 'cancelAllUploads', Type.UPLOAD);
-      return Promise.resolve(true);
+      return this.openModal(constants.IPC_UPLOAD_CANCEL, 'cancelAllUploads', Type.UPLOAD);
     }
   }
 
@@ -106,6 +103,7 @@ export class GcsApiService extends GcsService {
         this.cancelItemsStatus(type);
       }
     });
+    return dialogRef;
   }
 
   cancelItemsStatus(type: string) {

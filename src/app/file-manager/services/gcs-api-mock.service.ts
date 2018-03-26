@@ -4,6 +4,8 @@ import { Observable } from 'rxjs/Observable';
 import { Item } from '../models/item';
 import * as buckets from 'assets/demo/buckets-content';
 import 'rxjs/add/observable/of';
+import { WarningModalComponent } from '@app/file-manager/warning-modal/warning-modal.component';
+import { MatDialogRef } from '@angular/material';
 
 @Injectable()
 export class GcsApiMockService extends GcsService {
@@ -22,9 +24,9 @@ export class GcsApiMockService extends GcsService {
 
   public cancelAll() {}
 
-  public cancelDownloads(): Promise<boolean> { return; }
+  public cancelDownloads(): MatDialogRef<WarningModalComponent, any> { return; }
 
-  public cancelUploads(): Promise<boolean> { return; }
+  public cancelUploads(): MatDialogRef<WarningModalComponent, any> { return; }
 
   public cancelExportsToGCP() { }
 

@@ -1,6 +1,8 @@
 import { Observable } from 'rxjs/Observable';
 import { Item } from '../models/item';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { WarningModalComponent } from '@app/file-manager/warning-modal/warning-modal.component';
+import { MatDialogRef } from '@angular/material';
 
 export abstract class GcsService {
 
@@ -16,11 +18,11 @@ export abstract class GcsService {
 
   abstract cancelAll();
 
-  abstract cancelDownloads(): Promise<boolean>;
+  abstract cancelDownloads(): MatDialogRef<WarningModalComponent, any>;
 
   abstract cancelExportsToGCP();
 
-  abstract cancelUploads(): Promise<boolean>;
+  abstract cancelUploads(): MatDialogRef<WarningModalComponent, any>;
 
   abstract getBucketFilesWithMaxResult(bucketName: String, delimiter: String, token: String, useDelimiter: Boolean): Observable<any>;
 
