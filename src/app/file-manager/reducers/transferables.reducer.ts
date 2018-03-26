@@ -24,7 +24,7 @@ export class TransferableState {
     }
 
     get downloadingCount(): number {
-        return this.items.filter(x => x.status === ItemStatus.COMPLETED && x.type === Type.DOWNLOAD).length;
+        return this.items.filter(x => x.status === ItemStatus.COMPLETED && x.type === Type.DOWNLOAD && x.currentBatch).length;
     }
 
     get uploadingCount(): number {
@@ -36,7 +36,7 @@ export class TransferableState {
     }
 
     get toDownloadCount(): number {
-        return this.items.filter(x => x.type === Type.DOWNLOAD).length;
+        return this.items.filter(x => x.type === Type.DOWNLOAD && x.currentBatch).length;
     }
 
     get toUploadCount(): number {

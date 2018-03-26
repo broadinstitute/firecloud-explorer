@@ -66,7 +66,7 @@ export class FileExplorerComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.rootItem = new Item(
       'workspaces', 'workspaces', null, null, 0, '', '', '',
-      'Folder', '', '', '', '', true, false, '', '', '');
+      'Folder', '', '', '', '', true, false, '', '', '', false);
 
     this.getWorkspacesObjects(this.rootItem);
 
