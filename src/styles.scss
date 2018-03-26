@@ -513,6 +513,18 @@ a.sidenav-link p {
   border-radius: 0;
 }
 
+.progress-bar.success .ui-widget-header,
+.progress-bar-small.success .ui-widget-header {
+  background: rgb(122, 172, 32);
+}
+
+.progress-bar.failure .ui-widget-header,
+.progress-bar-small.failure .ui-widget-header,
+.progress-bar.failure .ui-widget-content,
+.progress-bar-small.failure .ui-widget-content {
+  background: mat-color($fcExplorer-warn, 600);
+}
+
 .progress-bar .ui-widget-content {
   margin: 5px 0
 }
@@ -630,16 +642,16 @@ a.sidenav-link p {
 
 .mat-form-field-invalid .mat-input-element,
 .mat-warn .mat-input-element {
-  caret-color: mat-color($fcExplorer-warn, 500);
+  caret-color: mat-color($fcExplorer-warn, 600);
 }
 
 .mat-form-field-invalid .mat-input-underline {
-  background-color: mat-color($fcExplorer-warn, 500);
+  background-color: mat-color($fcExplorer-warn, 600);
 }
 
 .mat-form-field-invalid .mat-form-field-label,
 mat-error {
-  color: mat-color($fcExplorer-warn, 500);
+  color: mat-color($fcExplorer-warn, 600);
 }
 
 /*MODALS*/

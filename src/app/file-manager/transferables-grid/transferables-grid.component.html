@@ -9,8 +9,8 @@
       <h4 class="subtitle">{{generalProgress}}%</h4>
     </div>
 
-    <p-progressBar mode="determinate" class="progress-bar" [value]="generalProgress" [showValue]="false"></p-progressBar>
-
+    <p-progressBar mode="determinate" class="progress-bar" [ngClass]="{'success': generalProgress === 100, 'failure': downloadCanceled === true}" [value]="generalProgress" [showValue]="false"></p-progressBar>
+    
     <div class="flex-container end actions">
       <button mat-raised-button (click)="cancelDownloads()" class="button-secondary" [disabled]="!downloadInProgress">
 
@@ -26,7 +26,7 @@
       <h4 class="subtitle">{{generalUploadProgress}}%</h4>
     </div>
 
-    <p-progressBar mode="determinate" class="progress-bar" [value]="generalUploadProgress" [showValue]="false"></p-progressBar>
+    <p-progressBar mode="determinate" class="progress-bar" [ngClass]="{'success': generalUploadProgress === 100, 'failure': uploadCanceled === true}" [value]="generalUploadProgress" [showValue]="false"></p-progressBar>
 
     <div class="flex-container end actions">
       <button mat-raised-button (click)="cancelUploads()" class="button-secondary" [disabled]="!uploadInProgress">
@@ -37,9 +37,10 @@
   <div class="status-box-left">
     <div class="flex-container space-between">
       <h4 class="subtitle">Exported: {{filesDatabase.exportingCount + ' of ' + filesDatabase.toExportGCPCount}} file(s)</h4>
+      <h4 class="subtitle">{{generalExportToGCPProgress}}%</h4>
     </div>
 
-    <p-progressBar mode="determinate" class="progress-bar" [value]="generalExportToGCPProgress" [showValue]="false"></p-progressBar>
+    <p-progressBar mode="determinate" class="progress-bar" [ngClass]="{'success': generalExportToGCPProgress === 100, 'failure': exportToGCPCanceled === true}" [value]="generalExportToGCPProgress" [showValue]="false"></p-progressBar>
     <div class="flex-container end actions">
       <button mat-raised-button (click)="cancelExportsToGCP()" class="button-secondary" [disabled]="!getExportingStatus()" >
         <i class="material-icons">highlight_off</i>Cancel Export</button>
@@ -94,8 +95,8 @@
       <ng-container matColumnDef="progress">
         <mat-header-cell *matHeaderCellDef> Progress </mat-header-cell>
         <mat-cell *matCellDef="let row">
-          <p-progressBar *ngIf="row.status === 'Downloading' || row.status === 'Uploading' || row.status === 'Completed'" mode="determinate" class="progress-bar-small" [value]=row.progress [showValue]="false"></p-progressBar>
-          <p-progressBar *ngIf="row.status === 'Exporting to GCP'" mode="indeterminate" class="progress-bar-small"  [showValue]="false"></p-progressBar>
+          <p-progressBar *ngIf="row.status === 'Pending' || row.status === 'Downloading' || row.status === 'Uploading' || row.status === 'Completed' || row.status === 'Canceled'" mode="determinate" class="progress-bar-small" [ngClass]="{'success': row.status === 'Completed', 'failure': row.status === 'Canceled'}" [value]=row.progress [showValue]="false"></p-progressBar>
+          <p-progressBar *ngIf="row.status === 'Exporting to GCP'" mode="indeterminate" class="progress-bar-small" [ngClass]="{'success': row.status === 'Completed', 'failure': row.status === 'Canceled'}" [showValue]="false"></p-progressBar>
         </mat-cell>
       </ng-container>
 

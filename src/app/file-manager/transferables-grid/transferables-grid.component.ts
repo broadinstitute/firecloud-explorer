@@ -39,6 +39,9 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   downloadInProgress = false;
   generalExportToGCPProgress = 0;
   exportItems = [];
+  uploadCanceled = false;
+  downloadCanceled = false;
+  exportToGCPCanceled = false;
 
   constructor(
     private statusService: StatusService,
@@ -180,10 +183,8 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   cancelUploads() {
     this.gcsService.cancelUploads().afterClosed().subscribe(value => {
       this.zone.run(() => {
+        this.uploadCanceled = value;
         this.uploadInProgress = !value;
-        if (value) {
-          this.generalUploadProgress = 100;
-        }
       });
     });
   }
@@ -191,10 +192,8 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   cancelDownloads() {
     this.gcsService.cancelDownloads().afterClosed().subscribe(value => {
       this.zone.run(() => {
+        this.downloadCanceled = value;
         this.downloadInProgress = !value;
-        if (value) {
-          this.generalProgress = 100;
-        }
       });
     });
   }
@@ -209,6 +208,7 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
 
     dialogRef.afterClosed().subscribe(result => {
       this.zone.run(() => {
+        this.exportToGCPCanceled = result;
         if (result.exit) {
           this.gcsService.cancelExportsToGCP();
           this.gcsService.cancelGCPExports = true;
