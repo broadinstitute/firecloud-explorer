@@ -36,6 +36,7 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   generalProgress = 0;
   generalUploadProgress = 0;
   uploadInProgress = false;
+  disabledUpload = false;
   downloadInProgress = false;
   generalExportToGCPProgress = 0;
   exportItems = [];
@@ -208,7 +209,7 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
 
     dialogRef.afterClosed().subscribe(modalResponse => {
       this.zone.run(() => {
-        this.exportToGCPCanceled = modalResponse;
+        this.exportToGCPCanceled = modalResponse.exit;
         if (modalResponse.exit) {
           this.gcsService.cancelExportsToGCP();
           this.gcsService.cancelGCPExports = true;
