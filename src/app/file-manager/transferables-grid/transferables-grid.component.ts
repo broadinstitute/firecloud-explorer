@@ -181,19 +181,19 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   }
 
   cancelUploads() {
-    this.gcsService.cancelUploads().afterClosed().subscribe(value => {
+    this.gcsService.cancelUploads().afterClosed().subscribe(modalResponse => {
       this.zone.run(() => {
-        this.uploadCanceled = value;
-        this.uploadInProgress = !value;
+        this.uploadCanceled = modalResponse.exit;
+        this.uploadInProgress = !modalResponse.exit;
       });
     });
   }
 
   cancelDownloads() {
-    this.gcsService.cancelDownloads().afterClosed().subscribe(value => {
+    this.gcsService.cancelDownloads().afterClosed().subscribe(modalResponse => {
       this.zone.run(() => {
-        this.downloadCanceled = value;
-        this.downloadInProgress = !value;
+        this.downloadCanceled = modalResponse.exit;
+        this.downloadInProgress = !modalResponse.exit;
       });
     });
   }
@@ -206,10 +206,10 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
         data: 'cancelAllExportsToGCP'
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe(modalResponse => {
       this.zone.run(() => {
-        this.exportToGCPCanceled = result;
-        if (result.exit) {
+        this.exportToGCPCanceled = modalResponse;
+        if (modalResponse.exit) {
           this.gcsService.cancelExportsToGCP();
           this.gcsService.cancelGCPExports = true;
           this.gcsService.exportItemCompleted.next(true);

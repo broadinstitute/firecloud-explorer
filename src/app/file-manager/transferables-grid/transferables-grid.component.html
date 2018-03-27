@@ -9,11 +9,9 @@
       <h4 class="subtitle">{{generalProgress}}%</h4>
     </div>
 
-    <p-progressBar mode="determinate" class="progress-bar" [ngClass]="{'success': generalProgress === 100, 'failure': downloadCanceled === true}" [value]="generalProgress" [showValue]="false"></p-progressBar>
-    
+    <p-progressBar mode="determinate" class="progress-bar" [ngClass]="{'success': generalProgress === 100, 'failure': downloadCanceled}" [value]="generalProgress" [showValue]="false"></p-progressBar>
     <div class="flex-container end actions">
       <button mat-raised-button (click)="cancelDownloads()" class="button-secondary" [disabled]="!downloadInProgress">
-
         <i class="material-icons">highlight_off</i>Cancel Download</button>
       <!-- <button mat-raised-button (click)="resumeSelected()" class="button-primary">
         <i class="material-icons">pause_circle_outline</i>Pause all</button> -->
@@ -26,7 +24,7 @@
       <h4 class="subtitle">{{generalUploadProgress}}%</h4>
     </div>
 
-    <p-progressBar mode="determinate" class="progress-bar" [ngClass]="{'success': generalUploadProgress === 100, 'failure': uploadCanceled === true}" [value]="generalUploadProgress" [showValue]="false"></p-progressBar>
+    <p-progressBar mode="determinate" class="progress-bar" [ngClass]="{'success': generalUploadProgress === 100, 'failure': uploadCanceled}" [value]="generalUploadProgress" [showValue]="false"></p-progressBar>
 
     <div class="flex-container end actions">
       <button mat-raised-button (click)="cancelUploads()" class="button-secondary" [disabled]="!uploadInProgress">
