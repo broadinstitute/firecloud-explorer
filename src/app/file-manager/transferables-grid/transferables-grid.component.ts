@@ -137,7 +137,7 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
 
         if (this.exportItems.length !== 0) {
           this.generalExportToGCPProgress =
-            ((this.filesDatabase.data.length - this.exportItems.length ) * 100 ) / this.filesDatabase.data.length;
+            Math.round(((this.filesDatabase.data.length - this.exportItems.length ) * 100 ) / this.filesDatabase.data.length);
         }
 
         if (this.exportItems.length === 0 && TransferablesGridComponent.isExporting) {
