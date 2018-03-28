@@ -2,16 +2,34 @@
 
 <mat-dialog-content>
   <form role="form" id="exportForm" name="exportForm" [formGroup]="exportForm">
-    <div class="flex-container">
-      <mat-form-field class="full-width">
-        <input matInput placeholder="Google Bucket Name" formControlName="bucketNameGCP" required>
-        <mat-error>Please enter a Google Bucket Name</mat-error>
-      </mat-form-field>
-    </div>
-  </form>
-</mat-dialog-content>
 
-<p-toolbar styleClass="toolbar-accent toolbar-modal">
+    <mat-radio-group formControlName="exportDestination">
+      <mat-radio-button class="radio-block" id="exportToGCP" [value]="1"  (click)="cleanForm()">Google Cloud Platform</mat-radio-button>
+      <div *ngIf="exportForm.get('exportDestination').value == 1" class="flex-container column">
+        <mat-form-field class="full-width">
+          <input matInput placeholder="Google Bucket Name" formControlName="bucketNameGCP" required (input)="formChange()">
+          <mat-error>Please enter a Google Bucket Name</mat-error>
+        </mat-form-field>
+      </div>
+
+      <mat-radio-button class="radio-block" id="exportToAWS"  (change)="cleanForm()" [value]="2">Amazon Web Services</mat-radio-button>
+      <div *ngIf="exportForm.get('exportDestination').value == 2" class="flex-container column">
+        <mat-form-field class="full-width">
+          <input matInput placeholder="Access Key Id" formControlName="accessKeyIdAWS" required (input)="formChange()">
+          <mat-error>Please enter your Access Key Id</mat-error>
+        </mat-form-field>
+        <mat-form-field class="full-width ">
+          <input matInput placeholder="Secret Access Key" formControlName="secretAccessKeyAWS" type="password" required (input)="formChange()">
+          <mat-error>Please enter your Secret Access Key</mat-error>
+        </mat-form-field>
+        <mat-form-field class="full-width">
+          <input matInput placeholder="Amazon Bucket Name" formControlName="bucketNameAWS" required (input)="formChange()">
+          <mat-error>Please enter an Amazon Bucket Name</mat-error>
+        </mat-form-field>
+      </div>
+    </mat-radio-group>
+  </form>
+  <p-toolbar styleClass="toolbar-accent toolbar-modal">
     <h4 class="subtitle">Selected: {{fileCount()}} files.
       <span *ngIf="!isLoading()">Total size: {{ totalSize() | filesize}}</span>
       <span *ngIf="isLoading()">Size: {{ totalSize() | filesize}}</span>
@@ -26,13 +44,14 @@
     </div>
   </p-toolbar>
 
-<span class="italic">Files will be stored into "Imports" folder</span>
+  <div class="italic">Files will be stored into "Imports" folder</div>
+</mat-dialog-content>
 
 <mat-checkbox [checked]="preserveStructure" aria-label="Preserve folder structure" (change)="selectionChanged($event)" class="dialog-checkbox"
   disableRipple>Preserve folder structure</mat-checkbox>
 <p-messages class="error-messages" [(value)]="msgs"></p-messages>
 
 <mat-dialog-actions>
-  <button mat-raised-button (click)="cancel()" class="button-secondary" [disabled]="isLoading() || disable">Cancel</button>
-  <button mat-raised-button (click)="exportToGCPFiles()" [disabled]="!exportForm.valid || isLoading() || disable" class="button-primary">Start Export!</button>
+  <button mat-raised-button (click)="cancel()" [disabled]="disableCancel || isLoading() || disable" class="button-secondary">Cancel</button>
+  <button mat-raised-button (click)="exportFiles()" [disabled]="disableExport || isLoading() || disable" class="button-primary">Start Export!</button>
 </mat-dialog-actions>

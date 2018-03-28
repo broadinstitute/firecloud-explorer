@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { ElectronService } from 'ngx-electron';
 import { ElectronIpcService } from '@app/file-manager/services/electron-ipc.service';
 import { Observable } from 'rxjs/Observable';
-const constants = require('../../../../electron_app/helpers/enviroment').constants;
+const constants = require('../../../../electron_app/helpers/environment').constants;
 
 @Injectable()
 export class ElectronIpcApiService extends ElectronIpcService {
@@ -38,5 +38,34 @@ export class ElectronIpcApiService extends ElectronIpcService {
   public logout(): void {
     this.electronService.ipcRenderer.send(constants.IPC_GOOGLE_LOGOUT);
   }
-}
 
+  public exportS3(dataTransfer: any): void {
+    this.electronService.ipcRenderer.send(constants.IPC_EXPORT_S3, dataTransfer);
+  }
+
+  public exportS3NextItem(): Observable<any> {
+    return Observable.create(obs => {
+      this.electronService.ipcRenderer.removeAllListeners(constants.IPC_EXPORT_S3);
+      this.electronService.ipcRenderer.on(constants.IPC_EXPORT_S3, (event, data) => {
+        obs.next(data);
+      });
+    });
+  }
+
+  public setCredentials(credentials): void {
+    this.electronService.ipcRenderer.send(constants.IPC_AWS_HANDLE_CREDENTIALS, credentials);
+  }
+
+  public awsTestCredentials(): Promise<any> {
+    this.electronService.ipcRenderer.removeAllListeners(constants.IPC_AWS_HANDLE_CREDENTIALS);
+    return new Promise<Response>((resolve, reject) => {
+      this.electronService.ipcRenderer.on(constants.IPC_AWS_HANDLE_CREDENTIALS, (event, message) => {
+        if (message) {
+          reject(message);
+        } else {
+          resolve();
+        }
+      });
+    });
+  }
+}

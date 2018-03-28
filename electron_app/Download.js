@@ -345,7 +345,6 @@ Download.prototype.resume = function () {
   return this;
 };
 
-// For backward compatibility, will be removed in next releases
 Download.prototype.restart = util.deprecate(function () {
   return this.resume();
 }, 'Download `restart()` is deprecated, please use `resume()` instead.');

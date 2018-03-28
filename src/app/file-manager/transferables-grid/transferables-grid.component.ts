@@ -1,4 +1,4 @@
-import { Component, OnInit, NgZone, AfterViewInit, ViewChild, HostListener, } from '@angular/core';
+import { Component, OnInit, NgZone, AfterViewInit, ViewChild } from '@angular/core';
 import { Store } from '@ngrx/store';
 import * as Transferables from '../actions/transferables.actions';
 import { DownloadValidatorService } from '../services/download-validator.service';
@@ -15,6 +15,7 @@ import { FilesDatabase } from '../dbstate/files-database';
 import { LimitTransferablesService } from '../services/limit-transferables.service';
 import { Type } from '@app/file-manager/models/type';
 import { ItemStatus } from '@app/file-manager/models/item-status';
+import { S3ExportService } from '@app/file-manager/services/s3-export.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Observable } from 'rxjs/Observable';
 import { WarningModalComponent } from '../warning-modal/warning-modal.component';
@@ -40,8 +41,8 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   disabledDownload = false;
   disabledUpload = false;
   generalExportToGCPProgress = 0;
-  INDETERMINATE = 'indeterminate';
-  DETERMINATE = 'determinate';
+  generalExportToS3Progress = 0;
+  exportToS3InProgress = false;
   exportItems = [];
 
   constructor(
@@ -51,9 +52,9 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
     private registerDownload: DownloadValidatorService,
     private gcsService: GcsService,
     private limitTransferables: LimitTransferablesService,
+    private s3Service: S3ExportService,
     private spinner: NgxSpinnerService,
-    private dialog: MatDialog,
-) {
+    private dialog: MatDialog) {
     this.filesDatabase = new FilesDatabase(store);
   }
 
@@ -158,6 +159,26 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
     Observable.timer(2000, 1000).subscribe(t => {
       this.zone.run(() => { });
     });
+    this.statusService.updateExportS3Progress().subscribe(data => {
+      this.zone.run(() => {
+        const items = new FilesDatabase(this.store).data
+          .filter(item => item.type === Type.EXPORT_S3 && item.status === ItemStatus.PENDING);
+        if (items.length === 0) {
+          this.exportToS3InProgress = true;
+        }
+        this.generalExportToS3Progress = data;
+        if (data === 100 || this.disabledDownload) {
+          this.exportToS3InProgress = false;
+        } else {
+          this.exportToS3InProgress = true;
+        }
+      });
+    });
+
+    if (localStorage.getItem('displaySpinner') === 'true') {
+      this.spinner.show();
+      localStorage.removeItem('displaySpinner');
+    }
   }
 
   ngAfterViewInit() {
@@ -198,9 +219,9 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   cancelExportsToGCP() {
     this.spinner.show();
     const dialogRef = this.dialog.open(WarningModalComponent, {
-        width: '500px',
-        disableClose: true,
-        data: 'cancelAllExportsToGCP'
+      width: '500px',
+      disableClose: true,
+      data: 'cancelAllExportsToGCP'
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -214,6 +235,11 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
         }
       });
     });
+  }
+
+  cancelExportsToS3() {
+    this.gcsService.cancelExportToS3();
+    this.exportToS3InProgress = false;
   }
 
   stopAll() {
@@ -240,17 +266,21 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
     this.limitTransferables.controlLimitItems(files, Type.UPLOAD, ItemStatus.UPLOADING);
   }
 
-  startExportToGCP(preserveStructure: Boolean) {
-    this.gcsService.cancelGCPExports = false;
+  startExport(preserveStructure: Boolean, type: Type) {
     const files = new FilesDatabase(this.store).data
-      .filter(item => item.type === Type.EXPORT_GCP && item.status === ItemStatus.PENDING);
-    TransferablesGridComponent.isExporting = true;
+      .filter(item => item.type === type && item.status === ItemStatus.PENDING);
     localStorage.setItem('preserveStructure', preserveStructure.toString());
     this.spinner.hide();
-    this.limitTransferables.exportItems(files);
+    if (type === Type.EXPORT_S3) {
+      this.exportToS3InProgress = true;
+      this.limitTransferables.controlLimitItems(files, Type.EXPORT_S3, ItemStatus.EXPORTING_S3);
+    } else {
+      TransferablesGridComponent.isExporting = true;
+      this.limitTransferables.exportItems(files);
+    }
   }
 
   getExportingStatus() {
-    return TransferablesGridComponent.isExporting;
+   return TransferablesGridComponent.isExporting;
   }
 }

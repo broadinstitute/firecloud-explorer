@@ -40,6 +40,7 @@ import { BreadcrumbComponent } from './breadcrumb/breadcrumb.component';
 import { ElectronIpcApiService } from '@app/file-manager/services/electron-ipc.api.service';
 import { GoogleLoginService } from '@app/file-manager/services/login-google.service';
 import { FileExportModalComponent } from './file-export-modal/file-export-modal.component';
+import { S3ExportService } from '@app/file-manager/services/s3-export.service';
 import { SelectionService } from '@app/file-manager/services/selection.service';
 import { NgZone } from '@angular/core';
 
@@ -95,6 +96,7 @@ import { NgZone } from '@angular/core';
     DownloadValidatorService,
     RegisterUploadService,
     ElectronIpcApiService,
+    S3ExportService,
     SelectionService,
   ],
   exports: [

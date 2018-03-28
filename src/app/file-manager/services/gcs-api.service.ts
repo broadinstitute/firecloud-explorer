@@ -16,7 +16,7 @@ import { Type } from '@app/file-manager/models/type';
 import { ItemStatus } from '@app/file-manager/models/item-status';
 import { WarningModalComponent } from '@app/file-manager/warning-modal/warning-modal.component';
 import { MatDialog } from '@angular/material';
-const constants = require('../../../../electron_app/helpers/enviroment').constants;
+const constants = require('../../../../electron_app/helpers/environment').constants;
 
 @Injectable()
 export class GcsApiService extends GcsService {
@@ -46,12 +46,16 @@ export class GcsApiService extends GcsService {
 
   public uploadFiles(bucketName: String, files: any[]) {
     if (files !== null && files.length > 0) {
-      this.electronService.ipcRenderer.send('start-upload', bucketName, files, SecurityService.getAccessToken());
+      this.electronService.ipcRenderer.send(constants.IPC_START_UPLOAD, bucketName, files, SecurityService.getAccessToken());
     }
   }
 
   public downloadFiles(files: Item[]) {
-    this.electronService.ipcRenderer.send('start-download', files, SecurityService.getAccessToken());
+    this.electronService.ipcRenderer.send(constants.IPC_START_DOWNLOAD, files, SecurityService.getAccessToken());
+  }
+
+  public resumeDownload(file: Item) {
+    this.electronService.ipcRenderer.send('resume-download', file, SecurityService.getAccessToken());
   }
 
   public cancelAll() {
@@ -59,14 +63,16 @@ export class GcsApiService extends GcsService {
            item.status === ItemStatus.PENDING
         || item.status === ItemStatus.DOWNLOADING
         || item.status === ItemStatus.UPLOADING
-        || item.status === ItemStatus.EXPORTING_GCP).length > 0) {
+        || item.status === ItemStatus.EXPORTING_GCP
+        || item.status === ItemStatus.EXPORTING_S3).length > 0) {
 
       this.electronService.ipcRenderer.send(constants.IPC_DOWNLOAD_CANCEL);
-      // IPC_DOWNLOAD_CANCEL: 'download-cancelGCPExports',
       this.cancelItemsStatus(Type.DOWNLOAD);
 
       this.electronService.ipcRenderer.send(constants.IPC_UPLOAD_CANCEL);
       this.cancelItemsStatus(Type.UPLOAD);
+
+      this.cancelItemsStatus(Type.EXPORT_S3);
 
       this.cancelItemsStatus(Type.EXPORT_GCP);
     }
@@ -91,6 +97,10 @@ export class GcsApiService extends GcsService {
     if (this.getFiles(Type.EXPORT_GCP).length > 0) {
       this.cancelItemsStatus(Type.EXPORT_GCP);
     }
+  }
+
+  public cancelExportToS3() {
+    this.openModal('export-s3-cancel', 'cancelAllExportsToS3', Type.EXPORT_S3);
   }
 
   openModal(action: string, data: string, type: string) {
@@ -123,8 +133,12 @@ export class GcsApiService extends GcsService {
       case Type.DOWNLOAD:
         currentStatus = ItemStatus.DOWNLOADING;
         break;
-      default:
+      case Type.EXPORT_S3:
+        currentStatus = ItemStatus.EXPORTING_S3;
+        break;
+      case Type.UPLOAD:
         currentStatus = ItemStatus.UPLOADING;
+        break;
     }
     return new FilesDatabase(this.store).data.filter(item => item.status === currentStatus ||
       (item.status === ItemStatus.PENDING && item.type === type));

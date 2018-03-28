@@ -71,8 +71,9 @@
 
 <p-toolbar styleClass="toolbar-accent">
   <div class="ui-toolbar-group-left">
-    <div *ngIf="downloadInProgress" class="warn-message">
-      Please wait, download in progress
+    <div *ngIf="progressStatus" class="warn-message">
+      <span *ngIf="downloadInProgress">Please wait, download in progress</span>
+      <span *ngIf="exportInProgress">Please wait, export in progress</span>
       <div class="progress-dots">
         <span class="dot"></span>
         <span class="dot"></span>
@@ -80,6 +81,15 @@
       </div>
     </div>
   </div>
+
+  <!--<div *ngIf="exportInProgress" class="warn-message">-->
+    <!--Please wait, export in progress-->
+    <!--<div class="progress-dots">-->
+      <!--<span class="dot"></span>-->
+      <!--<span class="dot"></span>-->
+      <!--<span class="dot"></span>-->
+    <!--</div>-->
+  <!--</div>-->
 
   <div class="ui-toolbar-group-right">
     <button mat-raised-button (click)="cleanSelection()" class="button-secondary" [disabled]="disableButton()">

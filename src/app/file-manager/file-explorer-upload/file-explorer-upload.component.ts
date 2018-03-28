@@ -40,8 +40,6 @@ export class FileExplorerUploadComponent implements OnInit {
   fileCount = 0;
   totalSize = 0;
 
-  cols: any[];
-
   constructor(
     private statusService: StatusService,
     private store: Store<AppState>,

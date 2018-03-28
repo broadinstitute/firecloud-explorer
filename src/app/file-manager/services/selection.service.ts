@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
 import { Item } from '../models/item';
 import { SelectionModel } from '@angular/cdk/collections';
 

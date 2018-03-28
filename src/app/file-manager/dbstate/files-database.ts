@@ -14,6 +14,8 @@ const initialState: TransferableState = {
   exportingGCPCount: 0,
   toDownloadCount: 0,
   toUploadCount: 0,
+  toExportS3Count: 0,
+  exportingS3Count: 0,
   toExportGCPCount: 0,
   items: []
 };
@@ -55,8 +57,20 @@ export class FilesDatabase {
     return this.stateChange.value.toUploadCount;
   }
 
+  get toExportS3Count(): number {
+    return this.stateChange.value.toExportS3Count;
+  }
+
+  get exportingS3Count(): number {
+    return this.stateChange.value.exportingS3Count;
+  }
+
   get toExportGCPCount(): number {
     return this.stateChange.value.toExportGCPCount;
+  }
+
+  get exportingGCPCount(): number {
+    return this.stateChange.value.exportingGCPCount;
   }
 
   constructor(private store: Store<AppState>) {

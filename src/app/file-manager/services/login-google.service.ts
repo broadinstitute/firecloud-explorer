@@ -8,7 +8,7 @@ import { ElectronIpcApiService } from '@app/file-manager/services/electron-ipc.a
 import { FirecloudApiService } from '@app/file-manager/services/firecloud-api.service';
 import { HttpClient } from '@angular/common/http';
 
-const constants = require('../../../../electron_app/helpers/enviroment').constants;
+const constants = require('../../../../electron_app/helpers/environment').constants;
 
 const googleConfig = {
   clientId: environment.CLIENT_ID,
