@@ -16,4 +16,6 @@ export abstract class ElectronIpcService {
 
   abstract logout(): void;
 
+  abstract exportS3(accessKey, secretKey, bucketName, fileGCS): void;
+
 }

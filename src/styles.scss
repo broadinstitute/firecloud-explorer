@@ -731,6 +731,19 @@ mat-error {
   border-color: mat-color($fcExplorer-primary, 300);
 }
 
+.radio-block.mat-radio-button {
+    display: block;
+    padding-bottom: 7px;
+}
+
+.mat-radio-checked .mat-radio-outer-circle{
+  border-color: mat-color($fcExplorer-accent) !important;
+}
+
+.mat-radio-checked .mat-radio-inner-circle{
+  background-color: mat-color($fcExplorer-accent) !important;
+}
+
 /*SELECT and AUTOCOMPLETE*/
 
 .mat-select-panel,

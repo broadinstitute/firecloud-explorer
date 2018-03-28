@@ -21,8 +21,6 @@ import { Type } from '@app/file-manager/models/type';
 import { GcsService } from '@app/file-manager/services/gcs.service';
 import { GoogleLoginService } from '@app/file-manager/services/login-google.service';
 
-import { NgxSpinnerService } from 'ngx-spinner';
-
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -63,7 +61,8 @@ export class AppComponent implements OnInit, OnDestroy {
     filter(item =>
          item.status === ItemStatus.DOWNLOADING
       || item.status === ItemStatus.UPLOADING
-      || (item.status === ItemStatus.PENDING && Type.EXPORT_GCP));
+      || (item.status === ItemStatus.PENDING && item.type === Type.EXPORT_GCP)
+      || (item.status === ItemStatus.EXPORTING_S3 && item.type === Type.EXPORT_S3));
     if (items.length > 0) {
       const dialogRef = this.dialog.open(WarningModalComponent, {
         width: '500px',

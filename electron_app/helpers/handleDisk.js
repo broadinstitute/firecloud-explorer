@@ -1,8 +1,8 @@
 const fs = require('fs');
 const mkdirp = require('mkdirp');
 const diskspace = require('diskspace');
-
-let saveConditions = { enoughSpace: Boolean, allowed: Boolean };
+const electron = require('electron');
+const userDataPath = (electron.app || electron.remote.app).getPath('userData');
 let conditions = { error: false, errorMessage: '' };
 
 const handleFolder = (directory, callback) => {
@@ -21,6 +21,7 @@ const fileAlreadyExists = (file) => {
 };
 
 const handleDiskSpace = (destination, totalFileSize) => {
+    destination = destination !== null ? destination : userDataPath;
     let drive = destination;
     conditions = { error: Boolean, errorMessage: String };
     return new Promise((res) => {
@@ -49,6 +50,6 @@ const canWrite = (path, callback) => {
     fs.access(path, fs.W_OK, function (err) {
         callback(null, !err);
     });
-}
+};
 
-module.exports = { handleFolder, handleDiskSpace, fileAlreadyExists }
+module.exports = { handleFolder, handleDiskSpace, fileAlreadyExists };

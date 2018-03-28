@@ -1,7 +1,7 @@
 const fs = require('fs');
 const mime = require('mime-types');
 const req = require('request');
-const constants = require('./helpers/enviroment').constants;
+const constants = require('./helpers/environment').constants;
 const progress = require('progress-stream');
 var requestList = [];
 

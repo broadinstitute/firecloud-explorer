@@ -9,8 +9,9 @@ import { FilesDatabase } from '../dbstate/files-database';
 import { Type } from '@app/file-manager/models/type';
 import { LimitTransferablesService } from '@app/file-manager/services/limit-transferables.service';
 import { ItemStatus } from '@app/file-manager/models/item-status';
+import { S3ExportService } from '@app/file-manager/services/s3-export.service';
 import { OnInit } from '@angular/core/src/metadata/lifecycle_hooks';
-const constants = require('../../../../electron_app/helpers/enviroment').constants;
+const constants = require('../../../../electron_app/helpers/environment').constants;
 
 /**
  * Download progress information service
@@ -20,6 +21,7 @@ export class StatusService {
 
   constructor(private store: Store<AppState>,
     private limitTransferables: LimitTransferablesService,
+    private s3Service: S3ExportService,
     private electronService: ElectronService) { }
 
 
@@ -27,16 +29,36 @@ export class StatusService {
     this.electronService.ipcRenderer.removeAllListeners(constants.IPC_DOWNLOAD_STATUS);
     return Observable.create((observer) => {
       this.electronService.ipcRenderer.on(constants.IPC_DOWNLOAD_STATUS, (event, data) => {
-        this.updateItem(data, Type.DOWNLOAD, ItemStatus.DOWNLOADING);
-        observer.next(this.generalProgress(Type.DOWNLOAD));
+        if (data.type === Type.DOWNLOAD) {
+          this.updateItem(data, Type.DOWNLOAD, ItemStatus.DOWNLOADING);
+          observer.next(this.generalProgress(Type.DOWNLOAD));
+        }
+      });
+    });
+  }
+
+  updateExportS3Progress(): Observable<any> {
+    this.electronService.ipcRenderer.removeAllListeners(constants.IPC_EXPORT_S3_DOWNLOAD_STATUS);
+    return Observable.create((observer) => {
+      this.electronService.ipcRenderer.on(constants.IPC_EXPORT_S3_DOWNLOAD_STATUS, (event, data) => {
+        if (data.status === ItemStatus.EXPORTED_S3) {
+          this.updateItem(data, Type.EXPORT_S3, ItemStatus.EXPORTING_S3);
+        } else {
+          const existentItem = new FilesDatabase(this.store).data.
+                               filter(item => item.type === Type.EXPORT_S3 && item.id === data.id)[0];
+          if (existentItem.status === ItemStatus.EXPORTING_S3) {
+            this.s3Service.startUpload(data);
+          }
+        }
+        observer.next(this.generalProgress(Type.EXPORT_S3));
       });
     });
   }
 
   updateUploadProgress(): Observable<any> {
-    this.electronService.ipcRenderer.removeAllListeners('upload-status');
+    this.electronService.ipcRenderer.removeAllListeners(constants.IPC_UPLOAD_STATUS);
     return Observable.create((observer) => {
-      this.electronService.ipcRenderer.on('upload-status', (event, data) => {
+      this.electronService.ipcRenderer.on(constants.IPC_UPLOAD_STATUS, (event, data) => {
         this.updateItem(data, Type.UPLOAD, ItemStatus.UPLOADING);
         observer.next(this.generalProgress(Type.UPLOAD));
       });
@@ -62,13 +84,5 @@ export class StatusService {
         totalTransferred += Number(item.transferred);
       });
     return Math.floor((totalTransferred * 100) / totalSize);
-  }
-
-  public generalExportProgress(): Observable<any> {
-    return Observable.create((observer) => {
-      const items = new FilesDatabase(this.store).data.
-        filter(item => item.type === Type.EXPORT_GCP && (item.status === ItemStatus.EXPORTING_GCP || item.status === ItemStatus.PENDING));
-      observer.next(items.length === 0 ? 'determinate' : 'indeterminate');
-    });
   }
 }

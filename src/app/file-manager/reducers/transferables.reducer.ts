@@ -8,44 +8,52 @@ import { Type } from '@app/file-manager/models/type';
 export type Action = TransferablesActions.All;
 
 export class TransferableState {
-    items: Item[];
+  items: Item[];
 
-    constructor(items: Item[]) {
-        this.items = items;
-        sortList(items);
-    }
+  constructor(items: Item[]) {
+    this.items = items;
+    sortList(items);
+  }
 
-    get count(): number {
-        return this.items.length;
-    }
+  get count(): number {
+    return this.items.length;
+  }
 
-    get selectedCount(): number {
-        return this.items.filter(x => x.selected === true).length;
-    }
+  get selectedCount(): number {
+    return this.items.filter(x => x.selected === true).length;
+  }
 
-    get downloadingCount(): number {
-        return this.items.filter(x => x.status === ItemStatus.COMPLETED && x.type === Type.DOWNLOAD).length;
-    }
+  get downloadingCount(): number {
+    return this.items.filter(x => x.status === ItemStatus.COMPLETED && x.type === Type.DOWNLOAD).length;
+  }
 
-    get uploadingCount(): number {
-        return this.items.filter(x => x.status === ItemStatus.COMPLETED && x.type === Type.UPLOAD).length;
-    }
+  get uploadingCount(): number {
+    return this.items.filter(x => x.status === ItemStatus.COMPLETED && x.type === Type.UPLOAD).length;
+  }
 
+  get toDownloadCount(): number {
+    return this.items.filter(x => x.type === Type.DOWNLOAD).length;
+  }
+
+  get toUploadCount(): number {
+    return this.items.filter(x => x.type === Type.UPLOAD).length;
+  }
+
+  get toExportS3Count(): number {
+    return this.items.filter(x => x.type === Type.EXPORT_S3).length;
+  }
+
+  get exportingS3Count(): number {
+    return this.items.filter(x => x.status === ItemStatus.COMPLETED && x.type === Type.EXPORT_S3).length;
+  }
     get exportingGCPCount(): number {
         return this.items.filter(x => x.status === ItemStatus.COMPLETED && x.type === Type.EXPORT_GCP).length;
-    }
-
-    get toDownloadCount(): number {
-        return this.items.filter(x => x.type === Type.DOWNLOAD).length;
-    }
-
-    get toUploadCount(): number {
-        return this.items.filter(x => x.type === Type.UPLOAD).length;
     }
 
     get toExportGCPCount(): number {
         return this.items.filter(x => x.type === Type.EXPORT_GCP).length;
     }
+
 }
 function sortList(items: Item[]) {
     items.sort((a, b) => {
@@ -67,15 +75,24 @@ function sortList(items: Item[]) {
           case ItemStatus.EXPORTING_GCP:
             if (b.status === a.status) {
                 return 0;
-            } else if (b.status === ItemStatus.DOWNLOADING || ItemStatus.UPLOADING) {
+            } else if (b.status === ItemStatus.DOWNLOADING || ItemStatus.UPLOADING || ItemStatus.EXPORTING_S3) {
                 return 1;
             } else {
                 return -1;
           }
+          case ItemStatus.EXPORTING_S3:
+            if (b.status === a.status) {
+              return 0;
+            } else if (b.status === ItemStatus.DOWNLOADING || b.status === ItemStatus.UPLOADING || b.status === ItemStatus.EXPORTING_GCP) {
+              return 1;
+            } else {
+              return -1;
+            }
           case ItemStatus.PENDING:
             if (b.status === a.status) {
                 return 0;
-            } else if (b.status === ItemStatus.DOWNLOADING || b.status === ItemStatus.UPLOADING || b.status === ItemStatus.EXPORTING_GCP) {
+            } else if (b.status === ItemStatus.DOWNLOADING || b.status === ItemStatus.UPLOADING || b.status === ItemStatus.EXPORTING_GCP ||
+              ItemStatus.EXPORTING_S3) {
                 return 1;
             } else {
                 return -1;
@@ -104,9 +121,11 @@ const initialState: TransferableState = {
     downloadingCount: 0,
     uploadingCount: 0,
     exportingGCPCount: 0,
+    toExportGCPCount: 0,
     toDownloadCount: 0,
     toUploadCount: 0,
-    toExportGCPCount: 0,
+    toExportS3Count: 0,
+    exportingS3Count: 0,
     items: []
 };
 
