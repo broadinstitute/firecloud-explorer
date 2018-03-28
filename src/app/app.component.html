@@ -1,19 +1,19 @@
 <div class="wrapper">
   <mat-sidenav-container class="sidenav-container">
     <mat-sidenav mode="side" opened="true" class="sidenav" *ngIf="isAuthenticated" disableClose="true">
-      <a class="sidenav-link" [routerLink]="['/file-download']" [routerLinkActive]="['active']">
+      <a class="sidenav-link" [routerLink]="['/file-download']" [routerLinkActive]="['active']" title="Download data from FireCloud">
         <mat-icon>file_download</mat-icon>
         <p>Download</p>
       </a>
-      <a class="sidenav-link" [routerLink]="['/file-upload']" [routerLinkActive]="['active']">
+      <a class="sidenav-link" [routerLink]="['/file-upload']" [routerLinkActive]="['active']" title="Upload data to FireCloud">
         <mat-icon>file_upload</mat-icon>
         <p>Upload</p>
       </a>
-      <a class="sidenav-link export-to-cloud" [routerLink]="['/file-export']" [routerLinkActive]="['active']">
+      <a class="sidenav-link export-to-cloud" [routerLink]="['/file-export']" [routerLinkActive]="['active']" title="Export data from FireCloud to a Google or Amazon bucket">
         <i></i>
         <p>Export to Cloud</p>
       </a>
-      <a class="sidenav-link" [routerLink]="['/status']" [routerLinkActive]="['active']">
+      <a class="sidenav-link" [routerLink]="['/status']" [routerLinkActive]="['active']" title="Transfers progress status">
         <mat-icon>schedule</mat-icon>
         <p>Status</p>
       </a>

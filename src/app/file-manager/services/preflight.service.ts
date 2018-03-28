@@ -26,7 +26,7 @@ export class PreflightService {
   constructor(private bucketService: BucketService,
               private store: Store<AppState>) { }
 
-  processFiles(data, itemType) {
+  processFiles(data) {
     this.initializeValues();
     /**
      * we filter incoming files to remove some unwanted, aux, files
@@ -79,9 +79,9 @@ export class PreflightService {
       .forEach(
       item => {
         if (item.type === 'File') {
-          this.addToSelectedFiles(item, itemType);
+          this.addToSelectedFiles(item);
         } else {
-          this.getFiles(item, itemType);
+          this.getFiles(item);
         }
       });
 
@@ -89,7 +89,7 @@ export class PreflightService {
   }
 
 
-  getFiles(folderItem: Item, itemType) {
+  getFiles(folderItem: Item) {
     let retrievedItems: Item[] = [];
 
     this.loadingFolders++;
@@ -105,21 +105,16 @@ export class PreflightService {
           retrievedItems
             .forEach(
               child => {
-                this.addToSelectedFiles(child, itemType);
+                this.addToSelectedFiles(child);
               });
           this.loadingFolders--;
         }
       );
   }
 
-  addToSelectedFiles(item: Item, itemType) {
+  addToSelectedFiles(item: Item) {
     const found: Item = this.selectedFiles.find(x => x.mediaLink === item.mediaLink);
     if (found === undefined) {
-      if (itemType === Type.EXPORT_GCP) {
-        item.type = Type.EXPORT_GCP;
-        item.status = ItemStatus.PENDING;
-        this.store.dispatch(new Transferables.AddItem(item));
-      }
       this.selectedFiles.push(item);
       this.fileCount++;
       this.totalSize += Number(item.size);

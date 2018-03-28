@@ -31,4 +31,6 @@ export class ElectronIpcMockService extends ElectronIpcService {
   public openExternalURL(URL: string): void { }
 
   public logout(): void { }
+
+  public exportS3(bucketName, fileGCS): void { }
 }

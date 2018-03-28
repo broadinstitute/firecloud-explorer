@@ -1,5 +1,5 @@
 const electronOauth2 = require('electron-oauth2');
-const constants = require('./helpers/enviroment').constants;
+const constants = require('./helpers/environment').constants;
 
 class GoogleLoginWindow {
   static createOauth2Window(win) {

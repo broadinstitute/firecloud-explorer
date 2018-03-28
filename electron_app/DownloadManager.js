@@ -3,6 +3,7 @@ const path = require('path');
 const { handleFolder, fileAlreadyExists } = require('./helpers/handleDisk');
 const downloadStats = require('./helpers/downloadInfo').downloadStats;
 const handleEvents = require('./helpers/handleEvents');
+const environment = require('./helpers/environment');
 
 let filePath = '';
 let allDownloads = [];
@@ -66,6 +67,10 @@ const setHeader = (access_token) => {
     port: 443,
     headers: {
       'Authorization': 'Bearer ' + access_token,
+    },
+    onStart: function (meta) {
+      if (environment.TESTING)
+        console.log('META', meta);
     }
   };
 };

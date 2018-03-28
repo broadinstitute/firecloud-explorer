@@ -8,7 +8,7 @@ import { ItemStatus } from '@app/file-manager/models/item-status';
 import { GcsService } from '@app/file-manager/services/gcs.service';
 import { Type } from '@app/file-manager/models/type';
 import { environment } from '@env/environment';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { S3ExportService } from '@app/file-manager/services/s3-export.service';
 
 @Injectable()
 export class LimitTransferablesService {
@@ -16,6 +16,7 @@ export class LimitTransferablesService {
   constructor(
     public gcsService: GcsService,
     private store: Store<AppState>,
+    private s3TransferService: S3ExportService,
   ) { }
 
   public pendingItem(type: Type, status: ItemStatus): void {
@@ -50,14 +51,21 @@ export class LimitTransferablesService {
     }
 
     maxFiles.forEach(item => {
-      item.status = status;
-      this.store.dispatch(new Transferables.UpdateItem(item));
+      if (item.type !== Type.EXPORT_S3) {
+        item.status = status;
+        this.store.dispatch(new Transferables.UpdateItem(item));
+      }
     });
 
     if (type === Type.DOWNLOAD) {
       this.gcsService.downloadFiles(maxFiles);
     } else if (type === Type.UPLOAD) {
       this.gcsService.uploadFiles(localStorage.getItem('uploadBucket'), maxFiles);
+    } else if (type === Type.EXPORT_S3) {
+      // Because the export S3 process works with one item at a time it's necessary to take the first one
+      maxFiles[0].status = ItemStatus.EXPORTING_S3;
+      this.store.dispatch(new Transferables.UpdateItem(maxFiles[0]));
+      this.s3TransferService.startFileExportToS3(maxFiles[0]);
     }
   }
 
@@ -80,6 +88,8 @@ export class LimitTransferablesService {
         this.gcsService.downloadFiles([item]);
       } else if (type === Type.UPLOAD) {
         this.gcsService.uploadFiles(localStorage.getItem('uploadBucket'), [item]);
+      } else if (type === Type.EXPORT_S3) {
+        this.s3TransferService.startFileExportToS3(item);
       }
     }
   }

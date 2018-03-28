@@ -18,6 +18,8 @@ export abstract class GcsService {
 
   abstract cancelDownloads(): Promise<boolean>;
 
+  abstract cancelExportToS3();
+
   abstract cancelExportsToGCP();
 
   abstract cancelUploads(): Promise<boolean>;

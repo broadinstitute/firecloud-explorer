@@ -1,19 +1,16 @@
 if (require('electron-squirrel-startup')) return;
 
 // ./main.js
-const {
-  app,
-  BrowserWindow,
-  ipcMain
-} = require('electron');
+const { app, BrowserWindow, ipcMain, } = require('electron');
 const path = require('path');
 const url = require('url');
 const {
   downloadManager,
   destroyDownloads
 } = require('./electron_app/DownloadManager');
+const { ExportS3, testCredentials, exportS3Cancel } = require('./electron_app/ExportS3');
 const lazyNodeReader = require('./electron_app/FileSystemReader').lazyNodeReader;
-const constants = require('./electron_app/helpers/enviroment').constants;
+const constants = require('./electron_app/helpers/environment').constants;
 const os = require('os');
 const {
   GoogleLoginWindow
@@ -118,6 +115,26 @@ app.on('ready', function () {
       }
     );
   });
+
+  // ----- Export from GCS to S3 ------
+  ipcMain.on(constants.IPC_EXPORT_S3, (event, data) => {
+    ExportS3(win, data, app);
+  });
+
+  ipcMain.on(constants.IPC_EXPORT_S3_CANCEL, (event) => {
+    exportS3Cancel();
+  });
+
+  ipcMain.on(constants.IPC_AWS_HANDLE_CREDENTIALS, (event, credentials) => {
+    testCredentials(credentials).then(
+      () => {
+        win.webContents.send(constants.IPC_AWS_HANDLE_CREDENTIALS, null);
+      },
+      error => {
+        win.webContents.send(constants.IPC_AWS_HANDLE_CREDENTIALS, error);
+      });
+  });
+
 });
 
 app.on('activate', () => {
@@ -127,7 +144,7 @@ app.on('activate', () => {
 });
 
 app.on('window-all-closed', function () {
-  if (process.platform != 'darwin') {
+  if (process.platform !== 'darwin') {
     app.quit();
   }
   process.exit();

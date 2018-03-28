@@ -17,7 +17,12 @@ const constants ={
   IPC_DOWNLOAD_CANCEL: 'download-cancelGCPExports',
   IPC_GOOGLE_LOGOUT: 'google-revoke-auth',
   GOOGLE_LOGOUT_URL: 'https://accounts.google.com/logout?continue=http://google.com',
-  USER_AGENT: userAgent + '/Electron'
+  IPC_EXPORT_S3: 'export-s3',
+  IPC_EXPORT_S3_CANCEL: 'export-s3-cancel',
+  IPC_EXPORT_S3_DOWNLOAD_STATUS: 'download-s3',
+  IPC_AWS_HANDLE_CREDENTIALS: 'aws-handle-credentials',
+  USER_AGENT: userAgent + '/Electron',
+  TESTING: false,
 };
 
 module.exports = { constants };

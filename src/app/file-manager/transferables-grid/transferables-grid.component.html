@@ -36,12 +36,25 @@
 
   <div class="status-box-left">
     <div class="flex-container space-between">
-      <h4 class="subtitle">Exported: {{filesDatabase.exportingCount + ' of ' + filesDatabase.toExportGCPCount}} file(s)</h4>
+      <h4 class="subtitle">Exported to Google Cloud: {{filesDatabase.exportingGCPCount + ' of ' + filesDatabase.toExportGCPCount}} file(s)</h4>
     </div>
 
     <p-progressBar mode="determinate" class="progress-bar" [value]="generalExportToGCPProgress" [showValue]="false"></p-progressBar>
     <div class="flex-container end actions">
-      <button mat-raised-button (click)="cancelExportsToGCP()" class="button-secondary" [disabled]="!getExportingStatus()" >
+    <button mat-raised-button (click)="cancelExportsToGCP()" class="button-secondary" [disabled]="!getExportingStatus()" >
+        <i class="material-icons">highlight_off</i>Cancel Export</button>
+    </div>
+  </div>
+
+  <div class="status-box-left">
+    <div class="flex-container space-between">
+      <h4 class="subtitle">Exported to Amazon: {{ filesDatabase.exportingS3Count + ' of ' + filesDatabase.toExportS3Count }} file(s)</h4>
+    </div>
+
+    <p-progressBar mode="determinate" class="progress-bar" [value]="generalExportToS3Progress" [showValue]="false"></p-progressBar>
+
+    <div class="flex-container end actions">
+      <button mat-raised-button (click)="cancelExportsToS3()" class="button-secondary" [disabled]="!exportToS3InProgress">
         <i class="material-icons">highlight_off</i>Cancel Export</button>
     </div>
   </div>
@@ -81,9 +94,9 @@
         <mat-cell *matCellDef="let row">
           <mat-icon class="transfer-icon" *ngIf="row.type == 'Download'">file_download</mat-icon>
           <mat-icon class="transfer-icon" *ngIf="row.type == 'Upload'">file_upload</mat-icon>
-          <i class="export-icon-dark" *ngIf="row.type == 'Export GCP'"></i>
+          <i class="export-icon-dark" *ngIf="row.type == 'Export GCP' || row.type == 'Export S3' "></i>
           {{row.status}}
-          <div *ngIf="row.status === 'Downloading' || row.status === 'Uploading' || row.status === 'Exporting to GCP'" class="progress-dots transfer-status">
+          <div *ngIf="row.status === 'Downloading' || row.status === 'Uploading' || row.status === 'Exporting to Google Cloud' || row.status === 'Exporting to Amazon'" class="progress-dots transfer-status">
             <span class="dot"></span>
             <span class="dot"></span>
             <span class="dot"></span>
@@ -95,7 +108,7 @@
         <mat-header-cell *matHeaderCellDef> Progress </mat-header-cell>
         <mat-cell *matCellDef="let row">
           <p-progressBar *ngIf="row.status === 'Downloading' || row.status === 'Uploading' || row.status === 'Completed'" mode="determinate" class="progress-bar-small" [value]=row.progress [showValue]="false"></p-progressBar>
-          <p-progressBar *ngIf="row.status === 'Exporting to GCP'" mode="indeterminate" class="progress-bar-small"  [showValue]="false"></p-progressBar>
+          <p-progressBar *ngIf="row.status === 'Exporting to Google Cloud' || row.status === 'Exporting to Amazon'" mode="indeterminate" class="progress-bar-small"  [showValue]="false"></p-progressBar>
         </mat-cell>
       </ng-container>
 

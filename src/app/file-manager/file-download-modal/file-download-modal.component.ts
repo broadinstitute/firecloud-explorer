@@ -18,6 +18,7 @@ import { Observable } from 'rxjs/Observable';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { UUID } from 'angular2-uuid';
 
+
 @Component({
   selector: 'app-file-download-modal',
   templateUrl: './file-download-modal.component.html'
@@ -33,7 +34,6 @@ export class FileDownloadModalComponent implements OnInit {
   verify: DiskStatus;
   downloadFiles: Item[] = [];
   filesMap: Map<String, Item>;
-  myFiles: Item[] = [];
 
 
   constructor(
@@ -53,7 +53,7 @@ export class FileDownloadModalComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.preflightService.processFiles(this.data, Type.DOWNLOAD);
+    this.preflightService.processFiles(this.data);
   }
 
   isLoading() {
@@ -109,6 +109,8 @@ export class FileDownloadModalComponent implements OnInit {
           this.router.navigate(['/status']);
         }
       });
+    this.done.emit(true);
+    this.router.navigate(['/status']);
   }
 
   createWarningMsg(warnMessage) {

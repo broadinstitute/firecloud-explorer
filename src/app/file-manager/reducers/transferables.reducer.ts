@@ -28,11 +28,7 @@ export class TransferableState {
     }
 
     get uploadingCount(): number {
-        return this.items.filter(x => x.status === ItemStatus.COMPLETED && x.type === Type.UPLOAD).length;
-    }
-
-    get exportingGCPCount(): number {
-        return this.items.filter(x => x.status === ItemStatus.COMPLETED && x.type === Type.EXPORT_GCP).length;
+        return this.items.filter(x => x.status === ItemStatus.COMPLETED && x.type === Type.UPLOAD && x.currentBatch).length;
     }
 
     get toDownloadCount(): number {
@@ -40,62 +36,86 @@ export class TransferableState {
     }
 
     get toUploadCount(): number {
-        return this.items.filter(x => x.type === Type.UPLOAD).length;
+        return this.items.filter(x => x.type === Type.UPLOAD  && x.currentBatch).length;
+    }
+
+    get toExportS3Count(): number {
+        return this.items.filter(x => x.type === Type.EXPORT_S3).length;
+    }
+
+
+    get exportingS3Count(): number {
+        return this.items.filter(x => x.status === ItemStatus.COMPLETED && x.type === Type.EXPORT_S3).length;
+    }
+    get exportingGCPCount(): number {
+        return this.items.filter(x => x.status === ItemStatus.COMPLETED && x.type === Type.EXPORT_GCP).length;
     }
 
     get toExportGCPCount(): number {
         return this.items.filter(x => x.type === Type.EXPORT_GCP).length;
     }
+
 }
 function sortList(items: Item[]) {
     items.sort((a, b) => {
         switch (a.status) {
-          case ItemStatus.DOWNLOADING:
-            if (b.status === a.status) {
-                return 0;
-            } else {
-                return -1;
-            }
-          case ItemStatus.UPLOADING:
-            if (b.status === a.status) {
-                return 0;
-            } else if (b.status === ItemStatus.DOWNLOADING) {
-                return 1;
-            } else {
-                return -1;
-            }
-          case ItemStatus.EXPORTING_GCP:
-            if (b.status === a.status) {
-                return 0;
-            } else if (b.status === ItemStatus.DOWNLOADING || ItemStatus.UPLOADING) {
-                return 1;
-            } else {
-                return -1;
-          }
-          case ItemStatus.PENDING:
-            if (b.status === a.status) {
-                return 0;
-            } else if (b.status === ItemStatus.DOWNLOADING || b.status === ItemStatus.UPLOADING || b.status === ItemStatus.EXPORTING_GCP) {
-                return 1;
-            } else {
-                return -1;
-            }
-          case ItemStatus.COMPLETED:
-            if (b.status === a.status) {
-                return 0;
-            } else if (b.status === ItemStatus.CANCELED) {
-                return -1;
-            } else {
-                return 1;
-            }
-          case ItemStatus.CANCELED:
-            if (b.status === a.status) {
-                return 0;
-            } else {
-                return 1;
-            }
-          }
-      });
+            case ItemStatus.DOWNLOADING:
+                if (b.status === a.status) {
+                    return 0;
+                } else {
+                    return -1;
+                }
+            case ItemStatus.UPLOADING:
+                if (b.status === a.status) {
+                    return 0;
+                } else if (b.status === ItemStatus.DOWNLOADING) {
+                    return 1;
+                } else {
+                    return -1;
+                }
+            case ItemStatus.EXPORTING_GCP:
+                if (b.status === a.status) {
+                    return 0;
+                } else if (b.status === ItemStatus.DOWNLOADING || ItemStatus.UPLOADING || ItemStatus.EXPORTING_S3) {
+                    return 1;
+                } else {
+                    return -1;
+                }
+            case ItemStatus.EXPORTING_S3:
+                if (b.status === a.status) {
+                    return 0;
+                } else if (b.status === ItemStatus.DOWNLOADING || b.status === ItemStatus.UPLOADING
+                    || b.status === ItemStatus.EXPORTING_GCP) {
+                    return 1;
+                } else {
+                    return -1;
+                }
+            case ItemStatus.PENDING:
+                if (b.status === a.status) {
+                    return 0;
+                } else if (b.status === ItemStatus.DOWNLOADING || b.status === ItemStatus.UPLOADING
+                    || b.status === ItemStatus.EXPORTING_GCP ||
+                    ItemStatus.EXPORTING_S3) {
+                    return 1;
+                } else {
+                    return -1;
+                }
+            case ItemStatus.COMPLETED:
+                if (b.status === a.status) {
+                    return 0;
+                } else if (b.status === ItemStatus.CANCELED) {
+                    return -1;
+                } else {
+                    return 1;
+                }
+            case ItemStatus.CANCELED:
+                if (b.status === a.status) {
+                    return 0;
+                } else {
+                    return 1;
+                }
+        }
+    });
 }
 
 const initialState: TransferableState = {
@@ -104,9 +124,11 @@ const initialState: TransferableState = {
     downloadingCount: 0,
     uploadingCount: 0,
     exportingGCPCount: 0,
+    toExportGCPCount: 0,
     toDownloadCount: 0,
     toUploadCount: 0,
-    toExportGCPCount: 0,
+    toExportS3Count: 0,
+    exportingS3Count: 0,
     items: []
 };
 
@@ -181,22 +203,22 @@ export function TransferablesReducer(state = initialState, action: Action): Tran
             return state;
 
         case TransferablesActions.UPDATE_ITEM_COMPLETED:
-          state.items.filter(item => {
-            if (item.id === action.payload.id) {
-                item.status = ItemStatus.COMPLETED;
-                item.progress = 100;
-                item.transferred = action.payload.size;
-            }
-          });
-          return new TransferableState(state.items);
+            state.items.filter(item => {
+                if (item.id === action.payload.id) {
+                    item.status = ItemStatus.COMPLETED;
+                    item.progress = 100;
+                    item.transferred = action.payload.size;
+                }
+            });
+            return new TransferableState(state.items);
 
-      case TransferablesActions.UPDATE_ITEM_DOWNLOADING:
-        state.items.filter(item => {
-          if (item.id === action.payload.id) {
-            item.status = ItemStatus.DOWNLOADING;
-          }
-        });
-        return new TransferableState(state.items);
+        case TransferablesActions.UPDATE_ITEM_DOWNLOADING:
+            state.items.filter(item => {
+                if (item.id === action.payload.id) {
+                    item.status = ItemStatus.DOWNLOADING;
+                }
+            });
+            return new TransferableState(state.items);
 
         case TransferablesActions.SELECT_ITEM:
             const sel_item = state.items.filter(item => {

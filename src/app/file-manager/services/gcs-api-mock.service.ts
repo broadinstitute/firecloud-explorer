@@ -28,6 +28,8 @@ export class GcsApiMockService extends GcsService {
 
   public cancelExportsToGCP() { }
 
+  public cancelExportToS3() { }
+
   public getBucketFilesWithMaxResult(bucketName: String, delimiter: String, token: String, useDelimiter: Boolean) {
     return Observable.of();
   }
