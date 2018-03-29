@@ -43,7 +43,7 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   generalExportToGCPProgress = 0;
   generalExportToS3Progress = 0;
   exportToS3InProgress = false;
-  exportItems = [];
+  exportToGcpItems = [];
 
   constructor(
     private statusService: StatusService,
@@ -131,30 +131,21 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
       });
     });
 
+    // exportToGcpItems contains every item of type ExportToGcp from which other filters are applied
+    this.exportToGcpItems = new FilesDatabase(this.store).data
+      .filter(item => item.type === Type.EXPORT_GCP);
+
     this.gcsService.exportItemCompleted.subscribe(() => {
-        this.exportItems = new FilesDatabase(this.store).data
-          .filter(item => item.type === Type.EXPORT_GCP && item.status === ItemStatus.PENDING);
-
-        if (this.exportItems.length !== 0) {
-          this.generalExportToGCPProgress =
-            ((this.filesDatabase.data.length - this.exportItems.length ) * 100 ) / this.filesDatabase.data.length;
-        }
-
-        if (this.exportItems.length === 0 && TransferablesGridComponent.isExporting) {
-          // execute this condition when all exports are completed
-          TransferablesGridComponent.isExporting = false;
-          this.generalExportToGCPProgress = 100;
-          this.spinner.hide();
-        } else if (TransferablesGridComponent.isExporting) {
-          // execute this condition when exports are still in progress
-          if (!this.gcsService.cancelGCPExports) {
-            this.limitTransferables.exportItems(this.exportItems);
-          } else {
-            this.generalExportToGCPProgress = 100;
-            TransferablesGridComponent.isExporting = false;
-          }
-        }
-      });
+      if (this.exportToGcpItems.length !== 0) {
+        this.generalExportToGCPProgress =
+          (this.exportToGcpItems.filter(item => item.status === ItemStatus.COMPLETED).length * 100) / this.exportToGcpItems.length;
+        this.handleGcpExport();
+      } else if (TransferablesGridComponent.isExporting) {
+        // exportToGcpItems === 0, all exports were completed
+        TransferablesGridComponent.isExporting = false;
+        this.generalExportToGCPProgress = 100;
+      }
+    });
 
     Observable.timer(2000, 1000).subscribe(t => {
       this.zone.run(() => { });
@@ -235,6 +226,18 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
         }
       });
     });
+  }
+
+  handleGcpExport() {
+    // cancelGCPExports its a flag which indicates if cancel order has been given
+    if (!this.gcsService.cancelGCPExports) {
+      // exportToGcpItems passes the list of items to be exported when each chunk has already finished its export
+      this.limitTransferables.exportItems(this.exportToGcpItems.filter(item => item.status === ItemStatus.PENDING));
+    } else {
+      // prepares the Ui to indicate that exports to gcp have been cancelled
+      this.generalExportToGCPProgress = 100;
+      TransferablesGridComponent.isExporting = false;
+    }
   }
 
   cancelExportsToS3() {
