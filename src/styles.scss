@@ -70,6 +70,10 @@ h4.subtitle {
   color: mat-color($fcExplorer-primary, 900);
 }
 
+.light {
+  font-weight: 300;
+}
+
 .medium {
   font-weight: 500;
 }
@@ -407,8 +411,7 @@ a.sidenav-link p {
 }
 
 .toolbar-accent.ui-toolbar.ui-widget-header,
-.status-box-left,
-.status-box-right {
+.status-box {
   background: mat-color($fcExplorer-primary, 100);
   border: 1px solid mat-color($fcExplorer-primary, 400);
 }
@@ -440,25 +443,20 @@ a.sidenav-link p {
   color: mat-color($fcExplorer-warn, 900);
 }
 
-.status-box-left,
-.status-box-right {
+.status-box {
   width: 50%;
-  padding: 20px;
-}
-
-.status-box-left {
+  padding: 15px;
   margin-right: 10px;
 }
 
-.status-box-right {
-  margin-left: 10px;
+.status-box:last-child {
+  margin-right: 0;
 }
 
 /*EXPAND PANEL*/
 
 .expand-panel.mat-expansion-panel {
   margin: 0;
-  height: 50px !important;
   box-shadow: none;
   background: transparent;
   position: relative;
@@ -495,6 +493,7 @@ a.sidenav-link p {
 .expand-panel .mat-expansion-panel-body {
   margin: 0;
   padding: 0;
+  position: relative;
 }
 
 /*PROGRESS*/
@@ -518,7 +517,6 @@ a.sidenav-link p {
   background: rgb(122, 172, 32);
 }
 
-.progress-bar.failure .ui-widget-header,
 .progress-bar-small.failure .ui-widget-header,
 .progress-bar.failure .ui-widget-content,
 .progress-bar-small.failure .ui-widget-content {
