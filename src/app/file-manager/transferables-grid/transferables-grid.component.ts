@@ -37,7 +37,6 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   generalProgress = 0;
   generalUploadProgress = 0;
   uploadInProgress = false;
-  disabledUpload = false;
   downloadInProgress = false;
   generalExportToGCPProgress = 0;
   generalExportToS3Progress = 0;
@@ -175,13 +174,6 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
         } else if (items.length !== 0) {
           this.exportToS3InProgress = true;
         }
-
-        // this.generalExportToS3Progress = data;
-        // if (data === 100) {
-        //   this.exportToS3InProgress = false;
-        // } else {
-        //   this.exportToS3InProgress = true;
-        // }
       });
     });
 
