@@ -5,14 +5,18 @@ const { downloadManager } = require('./DownloadManager');
 let AWS = require('aws-sdk');
 AWS.config.httpOptions = { timeout: 5000 };
 const constants = require('./helpers/environment').constants;
+var request = require('request');
 var s3List = [];
 let s3 = null;
 
 let electronWin = null;
 let tempPath = (electron.app || electron.remote.app).getPath('userData');
 const pathTemp = tempPath;
+let gcsToken = '';
 const ExportS3 = (win, data) => {
   electronWin = win;
+  gcsToken = data.gcsToken;
+  console.log(gcsToken);
   if (data.item.progress === 100) {
     uploadS3(data);
   } else {
@@ -67,20 +71,44 @@ const manageDownloadProcess = (data) => {
 const uploadS3 = (data) => {
   const filePathExport = data.preserveStructure ? data.item.path : data.item.displayName;
   const tempFilePath = path.join(tempPath, 'TempFolder', data.item.displayName);
-  const fileStream = fs.createReadStream(tempFilePath);
+  // const fileStream = fs.createReadStream(tempFilePath);
+  var url = data.item.mediaLink;
+  console.log(url);
+  console.log('token' + data.gcsToken);
+
   const putParams = {
     Bucket: data.bucketName,
-    Key: 'Imports/' + filePathExport,
-    Body: fileStream
+    Key: 'Imports/' + filePathExport
+    // Body: remoteReadStream
   };
-  fileStream.on('error', (error) => { console.log(error) });
-  s3.putObject(putParams, (putErr, putData) => {
+
+
+  var remoteReadStream = request.get(url, setHeader(data.gcsToken))
+    .on('error', function (err) {
+      console.log(err);
+    })
+    //.pipe(fs.createWriteStream('mi.cram.md5'));
+    .pipe(putParams);
+  //  };
+  //remoteReadStream.on('error', (error) => { console.log(error) });
+  /**s3.putObject(putParams, (putErr, putData) => {
     if (putErr) console.log(putErr);
     else {
-      removeFile(tempFilePath, data.item);
+      console.log('upload completo')
+     // removeFile(tempFilePath, data.item); // TODO avisar que envíe el próximo item
     }
-  });
+  }); */
   s3List.push(s3);
+
+};
+
+const setHeader = (access_token) => {
+  return {
+    port: 443,
+    headers: {
+      'Authorization': 'Bearer ' + access_token,
+    }
+  };
 };
 
 const removeFile = (filePath, item) => {
@@ -89,7 +117,7 @@ const removeFile = (filePath, item) => {
       console.log('Error removing file ', err);
     tempPath = pathTemp;
     item.status = 'Exported to S3';
-    electronWin.webContents.send(constants.IPC_EXPORT_S3_DOWNLOAD_STATUS, item);
+    electronWin.webContents.send(constants.IPC_EXPORT_S3_DOWNLOAD_STATUS, item); // considerar esta línea
   });
 };
 
