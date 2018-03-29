@@ -15,11 +15,7 @@ const downloadStats = function(dl, item, win) {
             if (win !== undefined)
                 clearInterval(timer);
             timer = null;
-            if (item.type === 'Export S3') {
-                win.webContents.send(constants.IPC_EXPORT_S3_DOWNLOAD_STATUS, item);
-            } else {
-                win.webContents.send(constants.IPC_DOWNLOAD_STATUS, item);
-            }
+            win.webContents.send(constants.IPC_DOWNLOAD_STATUS, item);
         } else if (dl.status === -1 || dl.status === 3 || dl.status === -3) {
             clearInterval(timer);
             timer = null;
