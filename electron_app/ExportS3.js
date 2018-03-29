@@ -82,14 +82,10 @@ const uploadS3 = (data) => {
   uploadStream.on('uploaded', function (details) {
     data.item.status = 'Exported to S3';
     console.log('Details -> ', details);
-    endExportS3(data.item);
+    console.log('electron win -> ', electronWin);
+    electronWin.webContents.send(constants.IPC_EXPORT_S3_DOWNLOAD_STATUS, item);
   });
   s3List.push(s3);
-};
-
-const endExportS3 = (item) => {
-  console.log('electron win -> ', electronWin);
-  electronWin.webContents.send(constants.IPC_EXPORT_S3_DOWNLOAD_STATUS, item);
 };
 
 const setHeader = (access_token) => {
