@@ -1,32 +1,22 @@
-const fs = require('fs');
-const path = require('path');
 const electron = require('electron');
-const { downloadManager } = require('./DownloadManager');
 let AWS = require('aws-sdk');
 let s3Stream = require('s3-upload-stream');
 AWS.config.httpOptions = { timeout: 5000 };
 const constants = require('./helpers/environment').constants;
-var request = require('request');
+const request = require('request');
 
-var s3List = [];
+let s3List = [];
 let s3 = null;
 
 let electronWin = null;
-let tempPath = (electron.app || electron.remote.app).getPath('userData');
-const pathTemp = tempPath;
 let gcsToken = '';
 const ExportS3 = (win, data) => {
   electronWin = win;
   gcsToken = data.gcsToken;
-  console.log(gcsToken);
-  if (data.item.progress === 100) {
-    uploadS3(data);
-  } else {
-    manageDownloadProcess(data); 
-  }
+  uploadS3(data);
 };
 
-const testCredentials = (data) => {
+const testS3Credentials = (data) => {
   let errorMessage = null;
   AWS.config.update({ accessKeyId: data.accessKey, secretAccessKey: data.secretKey });
   
@@ -67,55 +57,39 @@ const testCredentials = (data) => {
   });
 };
 
-const manageDownloadProcess = (data) => {
-  data.item.destination = path.join(tempPath, 'TempFolder');
-  data.item.preserveStructure = false;
-  downloadManager([data.item], data.gcsToken, electronWin);
-};
-
 const uploadS3 = (data) => {
   s3Stream = require('s3-upload-stream')(s3);
   const filePathExport = data.preserveStructure ? data.item.path : data.item.displayName;
-  var url = data.item.mediaLink;
-  console.log('S3 Stream -> ', s3Stream);
+  let url = data.item.mediaLink;
 
-
-  var uploadStream = s3Stream.upload({
+  let uploadStream = s3Stream.upload({
     Bucket: data.bucketName,
     Key: 'Imports/' + filePathExport
   });
 
-  var remoteReadStream = request.get(url, setHeader(data.gcsToken))
+  request.get(url, setHeader(data.gcsToken))
   .on('error', function (err) {
     console.log(err);
   }).pipe(uploadStream);
-  // Handle errors. 
+  // Handle errors.
   uploadStream.on('error', function (error) {
     console.log(error);
   });
 
-  /* Handle progress. Example details object:
-     { ETag: '"f9ef956c83756a80ad62f54ae5e7d34b"',
-       PartNumber: 5,
-       receivedSize: 29671068,
-       uploadedSize: 29671068 }
-  */
   uploadStream.on('part', function (details) {
-    console.log(details);
   });
 
-  /* Handle upload completion. Example details object:
-     { Location: 'https://bucketName.s3.amazonaws.com/filename.ext',
-       Bucket: 'bucketName',
-       Key: 'filename.ext',
-       ETag: '"bf2acbedf84207d696c8da7dbb205b9f-5"' }
-  */
   uploadStream.on('uploaded', function (details) {
-    console.log(details);
     data.item.status = 'Exported to S3';
-    electronWin.webContents.send(constants.IPC_EXPORT_S3_DOWNLOAD_STATUS, data.item); // considerar esta línea
+    console.log('Details -> ', details);
+    endExportS3(data.item);
   });
   s3List.push(s3);
+};
+
+const endExportS3 = (item) => {
+  console.log('electron win -> ', electronWin);
+  electronWin.webContents.send(constants.IPC_EXPORT_S3_DOWNLOAD_STATUS, item);
 };
 
 const setHeader = (access_token) => {
@@ -127,18 +101,9 @@ const setHeader = (access_token) => {
   };
 };
 
-const removeFile = (filePath, item) => {
-  fs.unlink(filePath, (err) => {
-    if (err)
-      console.log('Error removing file ', err);
-    tempPath = pathTemp;
-
-  });
-};
-
 const exportS3Cancel = () => {
   s3List.forEach(s3 => {
     s3.abortMultipartUpload();
   });
 };
-module.exports = { ExportS3, testCredentials, exportS3Cancel };
+module.exports = { ExportS3, testS3Credentials, exportS3Cancel };

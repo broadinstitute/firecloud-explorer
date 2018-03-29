@@ -46,8 +46,8 @@ export class ElectronIpcApiService extends ElectronIpcService {
 
   public exportS3NextItem(): Observable<any> {
     return Observable.create(obs => {
-      this.electronService.ipcRenderer.removeAllListeners(constants.IPC_EXPORT_S3);
-      this.electronService.ipcRenderer.on(constants.IPC_EXPORT_S3, (event, data) => {
+      // this.electronService.ipcRenderer.removeAllListeners(constants.IPC_EXPORT_S3);
+      this.electronService.ipcRenderer.once(constants.IPC_EXPORT_S3, (event, data) => {
         obs.next(data);
       });
     });
