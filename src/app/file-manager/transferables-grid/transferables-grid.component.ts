@@ -43,8 +43,6 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   generalExportToGCPProgress = 0;
   generalExportToS3Progress = 0;
   exportToS3InProgress = false;
-  exportToGcpItems = [];
-
   constructor(
     private statusService: StatusService,
     private zone: NgZone,
@@ -131,17 +129,15 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
       });
     });
 
-    // exportToGcpItems contains every item of type ExportToGcp from which other filters are applied
-    this.exportToGcpItems = new FilesDatabase(this.store).data
-      .filter(item => item.type === Type.EXPORT_GCP);
-
     this.gcsService.exportItemCompleted.subscribe(() => {
-      if (this.exportToGcpItems.length !== 0) {
+      const pendingItems = this.filesDatabase.data.filter(item => item.status === ItemStatus.PENDING);
+      if (pendingItems.length !== 0) {
         this.generalExportToGCPProgress =
-          (this.exportToGcpItems.filter(item => item.status === ItemStatus.COMPLETED).length * 100) / this.exportToGcpItems.length;
-        this.handleGcpExport();
+          (this.filesDatabase.data.filter(item =>
+            item.status === ItemStatus.COMPLETED).length * 100) / this.filesDatabase.toExportGCPCount;
+        this.handleGcpExport(pendingItems);
       } else if (TransferablesGridComponent.isExporting) {
-        // exportToGcpItems === 0, all exports were completed
+        // all exports were completed
         TransferablesGridComponent.isExporting = false;
         this.generalExportToGCPProgress = 100;
       }
@@ -228,11 +224,11 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
     });
   }
 
-  handleGcpExport() {
+  handleGcpExport(pendingItems) {
     // cancelGCPExports its a flag which indicates if cancel order has been given
     if (!this.gcsService.cancelGCPExports) {
       // exportToGcpItems passes the list of items to be exported when each chunk has already finished its export
-      this.limitTransferables.exportItems(this.exportToGcpItems.filter(item => item.status === ItemStatus.PENDING));
+      this.limitTransferables.exportItems(pendingItems);
     } else {
       // prepares the Ui to indicate that exports to gcp have been cancelled
       this.generalExportToGCPProgress = 100;
