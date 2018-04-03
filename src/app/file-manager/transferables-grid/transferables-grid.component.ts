@@ -43,6 +43,8 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   generalExportToGCPProgress = 0;
   generalExportToS3Progress = 0;
   exportToS3InProgress = false;
+  exportToGcpItems = new FilesDatabase(this.store);
+
   constructor(
     private statusService: StatusService,
     private zone: NgZone,
@@ -130,22 +132,23 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
     });
 
     this.gcsService.exportItemCompleted.subscribe(() => {
-      const pendingItems = this.filesDatabase.data.filter(item => item.status === ItemStatus.PENDING);
+      const pendingItems = this.exportToGcpItems.data.filter(item => item.type === Type.EXPORT_GCP && item.status === ItemStatus.PENDING);
       if (pendingItems.length !== 0) {
         this.generalExportToGCPProgress =
-          (this.filesDatabase.data.filter(item =>
-            item.status === ItemStatus.COMPLETED).length * 100) / this.filesDatabase.toExportGCPCount;
+          Math.round((this.exportToGcpItems.data.filter(item =>
+            item.type === Type.EXPORT_GCP && item.status === ItemStatus.COMPLETED).length * 100) / this.exportToGcpItems.toExportGCPCount);
         this.handleGcpExport(pendingItems);
       } else if (TransferablesGridComponent.isExporting) {
-        // all exports were completed
-        TransferablesGridComponent.isExporting = false;
+        // exportToGcpItems === 0, all exports were completed
         this.generalExportToGCPProgress = 100;
+        TransferablesGridComponent.isExporting = false;
       }
     });
 
     Observable.timer(2000, 1000).subscribe(t => {
       this.zone.run(() => { });
     });
+
     this.statusService.updateExportS3Progress().subscribe(data => {
       this.zone.run(() => {
         const items = new FilesDatabase(this.store).data
