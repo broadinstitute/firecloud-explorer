@@ -35,9 +35,7 @@ export class S3ExportService {
   public startUpload(item) {
     const dataTransfer = {
       'preserveStructure': JSON.parse(localStorage.getItem('preserveStructure')),
-      'item': item,
-      'gcsToken': SecurityService.getAccessToken(),
-      'bucketName': localStorage.getItem('S3BucketName'),
+      'item': item
     };
     this.electronService.exportS3(dataTransfer);
   }
