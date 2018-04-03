@@ -179,7 +179,8 @@ export class PreflightService {
       item.open,
       item.workspaceName,
       item.displayName,
-      item.namespace);
+      item.namespace,
+      false);
   }
 
   initializeValues() {

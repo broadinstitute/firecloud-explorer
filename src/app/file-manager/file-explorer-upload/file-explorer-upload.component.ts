@@ -18,6 +18,7 @@ import { Type } from '@app/file-manager/models/type';
 import { ItemStatus } from '@app/file-manager/models/item-status';
 import { UUID } from 'angular2-uuid';
 import { StatusService } from '@app/file-manager/services/status.service';
+import { FilesDatabase } from '../dbstate/files-database';
 
 @Component({
   selector: 'app-file-explorer-upload',
@@ -208,12 +209,13 @@ export class FileExplorerUploadComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result !== undefined) {
+        this.updateCurrentBatch();
         this.selectedFiles
           .filter(file => file.data.type === Type.FILE)
           .forEach(file => {
             this.dataFile = new Item(UUID.UUID(), file.data.name, file.data.updated, file.data.updated, file.data.size,
               '', file.data.path, result.directory, Type.UPLOAD, ItemStatus.PENDING, '',
-              '', '', result.preserveStructure, false, '', file.data.name, '');
+              '', '', result.preserveStructure, false, '', file.data.name, '', true);
             this.uploadFiles.push(this.dataFile);
             this.store.dispatch(new Transferables.AddItem(this.dataFile));
           });
@@ -231,5 +233,13 @@ export class FileExplorerUploadComponent implements OnInit {
 
   disableButton() {
     return this.uploadInProgress || this.fileCount <= 0;
+  }
+
+  updateCurrentBatch() {
+    const items = new FilesDatabase(this.store).data.filter(item => item.type === Type.UPLOAD && item.currentBatch);
+    items.forEach(item => {
+      item.currentBatch = false;
+      this.store.dispatch(new Transferables.UpdateItem(item));
+    });
   }
 }

@@ -85,7 +85,8 @@ export class BucketService {
           false, // open
           workspaceName, // workspaceName
           item.name.split(this.DELIMITER).slice(-1)[0], // displayName
-          ''
+          '',
+          false
         );
         if (processData) {
           this.processSelection(parentNode, newItem);
@@ -146,7 +147,8 @@ export class BucketService {
         false, // open
         workspaceName, // workspaceName
         prefix.split(this.DELIMITER).slice(-2, -1)[0],
-        ''
+        '',
+        false
       );
 
     return newItem;
