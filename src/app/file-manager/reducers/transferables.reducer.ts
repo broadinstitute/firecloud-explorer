@@ -40,19 +40,19 @@ export class TransferableState {
     }
 
     get toExportS3Count(): number {
-        return this.items.filter(x => x.type === Type.EXPORT_S3).length;
+        return this.items.filter(x => x.type === Type.EXPORT_S3  && x.currentBatch).length;
     }
 
 
     get exportingS3Count(): number {
-        return this.items.filter(x => x.status === ItemStatus.COMPLETED && x.type === Type.EXPORT_S3).length;
+        return this.items.filter(x => x.status === ItemStatus.COMPLETED && x.type === Type.EXPORT_S3 && x.currentBatch).length;
     }
     get exportingGCPCount(): number {
-        return this.items.filter(x => x.status === ItemStatus.COMPLETED && x.type === Type.EXPORT_GCP).length;
+        return this.items.filter(x => x.status === ItemStatus.COMPLETED && x.type === Type.EXPORT_GCP && x.currentBatch).length;
     }
 
     get toExportGCPCount(): number {
-        return this.items.filter(x => x.type === Type.EXPORT_GCP).length;
+        return this.items.filter(x => x.type === Type.EXPORT_GCP && x.currentBatch).length;
     }
 
 }
