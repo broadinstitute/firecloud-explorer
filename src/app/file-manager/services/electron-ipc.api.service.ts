@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { ElectronService } from 'ngx-electron';
 import { ElectronIpcService } from '@app/file-manager/services/electron-ipc.service';
 import { Observable } from 'rxjs/Observable';
+import { SecurityService } from '@app/file-manager/services/security.service';
 const constants = require('../../../../electron_app/helpers/environment').constants;
 
 @Injectable()
