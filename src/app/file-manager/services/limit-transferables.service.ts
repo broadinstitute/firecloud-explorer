@@ -63,13 +63,11 @@ export class LimitTransferablesService {
       this.gcsService.uploadFiles(localStorage.getItem('uploadBucket'), maxFiles);
     } else if (type === Type.EXPORT_S3) {
       // Because the export S3 process works with one item at a time it's necessary to take the first one
-      console.log('control limit item');
       maxFiles[0].status = ItemStatus.EXPORTING_S3;
       this.store.dispatch(new Transferables.UpdateItem(maxFiles[0]));
       this.s3TransferService.startFileExportToS3(maxFiles[0]);
     }
   }
-
 
   public exportItems(files: Item[]): void {
     const maxFiles = files.splice(0, environment.LIMIT_EXPORTABLES);
@@ -90,7 +88,6 @@ export class LimitTransferablesService {
       } else if (type === Type.UPLOAD) {
         this.gcsService.uploadFiles(localStorage.getItem('uploadBucket'), [item]);
       } else if (type === Type.EXPORT_S3) {
-        console.log('proceedNextItem');
         this.s3TransferService.startFileExportToS3(item);
       }
     }

@@ -134,7 +134,7 @@ export class GcsApiService extends GcsService {
         currentStatus = ItemStatus.DOWNLOADING;
         break;
       case Type.EXPORT_S3:
-        currentStatus = ItemStatus.EXPORTING_S3;
+        // currentStatus = ItemStatus.EXPORTING_S3;
         break;
       case Type.UPLOAD:
         currentStatus = ItemStatus.UPLOADING;

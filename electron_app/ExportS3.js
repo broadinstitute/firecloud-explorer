@@ -76,14 +76,14 @@ const uploadS3 = (data) => {
     console.log(error);
   });
 
+  electronWin.webContents.send(constants.IPC_EXPORT_S3_DOWNLOAD_STATUS, data.item);
   uploadStream.on('part', function (details) {
   });
 
   uploadStream.on('uploaded', function (details) {
     data.item.status = 'Exported to S3';
-    console.log('Details -> ', details);
-    console.log('electron win -> ', electronWin);
-    electronWin.webContents.send(constants.IPC_EXPORT_S3_DOWNLOAD_STATUS, item);
+    data.item.progress = 100;
+    electronWin.webContents.send(constants.IPC_EXPORT_S3_DOWNLOAD_STATUS, data.item);
   });
   s3List.push(s3);
 };
