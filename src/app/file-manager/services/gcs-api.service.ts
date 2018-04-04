@@ -160,7 +160,7 @@ export class GcsApiService extends GcsService {
         'Authorization': 'Bearer ' + SecurityService.getAccessToken()
       })
     };
-    return this.http.post(url, null, httpOptions);
+    return this.http.post(url, null, httpOptions).retry(1);
   }
 
   public exportToGCPFiles(destinationBucket: string, fileList: Item[]) {

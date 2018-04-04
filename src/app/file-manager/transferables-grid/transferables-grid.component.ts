@@ -28,10 +28,10 @@ import { WarningModalComponent } from '../warning-modal/warning-modal.component'
 
 export class TransferablesGridComponent implements OnInit, AfterViewInit {
   static isExporting: Boolean = false;
+  static firstIteration: Boolean = true;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   displayedColumns = ['name', 'size', 'status', 'progress', 'actions'];
-
   dataSource = new MatTableDataSource([]);
   filesDatabase: FilesDatabase;
   generalProgress = 0;
@@ -132,16 +132,22 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
     });
 
     this.gcsService.exportItemCompleted.subscribe(() => {
-      const pendingItems = this.exportToGcpItems.data.filter(item => item.type === Type.EXPORT_GCP && item.status === ItemStatus.PENDING);
-      if (pendingItems.length !== 0) {
-        this.generalExportToGCPProgress =
-          Math.round((this.exportToGcpItems.data.filter(item =>
-            item.type === Type.EXPORT_GCP && item.status === ItemStatus.COMPLETED).length * 100) / this.exportToGcpItems.toExportGCPCount);
-        this.handleGcpExport(pendingItems);
-      } else if (TransferablesGridComponent.isExporting) {
-        // exportToGcpItems === 0, all exports were completed
-        this.generalExportToGCPProgress = 100;
-        TransferablesGridComponent.isExporting = false;
+      if (!TransferablesGridComponent.firstIteration) {
+        const pendingItems = this.exportToGcpItems.data.filter(item => item.type === Type.EXPORT_GCP && item.status === ItemStatus.PENDING);
+        if (pendingItems.length !== 0) {
+          this.generalExportToGCPProgress =
+            Math.round((this.exportToGcpItems.data.filter(item =>
+              item.type === Type.EXPORT_GCP && item.status === ItemStatus.COMPLETED && item.currentBatch).length * 100) / this.exportToGcpItems.toExportGCPCount);
+          this.handleGcpExport(pendingItems);
+        } else if (TransferablesGridComponent.isExporting) {
+          // exportToGcpItems === 0, all exports were completed
+          this.zone.run(() => {
+            console.log('GCP general export', this.generalExportToGCPProgress);
+            this.generalExportToGCPProgress = 99;
+            TransferablesGridComponent.isExporting = false;
+            TransferablesGridComponent.firstIteration = true;
+          });
+        }
       }
     });
 
@@ -277,8 +283,10 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
       this.exportToS3InProgress = true;
       this.limitTransferables.controlLimitItems(files, Type.EXPORT_S3, ItemStatus.EXPORTING_S3);
     } else {
+      this.generalExportToGCPProgress = 0;
       TransferablesGridComponent.isExporting = true;
       this.limitTransferables.exportItems(files);
+      TransferablesGridComponent.firstIteration = false;
     }
   }
 
