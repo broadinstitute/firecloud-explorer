@@ -1,7 +1,7 @@
 <ngx-spinner #spin bdOpacity="0.6" bdColor="#fff" size="medium" color="#1e88e5" type="ball-circus" style="z-index:10000"></ngx-spinner>
 
 <h1>Progress Status</h1>
-
+{{ (generalExportToGCPProgress | async).value }}
 <div class="flex-container space-between">
   <div class="status-box-left">
     <div class="flex-container space-between">
@@ -36,10 +36,12 @@
 
   <div class="status-box-left">
     <div class="flex-container space-between">
-      <h4 class="subtitle">Exported to Google Cloud: {{filesDatabase.exportingGCPCount + ' of ' + filesDatabase.toExportGCPCount}} file(s)</h4>
+      <h4 class="subtitle">Exported to Google Cloud: {{ filesDatabase.exportingGCPCount + ' of ' + filesDatabase.toExportGCPCount }} file(s)</h4>
+      <h4 class="subtitle">{{(generalExportToGCPProgress | async).value}}%</h4>
     </div>
 
-    <p-progressBar mode="determinate" class="progress-bar" [value]="generalExportToGCPProgress" [showValue]="false"></p-progressBar>
+    <p-progressBar #pbg mode="determinate"  class="progress-bar" [value]="100.0 * (filesDatabase.exportingGCPCount/filesDatabase.toExportGCPCount)" [showValue]="false"></p-progressBar>
+    
     <div class="flex-container end actions">
     <button mat-raised-button (click)="cancelExportsToGCP()" class="button-secondary" [disabled]="!getExportingStatus()" >
         <i class="material-icons">highlight_off</i>Cancel Export</button>
