@@ -54,7 +54,7 @@
     <p-progressBar mode="determinate" class="progress-bar" [value]="generalExportToS3Progress" [showValue]="false"></p-progressBar>
 
     <div class="flex-container end actions">
-      <button mat-raised-button (click)="cancelExportsToS3()" class="button-secondary" [disabled]="!exportToS3InProgress">
+      <button mat-raised-button (click)="cancelExportsToS3()" class="button-secondary" [disabled]="!(exportToS3InProgress && exportToS3Canceled === false)">
         <i class="material-icons">highlight_off</i>Cancel Export</button>
     </div>
   </div>

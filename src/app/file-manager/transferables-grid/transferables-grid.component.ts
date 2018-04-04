@@ -19,6 +19,7 @@ import { S3ExportService } from '@app/file-manager/services/s3-export.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Observable } from 'rxjs/Observable';
 import { WarningModalComponent } from '../warning-modal/warning-modal.component';
+import { ItemType } from 'aws-sdk/clients/mediastoredata';
 
 @Component({
   selector: 'app-transferalbes-grid',
@@ -43,6 +44,7 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   generalExportToGCPProgress = 0;
   generalExportToS3Progress = 0;
   exportToS3InProgress = false;
+  exportToS3Canceled = false;
   exportItems = [];
 
   constructor(
@@ -106,6 +108,7 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
+    this.exportToS3Canceled = this.gcsService.exportToS3Canceled;
     this.generalExportToGCPProgress = 0;
 
     this.dataSource.data = this.filesDatabase.data;
@@ -160,6 +163,12 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
       this.zone.run(() => { });
     });
     this.statusService.updateExportS3Progress().subscribe(data => {
+      this.zone.run(() => {
+        this.exportToS3InProgress = true;
+      });
+    });
+
+    this.statusService.updateExportS3Complete().subscribe(data => {
       this.zone.run(() => {
         const items = new FilesDatabase(this.store).data
           .filter(item => item.type === Type.EXPORT_S3 && item.status === ItemStatus.PENDING);
@@ -238,8 +247,22 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   }
 
   cancelExportsToS3() {
-    this.gcsService.cancelExportToS3();
-    this.exportToS3InProgress = false;
+    const dialogRef = this.dialog.open(WarningModalComponent, {
+      width: '500px',
+      disableClose: true,
+      data: 'cancelAllExportsToS3'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      this.zone.run(() => {
+        if (result.exit) {
+          this.gcsService.cancelExportToS3();
+          this.exportToS3InProgress = false;
+          this.exportToS3Canceled = true;
+          this.gcsService.exportToS3Canceled = true;
+        }
+      });
+    });
   }
 
   stopAll() {
