@@ -19,6 +19,7 @@ import { AppState } from '@app/file-manager/dbstate/app-state';
 import * as Transferables from '../actions/transferables.actions';
 import { DownloadValidatorService } from '@app/file-manager/services/download-validator.service';
 import { FilesDatabase } from '../dbstate/files-database';
+import { UUID } from 'angular2-uuid';
 
 
 @Component({
@@ -189,6 +190,7 @@ export class FileExportModalComponent implements OnInit {
   dispatchFiles (type: string) {
     this.updateCurrentBatch(type);
     this.selectedFiles().forEach(file => {
+      file.id = UUID.UUID();
       file.type = type;
       file.status = ItemStatus.PENDING;
       file.currentBatch = true;
