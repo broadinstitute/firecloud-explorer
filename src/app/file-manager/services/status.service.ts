@@ -47,7 +47,6 @@ export class StatusService {
           const existentItem = new FilesDatabase(this.store).data.
                                filter(item => item.type === Type.EXPORT_S3 && item.id === data.id)[0];
           if (existentItem.status === ItemStatus.EXPORTING_S3) {
-            console.log('nex item');
             this.s3Service.startUpload(data);
           }
         }

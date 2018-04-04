@@ -1,4 +1,3 @@
-const electron = require('electron');
 let AWS = require('aws-sdk');
 let s3Stream = require('s3-upload-stream');
 AWS.config.httpOptions = { timeout: 5000 };
@@ -76,8 +75,13 @@ const uploadS3 = (data) => {
     console.log(error);
   });
 
-  electronWin.webContents.send(constants.IPC_EXPORT_S3_DOWNLOAD_STATUS, data.item);
   uploadStream.on('part', function (details) {
+    // the message is send when the first 5MB has already transferred
+    if (details.uploadedSize <= 5242890) {
+      electronWin.webContents.send(constants.IPC_EXPORT_S3_DOWNLOAD_STATUS, data.item);
+      // console.log(details);
+    }
+    // console.log(details.uploadedSize);
   });
 
   uploadStream.on('uploaded', function (details) {
