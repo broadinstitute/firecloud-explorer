@@ -69,6 +69,7 @@ export class LimitTransferablesService {
     }
   }
 
+
   public exportItems(files: Item[]): void {
     const maxFiles = files.splice(0, environment.LIMIT_EXPORTABLES);
     this.gcsService.exportToGCPFiles(localStorage.getItem('destinationBucket'), maxFiles);

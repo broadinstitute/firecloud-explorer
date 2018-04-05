@@ -8,7 +8,7 @@ let s3List = [];
 let s3 = null;
 
 let electronWin = null;
-let gcsToken = '';
+let gcsToken = null;
 const ExportS3 = (win, data) => {
   electronWin = win;
   gcsToken = data.gcsToken;
@@ -27,7 +27,7 @@ const testS3Credentials = (data) => {
 
   // BucketLocation is innocuous
   return new Promise((resolve, reject) => {
-    s3.getBucketLocation({ Bucket: this.bucketName }, function (err) {
+    s3.getBucketLocation({ Bucket: this.bucketName }, (err) => {
       if (err) {
         console.log('ERROR', err.message);
         // Three of these errors has the same error code (403) coming from AWS servers, so we identify them by their name on its properties.
@@ -67,20 +67,20 @@ const uploadS3 = (data) => {
   });
 
   request.get(url, setHeader(data.gcsToken))
-  .on('error', function (err) {
-    console.log(err);
+  .on('error', (err) => {
+    console.error(err);
   }).pipe(uploadStream);
   // Handle errors.
-  uploadStream.on('error', function (error) {
-    console.log(error);
+  uploadStream.on('error', (error) => {
+    console.error(error);
   });
 
-  uploadStream.on('part', function (details) {
-    // the message is send when the first 5MB has already transferred
+  uploadStream.on('part', (details) => {
+    // the message is send when the first 5MB has already been transferred
     electronWin.webContents.send(constants.IPC_EXPORT_S3_DOWNLOAD_STATUS, data.item);
   });
 
-  uploadStream.on('uploaded', function (details) {
+  uploadStream.on('uploaded', (details) => {
     data.item.status = 'Exported to S3';
     data.item.progress = 100;
     electronWin.webContents.send(constants.IPC_EXPORT_S3_COMPLETE, data.item);

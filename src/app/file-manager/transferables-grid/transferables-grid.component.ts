@@ -19,7 +19,6 @@ import { S3ExportService } from '@app/file-manager/services/s3-export.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Observable } from 'rxjs/Observable';
 import { WarningModalComponent } from '../warning-modal/warning-modal.component';
-import { ItemType } from 'aws-sdk/clients/mediastoredata';
 
 @Component({
   selector: 'app-transferalbes-grid',
