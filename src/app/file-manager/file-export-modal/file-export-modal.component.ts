@@ -30,7 +30,6 @@ export class FileExportModalComponent implements OnInit {
   keyAccessCtrl: FormControl;
   exportForm: FormGroup;
   preserveStructure = true;
-  disableExport = true;
   disableCancel = false;
   msgs: Message[] = [];
   disable = false;
@@ -54,14 +53,24 @@ export class FileExportModalComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.exportForm = this.formBuilder.group({
-      exportDestination: [''],
-      bucketNameGCP: [''],
-      accessKeyIdAWS: [''],
-      secretAccessKeyAWS: [''],
-      bucketNameAWS: [''],
-    });
-      this.preflightService.processFiles(this.data);
+    if (localStorage.getItem('S3BucketName') !== undefined) {
+      this.exportForm = this.formBuilder.group({
+        exportDestination: [''],
+        bucketNameGCP: [''],
+        accessKeyIdAWS: [localStorage.getItem('S3AccessKey')],
+        secretAccessKeyAWS: [localStorage.getItem('S3SecretKey')],
+        bucketNameAWS: [localStorage.getItem('S3BucketName')],
+      });
+    } else {
+      this.exportForm = this.formBuilder.group({
+        exportDestination: [''],
+        bucketNameGCP: [''],
+        accessKeyIdAWS: [''],
+        secretAccessKeyAWS: [''],
+        bucketNameAWS: [''],
+      });
+    }
+    this.preflightService.processFiles(this.data);
   }
 
   cancel(): void {
@@ -73,12 +82,11 @@ export class FileExportModalComponent implements OnInit {
   }
 
   exportFiles(): void {
-    this.disableExport = true;
     this.disableCancel = true;
     if (this.exportForm.get('exportDestination').value === 1) {
       this.exportToGCPFiles();
     } else {
-      this.downloadValidator.verifyDisk(null, Math.max.apply(Math, this.preflightService.selectedFiles.map(o =>  o.size))).then(
+      this.downloadValidator.verifyDisk(null, Math.max.apply(Math, this.preflightService.selectedFiles.map(o => o.size))).then(
         diskVerification => {
           if (!diskVerification.hasErr) {
             this.exportToS3();
@@ -91,39 +99,32 @@ export class FileExportModalComponent implements OnInit {
     }
   }
 
-  formChange(): boolean {
+  disableExportButton(): boolean {
+    let disableExport;
     if (this.exportForm.get('exportDestination').value === 1) {
-      if (this.exportForm.get('bucketNameGCP').valid) {
-        this.disableExport = false;
+      if (this.exportForm.get('bucketNameGCP').value) {
+        disableExport = false;
       } else {
-        this.disableExport = true;
+        disableExport = true;
       }
     } else if (this.exportForm.get('exportDestination').value === 2) {
-      if (this.exportForm.get('accessKeyIdAWS').valid &&
-        this.exportForm.get('secretAccessKeyAWS').valid &&
-        this.exportForm.get('bucketNameAWS').valid) {
-        this.disableExport = false;
+      if (this.exportForm.get('accessKeyIdAWS').value &&
+        this.exportForm.get('secretAccessKeyAWS').value &&
+        this.exportForm.get('bucketNameAWS').value) {
+        disableExport = false;
       } else {
-        this.disableExport = true;
+        disableExport = true;
       }
     } else {
-      this.disableExport = true;
+      disableExport = true;
     }
-    return this.disableExport;
+    return disableExport;
   }
 
-  cleanForm() {
-    this.exportForm.get('accessKeyIdAWS').reset();
-    this.exportForm.get('secretAccessKeyAWS').reset();
-    this.exportForm.get('bucketNameAWS').reset();
-    this.exportForm.get('bucketNameGCP').reset();
-    this.msgs = [];
-    this.disableExport = true;
-  }
 
   setItemsS3() {
     this.dispatchFiles(Type.EXPORT_S3);
-    this.dialogRef.close({ preserveStructure: this.preserveStructure, type: Type.EXPORT_S3});
+    this.dialogRef.close({ preserveStructure: this.preserveStructure, type: Type.EXPORT_S3 });
     this.router.navigate(['/status']);
   }
 
@@ -145,6 +146,8 @@ export class FileExportModalComponent implements OnInit {
     SecurityService.setS3AccessKey(this.exportForm.getRawValue().accessKeyIdAWS);
     SecurityService.setS3SecretKey(this.exportForm.getRawValue().secretAccessKeyAWS);
     localStorage.setItem('S3BucketName', this.exportForm.getRawValue().bucketNameAWS);
+    localStorage.setItem('S3AccessKey', this.exportForm.getRawValue().accessKeyIdAWS);
+    localStorage.setItem('S3SecretKey', this.exportForm.getRawValue().secretAccessKeyAWS);
     this.s3Service.testCredentials();
     this.electronIpc.awsTestCredentials().then(
       () => this.setItemsS3(),
@@ -185,7 +188,7 @@ export class FileExportModalComponent implements OnInit {
     );
   }
 
-  dispatchFiles (type: string) {
+  dispatchFiles(type: string) {
     this.selectedFiles().forEach(file => {
       file.type = type;
       file.status = ItemStatus.PENDING;
@@ -193,7 +196,7 @@ export class FileExportModalComponent implements OnInit {
       this.done.emit(true);
       this.router.navigate(['/status']);
     });
-  this.done.emit(true);
+    this.done.emit(true);
   }
 
   isLoading() {
