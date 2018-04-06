@@ -4,26 +4,26 @@
   <form role="form" id="exportForm" name="exportForm" [formGroup]="exportForm">
 
     <mat-radio-group formControlName="exportDestination">
-      <mat-radio-button class="radio-block" id="exportToGCP" [value]="1"  (click)="cleanForm()">Google Cloud Platform</mat-radio-button>
+      <mat-radio-button class="radio-block" id="exportToGCP" [value]="1">Google Cloud Platform</mat-radio-button>
       <div *ngIf="exportForm.get('exportDestination').value == 1" class="flex-container column">
         <mat-form-field class="full-width">
-          <input matInput placeholder="Google Bucket Name" formControlName="bucketNameGCP" required (input)="formChange()">
+          <input matInput placeholder="Google Bucket Name" formControlName="bucketNameGCP" required>
           <mat-error>Please enter a Google Bucket Name</mat-error>
         </mat-form-field>
       </div>
 
-      <mat-radio-button class="radio-block" id="exportToAWS"  (change)="cleanForm()" [value]="2">Amazon Web Services</mat-radio-button>
+      <mat-radio-button class="radio-block" id="exportToAWS" [value]="2">Amazon Web Services</mat-radio-button>
       <div *ngIf="exportForm.get('exportDestination').value == 2" class="flex-container column">
         <mat-form-field class="full-width">
-          <input matInput placeholder="Access Key Id" formControlName="accessKeyIdAWS" required (input)="formChange()">
+          <input matInput placeholder="Access Key Id" formControlName="accessKeyIdAWS" required>
           <mat-error>Please enter your Access Key Id</mat-error>
         </mat-form-field>
         <mat-form-field class="full-width ">
-          <input matInput placeholder="Secret Access Key" formControlName="secretAccessKeyAWS" type="password" required (input)="formChange()">
+          <input matInput placeholder="Secret Access Key" formControlName="secretAccessKeyAWS" type="password" required>
           <mat-error>Please enter your Secret Access Key</mat-error>
         </mat-form-field>
         <mat-form-field class="full-width">
-          <input matInput placeholder="Amazon Bucket Name" formControlName="bucketNameAWS" required (input)="formChange()">
+          <input matInput placeholder="Amazon Bucket Name" formControlName="bucketNameAWS" required>
           <mat-error>Please enter an Amazon Bucket Name</mat-error>
         </mat-form-field>
       </div>
@@ -53,5 +53,5 @@
 
 <mat-dialog-actions>
   <button mat-raised-button (click)="cancel()" [disabled]="disableCancel || isLoading() || disable" class="button-secondary">Cancel</button>
-  <button mat-raised-button (click)="exportFiles()" [disabled]="disableExport || isLoading() || disable" class="button-primary">Start Export!</button>
+  <button mat-raised-button (click)="exportFiles()" [disabled]="disableExportButton() || isLoading() || disable" class="button-primary">Start Export!</button>
 </mat-dialog-actions>
