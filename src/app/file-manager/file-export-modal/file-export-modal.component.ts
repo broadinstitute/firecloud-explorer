@@ -188,6 +188,8 @@ export class FileExportModalComponent implements OnInit {
       file.id = UUID.UUID();
       file.type = type;
       file.status = ItemStatus.PENDING;
+      file.istatus = ItemStatus.IPENDING;
+      file.itype = type === Type.EXPORT_GCP ? Type.IEXPORT_GCP: Type.IEXPORT_S3;
       file.currentBatch = true;
       this.store.dispatch(new Transferables.AddItem(file));
       this.done.emit(true);

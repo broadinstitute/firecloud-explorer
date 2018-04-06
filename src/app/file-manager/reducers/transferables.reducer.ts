@@ -220,6 +220,7 @@ export function TransferablesReducer(state = initialState, action: Action): Tran
             }
 
             state.itemsMap[action.payload.id] = action.payload;
+
             state.counter
             [action.payload.itype]
             [action.payload.istatus]++;

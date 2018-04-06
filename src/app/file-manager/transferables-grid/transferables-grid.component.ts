@@ -50,6 +50,8 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   exportToGcpItems = new FilesDatabase(this.store);
   exportToS3Canceled = false;
 
+  currentState: Observable<TransferableState>;
+
   itemsObs: Observable<TransferableState>;
 
   initialState: TransferableState = {
@@ -100,6 +102,34 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
     private dialog: MatDialog) {
     this.filesDatabase = new FilesDatabase(store);
 
+    // this.currentState = this.store.select('transferables');
+
+    // this.currentState.subscribe( cs => {
+    //   console.log('------------------- current state ------------------');
+    //   console.log(cs.counter);
+
+    //   console.log('downloadingCount  : ' + cs.downloadingCount);
+    //   console.log('toDownloadCount   : ' + cs.toDownloadCount);
+
+    //   console.log('uploadingCount    : ' + cs.uploadingCount);
+    //   console.log('toUploadCount     : ' + cs.toUploadCount);
+
+    //   console.log('exportingGCPCount : ' + cs.exportingGCPCount);
+    //   console.log('toExportGCPCount  : ' + cs.toExportGCPCount);
+
+    //   console.log('exportingS3Count  : ' + cs.exportingS3Count);
+    //   console.log('toExportS3Count   : ' + cs.toExportS3Count);
+    // });
+
+    // selectedCount: 0,
+    // downloadingCount: 0,
+    // uploadingCount: 0,
+    // exportingGCPCount: 0,
+    // toExportGCPCount: 0,
+    // toDownloadCount: 0,
+    // toUploadCount: 0,
+    // toExportS3Count: 0,
+    // exportingS3Count: 0,
   }
 
   load() {
@@ -310,8 +340,8 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   }
 
   startExport(preserveStructure: Boolean, type: Type) {
-    const files = new FilesDatabase(this.store).data
-      .filter(item => item.type === type && item.status === ItemStatus.PENDING);
+    const files = [...new FilesDatabase(this.store).data.filter(item => item.type === type && item.status === ItemStatus.PENDING)];
+
     localStorage.setItem('preserveStructure', preserveStructure.toString());
     this.spinner.hide();
     if (type === Type.EXPORT_S3) {

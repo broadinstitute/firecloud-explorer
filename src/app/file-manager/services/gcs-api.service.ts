@@ -169,16 +169,13 @@ export class GcsApiService extends GcsService {
       this.exportToGCP(destinationBucket, file)
         .subscribe(
         data => {
-          this.zone.runOutsideAngular(() => {
             if (data.done) {
               responseCompleted++;
-              file.status = ItemStatus.COMPLETED;
-              file.progress = 100;
+              this.store.dispatch(new Transferables.UpdateItemCompleted(file));
               if (responseCompleted === fileList.length) {
                 this.exportItemCompleted.next(true);
               }
             }
-          });
         },
         err => {
           console.log(err);
