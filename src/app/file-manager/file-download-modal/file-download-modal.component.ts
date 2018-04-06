@@ -12,6 +12,12 @@ import { Router } from '@angular/router';
 import { ItemStatus } from '@app/file-manager/models/item-status';
 import { TransferablesGridComponent } from '@app/file-manager/transferables-grid/transferables-grid.component';
 import { PreflightService } from '../services/preflight.service';
+import { FilterSizePipe } from '../filters/filesize-filter';
+import { FilesDatabase } from '../dbstate/files-database';
+import { Observable } from 'rxjs/Observable';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { UUID } from 'angular2-uuid';
+
 
 @Component({
   selector: 'app-file-download-modal',
@@ -88,13 +94,15 @@ export class FileDownloadModalComponent implements OnInit {
   }
 
   setItems() {
+    this.updateCurrentBatch();
     this.selectedFiles().filter(file => file.type === 'File')
       .forEach(file => {
         if (!this.filesMap.has(file.id)) {
           this.filesMap.set(file.id, file);
-          const dataFile: Item = new Item(file.id, file.name, file.updated, file.created,
+          const dataFile: Item = new Item(UUID.UUID(), file.name, file.updated, file.created,
             file.size, file.mediaLink, file.path, this.directory,
-            Type.DOWNLOAD, ItemStatus.PENDING, '', '', '', this.preserveStructure, false, '', file.displayName, '');
+            Type.DOWNLOAD, ItemStatus.PENDING, '', '', '', this.preserveStructure, false, '', file.displayName, '',
+            true);
           this.downloadFiles.push(dataFile);
           this.store.dispatch(new Transferables.AddItem(dataFile));
           this.done.emit(true);
@@ -135,4 +143,13 @@ export class FileDownloadModalComponent implements OnInit {
   selectedFiles() {
     return this.preflightService.selectedFiles;
   }
+
+  updateCurrentBatch() {
+    const items = new FilesDatabase(this.store).data.filter(item => item.type === Type.DOWNLOAD && item.currentBatch);
+    items.forEach(item => {
+      item.currentBatch = false;
+      this.store.dispatch(new Transferables.UpdateItem(item));
+    });
+  }
+
 }
