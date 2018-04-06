@@ -76,7 +76,7 @@ export abstract class FirecloudService {
       item.workspace.name, // workspaceName
       item.workspace.name,
       item.workspace.namespace,
-      false
+      false, 0, 0
     );
   }
   abstract getUserFirecloudWorkspaces(item: Item, optional: boolean): Observable<any>;

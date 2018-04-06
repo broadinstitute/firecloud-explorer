@@ -17,7 +17,16 @@ const initialState: TransferableState = {
   toExportS3Count: 0,
   exportingS3Count: 0,
   toExportGCPCount: 0,
-  items: []
+  counter: [
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0]
+  ],
+  items: [],
+  itemsMap: []
 };
 
 @Injectable()

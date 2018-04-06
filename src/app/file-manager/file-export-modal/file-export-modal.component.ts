@@ -71,7 +71,8 @@ export class FileExportModalComponent implements OnInit {
         bucketNameAWS: [''],
       });
     }
-    this.preflightService.processFiles(this.data);
+    // TODO: Review Type here ...
+    this.preflightService.processFiles(this.data, Type.EXPORT_GCP);
   }
 
   cancel(): void {

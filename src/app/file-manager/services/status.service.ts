@@ -94,4 +94,14 @@ export class StatusService {
       });
     return Math.floor((totalTransferred * 100) / totalSize);
   }
+
+/* TODO
+  public generalExportProgress(): Observable<any> {
+    return Observable.create((observer) => {
+      const items = new FilesDatabase(this.store).data.
+        filter(item => item.type === Type.EXPORT_GCP && (item.status === ItemStatus.EXPORTING_GCP || item.status === ItemStatus.PENDING));
+      observer.next(items.length === 0 ? 'determinate' : 'indeterminate');
+    });
+  }
+*/
 }

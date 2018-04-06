@@ -1,5 +1,6 @@
 import { Component, OnInit, NgZone, ViewChild, AfterViewInit } from '@angular/core';
 import { Item } from '../models/item';
+
 import { FilterSizePipe } from '../filters/filesize-filter';
 import { FileDownloadModalComponent } from '../file-download-modal/file-download-modal.component';
 import { MatDialog, MatPaginator, MAT_CHECKBOX_CLICK_ACTION } from '@angular/material';
@@ -63,8 +64,12 @@ export class FileExplorerComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.rootItem = new Item(
       'workspaces', 'workspaces', null, null, 0, '', '', '',
-      'Folder', '', '', '', '', true, false, '', '', '', false);
+      'Folder', '', '', '', '', true, false, '', '', '', false, 0, 0);
 
+/* TODO 
+    this.rootItem = new Item('workspaces', 'workspaces', null, null, 0, '', '',
+      '', 'Folder', '', '', '', '', true, false, '', '', '', 0, 0);
+*/
     this.getWorkspacesObjects(this.rootItem);
 
     this.statusService.updateDownloadProgress()
@@ -348,7 +353,7 @@ export class FileExplorerComponent implements OnInit, AfterViewInit {
   }
 
   exportSelectionDone() {
-    const items = {selectedFiles: this.selectionService.selectedItems()};
+    const items = { selectedFiles: this.selectionService.selectedItems() };
     const dialogRef = this.dialog.open(FileExportModalComponent, {
       width: '500px',
       disableClose: true,

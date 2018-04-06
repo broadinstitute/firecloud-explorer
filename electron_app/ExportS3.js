@@ -1,7 +1,7 @@
 let AWS = require('aws-sdk');
+let s3Stream = require('s3-upload-stream');
 AWS.config.httpOptions = { timeout: 5000 };
 const constants = require('./helpers/environment').constants;
-
 const request = require('request');
 
 let s3List = [];
@@ -17,11 +17,14 @@ const ExportS3 = (win, data) => {
 
 const testS3Credentials = (data) => {
   let errorMessage = null;
+  AWS.config.update({ accessKeyId: data.accessKey, secretAccessKey: data.secretKey });
+
   s3 = new AWS.S3({
     accessKeyId: data.accessKey,
     secretAccessKey: data.secretKey,
     params: { Bucket: data.bucketName }
   });
+
   // BucketLocation is innocuous
   return new Promise((resolve, reject) => {
     s3.getBucketLocation({ Bucket: this.bucketName }, (err) => {
@@ -54,8 +57,8 @@ const testS3Credentials = (data) => {
 };
 
 const uploadS3 = (data) => {
+  s3Stream = require('s3-upload-stream')(s3);
   const filePathExport = data.preserveStructure ? data.item.path : data.item.displayName;
-
   let url = data.item.mediaLink;
 
   let uploadStream = s3Stream.upload({
@@ -64,9 +67,9 @@ const uploadS3 = (data) => {
   });
 
   request.get(url, setHeader(data.gcsToken))
-  .on('error', (err) => {
-    console.error(err);
-  }).pipe(uploadStream);
+    .on('error', (err) => {
+      console.error(err);
+    }).pipe(uploadStream);
   // Handle errors.
   uploadStream.on('error', (error) => {
     console.error(error);
@@ -81,7 +84,6 @@ const uploadS3 = (data) => {
     data.item.status = 'Exported to S3';
     data.item.progress = 100;
     electronWin.webContents.send(constants.IPC_EXPORT_S3_COMPLETE, data.item);
-
   });
   s3List.push(s3);
 };
