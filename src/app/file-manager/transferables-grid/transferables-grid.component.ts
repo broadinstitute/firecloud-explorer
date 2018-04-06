@@ -46,6 +46,9 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   exportToGcpItems = new FilesDatabase(this.store);
   exportToS3Canceled = false;
   exportItems = [];
+  uploadCanceled = false;
+  downloadCanceled = false;
+  exportToGCPCanceled = false;
 
   constructor(
     private statusService: StatusService,
@@ -181,17 +184,19 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   }
 
   cancelUploads() {
-    this.gcsService.cancelUploads().then(value => {
+    this.gcsService.cancelUploads().afterClosed().subscribe(modalResponse => {
       this.zone.run(() => {
-        this.disabledUpload = value;
+        this.uploadCanceled = modalResponse.exit;
+        this.uploadInProgress = !modalResponse.exit;
       });
     });
   }
 
   cancelDownloads() {
-    this.gcsService.cancelDownloads().then(value => {
+    this.gcsService.cancelDownloads().afterClosed().subscribe(modalResponse => {
       this.zone.run(() => {
-        this.disabledDownload = value;
+        this.downloadCanceled = modalResponse.exit;
+        this.downloadInProgress = !modalResponse.exit;
       });
     });
   }
@@ -204,9 +209,10 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
       data: 'cancelAllExportsToGCP'
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe(modalResponse => {
       this.zone.run(() => {
-        if (result.exit) {
+        this.exportToGCPCanceled = modalResponse.exit;
+        if (modalResponse.exit) {
           this.gcsService.cancelExportsToGCP();
           this.gcsService.cancelGCPExports = true;
           this.gcsService.exportItemCompleted.next(true);
@@ -230,20 +236,12 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   }
 
   cancelExportsToS3() {
-    const dialogRef = this.dialog.open(WarningModalComponent, {
-      width: '500px',
-      disableClose: true,
-      data: 'cancelAllExportsToS3'
-    });
 
-    dialogRef.afterClosed().subscribe(result => {
+    this.gcsService.cancelExportToS3().afterClosed().subscribe(modalResponse => {
       this.zone.run(() => {
-        if (result.exit) {
-          this.gcsService.cancelExportToS3();
-          this.exportToS3InProgress = false;
-          this.exportToS3Canceled = true;
-          this.gcsService.exportToS3Canceled = true;
-        }
+        this.exportToS3InProgress = !modalResponse.exit;
+        this.exportToS3Canceled = modalResponse.exit;
+        console.log('exportToS3InProgress: ', this.exportToS3InProgress);
       });
     });
   }

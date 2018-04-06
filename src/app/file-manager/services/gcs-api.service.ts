@@ -15,7 +15,7 @@ import 'rxjs/add/operator/retry';
 import { Type } from '@app/file-manager/models/type';
 import { ItemStatus } from '@app/file-manager/models/item-status';
 import { WarningModalComponent } from '@app/file-manager/warning-modal/warning-modal.component';
-import { MatDialog } from '@angular/material';
+import { MatDialog, MatDialogRef  } from '@angular/material';
 const constants = require('../../../../electron_app/helpers/environment').constants;
 
 @Injectable()
@@ -79,17 +79,15 @@ export class GcsApiService extends GcsService {
     }
   }
 
-  public cancelDownloads(): Promise<boolean> {
+  public cancelDownloads(): MatDialogRef<WarningModalComponent, any> {
     if (this.getFiles(Type.DOWNLOAD).length > 0) {
-      this.openModal(constants.IPC_DOWNLOAD_CANCEL, 'cancelAllDownloads', Type.DOWNLOAD);
-      return Promise.resolve(true);
+      return this.openModal(constants.IPC_DOWNLOAD_CANCEL, 'cancelAllDownloads', Type.DOWNLOAD);
     }
   }
 
-  public cancelUploads(): Promise<boolean> {
+  public cancelUploads(): MatDialogRef<WarningModalComponent, any> {
     if (this.getFiles(Type.UPLOAD).length > 0) {
-      this.openModal(constants.IPC_UPLOAD_CANCEL, 'cancelAllUploads', Type.UPLOAD);
-      return Promise.resolve(true);
+      return this.openModal(constants.IPC_UPLOAD_CANCEL, 'cancelAllUploads', Type.UPLOAD);
     }
   }
 
@@ -100,8 +98,9 @@ export class GcsApiService extends GcsService {
     }
   }
 
-  public cancelExportToS3() {
-    this.cancelItemsStatus(Type.EXPORT_S3);
+
+  public cancelExportToS3(): MatDialogRef<WarningModalComponent, any> {
+    return this.openModal('export-s3-cancel', 'cancelAllExportsToS3', Type.EXPORT_S3);
   }
 
   openModal(action: string, data: string, type: string) {
@@ -117,6 +116,7 @@ export class GcsApiService extends GcsService {
         this.cancelItemsStatus(type);
       }
     });
+    return dialogRef;
   }
 
   cancelItemsStatus(type: string) {
