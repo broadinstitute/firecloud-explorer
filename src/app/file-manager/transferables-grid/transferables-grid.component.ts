@@ -44,6 +44,8 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   disabledUpload = false;
   exportToS3InProgress = false;
   exportToGcpItems = new FilesDatabase(this.store);
+  exportToS3Canceled = false;
+  exportItems = [];
 
   constructor(
     private statusService: StatusService,
@@ -106,6 +108,9 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
+
+    this.exportToS3Canceled = this.gcsService.exportToS3Canceled;
+
     this.dataSource.data = this.filesDatabase.data;
     this.statusService.updateDownloadProgress().subscribe(data => {
       this.zone.run(() => {
@@ -134,6 +139,12 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
     });
 
     this.statusService.updateExportS3Progress().subscribe(data => {
+      this.zone.run(() => {
+        this.exportToS3InProgress = true;
+      });
+    });
+
+    this.statusService.updateExportS3Complete().subscribe(data => {
       this.zone.run(() => {
         const items = new FilesDatabase(this.store).data
           .filter(item => item.type === Type.EXPORT_S3 && item.status === ItemStatus.PENDING);
@@ -219,8 +230,22 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   }
 
   cancelExportsToS3() {
-    this.gcsService.cancelExportToS3();
-    this.exportToS3InProgress = false;
+    const dialogRef = this.dialog.open(WarningModalComponent, {
+      width: '500px',
+      disableClose: true,
+      data: 'cancelAllExportsToS3'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      this.zone.run(() => {
+        if (result.exit) {
+          this.gcsService.cancelExportToS3();
+          this.exportToS3InProgress = false;
+          this.exportToS3Canceled = true;
+          this.gcsService.exportToS3Canceled = true;
+        }
+      });
+    });
   }
 
   stopAll() {

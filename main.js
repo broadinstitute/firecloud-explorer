@@ -8,7 +8,7 @@ const {
   downloadManager,
   destroyDownloads
 } = require('./electron_app/DownloadManager');
-const { ExportS3, testCredentials, exportS3Cancel } = require('./electron_app/ExportS3');
+const { ExportS3, testS3Credentials, exportS3Cancel } = require('./electron_app/ExportS3');
 const lazyNodeReader = require('./electron_app/FileSystemReader').lazyNodeReader;
 const constants = require('./electron_app/helpers/environment').constants;
 const os = require('os');
@@ -126,7 +126,7 @@ app.on('ready', function () {
   });
 
   ipcMain.on(constants.IPC_AWS_HANDLE_CREDENTIALS, (event, credentials) => {
-    testCredentials(credentials).then(
+    testS3Credentials(credentials).then(
       () => {
         win.webContents.send(constants.IPC_AWS_HANDLE_CREDENTIALS, null);
       },
