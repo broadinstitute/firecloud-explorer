@@ -33,8 +33,6 @@ export class FileDownloadModalComponent implements OnInit {
   msgs: Message[] = [];
   verify: DiskStatus;
   downloadFiles: Item[] = [];
-  filesMap: Map<String, Item>;
-
 
   constructor(
     private downloadValidator: DownloadValidatorService,
@@ -44,7 +42,7 @@ export class FileDownloadModalComponent implements OnInit {
     public router: Router,
     private preflightService: PreflightService,
     @Inject(MAT_DIALOG_DATA) public data: any) {
-    this.filesMap = new Map();
+
     const storedDirectory = localStorage.getItem('directory');
     if (storedDirectory !== null) {
       this.directory = storedDirectory;
@@ -53,7 +51,7 @@ export class FileDownloadModalComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.preflightService.processFiles(this.data);
+    this.preflightService.processFiles(this.data, Type.DOWNLOAD);
   }
 
   isLoading() {
@@ -67,8 +65,9 @@ export class FileDownloadModalComponent implements OnInit {
         this.verify = diskVerification;
         if (!this.verify.hasErr) {
           this.setItems();
-          this.transferablesGridComponent.startDownload(this.downloadFiles);
           this.dialogRef.close();
+          this.transferablesGridComponent.startDownload(this.downloadFiles);
+          //          this.dialogRef.close();
           this.router.navigate(['/status']);
         } else {
           this.msgs = [];
@@ -94,21 +93,26 @@ export class FileDownloadModalComponent implements OnInit {
   }
 
   setItems() {
+
+    const ids: string[] = [];
     this.updateCurrentBatch();
-    this.selectedFiles().filter(file => file.type === 'File')
-      .forEach(file => {
-        if (!this.filesMap.has(file.id)) {
-          this.filesMap.set(file.id, file);
-          const dataFile: Item = new Item(UUID.UUID(), file.name, file.updated, file.created,
-            file.size, file.mediaLink, file.path, this.directory,
-            Type.DOWNLOAD, ItemStatus.PENDING, '', '', '', this.preserveStructure, false, '', file.displayName, '',
-            true);
-          this.downloadFiles.push(dataFile);
-          this.store.dispatch(new Transferables.AddItem(dataFile));
-          this.done.emit(true);
-          this.router.navigate(['/status']);
-        }
-      });
+    this.selectedFiles()
+      .forEach(
+        file => {
+          if (file.type === 'File' && !ids.includes(file.id)) {
+
+            ids.push(file.id);
+
+            const dataFile: Item = new Item(UUID.UUID(), file.name, file.updated, file.created,
+              file.size, file.mediaLink, file.path, this.directory,
+              Type.DOWNLOAD, ItemStatus.PENDING, '', '', '', this.preserveStructure, false, '', file.displayName, '',
+              true, Type.IDOWNLOAD, ItemStatus.IPENDING);
+
+            this.store.dispatch(new Transferables.AddItem(dataFile));
+            this.downloadFiles.push(dataFile);
+          }
+        });
+
     this.done.emit(true);
     this.router.navigate(['/status']);
   }

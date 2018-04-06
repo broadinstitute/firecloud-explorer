@@ -24,9 +24,9 @@ export class PreflightService {
 
   selectedFiles: Item[] = [];
   constructor(private bucketService: BucketService,
-              private store: Store<AppState>) { }
+    private store: Store<AppState>) { }
 
-  processFiles(data) {
+  processFiles(data, itemType) {
     this.initializeValues();
     /**
      * we filter incoming files to remove some unwanted, aux, files
@@ -44,26 +44,26 @@ export class PreflightService {
       .filter(item => item.id !== 'workspaces')
       .map(
       item => {
-        /**
-         * if item.path === '', it means the item is not really a bucket object
-         * but a reference to the bucket itself in order to be included in first
-         * page table, where all workspaces / buckets are shown.
-         * Since we are using same table / breadcrumb structure to show items
-         * obtained from FireCloud (workspaces) and from GCS (files per bucket)
-         * we are using some tricks like this to make data models behaves equal.
-         */
-        if (item.path === '') {
-          /*
-          * We need to return a cloned and modified object here
-          * to not "spoil" the original object since object usage
-          * is not the same:
-          * Object usage in Selection and breadcrumbs is different
-          * than the one in Downloading.
-          */
-          return this.cloneItem(item);
+          /**
+           * if item.path === '', it means the item is not really a bucket object
+           * but a reference to the bucket itself in order to be included in first
+           * page table, where all workspaces / buckets are shown.
+           * Since we are using same table / breadcrumb structure to show items
+           * obtained from FireCloud (workspaces) and from GCS (files per bucket)
+           * we are using some tricks like this to make data models behaves equal.
+           */
+          if (item.path === '') {
+            /*
+            * We need to return a cloned and modified object here
+            * to not "spoil" the original object since object usage
+            * is not the same:
+            * Object usage in Selection and breadcrumbs is different
+            * than the one in Downloading.
+            */
+            return this.cloneItem(item);
+          }
+          return item;
         }
-        return item;
-      }
       )
       .sort((itemA, itemB) => itemA.path.localeCompare(itemB.path));
 
@@ -79,9 +79,9 @@ export class PreflightService {
       .forEach(
       item => {
         if (item.type === 'File') {
-          this.addToSelectedFiles(item);
+          this.addToSelectedFiles(item, itemType);
         } else {
-          this.getFiles(item);
+          this.getFiles(item, itemType);
         }
       });
 
@@ -89,7 +89,7 @@ export class PreflightService {
   }
 
 
-  getFiles(folderItem: Item) {
+  getFiles(folderItem: Item, itemType) {
     let retrievedItems: Item[] = [];
 
     this.loadingFolders++;
@@ -105,16 +105,23 @@ export class PreflightService {
           retrievedItems
             .forEach(
               child => {
-                this.addToSelectedFiles(child);
+                this.addToSelectedFiles(child, itemType);
               });
           this.loadingFolders--;
         }
       );
   }
 
-  addToSelectedFiles(item: Item) {
+  addToSelectedFiles(item: Item, itemType) {
     const found: Item = this.selectedFiles.find(x => x.mediaLink === item.mediaLink);
     if (found === undefined) {
+/* TODO
+      if (itemType === Type.EXPORT_GCP) {
+        item.type = Type.EXPORT_GCP;
+        item.status = ItemStatus.PENDING;
+        this.store.dispatch(new Transferables.AddItem(item));
+      }
+*/
       this.selectedFiles.push(item);
       this.fileCount++;
       this.totalSize += Number(item.size);
@@ -180,7 +187,9 @@ export class PreflightService {
       item.workspaceName,
       item.displayName,
       item.namespace,
-      false);
+      false,
+      item.itype,
+      item.istatus);
   }
 
   initializeValues() {

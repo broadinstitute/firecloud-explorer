@@ -17,8 +17,11 @@ import { Type } from '@app/file-manager/models/type';
 import { ItemStatus } from '@app/file-manager/models/item-status';
 import { S3ExportService } from '@app/file-manager/services/s3-export.service';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { WarningModalComponent } from '../warning-modal/warning-modal.component';
 import { ProgressBar } from 'primeng/primeng';
+import { Observable } from 'rxjs/Observable';
+import { WarningModalComponent } from '@app/file-manager/warning-modal/warning-modal.component';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { TransferableState } from '../reducers/transferables.reducer';
 
 @Component({
   selector: 'app-transferalbes-grid',
@@ -34,6 +37,7 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   @ViewChild('pbg') pbg: ProgressBar;
 
   displayedColumns = ['name', 'size', 'status', 'progress', 'actions'];
+
   dataSource = new MatTableDataSource([]);
   filesDatabase: FilesDatabase;
   generalProgress = 0;
@@ -45,6 +49,40 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   exportToS3InProgress = false;
   exportToGcpItems = new FilesDatabase(this.store);
   exportToS3Canceled = false;
+
+  itemsObs: Observable<TransferableState>;
+
+  initialState: TransferableState = {
+    count: 0,
+    selectedCount: 0,
+    downloadingCount: 0,
+    uploadingCount: 0,
+    exportingGCPCount: 0,
+    toDownloadCount: 0,
+    toUploadCount: 0,
+    toExportS3Count: 0,
+    exportingS3Count: 0,
+    toExportGCPCount: 0,
+    counter: [
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0]
+  
+    ],
+    items: [],
+    itemsMap: []
+  };
+
+  stateChange: BehaviorSubject<TransferableState>
+    = new BehaviorSubject<TransferableState>(this.initialState);
+
+  modeVariable = 'determinate';
+  generalExportToGCPProgress = 0;
+  INDETERMINATE = 'indeterminate';
+  DETERMINATE = 'determinate';
   exportItems = [];
   uploadCanceled = false;
   downloadCanceled = false;
@@ -61,6 +99,7 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
     private spinner: NgxSpinnerService,
     private dialog: MatDialog) {
     this.filesDatabase = new FilesDatabase(store);
+
   }
 
   load() {

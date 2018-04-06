@@ -67,6 +67,7 @@
     "progress-stream": "^2.0.0",
     "request": "^2.83.0",
     "rxjs": "^5.5.5",
+    "s3-upload-stream": "^1.0.7",
     "urlencode": "^1.1.0",
     "uuid": "^3.1.0",
     "web-animations-js": "^2.2.5",
