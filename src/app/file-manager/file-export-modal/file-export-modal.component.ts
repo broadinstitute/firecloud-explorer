@@ -17,6 +17,7 @@ import { ItemStatus } from '@app/file-manager/models/item-status';
 import { Store } from '@ngrx/store';
 import { AppState } from '@app/file-manager/dbstate/app-state';
 import * as Transferables from '../actions/transferables.actions';
+import { UUID } from 'angular2-uuid';
 
 @Component({
   selector: 'app-file-export-modal',
@@ -176,10 +177,13 @@ export class FileExportModalComponent implements OnInit {
     );
   }
 
-  dispatchFiles(type: string) {
+  dispatchFiles (type: string) {
+    this.transferablesGridComponent.updateCurrentBatch(type);
     this.selectedFiles().forEach(file => {
+      file.id = UUID.UUID();
       file.type = type;
       file.status = ItemStatus.PENDING;
+      file.currentBatch = true;
       this.store.dispatch(new Transferables.AddItem(file));
       this.done.emit(true);
       this.router.navigate(['/status']);

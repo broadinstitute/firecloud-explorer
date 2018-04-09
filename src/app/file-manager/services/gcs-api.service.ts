@@ -161,7 +161,16 @@ export class GcsApiService extends GcsService {
         'Authorization': 'Bearer ' + SecurityService.getAccessToken()
       })
     };
-    return this.http.post(url, null, httpOptions);
+    /**
+    * Retry option is added to the http post in order to minimize impact due to Chromium limitations when exporting a large amount
+    * of files between Google Buckets.
+    * By default angular's http client will retry multiple times before dropping this request. Meanwhile,
+    * the app will continue sending more posts from other exports (these might fail too), causing a request memory overflow
+    * leading to "Memory out of Resources" chromium's error.
+    * The idea here is to retry only once if the request fails, stopping any request flood, leaving the retry requests to a separate
+    * action performed by the user.
+    **/
+    return this.http.post(url, null, httpOptions).retry(1);
   }
 
   public exportToGCPFiles(destinationBucket: string, fileList: Item[]) {
@@ -182,6 +191,7 @@ export class GcsApiService extends GcsService {
           });
         },
         err => {
+          // Todo: handle failed requests
           console.log(err);
         });
     });

@@ -87,7 +87,7 @@ export class StatusService {
     let totalSize = 0;
     let totalTransferred = 0;
     new FilesDatabase(this.store).data.
-      filter(item => item.type === type)
+      filter(item => item.type === type && item.currentBatch)
       .forEach(item => {
         totalSize += Number(item.size);
         totalTransferred += Number(item.transferred);
