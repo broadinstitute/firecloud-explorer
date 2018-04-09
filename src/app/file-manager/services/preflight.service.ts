@@ -5,7 +5,7 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Type } from '@app/file-manager/models/type';
 import { ItemStatus } from '@app/file-manager/models/item-status';
 import { Store } from '@ngrx/store';
-import { AppState } from '../dbstate/app-state';
+import { AppState } from '@app/file-manager/reducers';
 import * as Transferables from '../actions/transferables.actions';
 
 @Injectable()

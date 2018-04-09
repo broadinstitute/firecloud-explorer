@@ -18,7 +18,7 @@ import { FileExportModalComponent } from '@app/file-manager/file-export-modal/fi
 import { TransferablesGridComponent } from '@app/file-manager/transferables-grid/transferables-grid.component';
 import { FilesDatabase } from '@app/file-manager/dbstate/files-database';
 import { Type } from '@app/file-manager/models/type';
-import { AppState } from '../dbstate/app-state';
+import { AppState } from '@app/file-manager/reducers';
 import { Store } from '@ngrx/store';
 import * as Transferables from '../actions/transferables.actions';
 

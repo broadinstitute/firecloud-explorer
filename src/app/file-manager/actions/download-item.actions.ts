@@ -1,33 +1,35 @@
-// Transferables.actions.ts
 import { Action } from '@ngrx/store';
+import { DownloadItem } from '../models/download-item';
 
-export const LOAD = '[Transferables] Load';
-export const FILTER = '[Transferables] Filter';
-export const RESET = '[Transferables] Reset';
-export const SELECT_ALL = '[Transferables] Select All';
-export const UNSELECT_ALL = '[Transferables] Unselect All';
-export const TOGGLE_SELECTION = '[Transferables] Toggle Selection';
-export const TOGGLE_ITEM_SELECTION = '[Transferables] Toggle Item Selection';
-export const ADD_ITEM = '[Transferables] Add Item';
-export const ADD_ITEMS = '[Transferables] Add Items';
-export const UPDATE_ITEM = '[Transferables] Update Item';
-export const REMOVE_ITEM = '[Transferables] Remove Item';
-export const SELECT_ITEM = '[Transferables] Select Item';
-export const UPDATE_ITEM_PROGRESS = '[Transferables] Update Item Progress';
-export const UPDATE_ITEM_COMPLETED = '[Transferables] Update Item Completed';
-export const UPDATE_ITEM_DOWNLOADING = '[Transferables] Update Item Downloading';
-export const UPDATE_ITEM_CANCELED =  '[Transferables] Update Item Canceled';
+export const LOAD = '[Download] Load';
+export const FILTER = '[Download] Filter';
+export const RESET = '[Download] Reset';
+export const SELECT_ALL = '[Download] Select All';
+export const UNSELECT_ALL = '[Download] Unselect All';
+export const TOGGLE_SELECTION = '[Download] Toggle Selection';
+export const TOGGLE_ITEM_SELECTION = '[Download] Toggle Item Selection';
+export const ADD_ITEM = '[Download] Add Item';
+export const UPDATE_ITEM = '[Download] Update Item';
+export const REMOVE_ITEM = '[Download] Remove Item';
+export const SELECT_ITEM = '[Download] Select Item';
+export const UPDATE_ITEM_PROGRESS = '[Download] Update Item Progress';
+export const UPDATE_ITEM_COMPLETED = '[Download] Update Item Completed';
+export const UPDATE_ITEM_DOWNLOADING = '[Download] Update Item Downloading';
+export const UPDATE_ITEM_CANCELED =  '[Download] Update Item Canceled';
 
 export class Load implements Action {
     readonly type = LOAD;
+    constructor(public payload: { item: DownloadItem }) {}
 }
 
 export class Filter implements Action {
     readonly type = FILTER;
+    constructor(public payload: { item: DownloadItem }) {}
 }
 
 export class Reset implements Action {
     readonly type = RESET;
+    constructor(public payload: { item: DownloadItem }) {}
 }
 
 export class SelectAll implements Action {
@@ -36,10 +38,12 @@ export class SelectAll implements Action {
 
 export class UnselectAll implements Action {
     readonly type = UNSELECT_ALL;
+    constructor(public payload: { item: DownloadItem }) {}
 }
 
 export class ToggleSelection implements Action {
     readonly type = TOGGLE_SELECTION;
+    constructor(public payload: any) { }
 }
 
 export class ToggleItemSelection implements Action {
@@ -49,31 +53,21 @@ export class ToggleItemSelection implements Action {
 
 export class AddItem implements Action {
     readonly type = ADD_ITEM;
-
-    constructor(public payload: any) { }
-}
-
-export class AddItems implements Action {
-    readonly type = ADD_ITEMS;
-
     constructor(public payload: any) { }
 }
 
 export class UpdateItem implements Action {
     readonly type = UPDATE_ITEM;
-
     constructor(public payload: any) { }
 }
 
 export class RemoveItem implements Action {
     readonly type = REMOVE_ITEM;
-
     constructor(public payload: any) { }
 }
 
 export class SelectItem implements Action {
     readonly type = SELECT_ITEM;
-
     constructor(public payload: any) { }
 }
 
@@ -110,7 +104,6 @@ export type All
     | ToggleSelection
     | ToggleItemSelection
     | AddItem
-    | AddItems
     | UpdateItem
     | RemoveItem
     | SelectItem

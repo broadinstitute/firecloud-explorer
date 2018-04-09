@@ -15,7 +15,12 @@ import 'rxjs/add/operator/retry';
 import { Type } from '@app/file-manager/models/type';
 import { ItemStatus } from '@app/file-manager/models/item-status';
 import { WarningModalComponent } from '@app/file-manager/warning-modal/warning-modal.component';
-import { MatDialog, MatDialogRef  } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material';
+import { forkJoin } from 'rxjs/observable/forkJoin';
+import { concatMap } from 'rxjs/operators';
+import { UpdateItemProgress } from '../actions/transferables.actions';
+
+
 const constants = require('../../../../electron_app/helpers/environment').constants;
 
 @Injectable()
@@ -61,11 +66,11 @@ export class GcsApiService extends GcsService {
 
   public cancelAll() {
     if (new FilesDatabase(this.store).data.filter(item =>
-           item.status === ItemStatus.PENDING
-        || item.status === ItemStatus.DOWNLOADING
-        || item.status === ItemStatus.UPLOADING
-        || item.status === ItemStatus.EXPORTING_GCP
-        || item.status === ItemStatus.EXPORTING_S3).length > 0) {
+      item.status === ItemStatus.PENDING
+      || item.status === ItemStatus.DOWNLOADING
+      || item.status === ItemStatus.UPLOADING
+      || item.status === ItemStatus.EXPORTING_GCP
+      || item.status === ItemStatus.EXPORTING_S3).length > 0) {
 
       this.electronService.ipcRenderer.send(constants.IPC_DOWNLOAD_CANCEL);
       this.cancelItemsStatus(Type.DOWNLOAD);
@@ -151,35 +156,54 @@ export class GcsApiService extends GcsService {
 
   public exportToGCP(destinationBucket: string, file: Item): Observable<any> {
     const sourceObject = file.path.substring(file.path.indexOf('/') + 1, file.path.length);
-    const destinationObject =  localStorage.getItem('preserveStructure') === 'true' ? sourceObject : file.displayName;
+    const destinationObject = localStorage.getItem('preserveStructure') === 'true' ? sourceObject : file.displayName;
     const url = environment.GOOGLE_URL + 'storage/v1/b/' + file.bucketName + '/o/' +
       encodeURIComponent(sourceObject) + '/rewriteTo/b/' + encodeURIComponent(destinationBucket) +
-      '/o/' + encodeURIComponent('Imports/' + destinationObject) + '?fields=done';
+      '/o/' + encodeURIComponent('Imports/' + destinationObject); + '?fields=done,totalBytesRewritten,resource.id';
     const httpOptions = {
       headers: new HttpHeaders({
         'Authorization': 'Bearer ' + SecurityService.getAccessToken()
       })
     };
+
     return this.http.post(url, null, httpOptions).retry(1);
   }
 
   public exportToGCPFiles(destinationBucket: string, fileList: Item[]) {
+    let reqs = [];
     let responseCompleted = 0;
-    fileList.forEach(file => {
-      this.exportToGCP(destinationBucket, file)
-        .subscribe(
-        data => {
-            if (data.done) {
-              responseCompleted++;
-              this.store.dispatch(new Transferables.UpdateItemCompleted(file));
-              if (responseCompleted === fileList.length) {
-                this.exportItemCompleted.next(true);
-              }
-            }
+
+    // // fileList.forEach(file => {
+    // //   reqs.push(this.exportToGCP(destinationBucket, file).map(r => {
+    //     return { id: r.id, data: r };
+    //   })));
+    // // });
+
+    let rq2 = Observable.from(fileList).pipe(concatMap(file => this.exportToGCP(destinationBucket, file)));
+
+    // forkJoin(reqs).subscribe(
+    //   data => {
+    //     console.log('------------------------- before -----------------------');
+    //     console.log(JSON.stringify(data, null, 2));
+    //     console.log('------------------------- after  -----------------------');
+    //   },
+    //   err => {
+    //     console.log(err);
+    //   },
+    //   () => {
+    //     //this.exportItemCompleted.next(true);
+    //   });
+
+      rq2.subscribe(
+        res =>{
+          this.store.dispatch(new Transferables.UpdateItemCompleted({id: res.id, size: res.totalBytesRewritten}));
         },
         err => {
           console.log(err);
-        });
-    });
+        },
+        () => {
+          console.log("-------------- termine --------------");
+        }
+      );
   }
 }

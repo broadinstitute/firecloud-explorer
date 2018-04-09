@@ -54,7 +54,7 @@ export class TransferableState {
     get toExportS3Count(): number {
         let m = 0;
         this.counter[Type.IEXPORT_S3].forEach(n => m += n);
-        return m;  
+        return m;
     }
 
 
@@ -72,65 +72,65 @@ export class TransferableState {
 }
 
 function sortList(items: Item[]) {
-  items.sort((a, b) => {
-    switch (a.status) {
-      case ItemStatus.DOWNLOADING:
-        if (b.status === a.status) {
-          return 0;
-        } else {
-          return -1;
+    items.sort((a, b) => {
+        switch (a.status) {
+            case ItemStatus.DOWNLOADING:
+                if (b.status === a.status) {
+                    return 0;
+                } else {
+                    return -1;
+                }
+            case ItemStatus.UPLOADING:
+                if (b.status === a.status) {
+                    return 0;
+                } else if (b.status === ItemStatus.DOWNLOADING) {
+                    return 1;
+                } else {
+                    return -1;
+                }
+            case ItemStatus.EXPORTING_GCP:
+                if (b.status === a.status) {
+                    return 0;
+                } else if (b.status === ItemStatus.DOWNLOADING || ItemStatus.UPLOADING || ItemStatus.EXPORTING_S3) {
+                    return 1;
+                } else {
+                    return -1;
+                }
+            case ItemStatus.EXPORTING_S3:
+                if (b.status === a.status) {
+                    return 0;
+                } else if (b.status === ItemStatus.DOWNLOADING || b.status === ItemStatus.UPLOADING
+                    || b.status === ItemStatus.EXPORTING_GCP) {
+                    return 1;
+                } else {
+                    return -1;
+                }
+            case ItemStatus.PENDING:
+                if (b.status === a.status) {
+                    return 0;
+                } else if (b.status === ItemStatus.DOWNLOADING || b.status === ItemStatus.UPLOADING
+                    || b.status === ItemStatus.EXPORTING_GCP ||
+                    ItemStatus.EXPORTING_S3) {
+                    return 1;
+                } else {
+                    return -1;
+                }
+            case ItemStatus.COMPLETED:
+                if (b.status === a.status) {
+                    return 0;
+                } else if (b.status === ItemStatus.CANCELED) {
+                    return -1;
+                } else {
+                    return 1;
+                }
+            case ItemStatus.CANCELED:
+                if (b.status === a.status) {
+                    return 0;
+                } else {
+                    return 1;
+                }
         }
-      case ItemStatus.UPLOADING:
-        if (b.status === a.status) {
-          return 0;
-        } else if (b.status === ItemStatus.DOWNLOADING) {
-          return 1;
-        } else {
-          return -1;
-        }
-      case ItemStatus.EXPORTING_GCP:
-        if (b.status === a.status) {
-          return 0;
-        } else if (b.status === ItemStatus.DOWNLOADING || ItemStatus.UPLOADING || ItemStatus.EXPORTING_S3) {
-          return 1;
-        } else {
-          return -1;
-        }
-      case ItemStatus.EXPORTING_S3:
-        if (b.status === a.status) {
-          return 0;
-        } else if (b.status === ItemStatus.DOWNLOADING || b.status === ItemStatus.UPLOADING
-          || b.status === ItemStatus.EXPORTING_GCP) {
-          return 1;
-        } else {
-          return -1;
-        }
-      case ItemStatus.PENDING:
-        if (b.status === a.status) {
-          return 0;
-        } else if (b.status === ItemStatus.DOWNLOADING || b.status === ItemStatus.UPLOADING
-          || b.status === ItemStatus.EXPORTING_GCP ||
-          ItemStatus.EXPORTING_S3) {
-          return 1;
-        } else {
-          return -1;
-        }
-      case ItemStatus.COMPLETED:
-        if (b.status === a.status) {
-          return 0;
-        } else if (b.status === ItemStatus.CANCELED) {
-          return -1;
-        } else {
-          return 1;
-        }
-      case ItemStatus.CANCELED:
-        if (b.status === a.status) {
-          return 0;
-        } else {
-          return 1;
-        }
-    }
-  });
+    });
 }
 
 const initialCounter = [
@@ -144,16 +144,16 @@ const initialCounter = [
 ];
 
 const initialState: TransferableState = {
-  count: 0,
-  selectedCount: 0,
-  downloadingCount: 0,
-  uploadingCount: 0,
-  exportingGCPCount: 0,
-  toExportGCPCount: 0,
-  toDownloadCount: 0,
-  toUploadCount: 0,
-  toExportS3Count: 0,
-  exportingS3Count: 0,
+    count: 0,
+    selectedCount: 0,
+    downloadingCount: 0,
+    uploadingCount: 0,
+    exportingGCPCount: 0,
+    toExportGCPCount: 0,
+    toDownloadCount: 0,
+    toUploadCount: 0,
+    toExportS3Count: 0,
+    exportingS3Count: 0,
     counter: [
         [0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -161,7 +161,7 @@ const initialState: TransferableState = {
         [0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0]
-    
+
     ],
     items: [],
     itemsMap: []
@@ -210,6 +210,14 @@ export function TransferablesReducer(state = initialState, action: Action): Tran
             state.counter[action.payload.itype][action.payload.istatus]++;
             state.items = [...state.items, action.payload];
             state.itemsMap = { ...state.itemsMap, [action.payload.id]: action.payload };
+            break;
+
+        case TransferablesActions.ADD_ITEMS:
+            state.counter[action.payload.itype][action.payload.istatus] += action.payload.items.length;
+            state.items = [...state.items, ...action.payload.items];
+            action.payload.items.forEach(element => {
+                state.itemsMap = { ...state.itemsMap, [element.id]: element };
+            });
             break;
 
         case TransferablesActions.UPDATE_ITEM:

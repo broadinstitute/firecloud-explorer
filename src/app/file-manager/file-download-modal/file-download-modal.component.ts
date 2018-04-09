@@ -3,7 +3,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { Item } from '@app/file-manager/models/item';
 import * as Transferables from '../actions/transferables.actions';
 import { Store } from '@ngrx/store';
-import { AppState } from '../dbstate/app-state';
+import { AppState } from '@app/file-manager/reducers';
 import { Message } from 'primeng/components/common/api';
 import { DiskStatus } from '../models/diskStatus';
 import { DownloadValidatorService } from '@app/file-manager/services/download-validator.service';

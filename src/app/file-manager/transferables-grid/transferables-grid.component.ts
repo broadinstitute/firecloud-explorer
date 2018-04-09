@@ -10,7 +10,7 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/observable/merge';
 import { GcsService } from '@app/file-manager/services/gcs.service';
 import { StatusService } from '../services/status.service';
-import { AppState } from '../dbstate/app-state';
+import { AppState } from '@app/file-manager/reducers';
 import { FilesDatabase } from '../dbstate/files-database';
 import { LimitTransferablesService } from '../services/limit-transferables.service';
 import { Type } from '@app/file-manager/models/type';
@@ -72,7 +72,7 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
       [0, 0, 0, 0, 0, 0, 0, 0, 0],
       [0, 0, 0, 0, 0, 0, 0, 0, 0],
       [0, 0, 0, 0, 0, 0, 0, 0, 0]
-  
+
     ],
     items: [],
     itemsMap: []

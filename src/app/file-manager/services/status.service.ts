@@ -4,7 +4,7 @@ import { Observable } from 'rxjs/Observable';
 import { Item } from '../models/item';
 import * as Transferables from '../actions/transferables.actions';
 import { Store } from '@ngrx/store';
-import { AppState } from '../dbstate/app-state';
+import { AppState } from '@app/file-manager/reducers';
 import { FilesDatabase } from '../dbstate/files-database';
 import { Type } from '@app/file-manager/models/type';
 import { LimitTransferablesService } from '@app/file-manager/services/limit-transferables.service';

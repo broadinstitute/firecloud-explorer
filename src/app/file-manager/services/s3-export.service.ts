@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Item } from '@app/file-manager/models/item';
 import { SecurityService } from '@app/file-manager/services/security.service';
 import { ElectronIpcApiService } from '@app/file-manager/services/electron-ipc.api.service';
-import { AppState } from '../dbstate/app-state';
+import { AppState } from '@app/file-manager/reducers';
 import { Store } from '@ngrx/store';
 
 @Injectable()

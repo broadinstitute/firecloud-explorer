@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import * as Transferables from '../actions/transferables.actions';
 import { Item } from '../models/item';
 import { Store } from '@ngrx/store';
-import { AppState } from '../dbstate/app-state';
+import { AppState } from '@app/file-manager/reducers';
 import { FilesDatabase } from '../dbstate/files-database';
 import { ItemStatus } from '@app/file-manager/models/item-status';
 import { GcsService } from '@app/file-manager/services/gcs.service';

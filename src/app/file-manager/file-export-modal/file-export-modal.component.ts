@@ -15,7 +15,7 @@ import { BucketService } from '@app/file-manager/services/bucket.service';
 import { PreflightService } from '@app/file-manager/services/preflight.service';
 import { ItemStatus } from '@app/file-manager/models/item-status';
 import { Store } from '@ngrx/store';
-import { AppState } from '@app/file-manager/dbstate/app-state';
+import { AppState } from '@app/file-manager/reducers';
 import * as Transferables from '../actions/transferables.actions';
 import { DownloadValidatorService } from '@app/file-manager/services/download-validator.service';
 import { FilesDatabase } from '../dbstate/files-database';
@@ -182,20 +182,27 @@ export class FileExportModalComponent implements OnInit {
   }
 
 
-  dispatchFiles (type: string) {
+  dispatchFiles(type: string) {
     this.updateCurrentBatch(type);
+    let filesToExport = [];
     this.selectedFiles().forEach(file => {
-      file.id = UUID.UUID();
+      //file.id = UUID.UUID();
       file.type = type;
       file.status = ItemStatus.PENDING;
       file.istatus = ItemStatus.IPENDING;
-      file.itype = type === Type.EXPORT_GCP ? Type.IEXPORT_GCP: Type.IEXPORT_S3;
+      file.itype = type === Type.EXPORT_GCP ? Type.IEXPORT_GCP : Type.IEXPORT_S3;
       file.currentBatch = true;
-      this.store.dispatch(new Transferables.AddItem(file));
-      this.done.emit(true);
-      this.router.navigate(['/status']);
+      filesToExport.push(file);
     });
-    this.done.emit(true);
+    this.store.dispatch(new Transferables.AddItems(
+      {
+        state: ItemStatus.IPENDING,
+        itype: type === Type.EXPORT_GCP ? Type.IEXPORT_GCP : Type.IEXPORT_S3,
+        items: filesToExport
+      }
+    ));
+    //    this.done.emit(true);
+    this.router.navigate(['/status']);
   }
 
   isLoading() {
@@ -228,10 +235,11 @@ export class FileExportModalComponent implements OnInit {
 
   updateCurrentBatch(type) {
     const items = new FilesDatabase(this.store).data.filter(item => item.type === type && item.currentBatch
-                  && item.status === ItemStatus.COMPLETED || item.status === ItemStatus.CANCELED);
+      && item.status === ItemStatus.COMPLETED || item.status === ItemStatus.CANCELED);
     items.forEach(item => {
       item.currentBatch = false;
       this.store.dispatch(new Transferables.UpdateItem(item));
     });
   }
 }
+
