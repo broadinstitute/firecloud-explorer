@@ -1,35 +1,31 @@
-const fs = require('fs');
-const path = require('path');
-const electron = require('electron');
-const { downloadManager } = require('./DownloadManager');
 let AWS = require('aws-sdk');
+let s3Stream = require('s3-upload-stream');
 AWS.config.httpOptions = { timeout: 5000 };
 const constants = require('./helpers/environment').constants;
-var s3List = [];
+const request = require('request');
+
+let s3List = [];
 let s3 = null;
 
 let electronWin = null;
-let tempPath = (electron.app || electron.remote.app).getPath('userData');
-const pathTemp = tempPath;
+let gcsToken = null;
 const ExportS3 = (win, data) => {
   electronWin = win;
-  if (data.item.progress === 100) {
-    uploadS3(data);
-  } else {
-    manageDownloadProcess(data); // TODO Manage failed downloads to export
-  }
+  gcsToken = data.gcsToken;
+  uploadS3(data);
 };
 
-const testCredentials = (data) => {
+const testS3Credentials = (data) => {
   let errorMessage = null;
+  AWS.config.update({ accessKeyId: data.accessKey, secretAccessKey: data.secretKey });
+  
   s3 = new AWS.S3({
-    accessKeyId: data.accessKey,
-    secretAccessKey: data.secretKey,
     params: { Bucket: data.bucketName }
   });
+
   // BucketLocation is innocuous
   return new Promise((resolve, reject) => {
-    s3.getBucketLocation({ Bucket: this.bucketName }, function (err) {
+    s3.getBucketLocation({ Bucket: this.bucketName }, (err) => {
       if (err) {
         console.log('ERROR', err.message);
         // Three of these errors has the same error code (403) coming from AWS servers, so we identify them by their name on its properties.
@@ -58,39 +54,45 @@ const testCredentials = (data) => {
   });
 };
 
-const manageDownloadProcess = (data) => {
-  data.item.destination = path.join(tempPath, 'TempFolder');
-  data.item.preserveStructure = false;
-  downloadManager([data.item], data.gcsToken, electronWin);
-};
-
 const uploadS3 = (data) => {
+  s3Stream = require('s3-upload-stream')(s3);
   const filePathExport = data.preserveStructure ? data.item.path : data.item.displayName;
-  const tempFilePath = path.join(tempPath, 'TempFolder', data.item.displayName);
-  const fileStream = fs.createReadStream(tempFilePath);
-  const putParams = {
+  let url = data.item.mediaLink;
+
+  let uploadStream = s3Stream.upload({
     Bucket: data.bucketName,
-    Key: 'Imports/' + filePathExport,
-    Body: fileStream
-  };
-  fileStream.on('error', (error) => { console.log(error) });
-  s3.putObject(putParams, (putErr, putData) => {
-    if (putErr) console.log(putErr);
-    else {
-      removeFile(tempFilePath, data.item);
-    }
+    Key: 'Imports/' + filePathExport
+  });
+
+  request.get(url, setHeader(data.gcsToken))
+  .on('error', (err) => {
+    console.error(err);
+  }).pipe(uploadStream);
+  // Handle errors.
+  uploadStream.on('error', (error) => {
+    console.error(error);
+  });
+
+  uploadStream.on('part', (details) => {
+    // the message is send when the first 5MB has already been transferred
+    electronWin.webContents.send(constants.IPC_EXPORT_S3_DOWNLOAD_STATUS, data.item);
+  });
+
+  uploadStream.on('uploaded', (details) => {
+    data.item.status = 'Exported to S3';
+    data.item.progress = 100;
+    electronWin.webContents.send(constants.IPC_EXPORT_S3_COMPLETE, data.item);
   });
   s3List.push(s3);
 };
 
-const removeFile = (filePath, item) => {
-  fs.unlink(filePath, (err) => {
-    if (err)
-      console.log('Error removing file ', err);
-    tempPath = pathTemp;
-    item.status = 'Exported to S3';
-    electronWin.webContents.send(constants.IPC_EXPORT_S3_DOWNLOAD_STATUS, item);
-  });
+const setHeader = (access_token) => {
+  return {
+    port: 443,
+    headers: {
+      'Authorization': 'Bearer ' + access_token,
+    }
+  };
 };
 
 const exportS3Cancel = () => {
@@ -98,4 +100,4 @@ const exportS3Cancel = () => {
     s3.abortMultipartUpload();
   });
 };
-module.exports = { ExportS3, testCredentials, exportS3Cancel };
+module.exports = { ExportS3, testS3Credentials, exportS3Cancel };

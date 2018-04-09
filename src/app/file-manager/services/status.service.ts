@@ -41,11 +41,20 @@ export class StatusService {
     this.electronService.ipcRenderer.removeAllListeners(constants.IPC_EXPORT_S3_DOWNLOAD_STATUS);
     return Observable.create((observer) => {
       this.electronService.ipcRenderer.on(constants.IPC_EXPORT_S3_DOWNLOAD_STATUS, (event, data) => {
+        observer.next(this.generalProgress(Type.EXPORT_S3));
+      });
+    });
+  }
+
+  updateExportS3Complete(): Observable<any> {
+    this.electronService.ipcRenderer.removeAllListeners(constants.IPC_EXPORT_S3_COMPLETE);
+    return Observable.create((observer) => {
+      this.electronService.ipcRenderer.on(constants.IPC_EXPORT_S3_COMPLETE, (event, data) => {
         if (data.status === ItemStatus.EXPORTED_S3) {
           this.updateItem(data, Type.EXPORT_S3, ItemStatus.EXPORTING_S3);
         } else {
           const existentItem = new FilesDatabase(this.store).data.
-                               filter(item => item.type === Type.EXPORT_S3 && item.id === data.id)[0];
+          filter(item => item.type === Type.EXPORT_S3 && item.id === data.id)[0];
           if (existentItem.status === ItemStatus.EXPORTING_S3) {
             this.s3Service.startUpload(data);
           }

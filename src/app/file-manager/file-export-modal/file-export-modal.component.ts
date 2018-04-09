@@ -17,8 +17,6 @@ import { ItemStatus } from '@app/file-manager/models/item-status';
 import { Store } from '@ngrx/store';
 import { AppState } from '@app/file-manager/dbstate/app-state';
 import * as Transferables from '../actions/transferables.actions';
-import { DownloadValidatorService } from '@app/file-manager/services/download-validator.service';
-
 
 @Component({
   selector: 'app-file-export-modal',
@@ -47,8 +45,7 @@ export class FileExportModalComponent implements OnInit {
     private electronIpc: ElectronIpcApiService,
     private s3Service: S3ExportService,
     private store: Store<AppState>,
-    private preflightService: PreflightService,
-    private downloadValidator: DownloadValidatorService) {
+    private preflightService: PreflightService) {
     this.keyAccessCtrl = new FormControl();
   }
 
@@ -86,16 +83,7 @@ export class FileExportModalComponent implements OnInit {
     if (this.exportForm.get('exportDestination').value === 1) {
       this.exportToGCPFiles();
     } else {
-      this.downloadValidator.verifyDisk(null, Math.max.apply(Math, this.preflightService.selectedFiles.map(o => o.size))).then(
-        diskVerification => {
-          if (!diskVerification.hasErr) {
-            this.exportToS3();
-          } else {
-            this.disableCancel = false;
-            this.msgs = [];
-            this.createWarningMsg(diskVerification.errMsg);
-          }
-        });
+      this.exportToS3();
     }
   }
 

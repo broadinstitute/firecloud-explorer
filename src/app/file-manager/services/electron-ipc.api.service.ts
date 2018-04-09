@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { ElectronService } from 'ngx-electron';
 import { ElectronIpcService } from '@app/file-manager/services/electron-ipc.service';
 import { Observable } from 'rxjs/Observable';
+import { SecurityService } from '@app/file-manager/services/security.service';
 const constants = require('../../../../electron_app/helpers/environment').constants;
 
 @Injectable()
@@ -41,15 +42,6 @@ export class ElectronIpcApiService extends ElectronIpcService {
 
   public exportS3(dataTransfer: any): void {
     this.electronService.ipcRenderer.send(constants.IPC_EXPORT_S3, dataTransfer);
-  }
-
-  public exportS3NextItem(): Observable<any> {
-    return Observable.create(obs => {
-      this.electronService.ipcRenderer.removeAllListeners(constants.IPC_EXPORT_S3);
-      this.electronService.ipcRenderer.on(constants.IPC_EXPORT_S3, (event, data) => {
-        obs.next(data);
-      });
-    });
   }
 
   public setCredentials(credentials): void {

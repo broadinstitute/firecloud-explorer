@@ -20,6 +20,7 @@ const constants = require('../../../../electron_app/helpers/environment').consta
 
 @Injectable()
 export class GcsApiService extends GcsService {
+
   constructor(private http: HttpClient,
     private electronService: ElectronService,
     private store: Store<any>,
@@ -100,7 +101,7 @@ export class GcsApiService extends GcsService {
   }
 
   public cancelExportToS3() {
-    this.openModal('export-s3-cancel', 'cancelAllExportsToS3', Type.EXPORT_S3);
+    this.cancelItemsStatus(Type.EXPORT_S3);
   }
 
   openModal(action: string, data: string, type: string) {
@@ -134,8 +135,8 @@ export class GcsApiService extends GcsService {
         currentStatus = ItemStatus.DOWNLOADING;
         break;
       case Type.EXPORT_S3:
-        currentStatus = ItemStatus.EXPORTING_S3;
-        break;
+        // This is because the status we can cancel only de Pending Export S3 Items, but not the Export S3 items in progress
+        return new FilesDatabase(this.store).data.filter(item => (item.status === ItemStatus.PENDING && item.type === Type.EXPORT_S3));
       case Type.UPLOAD:
         currentStatus = ItemStatus.UPLOADING;
         break;

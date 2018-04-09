@@ -15,9 +15,9 @@ export class S3ExportService {
 
   public startFileExportToS3(item: Item) {
     const dataTransfer = {
+      'preserveStructure': JSON.parse(localStorage.getItem('preserveStructure')),
       'gcsToken': SecurityService.getAccessToken(),
       'bucketName': localStorage.getItem('S3BucketName'),
-      'preserveStructure': localStorage.getItem('preserveStructure'),
       'item': item
     };
     this.electronService.exportS3(dataTransfer);
@@ -35,7 +35,9 @@ export class S3ExportService {
   public startUpload(item) {
     const dataTransfer = {
       'preserveStructure': JSON.parse(localStorage.getItem('preserveStructure')),
-      'item': item
+      'gcsToken': SecurityService.getAccessToken(),
+      'bucketName': localStorage.getItem('S3BucketName'),
+      'item': item,
     };
     this.electronService.exportS3(dataTransfer);
   }
