@@ -37,6 +37,18 @@ export class GcsApiService extends GcsService {
     private zone: NgZone) {
     super();
 
+      // this.store.select('downloads').subscribe(
+      //   data => {
+      //     console.log('----------- GcsApiService store -------------------');
+      //       if (data.inProgress.count < 3 && data.pending.count > 0) {
+      //         console.log('---- inProgress.count: ' + data.inProgress.count + ' ---- pending.count: ' + data.pending.count);
+      //         for (var first in data.pending.items) break;
+      //         let nextItems = [];
+      //         nextItems.push(Object(first).value);
+      //           this.downloadFiles(nextItems);
+      //       }
+      //   }
+      // )
   }
 
   public getBucketFiles(bucketName: String): Observable<any> {
@@ -62,7 +74,14 @@ export class GcsApiService extends GcsService {
   }
 
   public downloadFiles(files: DownloadItem[]) {
+    if (files === undefined || files === null || files.length <= 0) {
+      console.log('---------------------downloadFiles - files empty --------------------------', files);
+      return;
+    }
+
+    console.log('------------------ gcs-service downloadFiles ------- ', files);
     this.store.dispatch(new downloadActions.ProcessItems({items: files}));
+
     this.electronService.ipcRenderer.send(constants.IPC_START_DOWNLOAD, files, SecurityService.getAccessToken());
   }
 

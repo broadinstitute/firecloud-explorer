@@ -60,15 +60,32 @@ export class FileDownloadModalComponent implements OnInit {
 
 
   startDownload() {
+    this.downloadFiles = [];
+    const ids: string[] = [];
     this.downloadValidator.verifyDisk(this.directory, this.totalSize()).then(
       diskVerification => {
         this.verify = diskVerification;
+
         if (!this.verify.hasErr) {
-          this.setItems();
+
           this.dialogRef.close();
+
+          this.selectedFiles()
+            .forEach(
+              file => {
+                if (file.type === 'File' && !ids.includes(file.id)) {
+                  ids.push(file.id);
+                  const dataFile: DownloadItem = new DownloadItem(file.id, file.name,
+                    file.updated, file.created, file.size, file.mediaLink, file.path,
+                    this.directory, EntityStatus.PENDING, '', '',
+                    this.preserveStructure, false, '', file.displayName, '');
+                  this.downloadFiles.push(dataFile);
+                }
+              });
+
           this.transferablesGridComponent.startDownload(this.downloadFiles);
-          // this.dialogRef.close();
           this.router.navigate(['/status']);
+
         } else {
           this.msgs = [];
           this.createWarningMsg(this.verify.errMsg);
@@ -90,27 +107,6 @@ export class FileDownloadModalComponent implements OnInit {
       this.isValid = true;
       localStorage.setItem('directory', this.directory);
     }
-  }
-
-  setItems() {
-    this.downloadFiles = [];
-    const ids: string[] = [];
-    this.selectedFiles()
-      .forEach(
-        file => {
-          if (file.type === 'File' && !ids.includes(file.id)) {
-            ids.push(file.id);
-            const dataFile: DownloadItem = new DownloadItem(file.id, file.name,
-              file.updated, file.created, file.size, file.mediaLink, file.path,
-              this.directory, EntityStatus.PENDING, '', '',
-              this.preserveStructure, false, '', file.displayName, '');
-            this.downloadFiles.push(dataFile);
-          }
-        });
-
-    // console.log(JSON.stringify(this.downloadFiles));
-    // ({ items: this.downloadFiles }));
-    this.router.navigate(['/status']);
   }
 
   createWarningMsg(warnMessage) {

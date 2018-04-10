@@ -185,6 +185,7 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
     this.exportToS3Canceled = this.gcsService.exportToS3Canceled;
 
     this.dataSource.data = this.filesDatabase.data;
+    
     this.statusService.updateDownloadProgress().subscribe(data => {
       this.zone.run(() => {
         this.generalProgress = data;

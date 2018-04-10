@@ -1,71 +1,67 @@
-import { createEntityAdapter, EntityState, EntityAdapter } from '@ngrx/entity';
 import { DownloadItem } from '../models/download-item';
 import * as DownloadItemActions from '../actions/download-item.actions';
 import { EntityStatus } from '@app/file-manager/models/entity-status';
 
 export interface DownloadState {
     pending: {
-        ids: string[];
-        items: { [id: string]: DownloadItem[] };
+        count: number;
+        items: { [id: string]: DownloadItem };
     };
 
     inProgress: {
-        ids: string[];
-        items: { [id: string]: DownloadItem[] };
+        count: number;
+        progress: number;
+        transferred: number;
+        items: { [id: string]: DownloadItem };
     };
 
     completed: {
-        ids: string[];
-        items: { [id: string]: DownloadItem[] };
+        count: number;
+        items: { [id: string]: DownloadItem };
     };
 
     paused: {
-        ids: string[];
-        items: { [id: string]: DownloadItem[] };
+        count: number;
+        items: { [id: string]: DownloadItem };
     };
 
     cancelled: {
-        ids: string[];
-        items: { [id: string]: DownloadItem[] };
+        count: number;
+        items: { [id: string]: DownloadItem };
     };
 
     failed: {
-        ids: string[];
-        items: { [id: string]: DownloadItem[] };
+        count: number;
+        items: { [id: string]: DownloadItem };
     };
 }
-
-// export const pendingDownloadItemEA: EntityAdapter<DownloadItem> = createEntityAdapter<DownloadItem>();
-// export const processDownloadItemEA: EntityAdapter<DownloadItem> = createEntityAdapter<DownloadItem>();
-// export const completedDownloadItemEA: EntityAdapter<DownloadItem> = createEntityAdapter<DownloadItem>();
-// export const pausedDownloadItemEA: EntityAdapter<DownloadItem> = createEntityAdapter<DownloadItem>();
-// export const cancelledDownloadItemEA: EntityAdapter<DownloadItem> = createEntityAdapter<DownloadItem>();
-// export const failedlDownloadItemEA: EntityAdapter<DownloadItem> = createEntityAdapter<DownloadItem>();
 
 export const downloadInitialState: DownloadState = {
 
     pending: {
-        ids: [],
+        count: 0,
         items: {}
     },
     inProgress: {
-        ids: [],
+        count: 0,
+        progress: 0,
+        transferred: 0,
         items: {}
     },
     completed: {
-        ids: [],
+        count: 0,
         items: {}
     },
     paused: {
-        ids: [],
+        count: 0,
         items: {}
     },
     cancelled: {
-        ids: [],
+        count: 0,
         items: {}
     },
     failed: {
-        ids: [],
+        count: 0,
         items: {}
     }
 };
@@ -77,86 +73,126 @@ export function DownloadsReducer(
     switch (action.type) {
         case DownloadItemActions.ADD_ITEM:
             action.payload.status = EntityStatus.PENDING;
+            state.pending.count++;
             state.pending.items[action.payload.id] = action.payload;
-            return state;
+            break;
 
         case DownloadItemActions.ADD_ITEMS:
-        console.log(action.payload);
+            console.log('add-items: ', action.payload.items);
             action.payload.items.forEach(item => {
                 item.status = EntityStatus.PENDING;
+                state.pending.count++;
                 state.pending.items[item.id] = item;
             });
-            return state;
+            break;
 
         case DownloadItemActions.PROCESS_ITEM:
+            state.pending.count--;
             delete state.pending.items[action.payload.id];
             action.payload.status = EntityStatus.INPROGRESS;
+            state.inProgress.count++;
             state.inProgress.items[action.payload.id] = action.payload;
-            return state;
+            break;
 
         case DownloadItemActions.PROCESS_ITEMS:
+            console.log('process-items: ', action.payload.items);
             action.payload.items.forEach(item => {
+                state.pending.count--;
                 delete state.pending.items[item.id];
                 item.status = EntityStatus.INPROGRESS;
+                state.inProgress.count++;
                 state.inProgress.items[item.id] = item;
             });
-            return state;
+            break;
 
         case DownloadItemActions.COMPLETE_ITEM:
+            state.inProgress.count--;
             delete state.inProgress.items[action.payload.id];
             action.payload.status = EntityStatus.COMPLETED;
+            state.completed.count++;
             state.completed.items[action.payload.id] = action.payload;
-            return state;
+            break;
 
-        case DownloadItemActions.COMPLETE_ITEM:
+        case DownloadItemActions.COMPLETE_ITEMS:
+            console.log('complete-items: ', action.payload.items);
             action.payload.items.forEach(item => {
+                state.inProgress.count--;
                 delete state.inProgress.items[item.id];
                 item.status = EntityStatus.COMPLETED;
+                state.completed.count++;
                 state.completed.items[item.id] = item;
             });
-            return state;
+            break;
 
         case DownloadItemActions.PAUSE_ITEM:
+            state.inProgress.count--;
             delete state.inProgress.items[action.payload.id];
             action.payload.status = EntityStatus.PAUSED;
+            state.paused.count++;
             state.paused.items[action.payload.id] = action.payload;
-            return state;
+            break;
 
         case DownloadItemActions.PAUSE_ITEMS:
             action.payload.items.forEach(item => {
+                state.inProgress.count--;
                 delete state.inProgress.items[item.id];
                 item.status = EntityStatus.PAUSED;
+                state.paused.count++;
                 state.paused.items[item.id] = item;
             });
-            return state;
+            break;
 
         case DownloadItemActions.CANCEL_ITEM:
+            state.inProgress.count--;
             delete state.inProgress.items[action.payload.id];
             action.payload.status = EntityStatus.CANCELED;
+            state.cancelled.count++;
             state.cancelled.items[action.payload.id] = action.payload;
-            return state;
+            break;
 
         case DownloadItemActions.CANCEL_ITEMS:
             action.payload.items.forEach(item => {
+                state.inProgress.count--;
                 delete state.inProgress.items[item.id];
                 action.payload.status = EntityStatus.CANCELED;
+                state.cancelled.count++;
                 state.cancelled.items[item.id] = item;
             });
-            return state;
+            break;
 
         case DownloadItemActions.FAIL_ITEM:
+            state.inProgress.count--;
             delete state.inProgress.items[action.payload.id];
             action.payload.state = EntityStatus.FAILED;
+            state.failed.count++;
             state.failed.items[action.payload.id] = action.payload;
-            return state;
+            break;
 
         case DownloadItemActions.FAIL_ITEMS:
             action.payload.items.forEach(item => {
+                state.inProgress.count--;
                 delete state.inProgress.items[item.id];
                 item.status = EntityStatus.FAILED;
+                state.failed.count++;
                 state.failed.items[item.id] = item;
             });
-            return state;
+            break;
+
+
+        case DownloadItemActions.UPDATE_ITEM_PROGRESS:
+            // decrement old values
+            state.inProgress.progress -= state.inProgress.items[action.payload.id].progress;
+            state.inProgress.transferred -= state.inProgress.items[action.payload.id].transferred;
+
+            // update item
+            state.inProgress.items[action.payload.id].progress = action.payload.progress;
+            state.inProgress.items[action.payload.id].transferred = action.payload.transferred;
+
+            // increment new values
+            state.inProgress.progress += state.inProgress.items[action.payload.id].progress;
+            state.inProgress.transferred += state.inProgress.items[action.payload.id].transferred;
+            break;
+
 
         // case DownloadItemActions.UPDATE_ITEM:
         //     return downloadEntityAdapter.updateOne(action.payload.item, state);
@@ -166,7 +202,37 @@ export function DownloadsReducer(
 
         default:
             return state;
-
-        // addOne, addMany, addAll, removeOne, removeMany, removeAll, updateOne and updateMany
     }
+
+    return {
+        pending: {
+            count: state.pending.count,
+            items: state.pending.items
+        },
+        inProgress: {
+            count: state.inProgress.count,
+            progress: state.inProgress.progress,
+            transferred: state.inProgress.transferred,
+            items: state.inProgress.items
+        },
+        completed: {
+            count: state.completed.count,
+            items: state.completed.items
+        },
+
+        paused: {
+            count: state.paused.count,
+            items: state.paused.items
+        },
+
+        cancelled: {
+            count: state.cancelled.count,
+            items: state.cancelled.items
+        },
+
+        failed: {
+            count: state.failed.count,
+            items: state.failed.items
+        }
+    };
 }

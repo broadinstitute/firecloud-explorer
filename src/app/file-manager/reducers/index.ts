@@ -12,19 +12,19 @@ import * as fromExportToS3 from './export-to-s3.reducer';
 export const reducers: ActionReducerMap<any> = {
   downloads: fromDownloads.DownloadsReducer,
   uploads: fromUploads.UploadsReducer,
-  exportToGCS: fromExportToGCS.ExportToGCSReducer,
-  exportToS3: fromExportToS3.ExportToS3Reducer
+  exportToGCS: fromExportToGCS.ExportToGCSsReducer,
+  exportToS3: fromExportToS3.exportToS3InitialState
 };
 
 export interface AppState {
   downloads: fromDownloads.DownloadState,
-  uploads: fromUploads.UploadsState,
+  uploads: fromUploads.UploadState,
   exportToGCS: fromExportToGCS.ExportToGCSState,
   exportToS3: fromExportToS3.ExportToS3State;
 }
 
 export const selectDownloadsState = createFeatureSelector<fromDownloads.DownloadState>('downloads');
-export const selectUploadsState = createFeatureSelector<fromUploads.UploadsState>('uploads');
+export const selectUploadsState = createFeatureSelector<fromUploads.UploadState>('uploads');
 export const selectExportToGCSState = createFeatureSelector<fromExportToGCS.ExportToGCSState>('exportToGCS');
 export const selectExportToS3State = createFeatureSelector<fromExportToS3.ExportToS3State>('exportToS3');
 

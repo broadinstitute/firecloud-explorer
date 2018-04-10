@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnInit } from '@angular/core';
 import * as Transferables from '../actions/transferables.actions';
 import * as downloadActions from '../actions/download-item.actions';
 
@@ -14,23 +14,43 @@ import { Type } from '@app/file-manager/models/type';
 import { environment } from '@env/environment';
 import { S3ExportService } from '@app/file-manager/services/s3-export.service';
 
+
 @Injectable()
-export class LimitTransferablesService {
+export class LimitTransferablesService implements OnInit {
+
+  downloadsPendingCount = 0;
+  downloadsInProgressCount = 0;
+  downloadPendingItems: { [id: string]: DownloadItem };
 
   constructor(
     public gcsService: GcsService,
     private store: Store<AppState>,
     private s3TransferService: S3ExportService,
   ) {
+    this.store.select('downloads').subscribe(
+      data => {
+        this.downloadsPendingCount = data.pending.count;;
+        this.downloadsInProgressCount = data.inProgress.count;
+        this.downloadPendingItems = data.pending.items;
+      }
+    );
+  }
+
+  ngOnInit() {
 
   }
 
-  public pendingDownloadItem(type: Type, status: ItemStatus): void {
-    this.store.select(state => state.downloads.pending.items);
-
-    const items = new FilesDatabase(this.store).data;
-    if (!this.maxDownloadsAtSameTime(items, status)) {
-      this.proceedNextDownloadItem(items);
+  public pendingDownloadItem(): void {
+    const pendingItems = new FilesDatabase(this.store).downloadsChange.getValue().pending.items;
+    const pendingCount = new FilesDatabase(this.store).downloadsChange.getValue().pending.count;
+    const inProgressCount = new FilesDatabase(this.store).downloadsChange.getValue().inProgress.count;
+    const items: DownloadItem[] = [];
+    console.log('------ pendingItems ------- ', pendingItems);
+    if (pendingCount > 0 && inProgressCount < environment.LIMIT_TRANSFERABLES) {
+      const item = Object.values(pendingItems)[0];
+      console.log('---- new item to process --- ', item);
+      items.push(item);
+      this.gcsService.downloadFiles(items);
     }
   }
 
@@ -57,15 +77,20 @@ export class LimitTransferablesService {
   }
 
   public controlDownloadItemLimits(files: DownloadItem[]): void {
+    if (files === undefined || files === null || files.length <= 0) {
+      console.log('---------------------controlDownloadItemLimits - files empty --------------------------', files);
+      return;
+    }
+
     let maxFiles = [];
+    console.log('---------- files --------------', files);
+    this.store.dispatch(new downloadActions.AddItems({ items: files }));
 
     if (files.length > environment.LIMIT_TRANSFERABLES) {
       maxFiles = files.splice(0, environment.LIMIT_TRANSFERABLES);
     } else {
       maxFiles = files;
     }
-
-    this.store.dispatch(new downloadActions.AddItems({ items: maxFiles }));
     this.gcsService.downloadFiles(maxFiles);
   }
 
@@ -101,15 +126,6 @@ export class LimitTransferablesService {
   public exportItems(files: Item[]): void {
     const maxFiles = files.splice(0, environment.LIMIT_EXPORTABLES);
     this.gcsService.exportToGCPFiles(localStorage.getItem('destinationBucket'), maxFiles);
-  }
-
-  private proceedNextDownloadItem(files: DownloadItem[]): void {
-    let item: DownloadItem;
-
-    if (files.length > 1 || files.length === 1) {
-      item = files.splice(0, 1)[0];
-      this.gcsService.downloadFiles([item]);
-    }
   }
 
   private proceedNextItem(files: Item[], type: Type, status: ItemStatus): void {

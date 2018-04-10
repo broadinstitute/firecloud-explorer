@@ -11,41 +11,18 @@ import { ExportToGCSItem } from '../models/export-to-gcs-item';
 import { ExportToS3Item } from '../models/export-to-s3-item';
 
 import { DownloadsReducer, DownloadState, downloadInitialState } from '../reducers/downloads.reducer';
-import { UploadsReducer, UploadsState, uploadInitialState } from '../reducers/uploads.reducer';
-import { ExportToGCSReducer, ExportToGCSState, exportToGCSinitialState } from '../reducers/export-to-gcs.reducer';
+import { UploadsReducer, UploadState, uploadInitialState } from '../reducers/uploads.reducer';
+import { ExportToGCSsReducer, ExportToGCSState, exportToGCSInitialState } from '../reducers/export-to-gcs.reducer';
 import { ExportToS3Reducer, ExportToS3State, exportToS3InitialState } from '../reducers/export-to-s3.reducer';
 
 import { AppState } from '@app/file-manager/reducers';
 import { Dictionary } from '@ngrx/entity/src/models';
 
-// const initialState: TransferableState = {
-//   count: 0,
-//   selectedCount: 0,
-//   downloadingCount: 0,
-//   uploadingCount: 0,
-//   exportingGCPCount: 0,
-//   toDownloadCount: 0,
-//   toUploadCount: 0,
-//   toExportS3Count: 0,
-//   exportingS3Count: 0,
-//   toExportGCPCount: 0,
-//   counter: [
-//     [0, 0, 0, 0, 0, 0, 0, 0, 0],
-//     [0, 0, 0, 0, 0, 0, 0, 0, 0],
-//     [0, 0, 0, 0, 0, 0, 0, 0, 0],
-//     [0, 0, 0, 0, 0, 0, 0, 0, 0],
-//     [0, 0, 0, 0, 0, 0, 0, 0, 0],
-//     [0, 0, 0, 0, 0, 0, 0, 0, 0]
-//   ],
-//   items: [],
-//   itemsMap: []
-// };
-
 @Injectable()
 export class FilesDatabase {
 
   downloads: Observable<DownloadState>;
-  uploads: Observable<UploadsState>;
+  uploads: Observable<UploadState>;
   exportsToGCS: Observable<ExportToGCSState>;
   exportsToS3: Observable<ExportToS3State>;
   totalCount = 0;
@@ -54,8 +31,8 @@ export class FilesDatabase {
   selectionChange: BehaviorSubject<number> = new BehaviorSubject<number>(0);
 
   downloadsChange: BehaviorSubject<DownloadState> = new BehaviorSubject<DownloadState>(downloadInitialState);
-  uploadsChange: BehaviorSubject<UploadsState> = new BehaviorSubject<UploadsState>(uploadInitialState);
-  exportToGCSChange: BehaviorSubject<ExportToGCSState> = new BehaviorSubject<ExportToGCSState>(exportToGCSinitialState);
+  uploadsChange: BehaviorSubject<UploadState> = new BehaviorSubject<UploadState>(uploadInitialState);
+  exportToGCSChange: BehaviorSubject<ExportToGCSState> = new BehaviorSubject<ExportToGCSState>(exportToGCSInitialState);
   exportToS3Change: BehaviorSubject<ExportToS3State> = new BehaviorSubject<ExportToS3State>(exportToS3InitialState);
 
   get data(): Item[] {
@@ -67,7 +44,7 @@ export class FilesDatabase {
   }
 
   get downloadingCount(): number {
-    return 0; // return this.downloadsChange.value.completed.items.keyset.length;
+    return this.downloadsChange.getValue().completed.count;
   }
 
   get uploadingCount(): number {
@@ -79,7 +56,12 @@ export class FilesDatabase {
   }
 
   get toDownloadCount(): number {
-    return 10; // return this.downloadsChange.value.pending.items.keyset.length;
+    return this.downloadsChange.getValue().cancelled.count +
+      this.downloadsChange.getValue().completed.count +
+      this.downloadsChange.getValue().failed.count +
+      this.downloadsChange.getValue().inProgress.count +
+      this.downloadsChange.getValue().paused.count +
+      this.downloadsChange.getValue().pending.count;
   }
 
   get toUploadCount(): number {
@@ -111,7 +93,6 @@ export class FilesDatabase {
     this.downloads
       .subscribe(
         data => {
-          console.log(data);
           this.downloadsChange.next(data);
           // this.dataChange.next(data.entities);
           // this.selectionChange.next(data.selectedCount);

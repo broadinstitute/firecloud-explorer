@@ -35,13 +35,24 @@ export class StatusService {
    *
    */
   updateDownloadProgress(): Observable<any> {
+    console.log('----------------- updateDownloadProgress ----------------- ');
     this.electronService.ipcRenderer.removeAllListeners(constants.IPC_DOWNLOAD_STATUS);
+
     return Observable.create((observer) => {
       this.electronService.ipcRenderer.on(constants.IPC_DOWNLOAD_STATUS, (event, data) => {
-        this.updateDownloadItem(data, Type.DOWNLOAD, ItemStatus.DOWNLOADING);
+        this.updateDownloadItem(data);
         observer.next(this.generalProgress(Type.DOWNLOAD));
       });
     });
+
+    // this.electronService.ipcRenderer.on(constants.IPC_DOWNLOAD_STATUS, (event, data) => {
+    //   this.updateDownloadItem(data, Type.DOWNLOAD, ItemStatus.DOWNLOADING);
+
+    //   observer.next(this.generalProgress(Type.DOWNLOAD));
+    // });
+
+
+
   }
 
   updateExportS3Progress(): Observable<any> {
@@ -87,12 +98,13 @@ export class StatusService {
    * @param type entity type
    * @param status entity status
    */
-  private updateDownloadItem(data: DownloadItem, type: Type, status: ItemStatus) {
-    if (data.progress === 100) {
-      this.store.dispatch(new downloadActions.CompleteItem(data));
-      this.limitTransferables.pendingItem(type, status);
+  private updateDownloadItem(item: DownloadItem) {
+    console.log('---------------updateDownloadItem--------------------- ', item);
+    if (item.progress === 100) {
+      this.store.dispatch(new downloadActions.CompleteItem(item));
+      this.limitTransferables.pendingDownloadItem();
     } else {
-      this.store.dispatch(new downloadActions.UpdateProgress(data));
+      this.store.dispatch(new downloadActions.UpdateProgress(item));
     }
   }
 

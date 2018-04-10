@@ -32,9 +32,6 @@ export const REMOVE_ITEM = '[Download] Remove Item';
 
 export const SELECT_ITEM = '[Download] Select Item';
 export const UPDATE_ITEM_PROGRESS = '[Download] Update Item Progress';
-export const UPDATE_ITEM_COMPLETED = '[Download] Update Item Completed';
-export const UPDATE_ITEM_DOWNLOADING = '[Download] Update Item Downloading';
-export const UPDATE_ITEM_CANCELED =  '[Download] Update Item Canceled';
 
 export class Load implements Action {
     readonly type = LOAD;
