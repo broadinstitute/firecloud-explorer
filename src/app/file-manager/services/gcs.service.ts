@@ -1,5 +1,6 @@
 import { Observable } from 'rxjs/Observable';
 import { Item } from '../models/item';
+import { DownloadItem } from '../models/download-item';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { WarningModalComponent } from '@app/file-manager/warning-modal/warning-modal.component';
 import { MatDialogRef } from '@angular/material';
@@ -15,7 +16,7 @@ export abstract class GcsService {
 
   abstract uploadFiles(bucketName: String, files: any[]);
 
-  abstract downloadFiles(files: Item[]);
+  abstract downloadFiles(files: DownloadItem[]);
 
   abstract cancelAll();
 

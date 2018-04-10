@@ -6,7 +6,11 @@ import { SecurityService } from './security.service';
 import { GcsService } from './gcs.service';
 import { ElectronService } from 'ngx-electron';
 import { Item } from '../models/item';
+import { DownloadItem } from '../models/download-item';
+
 import * as Transferables from '../actions/transferables.actions';
+import * as downloadActions from '../actions/download-item.actions';
+
 import { Store } from '@ngrx/store';
 import { FilesDatabase } from '../dbstate/files-database';
 import 'rxjs/add/operator/map';
@@ -32,6 +36,7 @@ export class GcsApiService extends GcsService {
     private dialog: MatDialog,
     private zone: NgZone) {
     super();
+
   }
 
   public getBucketFiles(bucketName: String): Observable<any> {
@@ -56,7 +61,8 @@ export class GcsApiService extends GcsService {
     }
   }
 
-  public downloadFiles(files: Item[]) {
+  public downloadFiles(files: DownloadItem[]) {
+    this.store.dispatch(new downloadActions.ProcessItems({items: files}));
     this.electronService.ipcRenderer.send(constants.IPC_START_DOWNLOAD, files, SecurityService.getAccessToken());
   }
 
@@ -159,7 +165,7 @@ export class GcsApiService extends GcsService {
     const destinationObject = localStorage.getItem('preserveStructure') === 'true' ? sourceObject : file.displayName;
     const url = environment.GOOGLE_URL + 'storage/v1/b/' + file.bucketName + '/o/' +
       encodeURIComponent(sourceObject) + '/rewriteTo/b/' + encodeURIComponent(destinationBucket) +
-      '/o/' + encodeURIComponent('Imports/' + destinationObject); + '?fields=done,totalBytesRewritten,resource.id';
+      '/o/' + encodeURIComponent('Imports/' + destinationObject) + '?fields=done,totalBytesRewritten,resource.id';
     const httpOptions = {
       headers: new HttpHeaders({
         'Authorization': 'Bearer ' + SecurityService.getAccessToken()
@@ -170,8 +176,8 @@ export class GcsApiService extends GcsService {
   }
 
   public exportToGCPFiles(destinationBucket: string, fileList: Item[]) {
-    let reqs = [];
-    let responseCompleted = 0;
+    const reqs = [];
+    const responseCompleted = 0;
 
     // // fileList.forEach(file => {
     // //   reqs.push(this.exportToGCP(destinationBucket, file).map(r => {
@@ -179,7 +185,7 @@ export class GcsApiService extends GcsService {
     //   })));
     // // });
 
-    let rq2 = Observable.from(fileList).pipe(concatMap(file => this.exportToGCP(destinationBucket, file)));
+    const rq2 = Observable.from(fileList).pipe(concatMap(file => this.exportToGCP(destinationBucket, file)));
 
     // forkJoin(reqs).subscribe(
     //   data => {
@@ -194,16 +200,16 @@ export class GcsApiService extends GcsService {
     //     //this.exportItemCompleted.next(true);
     //   });
 
-      rq2.subscribe(
-        res =>{
-          this.store.dispatch(new Transferables.UpdateItemCompleted({id: res.id, size: res.totalBytesRewritten}));
-        },
-        err => {
-          console.log(err);
-        },
-        () => {
-          console.log("-------------- termine --------------");
-        }
-      );
+    rq2.subscribe(
+      res => {
+        this.store.dispatch(new Transferables.UpdateItemCompleted({ id: res.id, size: res.totalBytesRewritten }));
+      },
+      err => {
+        console.log(err);
+      },
+      () => {
+        console.log('-------------- termine --------------');
+      }
+    );
   }
 }

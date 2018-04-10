@@ -1,10 +1,14 @@
 import { Injectable } from '@angular/core';
 import * as Transferables from '../actions/transferables.actions';
+import * as downloadActions from '../actions/download-item.actions';
+
 import { Item } from '../models/item';
+import { DownloadItem } from '../models/download-item';
 import { Store } from '@ngrx/store';
 import { AppState } from '@app/file-manager/reducers';
 import { FilesDatabase } from '../dbstate/files-database';
 import { ItemStatus } from '@app/file-manager/models/item-status';
+import { EntityStatus } from '@app/file-manager/models/entity-status';
 import { GcsService } from '@app/file-manager/services/gcs.service';
 import { Type } from '@app/file-manager/models/type';
 import { environment } from '@env/environment';
@@ -17,7 +21,18 @@ export class LimitTransferablesService {
     public gcsService: GcsService,
     private store: Store<AppState>,
     private s3TransferService: S3ExportService,
-  ) { }
+  ) {
+
+  }
+
+  public pendingDownloadItem(type: Type, status: ItemStatus): void {
+    this.store.select(state => state.downloads.pending.items);
+
+    const items = new FilesDatabase(this.store).data;
+    if (!this.maxDownloadsAtSameTime(items, status)) {
+      this.proceedNextDownloadItem(items);
+    }
+  }
 
   public pendingItem(type: Type, status: ItemStatus): void {
     let items = new FilesDatabase(this.store).data;
@@ -39,6 +54,19 @@ export class LimitTransferablesService {
       return true;
     }
     return false;
+  }
+
+  public controlDownloadItemLimits(files: DownloadItem[]): void {
+    let maxFiles = [];
+
+    if (files.length > environment.LIMIT_TRANSFERABLES) {
+      maxFiles = files.splice(0, environment.LIMIT_TRANSFERABLES);
+    } else {
+      maxFiles = files;
+    }
+
+    this.store.dispatch(new downloadActions.AddItems({ items: maxFiles }));
+    this.gcsService.downloadFiles(maxFiles);
   }
 
   public controlLimitItems(files: Item[], type: Type, status: ItemStatus): void {
@@ -73,6 +101,15 @@ export class LimitTransferablesService {
   public exportItems(files: Item[]): void {
     const maxFiles = files.splice(0, environment.LIMIT_EXPORTABLES);
     this.gcsService.exportToGCPFiles(localStorage.getItem('destinationBucket'), maxFiles);
+  }
+
+  private proceedNextDownloadItem(files: DownloadItem[]): void {
+    let item: DownloadItem;
+
+    if (files.length > 1 || files.length === 1) {
+      item = files.splice(0, 1)[0];
+      this.gcsService.downloadFiles([item]);
+    }
   }
 
   private proceedNextItem(files: Item[], type: Type, status: ItemStatus): void {

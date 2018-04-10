@@ -4,6 +4,7 @@ import { Observable } from 'rxjs/Observable';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 import { Item } from '../models/item';
+
 import { DownloadItem } from '../models/download-item';
 import { UploadItem } from '../models/upload-item';
 import { ExportToGCSItem } from '../models/export-to-gcs-item';
@@ -47,8 +48,7 @@ export class FilesDatabase {
   uploads: Observable<UploadsState>;
   exportsToGCS: Observable<ExportToGCSState>;
   exportsToS3: Observable<ExportToS3State>;
-  totalCount = 0;0
-  xx : Dictionary<DownloadItem>
+  totalCount = 0;
 
   dataChange: BehaviorSubject<Item[]> = new BehaviorSubject<Item[]>([]);
   selectionChange: BehaviorSubject<number> = new BehaviorSubject<number>(0);
@@ -67,54 +67,56 @@ export class FilesDatabase {
   }
 
   get downloadingCount(): number {
-    return this.stateChange.value.downloadingCount;
+    return 0; // return this.downloadsChange.value.completed.items.keyset.length;
   }
 
   get uploadingCount(): number {
-    return this.stateChange.value.uploadingCount;
+    return 0; // return this.uploadsChange.value.entities;
   }
 
   get exportingCount(): number {
-    return this.stateChange.value.exportingGCPCount;
+    return 0; //    return this.exportToGCSChange.value.exportingGCPCount;
   }
 
   get toDownloadCount(): number {
-    return this.stateChange.value.toDownloadCount;
+    return 10; // return this.downloadsChange.value.pending.items.keyset.length;
   }
 
   get toUploadCount(): number {
-    return this.stateChange.value.toUploadCount;
+    return 0; //   return this.stateChange.value.toUploadCount;
   }
 
   get toExportS3Count(): number {
-    return this.stateChange.value.toExportS3Count;
+    return 0; //   return this.stateChange.value.toExportS3Count;
   }
 
   get exportingS3Count(): number {
-    return this.stateChange.value.exportingS3Count;
+    return 0; //   return this.stateChange.value.exportingS3Count;
   }
 
   get toExportGCPCount(): number {
-    return this.stateChange.value.toExportGCPCount;
+    return 0; //    return this.stateChange.value.toExportGCPCount;
   }
 
   get exportingGCPCount(): number {
-    return this.stateChange.value.exportingGCPCount;
+    return 0; //   return this.stateChange.value.exportingGCPCount;
   }
 
   constructor(private store: Store<AppState>) {
-    this.downloads = store.select("downloads");
-    this.uploads = store.select("uploads");
-    this.exportsToGCS = store.select("exportToGCS");
-    this.exportsToS3 = store.select("exportToS3");
+    this.downloads = store.select('downloads');
+    this.uploads = store.select('uploads');
+    this.exportsToGCS = store.select('exportToGCS');
+    this.exportsToS3 = store.select('exportToS3');
 
     this.downloads
       .subscribe(
         data => {
-          this.dataChange.next(data.entities);
-          this.selectionChange.next(data.selectedCount);
-          this.stateChange.next(data);
-          this.totalCount = data.count;
+          console.log(data);
+          this.downloadsChange.next(data);
+          // this.dataChange.next(data.entities);
+          // this.selectionChange.next(data.selectedCount);
+          // this.stateChange.next(data);
+          // this.totalCount = data.count;
         });
   }
 }

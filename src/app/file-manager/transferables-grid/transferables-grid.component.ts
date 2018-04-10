@@ -3,6 +3,7 @@ import { Store } from '@ngrx/store';
 import * as Transferables from '../actions/transferables.actions';
 import { DownloadValidatorService } from '../services/download-validator.service';
 import { Item } from '../models/item';
+import { DownloadItem } from '../models/download-item';
 import { MatPaginator, MatSort, MatTableDataSource, MatDialog } from '@angular/material';
 import 'rxjs/add/operator/startWith';
 import 'rxjs/add/observable/forkJoin';
@@ -331,8 +332,8 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   sortData(evt) {
   }
 
-  startDownload(files: Item[]) {
-    this.limitTransferables.controlLimitItems(files, Type.DOWNLOAD, ItemStatus.DOWNLOADING);
+  startDownload(files: DownloadItem[]) {
+    this.limitTransferables.controlDownloadItemLimits(files);
   }
 
   startUpload(files: Item[]) {

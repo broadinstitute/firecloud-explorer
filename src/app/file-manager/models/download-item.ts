@@ -1,5 +1,5 @@
 import { Type } from './type';
-import { ItemStatus } from './item-status';
+import { EntityStatus } from './entity-status';
 
 export class DownloadItem {
   id: string;
@@ -13,26 +13,20 @@ export class DownloadItem {
   preserveStructure: boolean;
   destination: string;
   progress: number;
-  type: Type;
-  status: ItemStatus;
+  status: EntityStatus;
   transferred: number;
   remaining: number;
   bucketName: string;
   workspaceName: string;
   prefix: string;
   delimiter: string;
-  open: boolean;
   selected: boolean;
   indeterminate: boolean;
   namespace: string;
-  children?: DownloadItem[];
-  currentBatch: boolean;
-  istatus: number;
-  itype: number;
 
   constructor(id, name, created, updated, size, mediaLink, path, destination,
-    type, status, bucketName, prefix, delimiter, preserveStructure, open,
-    workspaceName, displayName, namespace, currentBatch, itype, istatus) {
+    status, bucketName, prefix, delimiter, preserveStructure, workspaceName,
+    displayName, namespace) {
 
     this.id = id;
     this.name = name;
@@ -43,23 +37,16 @@ export class DownloadItem {
     this.path = path;
     this.preserveStructure = preserveStructure;
     this.destination = destination;
-    this.type = type;
     this.status = status;
     this.bucketName = bucketName;
     this.prefix = prefix;
     this.delimiter = delimiter;
     this.selected = false;
     this.indeterminate = false;
-    this.open = open;
     this.workspaceName = workspaceName;
     this.displayName = displayName;
     this.setProgressData();
     this.namespace = namespace;
-    this.currentBatch = currentBatch;
-    this.istatus = itype;
-    this.itype = istatus;
-    this.children = [];
-
   }
 
   setProgressData() {
@@ -68,22 +55,5 @@ export class DownloadItem {
     this.progress = 0;
   }
 
-  /*
-  * This method verifies parent-child relationship
-  * between two items.
-  * Criteria is based on item.path.
-  */
-  isParentOf(child: DownloadItem): boolean {
-
-    if (this.type === 'File') {
-      return false;
-    }
-
-    if (child === undefined) {
-      return false;
-    }
-
-    return child.path.startsWith(this.path);
-  }
 }
 

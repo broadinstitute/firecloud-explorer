@@ -19,6 +19,9 @@ import { AppState } from '@app/file-manager/reducers';
 import * as Transferables from '../actions/transferables.actions';
 import { DownloadValidatorService } from '@app/file-manager/services/download-validator.service';
 import { FilesDatabase } from '../dbstate/files-database';
+import * as exportToGCSActionsTransferables from '../actions/export-to-gcs-item.actions';
+import * as exportToS3Actions from '../actions/export-to-s3-item.actions';
+
 import { UUID } from 'angular2-uuid';
 
 
@@ -184,9 +187,9 @@ export class FileExportModalComponent implements OnInit {
 
   dispatchFiles(type: string) {
     this.updateCurrentBatch(type);
-    let filesToExport = [];
+    const filesToExport = [];
     this.selectedFiles().forEach(file => {
-      //file.id = UUID.UUID();
+      // file.id = UUID.UUID();
       file.type = type;
       file.status = ItemStatus.PENDING;
       file.istatus = ItemStatus.IPENDING;

@@ -1,7 +1,9 @@
 import { Component, Inject, Output, OnInit, EventEmitter } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { Item } from '@app/file-manager/models/item';
-import * as Transferables from '../actions/transferables.actions';
+import { DownloadItem } from '@app/file-manager/models/download-item';
+
+import * as downloadActions from '../actions/download-item.actions';
+
 import { Store } from '@ngrx/store';
 import { AppState } from '@app/file-manager/reducers';
 import { Message } from 'primeng/components/common/api';
@@ -9,14 +11,14 @@ import { DiskStatus } from '../models/diskStatus';
 import { DownloadValidatorService } from '@app/file-manager/services/download-validator.service';
 import { Type } from '@app/file-manager/models/type';
 import { Router } from '@angular/router';
-import { ItemStatus } from '@app/file-manager/models/item-status';
+import { EntityStatus } from '@app/file-manager/models/entity-status';
 import { TransferablesGridComponent } from '@app/file-manager/transferables-grid/transferables-grid.component';
 import { PreflightService } from '../services/preflight.service';
 import { FilterSizePipe } from '../filters/filesize-filter';
-import { FilesDatabase } from '../dbstate/files-database';
 import { Observable } from 'rxjs/Observable';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { UUID } from 'angular2-uuid';
+import { DownloadState } from '@app/file-manager/reducers/downloads.reducer';
 
 
 @Component({
@@ -25,19 +27,17 @@ import { UUID } from 'angular2-uuid';
 })
 export class FileDownloadModalComponent implements OnInit {
 
-  @Output('done') done: EventEmitter<any> = new EventEmitter();
-
   preserveStructure = true;
   directory = 'Choose Directory...';
   isValid = false;
   msgs: Message[] = [];
   verify: DiskStatus;
-  downloadFiles: Item[] = [];
+  downloadFiles: DownloadItem[] = [];
 
   constructor(
     private downloadValidator: DownloadValidatorService,
     private transferablesGridComponent: TransferablesGridComponent,
-    private store: Store<AppState>,
+    private store: Store<DownloadState>,
     public dialogRef: MatDialogRef<FileDownloadModalComponent>,
     public router: Router,
     private preflightService: PreflightService,
@@ -67,7 +67,7 @@ export class FileDownloadModalComponent implements OnInit {
           this.setItems();
           this.dialogRef.close();
           this.transferablesGridComponent.startDownload(this.downloadFiles);
-          //          this.dialogRef.close();
+          // this.dialogRef.close();
           this.router.navigate(['/status']);
         } else {
           this.msgs = [];
@@ -93,27 +93,23 @@ export class FileDownloadModalComponent implements OnInit {
   }
 
   setItems() {
-
+    this.downloadFiles = [];
     const ids: string[] = [];
-    this.updateCurrentBatch();
     this.selectedFiles()
       .forEach(
         file => {
           if (file.type === 'File' && !ids.includes(file.id)) {
-
             ids.push(file.id);
-
-            const dataFile: Item = new Item(UUID.UUID(), file.name, file.updated, file.created,
-              file.size, file.mediaLink, file.path, this.directory,
-              Type.DOWNLOAD, ItemStatus.PENDING, '', '', '', this.preserveStructure, false, '', file.displayName, '',
-              true, Type.IDOWNLOAD, ItemStatus.IPENDING);
-
-            this.store.dispatch(new Transferables.AddItem(dataFile));
+            const dataFile: DownloadItem = new DownloadItem(file.id, file.name,
+              file.updated, file.created, file.size, file.mediaLink, file.path,
+              this.directory, EntityStatus.PENDING, '', '',
+              this.preserveStructure, false, '', file.displayName, '');
             this.downloadFiles.push(dataFile);
           }
         });
 
-    this.done.emit(true);
+    // console.log(JSON.stringify(this.downloadFiles));
+    // ({ items: this.downloadFiles }));
     this.router.navigate(['/status']);
   }
 
@@ -146,14 +142,6 @@ export class FileDownloadModalComponent implements OnInit {
 
   selectedFiles() {
     return this.preflightService.selectedFiles;
-  }
-
-  updateCurrentBatch() {
-    const items = new FilesDatabase(this.store).data.filter(item => item.type === Type.DOWNLOAD && item.currentBatch);
-    items.forEach(item => {
-      item.currentBatch = false;
-      this.store.dispatch(new Transferables.UpdateItem(item));
-    });
   }
 
 }
