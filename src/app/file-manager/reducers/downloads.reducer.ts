@@ -3,6 +3,10 @@ import * as DownloadItemActions from '@app/file-manager/actions/download-item.ac
 import { EntityStatus } from '@app/file-manager/models/entity-status';
 
 export interface DownloadState {
+    totalCount: number;
+    totalSize: number;
+    totalTransferred: number;
+    totalProgress: number;
     pending: {
         count: number;
         items: { [id: string]: DownloadItem };
@@ -38,6 +42,10 @@ export interface DownloadState {
 
 export const downloadInitialState: DownloadState = {
 
+    totalCount: 0,
+    totalSize: 0,
+    totalTransferred: 0,
+    totalProgress: 0,
     pending: {
         count: 0,
         items: {}
@@ -74,14 +82,20 @@ export function DownloadsReducer(
         case DownloadItemActions.ADD_ITEM:
             action.payload.status = EntityStatus.PENDING;
             state.pending.count++;
+            state.totalCount++;
+            state.totalSize += action.payload.size;
             state.pending.items[action.payload.id] = action.payload;
             break;
 
         case DownloadItemActions.ADD_ITEMS:
-            console.log('add-items: ', action.payload.items);
+            if (action.payload.clear === true) {
+                state = downloadInitialState;
+            }
             action.payload.items.forEach(item => {
                 item.status = EntityStatus.PENDING;
                 state.pending.count++;
+                state.totalCount++;
+                state.totalSize += item.size;
                 state.pending.items[item.id] = item;
             });
             break;
@@ -95,7 +109,6 @@ export function DownloadsReducer(
             break;
 
         case DownloadItemActions.PROCESS_ITEMS:
-            console.log('process-items: ', action.payload.items);
             action.payload.items.forEach(item => {
                 state.pending.count--;
                 delete state.pending.items[item.id];
@@ -178,10 +191,9 @@ export function DownloadsReducer(
             });
             break;
 
-
         case DownloadItemActions.UPDATE_ITEM_PROGRESS:
             // decrement old values
-            state.inProgress.progress -= state.inProgress.items[action.payload.id].progress;
+            state.totalTransferred -= state.inProgress.items[action.payload.id].transferred;
             state.inProgress.transferred -= state.inProgress.items[action.payload.id].transferred;
 
             // update item
@@ -189,10 +201,37 @@ export function DownloadsReducer(
             state.inProgress.items[action.payload.id].transferred = action.payload.transferred;
 
             // increment new values
-            state.inProgress.progress += state.inProgress.items[action.payload.id].progress;
+            state.totalTransferred += state.inProgress.items[action.payload.id].transferred;
             state.inProgress.transferred += state.inProgress.items[action.payload.id].transferred;
+
+            state.totalProgress = state.totalSize !== 0 ? 100.0 * state.totalTransferred / state.totalSize : 0;
+            state.inProgress.progress = state.totalSize !== 0 ? state.inProgress.transferred / state.totalSize : 0;
             break;
 
+        case DownloadItemActions.RESET:
+
+            state.totalSize = 0;
+            state.totalCount = 0;
+            state.totalProgress = 0;
+            state.totalTransferred = 0;
+
+            state.pending.count = 0;
+            state.pending.items = {};
+
+            state.inProgress.count = 0;
+            state.inProgress.progress = 0;
+            state.inProgress.transferred = 0;
+            state.inProgress.items = {};
+
+            state.completed.count = 0;
+            state.completed.items = {};
+
+            state.paused.count = 0;
+            state.paused.items = {};
+
+            state.cancelled = { count: 0, items: {} };
+            state.failed = { count: 0, items: {} };
+            break;
 
         // case DownloadItemActions.UPDATE_ITEM:
         //     return downloadEntityAdapter.updateOne(action.payload.item, state);
@@ -205,6 +244,10 @@ export function DownloadsReducer(
     }
 
     return {
+        totalCount: state.totalCount,
+        totalSize: state.totalSize,
+        totalProgress: state.totalProgress,
+        totalTransferred: state.totalTransferred,
         pending: {
             count: state.pending.count,
             items: state.pending.items

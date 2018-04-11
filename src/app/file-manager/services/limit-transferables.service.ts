@@ -52,17 +52,15 @@ export class LimitTransferablesService implements OnInit {
     const pendingCount = new FilesDatabase(this.store).downloadsChange.getValue().pending.count;
     const inProgressCount = new FilesDatabase(this.store).downloadsChange.getValue().inProgress.count;
     const items: DownloadItem[] = [];
-    console.log('------ pendingItems ------- ', pendingItems);
     if (pendingCount > 0 && inProgressCount < environment.LIMIT_TRANSFERABLES) {
       const item = Object.values(pendingItems)[0];
-      console.log('---- new item to process --- ', item);
       items.push(item);
       this.gcsService.downloadFiles(items);
     }
   }
 
   public pendingItem(type: Type, status: ItemStatus): void {
-    let items = new FilesDatabase(this.store).data;
+    let items = new FilesDatabase(this.store).data();
     if (!this.maxDownloadsAtSameTime(items, status)) {
       items = items.filter(item => item.type === type && item.status === ItemStatus.PENDING);
       this.proceedNextItem(items, type, status);
@@ -85,13 +83,12 @@ export class LimitTransferablesService implements OnInit {
 
   public controlDownloadItemLimits(files: DownloadItem[]): void {
     if (files === undefined || files === null || files.length <= 0) {
-      console.log('---------------------controlDownloadItemLimits - files empty --------------------------', files);
       return;
     }
 
     let maxFiles = [];
-    console.log('---------- files --------------', files);
-    this.store.dispatch(new downloadActions.AddItems({ items: files }));
+    this.store.dispatch(new downloadActions.Reset());
+    this.store.dispatch(new downloadActions.AddItems({ items: files, clear: false }));
 
     if (files.length > environment.LIMIT_TRANSFERABLES) {
       maxFiles = files.splice(0, environment.LIMIT_TRANSFERABLES);
@@ -103,7 +100,6 @@ export class LimitTransferablesService implements OnInit {
 
   public controlExportToGCSItemLimits(files: ExportToGCSItem[]): void {
     if (files === undefined || files === null || files.length <= 0) {
-      console.log('---------------------controlExportToGCSItemLimits - files empty --------------------------', files);
       return;
     }
 

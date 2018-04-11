@@ -57,7 +57,7 @@ export class AppComponent implements OnInit, OnDestroy {
   @HostListener('window:beforeunload')
   checkBeforeClose() {
     event.preventDefault();
-    const items = new FilesDatabase(this.store).data.
+    const items = new FilesDatabase(this.store).data().
     filter(item =>
          item.status === ItemStatus.DOWNLOADING
       || item.status === ItemStatus.UPLOADING
@@ -106,7 +106,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   onLogoutClick() {
-    const items = new FilesDatabase(this.store).data.
+    const items = new FilesDatabase(this.store).data().
     filter(item => item.status === ItemStatus.DOWNLOADING
       || item.status === ItemStatus.UPLOADING
       || (item.status === ItemStatus.PENDING && Type.EXPORT_GCP));

@@ -237,7 +237,7 @@ export class FileExplorerUploadComponent implements OnInit {
   }
 
   updateCurrentBatch() {
-    const items = new FilesDatabase(this.store).data.filter(item => item.type === Type.UPLOAD && item.currentBatch);
+    const items = new FilesDatabase(this.store).data().filter(item => item.type === Type.UPLOAD && item.currentBatch);
     items.forEach(item => {
       item.currentBatch = false;
       this.store.dispatch(new Transferables.UpdateItem(item));

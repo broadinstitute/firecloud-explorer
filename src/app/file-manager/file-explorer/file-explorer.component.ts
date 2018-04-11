@@ -72,13 +72,14 @@ export class FileExplorerComponent implements OnInit, AfterViewInit {
 */
     this.getWorkspacesObjects(this.rootItem);
 
-    this.statusService.updateDownloadProgress()
-      .subscribe(data => {
-        this.zone.run(() => {
-          this.downloadInProgress = this.router.routerState.snapshot.url === '/file-download' && data !== 100;
-          this.progressStatus = this.downloadInProgress;
-        });
-      });
+    // this.statusService.updateDownloadProgress()
+    //   .subscribe(data => {
+    //     this.zone.run(() => {
+    //       this.downloadInProgress = this.router.routerState.snapshot.url === '/file-download' && data !== 100;
+    //       this.progressStatus = this.downloadInProgress;
+    //     });
+    //   });
+    
     this.statusService.updateExportS3Progress().subscribe(data => {
       this.zone.run(() => {
         this.exportInProgress = data !== 100;
@@ -362,7 +363,7 @@ export class FileExplorerComponent implements OnInit, AfterViewInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result !== undefined) {
         if (result.cancel !== undefined) {
-          const itemsToRemove = new FilesDatabase(this.store).data
+          const itemsToRemove = new FilesDatabase(this.store).data()
             .filter(item => (item.type === Type.EXPORT_GCP || item.type === Type.EXPORT_S3) && item.status === ItemStatus.PENDING);
           itemsToRemove.forEach(item => {
             this.store.dispatch(new Transferables.RemoveItem(item));

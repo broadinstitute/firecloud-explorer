@@ -4,7 +4,6 @@ import { DownloadItem } from '@app/file-manager/models/download-item';
 
 import * as downloadActions from '../actions/download-item.actions';
 
-import { Store } from '@ngrx/store';
 import { AppState } from '@app/file-manager/reducers';
 import { Message } from 'primeng/components/common/api';
 import { DiskStatus } from '../models/diskStatus';
@@ -37,7 +36,6 @@ export class FileDownloadModalComponent implements OnInit {
   constructor(
     private downloadValidator: DownloadValidatorService,
     private transferablesGridComponent: TransferablesGridComponent,
-    private store: Store<DownloadState>,
     public dialogRef: MatDialogRef<FileDownloadModalComponent>,
     public router: Router,
     private preflightService: PreflightService,

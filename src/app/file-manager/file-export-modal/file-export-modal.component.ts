@@ -294,7 +294,7 @@ export class FileExportModalComponent implements OnInit {
   }
 
   updateCurrentBatch(type) {
-    const items = new FilesDatabase(this.store).data.filter(item => item.type === type && item.currentBatch
+    const items = new FilesDatabase(this.store).data().filter(item => item.type === type && item.currentBatch
       && item.status === ItemStatus.COMPLETED || item.status === ItemStatus.CANCELED);
     items.forEach(item => {
       item.currentBatch = false;

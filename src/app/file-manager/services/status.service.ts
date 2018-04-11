@@ -28,32 +28,42 @@ export class StatusService {
   constructor(private store: Store<AppState>,
     private limitTransferables: LimitTransferablesService,
     private s3Service: S3ExportService,
-    private electronService: ElectronService) { }
+    private electronService: ElectronService) {
+
+    this.electronService.ipcRenderer.on(constants.IPC_DOWNLOAD_STATUS, (event, data) => {
+      this.store.dispatch(new downloadActions.UpdateProgress(data));
+    });
+
+  }
+
+
 
   /**
    *
    *
    */
-  updateDownloadProgress(): Observable<any> {
-    console.log('----------------- updateDownloadProgress ----------------- ');
-    this.electronService.ipcRenderer.removeAllListeners(constants.IPC_DOWNLOAD_STATUS);
+  // updateDownloadProgress(): Observable<any> {
+  //   console.log('----------------- updateDownloadProgress ----------------- ');
+  //   // this.electronService.ipcRenderer.removeAllListeners(constants.IPC_DOWNLOAD_STATUS);
 
-    return Observable.create((observer) => {
-      this.electronService.ipcRenderer.on(constants.IPC_DOWNLOAD_STATUS, (event, data) => {
-        this.updateDownloadItem(data);
-        observer.next(this.generalProgress(Type.DOWNLOAD));
-      });
-    });
+  //   return Observable.create((observer) => {
+  //     this.electronService.ipcRenderer.on(constants.IPC_DOWNLOAD_STATUS, (event, data) => {
+  //       console.log('----------- ' + constants.IPC_DOWNLOAD_STATUS + ' ----------');
+  //       console.log(data);
+  //       this.updateDownloadItem(data);
+  //       observer.next(this.generalProgress(Type.DOWNLOAD));
+  //     });
+  //   });
 
-    // this.electronService.ipcRenderer.on(constants.IPC_DOWNLOAD_STATUS, (event, data) => {
-    //   this.updateDownloadItem(data, Type.DOWNLOAD, ItemStatus.DOWNLOADING);
+  //   // this.electronService.ipcRenderer.on(constants.IPC_DOWNLOAD_STATUS, (event, data) => {
+  //   //   this.updateDownloadItem(data, Type.DOWNLOAD, ItemStatus.DOWNLOADING);
 
-    //   observer.next(this.generalProgress(Type.DOWNLOAD));
-    // });
+  //   //   observer.next(this.generalProgress(Type.DOWNLOAD));
+  //   // });
 
 
 
-  }
+  // }
 
   updateExportS3Progress(): Observable<any> {
     this.electronService.ipcRenderer.removeAllListeners(constants.IPC_EXPORT_S3_DOWNLOAD_STATUS);
@@ -71,7 +81,7 @@ export class StatusService {
         if (data.status === ItemStatus.EXPORTED_S3) {
           this.updateItem(data, Type.EXPORT_S3, ItemStatus.EXPORTING_S3);
         } else {
-          const existentItem = new FilesDatabase(this.store).data.
+          const existentItem = new FilesDatabase(this.store).data().
             filter(item => item.type === Type.EXPORT_S3 && item.id === data.id)[0];
           if (existentItem.status === ItemStatus.EXPORTING_S3) {
             this.s3Service.startUpload(data);
@@ -99,7 +109,6 @@ export class StatusService {
    * @param status entity status
    */
   private updateDownloadItem(item: DownloadItem) {
-    console.log('---------------updateDownloadItem--------------------- ', item);
     if (item.progress === 100) {
       this.store.dispatch(new downloadActions.CompleteItem(item));
       this.limitTransferables.pendingDownloadItem();
@@ -120,7 +129,7 @@ export class StatusService {
   private generalProgress(type: Type): number {
     let totalSize = 0;
     let totalTransferred = 0;
-    new FilesDatabase(this.store).data.
+    new FilesDatabase(this.store).data().
       filter(item => item.type === type && item.currentBatch)
       .forEach(item => {
         totalSize += Number(item.size);
@@ -132,7 +141,7 @@ export class StatusService {
   /* TODO
     public generalExportProgress(): Observable<any> {
       return Observable.create((observer) => {
-        const items = new FilesDatabase(this.store).data.
+        const items = new FilesDatabase(this.store).data().
           filter(item => item.type === Type.EXPORT_GCP && (item.status === ItemStatus.EXPORTING_GCP || item.status === ItemStatus.PENDING));
         observer.next(items.length === 0 ? 'determinate' : 'indeterminate');
       });

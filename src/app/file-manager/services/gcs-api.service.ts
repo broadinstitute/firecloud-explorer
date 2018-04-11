@@ -95,7 +95,7 @@ export class GcsApiService extends GcsService {
   }
 
   public cancelAll() {
-    if (new FilesDatabase(this.store).data.filter(item =>
+    if (new FilesDatabase(this.store).data().filter(item =>
       item.status === ItemStatus.PENDING
       || item.status === ItemStatus.DOWNLOADING
       || item.status === ItemStatus.UPLOADING
@@ -169,12 +169,12 @@ export class GcsApiService extends GcsService {
         currentStatus = ItemStatus.DOWNLOADING;
         break;
       case Type.EXPORT_S3:
-        return new FilesDatabase(this.store).data.filter(item => (item.status === ItemStatus.PENDING && item.type === Type.EXPORT_S3));
+        return new FilesDatabase(this.store).data().filter(item => (item.status === ItemStatus.PENDING && item.type === Type.EXPORT_S3));
       case Type.UPLOAD:
         currentStatus = ItemStatus.UPLOADING;
         break;
     }
-    return new FilesDatabase(this.store).data.filter(item => item.status === currentStatus ||
+    return new FilesDatabase(this.store).data().filter(item => item.status === currentStatus ||
       (item.status === ItemStatus.PENDING && item.type === type));
   }
 

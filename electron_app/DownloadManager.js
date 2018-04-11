@@ -10,10 +10,9 @@ let allDownloads = [];
 let fileExists = true;
 
 const downloadManager = (items, access_token, electronWin) => {
-  console.log('downloadManager.items : ',items);
 
   items.forEach(item => {
-    console.log(item);
+
     let count = 0;
     let fileName = item.displayName;
     const destination = item.preserveStructure ?
@@ -29,13 +28,11 @@ const downloadManager = (items, access_token, electronWin) => {
     } while (fileExists);
 
     item.displayName = fileName;
-    processItem(item, destination, access_token, electronWin);
-  });
-};
 
-const processItem = (item, itemDestination, token, win) => {
-  handleFolder(itemDestination, (result) => {
-    allDownloads.push(processDownload(token, item, result, win));
+    handleFolder(destination, (result) => {
+      allDownloads.push(processDownload(access_token, item, result, electronWin));
+    });
+
   });
 };
 

@@ -45,7 +45,7 @@ export class Filter implements Action {
 
 export class Reset implements Action {
     readonly type = RESET;
-    constructor(public payload: { item: DownloadItem }) {}
+    constructor() {}
 }
 
 export class SelectAll implements Action {

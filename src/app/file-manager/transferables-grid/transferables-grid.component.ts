@@ -65,7 +65,11 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   exportToGcpItems = new FilesDatabase(this.store);
   exportToS3Canceled = false;
 
-  currentState: Observable<TransferableState>;
+  downPending = 0;
+  downTotal = 0;
+  downProgress = 0;
+
+  currentState: Observable<DownloadState>;
 
   itemsObs: Observable<TransferableState>;
 
@@ -117,24 +121,23 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
     private dialog: MatDialog) {
     this.filesDatabase = new FilesDatabase(store);
 
-    // this.currentState = this.store.select('transferables');
+    this.currentState = this.store.select('downloads');
 
-    // this.currentState.subscribe( cs => {
-    //   console.log('------------------- current state ------------------');
-    //   console.log(cs.counter);
+    this.currentState.subscribe(cs => {
+      // console.log('------------------- current state ------------------');
+      // console.log('totalCount       : ' + cs.totalCount);
+      // console.log('totalSize        : ' + cs.totalSize);
+      // console.log('totalTransferred : ' + cs.totalTransferred);
+      // console.log('totalProgress    : ' + cs.totalProgress);
+      // console.log('------------------------------------');
 
-    //   console.log('downloadingCount  : ' + cs.downloadingCount);
-    //   console.log('toDownloadCount   : ' + cs.toDownloadCount);
+      this.zone.run(() => {
+        this.downPending = cs.pending.count;
+        this.downTotal = cs.totalCount;
+        this.downProgress = cs.totalProgress;
+      });
 
-    //   console.log('uploadingCount    : ' + cs.uploadingCount);
-    //   console.log('toUploadCount     : ' + cs.toUploadCount);
-
-    //   console.log('exportingGCPCount : ' + cs.exportingGCPCount);
-    //   console.log('toExportGCPCount  : ' + cs.toExportGCPCount);
-
-    //   console.log('exportingS3Count  : ' + cs.exportingS3Count);
-    //   console.log('toExportS3Count   : ' + cs.toExportS3Count);
-    // });
+    });
 
     // selectedCount: 0,
     // downloadingCount: 0,
@@ -198,14 +201,16 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
 
     this.exportToS3Canceled = this.gcsService.exportToS3Canceled;
 
-    this.dataSource.data = this.filesDatabase.data;
+    this.dataSource.data = this.filesDatabase.data();
 
-    this.statusService.updateDownloadProgress().subscribe(data => {
-      this.zone.run(() => {
-        this.generalProgress = data;
-        this.downloadInProgress = !(data === 100 || this.disabledDownload);
-      });
-    });
+    // this.statusService.updateDownloadProgress().subscribe(data => {
+    //   console.log('---------- update progres -----------------');
+    //   console.log(data);
+    //   this.zone.run(() => {
+    //     this.generalProgress = data;
+    //     this.downloadInProgress = !(data === 100 || this.disabledDownload);
+    //   });
+    // });
 
     this.statusService.updateUploadProgress().subscribe(data => {
       this.zone.run(() => {
@@ -216,7 +221,7 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
 
     this.gcsService.exportItemCompleted.subscribe(() => {
       if (!TransferablesGridComponent.firstIteration) {
-        const pendingItems = this.exportToGcpItems.data.filter(item => item.type === Type.EXPORT_GCP && item.status === ItemStatus.PENDING);
+        const pendingItems = this.exportToGcpItems.data().filter(item => item.type === Type.EXPORT_GCP && item.status === ItemStatus.PENDING);
         if (pendingItems.length !== 0) {
           this.handleGcpExport(pendingItems);
         } else if (TransferablesGridComponent.isExporting) {
@@ -234,7 +239,7 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
 
     this.statusService.updateExportS3Complete().subscribe(data => {
       this.zone.run(() => {
-        const items = new FilesDatabase(this.store).data
+        const items = new FilesDatabase(this.store).data()
           .filter(item => item.type === Type.EXPORT_S3 && item.status === ItemStatus.PENDING);
         if (items.length === 0) {
           this.exportToS3InProgress = true;
@@ -358,7 +363,7 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   startGCSExport(files: ExportToGCSItem[], preserveStructure: Boolean) {
     this.limitTransferables.controlExportToGCSItemLimits(files);
 
-    // const 2 = [...new FilesDatabase(this.store).data.filter(item => item.type === type && item.status === ItemStatus.PENDING)];
+    // const 2 = [...new FilesDatabase(this.store).data().filter(item => item.type === type && item.status === ItemStatus.PENDING)];
 
     // localStorage.setItem('preserveStructure', preserveStructure.toString());
     // this.spinner.hide();
@@ -369,7 +374,7 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   }
 
   startExport(preserveStructure: Boolean, type: Type) {
-    const files = [...new FilesDatabase(this.store).data.filter(item => item.type === type && item.status === ItemStatus.PENDING)];
+    const files = [...new FilesDatabase(this.store).data().filter(item => item.type === type && item.status === ItemStatus.PENDING)];
 
     localStorage.setItem('preserveStructure', preserveStructure.toString());
     this.spinner.hide();
