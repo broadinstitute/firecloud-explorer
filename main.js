@@ -23,6 +23,10 @@ const {
   uploadManager,
   uploadManagerCancel
 } = require('./electron_app/UploadManager');
+const {
+  exportGCPManager,
+  exportGCPManagerCancel
+} = require('./electron_app/ExportGCPManager');
 
 require('dotenv').config();
 
@@ -60,6 +64,15 @@ app.on('ready', function () {
 
   win.once('ready-to-show', () => {
     win.show();
+  });
+
+  ipcMain.on(constants.IPC_EXPORT_GCP, (event, destinationBucket, files, access_token) => {
+    exportGCPManager(destinationBucket, files, access_token, win);
+  });
+  
+
+  ipcMain.on(constants.IPC_EXPORT_GCP_CANCEL, (event, file, access_token) => {
+    exportGCPManagerCancel(file, access_token);
   });
 
   ipcMain.on(constants.IPC_CONFIGURE_ACCOUNT, (event, googleConfig, googleOptions) => {

@@ -58,12 +58,20 @@ export class StatusService {
     /**
      * Export To GCS progress listeners
      */
-    this.electronService.ipcRenderer.on(constants.IPC_EXPORT_GCS_DOWNLOAD_STATUS, (event, item) => {
+    this.electronService.ipcRenderer.on(constants.IPC_EXPORT_TO_GCP_STATUS, (event, item) => {
+      console.log('gcs status ', item);
       this.store.dispatch(new exportToGCSActions.UpdateProgress(item));
     });
 
-    this.electronService.ipcRenderer.on(constants.IPC_EXPORT_GCS_COMPLETE, (event, item) => {
+    this.electronService.ipcRenderer.on(constants.IPC_EXPORT_TO_GCP_COMPLETE, (event, item) => {
+      console.log('gcs complete ', item);
       this.store.dispatch(new exportToGCSActions.CompleteItem(item));
+      // TODO: must start next batch, if any
+    });
+
+    this.electronService.ipcRenderer.on(constants.IPC_EXPORT_TO_GCP_FAILED, (event, item) => {
+      console.log('gcs failed ', item);
+      this.store.dispatch(new exportToGCSActions.FailItem(item));
       // TODO: must start next batch, if any
     });
 

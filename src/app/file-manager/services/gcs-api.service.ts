@@ -90,6 +90,7 @@ export class GcsApiService extends GcsService {
     this.electronService.ipcRenderer.send(constants.IPC_START_DOWNLOAD, files, SecurityService.getAccessToken());
   }
 
+
   public resumeDownload(file: Item) {
     this.electronService.ipcRenderer.send('resume-download', file, SecurityService.getAccessToken());
   }
@@ -183,60 +184,71 @@ export class GcsApiService extends GcsService {
     return this.http.get(url);
   }
 
-  public exportToGCP(destinationBucket: string, file: ExportToGCSItem): Observable<any> {
-    const sourceObject = file.path.substring(file.path.indexOf('/') + 1, file.path.length);
-    const destinationObject = localStorage.getItem('preserveStructure') === 'true' ? sourceObject : file.displayName;
-    const url = environment.GOOGLE_URL + 'storage/v1/b/' + file.bucketName + '/o/' +
-      encodeURIComponent(sourceObject) + '/rewriteTo/b/' + encodeURIComponent(destinationBucket) +
-      '/o/' + encodeURIComponent('Imports/' + destinationObject) + '?fields=done,totalBytesRewritten,resource.id';
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'Authorization': 'Bearer ' + SecurityService.getAccessToken()
-      })
-    };
+  // public exportToGCP(destinationBucket: string, file: ExportToGCSItem): Observable<any> {
+  //   const sourceObject = file.path.substring(file.path.indexOf('/') + 1, file.path.length);
+  //   const destinationObject = localStorage.getItem('preserveStructure') === 'true' ? sourceObject : file.displayName;
+  //   const url = environment.GOOGLE_URL + 'storage/v1/b/' + file.bucketName + '/o/' +
+  //     encodeURIComponent(sourceObject) + '/rewriteTo/b/' + encodeURIComponent(destinationBucket) +
+  //     '/o/' + encodeURIComponent('Imports/' + destinationObject) + '?fields=done,totalBytesRewritten,resource.id';
+  //   const httpOptions = {
+  //     headers: new HttpHeaders({
+  //       'Authorization': 'Bearer ' + SecurityService.getAccessToken()
+  //     })
+  //   };
 
-    return this.http.post(url, null, httpOptions).retry(1);
+  //   return this.http.post(url, null, httpOptions).retry(1);
+  // }
+
+  public exportToGCSFiles(files: ExportToGCSItem[], destinationBucket: string) {
+    console.log('gcs-api-service' , files, destinationBucket);
+    if (files === undefined || files === null || files.length <= 0) {
+      console.log('---------------------exportToGCSFiles - files empty --------------------------', files);
+      return;
+    }
+
+    console.log('------------------ gcs-service exportToGCSFiles ------- ', files);
+    this.store.dispatch(new exportToGCSActions.ProcessItems({ items: files }));
+    this.electronService.ipcRenderer.send(constants.IPC_EXPORT_GCP, destinationBucket, files, SecurityService.getAccessToken());
   }
 
-  public exportToGCSFiles(fileList: ExportToGCSItem[], destinationBucket: string) {
-    const reqs = [];
-    const responseCompleted = 0;
+  //     const reqs = [];
+  //     const responseCompleted = 0;
 
-    // // fileList.forEach(file => {
-    // //   reqs.push(this.exportToGCP(destinationBucket, file).map(r => {
-    //     return { id: r.id, data: r };
-    //   })));
-    // // });
+  //     // // fileList.forEach(file => {
+  //     // //   reqs.push(this.exportToGCP(destinationBucket, file).map(r => {
+  //     //     return { id: r.id, data: r };
+  //     //   })));
+  //     // // });
 
-    const rq2 = Observable.from(fileList).
-      pipe(
-        concatMap(file => this.exportToGCP(destinationBucket, file)));
+  //     const rq2 = Observable.from(fileList).
+  //       pipe(
+  //         concatMap(file => this.exportToGCP(destinationBucket, file)));
 
-    // forkJoin(reqs).subscribe(
-    //   data => {
-    //     console.log('------------------------- before -----------------------');
-    //     console.log(JSON.stringify(data, null, 2));
-    //     console.log('------------------------- after  -----------------------');
-    //   },
-    //   err => {
-    //     console.log(err);
-    //   },
-    //   () => {
-    //     //this.exportItemCompleted.next(true);
-    //   });
+  //     // forkJoin(reqs).subscribe(
+  //     //   data => {
+  //     //     console.log('------------------------- before -----------------------');
+  //     //     console.log(JSON.stringify(data, null, 2));
+  //     //     console.log('------------------------- after  -----------------------');
+  //     //   },
+  //     //   err => {
+  //     //     console.log(err);
+  //     //   },
+  //     //   () => {
+  //     //     //this.exportItemCompleted.next(true);
+  //     //   });
 
-    rq2.subscribe(
-      res => {
-//        this.store.dispatch(new exportToGCSActions.CompleteItems({ items:  }));
-      },
-      err => {
-        console.log(err);
-      },
-      () => {
-        console.log('-------------- termine --------------');
-      }
-    );
-  }
+  //     rq2.subscribe(
+  //       res => {
+  // //        this.store.dispatch(new exportToGCSActions.CompleteItems({ items:  }));
+  //       },
+  //       err => {
+  //         console.log(err);
+  //       },
+  //       () => {
+  //         console.log('-------------- termine --------------');
+  //       }
+  //     );
+  //   }
 
 
   public exportToS3Files(fileList: ExportToS3Item[], destinationBucket: string) {

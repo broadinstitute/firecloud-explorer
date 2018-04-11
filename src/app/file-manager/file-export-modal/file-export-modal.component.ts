@@ -153,6 +153,7 @@ export class FileExportModalComponent implements OnInit {
   }
 
   startExportToGCS(): void {
+    console.log('startExportToGCS', this.selectedFiles);
     const filesToExport: ExportToGCSItem[] = [];
     if (this.exportForm.get('bucketNameGCP').valid) {
       this.disable = true;
@@ -175,16 +176,12 @@ export class FileExportModalComponent implements OnInit {
               filesToExport.push(file);
             });
 
-            this.store.dispatch(new exportToGCSActions.AddItems({ items: filesToExport }));
-            //    this.done.emit(true);
-
-            localStorage.setItem('displaySpinner', 'true');
-            this.router.navigate(['/status']);
+            console.log('filesToExport', filesToExport);
             localStorage.setItem('destinationBucket', this.exportForm.controls.bucketNameGCP.value);
 
+            this.transferablesGridComponent.startGCSExport(filesToExport, this.preserveStructure);
             this.dialogRef.close({ preserveStructure: this.preserveStructure, type: Type.EXPORT_GCP });
 
-            this.transferablesGridComponent.startGCSExport(filesToExport, this.preserveStructure);
             this.router.navigate(['/status']);
 
           } else {
@@ -203,7 +200,11 @@ export class FileExportModalComponent implements OnInit {
             severity: 'warn',
             summary: 'Sorry, the specified bucket does not exist.',
           });
+        },
+        () => {
+
         }
+
       );
     }
   }
@@ -242,7 +243,7 @@ export class FileExportModalComponent implements OnInit {
   }
 
   dispatchFiles(type: string) {
-    this.updateCurrentBatch(type);
+
     const filesToExport = [];
     this.selectedFiles().forEach(file => {
       // file.id = UUID.UUID();
@@ -293,13 +294,5 @@ export class FileExportModalComponent implements OnInit {
     return this.preflightService.selectedFiles;
   }
 
-  updateCurrentBatch(type) {
-    const items = new FilesDatabase(this.store).data().filter(item => item.type === type && item.currentBatch
-      && item.status === ItemStatus.COMPLETED || item.status === ItemStatus.CANCELED);
-    items.forEach(item => {
-      item.currentBatch = false;
-      this.store.dispatch(new Transferables.UpdateItem(item));
-    });
-  }
 }
 

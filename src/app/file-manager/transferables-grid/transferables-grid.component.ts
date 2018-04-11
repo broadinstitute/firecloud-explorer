@@ -401,31 +401,23 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   }
 
   startGCSExport(files: ExportToGCSItem[], preserveStructure: Boolean) {
+    console.log('transferable-grid-component', files);
     this.limitTransferables.controlExportToGCSItemLimits(files);
-
-    // const 2 = [...new FilesDatabase(this.store).data().filter(item => item.type === type && item.status === ItemStatus.PENDING)];
-
-    // localStorage.setItem('preserveStructure', preserveStructure.toString());
-    // this.spinner.hide();
-
-    // TransferablesGridComponent.isExporting = true;
-    // this.limitTransferables.exportItems(files);
-    // TransferablesGridComponent.firstIteration = false;
   }
 
   startExport(preserveStructure: Boolean, type: Type) {
-    const files = [...new FilesDatabase(this.store).data().filter(item => item.type === type && item.status === ItemStatus.PENDING)];
+    // const files = [...new FilesDatabase(this.store).data().filter(item => item.type === type && item.status === ItemStatus.PENDING)];
 
-    localStorage.setItem('preserveStructure', preserveStructure.toString());
-    this.spinner.hide();
-    if (type === Type.EXPORT_S3) {
-      this.exportToS3InProgress = true;
-      this.limitTransferables.controlLimitItems(files, Type.EXPORT_S3, ItemStatus.EXPORTING_S3);
-    } else {
-      TransferablesGridComponent.isExporting = true;
-      this.limitTransferables.exportItems(files);
-      TransferablesGridComponent.firstIteration = false;
-    }
+    // localStorage.setItem('preserveStructure', preserveStructure.toString());
+    // this.spinner.hide();
+    // if (type === Type.EXPORT_S3) {
+    //   this.exportToS3InProgress = true;
+    //   this.limitTransferables.controlLimitItems(files, Type.EXPORT_S3, ItemStatus.EXPORTING_S3);
+    // } else {
+    //   TransferablesGridComponent.isExporting = true;
+    //   this.limitTransferables.exportItems(files);
+    //   TransferablesGridComponent.firstIteration = false;
+    // }
   }
 
   getExportingStatus() {

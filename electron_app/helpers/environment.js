@@ -24,6 +24,12 @@ const constants ={
   IPC_AWS_HANDLE_CREDENTIALS: 'aws-handle-credentials',
   USER_AGENT: userAgent + '/Electron',
   TESTING: false,
+  IPC_EXPORT_TO_GCP_STATUS: 'export-to-gcp-status',
+  IPC_EXPORT_TO_GCP_COMPLETE: 'export-to-gcp-complete',
+  IPC_EXPORT_TO_GCP_FAILED: 'export-to-gcp-failed',
+  IPC_EXPORT_GCP: 'export-gcp',
+  IPC_EXPORT_GCP_CANCEL: 'export-gcp-cancel',
+  GCP_API: 'https://www.googleapis.com/storage/v1/b/' 
 };
 
 module.exports = { constants };

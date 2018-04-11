@@ -34,6 +34,7 @@ export class LimitTransferablesService implements OnInit {
     private store: Store<AppState>,
     private s3TransferService: S3ExportService,
   ) {
+
     this.store.select('downloads').subscribe(
       data => {
         this.downloadsPendingCount = data.pending.count;
@@ -99,20 +100,21 @@ export class LimitTransferablesService implements OnInit {
   }
 
   public controlExportToGCSItemLimits(files: ExportToGCSItem[]): void {
+    console.log('limit-transferables - gcs' , files);
     if (files === undefined || files === null || files.length <= 0) {
       return;
     }
-
+    let destinationBucket = localStorage.getItem('destinationBucket')
     let maxFiles = [];
     console.log('---------- files --------------', files);
     this.store.dispatch(new exportToGCSActions.AddItems({ items: files }));
 
-    if (files.length > environment.LIMIT_EXPORTABLES) {
-      maxFiles = files.splice(0, environment.LIMIT_EXPORTABLES);
+    if (files.length > environment.LIMIT_GCS_EXPORTABLES) {
+      maxFiles = files.splice(0, environment.LIMIT_GCS_EXPORTABLES);
     } else {
       maxFiles = files;
     }
-    this.gcsService.exportToGCSFiles(maxFiles, '');
+    this.gcsService.exportToGCSFiles(maxFiles, destinationBucket);
   }
 
   public controlLimitItems(files: Item[], type: Type, status: ItemStatus): void {

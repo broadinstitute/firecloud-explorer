@@ -47,7 +47,7 @@ export class Filter implements Action {
 
 export class Reset implements Action {
     readonly type = RESET;
-    constructor(public payload: { item: ExportToS3Item }) {}
+    constructor() {}
 }
 
 export class SelectAll implements Action {
