@@ -5,11 +5,11 @@
   <div class="status-box">
     <h4 class="subtitle medium">Downloaded:</h4>
     <div class="flex-container space-between">
-      <p class="aclaration">{{ downPending + ' of ' + downTotal }} file(s)</p>
-      <h4 class="subtitle light">{{ downProgress }}%</h4>
+      <p class="aclaration">{{ downCompleted + ' of ' + downTotal }} file(s)</p>
+      <h4 class="subtitle light">{{ downProgress | number:'1.2-2' }}%</h4>
     </div>
 
-    <p-progressBar mode="determinate" class="progress-bar" [ngClass]="{'success': downProgress >= 100, 'failure': downloadCanceled}"
+    <p-progressBar mode="determinate" class="progress-bar" [ngClass]="{'success': downProgress === 100, 'failure': downloadCanceled}"
       [value]="downProgress" [showValue]="false"></p-progressBar>
 
     <div class="flex-container end actions">
@@ -24,12 +24,12 @@
   <div class="status-box">
     <h4 class="subtitle medium">Uploaded:</h4>
     <div class="flex-container space-between">
-      <p class="aclaration">{{filesDatabase.uploadedCount() + ' of ' + filesDatabase.toUploadCount()}} file(s)</p>
-      <h4 class="subtitle light">{{ filesDatabase.uploadProgress() }}%</h4>
+      <p class="aclaration">{{ upCompleted + ' of ' + upTotal }} file(s)</p>
+      <h4 class="subtitle light">{{ upProgress | number:'1.2-2'  }}%</h4>
     </div>
 
-    <p-progressBar mode="determinate" class="progress-bar" [ngClass]="{'success': filesDatabase.uploadProgress() === 100, 'failure': uploadCanceled}"
-      [value]="filesDatabase.uploadProgress()" [showValue]="false"></p-progressBar>
+    <p-progressBar mode="determinate" class="progress-bar" [ngClass]="{'success': upProgress === 100, 'failure': uploadCanceled}"
+      [value]="upProgress" [showValue]="false"></p-progressBar>
 
     <div class="flex-container end actions">
       <button mat-raised-button (click)="cancelUploads()" class="button-secondary" [disabled]="!uploadInProgress">
@@ -43,11 +43,11 @@
     <div class="flex-container space-between">
 
       <p class="aclaration">{{ filesDatabase.exportedToGCSCount() + ' of ' + filesDatabase.toExportGCSCount() }} file(s)</p>
-      <h4 class="subtitle light">{{ filesDatabase.exportToGCSProgress() }}%</h4>
+      <h4 class="subtitle light">{{ gcsProgress | number:'1.2-2'  }}%</h4>
     </div>
 
-    <p-progressBar #pbg mode="determinate" class="progress-bar" [ngClass]="{'success': filesDatabase.exportToGCSProgress() === 100, 'failure': exportToGCPCanceled === true}"
-      [value]="filesDatabase.exportToGCSProgress()" [showValue]="false"></p-progressBar>
+    <p-progressBar #pbg mode="determinate" class="progress-bar" [ngClass]="{'success': gcsProgress === 100, 'failure': exportToGCPCanceled === true}"
+      [value]="gcsProgress" [showValue]="false"></p-progressBar>
 
     <div class="flex-container end actions">
       <button mat-raised-button (click)="cancelExportsToGCP()" class="button-secondary" [disabled]="!getExportingStatus()">
@@ -59,12 +59,12 @@
   <div class="status-box">
     <h4 class="subtitle medium">Exported to Amazon:</h4>
     <div class="flex-container space-between">
-      <p class="aclaration">{{ filesDatabase.exportedToS3Count() + ' of ' + filesDatabase.toExportS3Count() }} file(s)</p>
-      <h4 class="subtitle light">{{ filesDatabase.exportToS3Progress() }}%</h4>
+      <p class="aclaration">{{ s3Completed + ' of ' + s3Total }} file(s)</p>
+      <h4 class="subtitle light">{{ s3Progress | number:'1.2-2'  }}%</h4>
     </div>
 
-    <p-progressBar mode="determinate" class="progress-bar" [ngClass]="{'success': filesDatabase.exportToS3Progress() === 100, 'failure': exportToS3Canceled === true}"
-      [value]="filesDatabase.exportToS3Progress()" [showValue]="false"></p-progressBar>
+    <p-progressBar mode="determinate" class="progress-bar" [ngClass]="{'success': s3Progress === 100, 'failure': exportToS3Canceled === true}"
+      [value]="s3Progress" [showValue]="false"></p-progressBar>
 
     <div class="flex-container end actions">
       <button mat-raised-button (click)="cancelExportsToS3()" class="button-secondary" [disabled]="!(exportToS3InProgress && exportToS3Canceled === false)">

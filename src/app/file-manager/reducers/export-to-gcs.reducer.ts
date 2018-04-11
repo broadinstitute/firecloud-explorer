@@ -3,6 +3,10 @@ import * as ExportToGCSItemActions from '@app/file-manager/actions/export-to-gcs
 import { EntityStatus } from '@app/file-manager/models/entity-status';
 
 export interface ExportToGCSState {
+    totalCount: number;
+    totalSize: number;
+    totalTransferred: number;
+    totalProgress: number;
     pending: {
         count: number;
         items: { [id: string]: ExportToGCSItem };
@@ -38,6 +42,10 @@ export interface ExportToGCSState {
 
 export const exportToGCSInitialState: ExportToGCSState = {
 
+    totalCount: 0,
+    totalSize: 0,
+    totalTransferred: 0,
+    totalProgress: 0,
     pending: {
         count: 0,
         items: {}
@@ -74,14 +82,20 @@ export function ExportToGCSReducer(
         case ExportToGCSItemActions.ADD_ITEM:
             action.payload.status = EntityStatus.PENDING;
             state.pending.count++;
+            state.totalCount++;
+            state.totalSize += Number(action.payload.size);
             state.pending.items[action.payload.id] = action.payload;
             break;
 
         case ExportToGCSItemActions.ADD_ITEMS:
-            console.log('add-items: ', action.payload.items);
+            if (action.payload.clear === true) {
+                state = exportToGCSInitialState;
+            }
             action.payload.items.forEach(item => {
                 item.status = EntityStatus.PENDING;
                 state.pending.count++;
+                state.totalCount++;
+                state.totalSize += Number(item.size);
                 state.pending.items[item.id] = item;
             });
             break;
@@ -95,7 +109,6 @@ export function ExportToGCSReducer(
             break;
 
         case ExportToGCSItemActions.PROCESS_ITEMS:
-            console.log('process-items: ', action.payload.items);
             action.payload.items.forEach(item => {
                 state.pending.count--;
                 delete state.pending.items[item.id];
@@ -178,10 +191,9 @@ export function ExportToGCSReducer(
             });
             break;
 
-
         case ExportToGCSItemActions.UPDATE_ITEM_PROGRESS:
             // decrement old values
-            state.inProgress.progress -= state.inProgress.items[action.payload.id].progress;
+            state.totalTransferred -= state.inProgress.items[action.payload.id].transferred;
             state.inProgress.transferred -= state.inProgress.items[action.payload.id].transferred;
 
             // update item
@@ -189,22 +201,47 @@ export function ExportToGCSReducer(
             state.inProgress.items[action.payload.id].transferred = action.payload.transferred;
 
             // increment new values
-            state.inProgress.progress += state.inProgress.items[action.payload.id].progress;
+            state.totalTransferred += state.inProgress.items[action.payload.id].transferred;
             state.inProgress.transferred += state.inProgress.items[action.payload.id].transferred;
+
+            state.totalProgress = state.totalSize !== 0 ? 100.0 * state.totalTransferred / state.totalSize : 0;
+            state.inProgress.progress = state.totalSize !== 0 ? state.inProgress.transferred / state.totalSize : 0;
             break;
 
+        case ExportToGCSItemActions.RESET:
 
-        // case ExportToGCSItemActions.UPDATE_ITEM:
-        //     return downloadEntityAdapter.updateOne(action.payload.item, state);
+            state.totalSize = 0;
+            state.totalCount = 0;
+            state.totalProgress = 0;
+            state.totalTransferred = 0;
 
-        // case ExportToGCSItemActions.REMOVE_ITEM:
-        //     return downloadEntityAdapter.removeOne(action.payload.id, state);
+            state.pending.count = 0;
+            state.pending.items = {};
+
+            state.inProgress.count = 0;
+            state.inProgress.progress = 0;
+            state.inProgress.transferred = 0;
+            state.inProgress.items = {};
+
+            state.completed.count = 0;
+            state.completed.items = {};
+
+            state.paused.count = 0;
+            state.paused.items = {};
+
+            state.cancelled = { count: 0, items: {} };
+            state.failed = { count: 0, items: {} };
+            break;
 
         default:
             return state;
     }
 
     return {
+        totalCount: state.totalCount,
+        totalSize: state.totalSize,
+        totalProgress: state.totalProgress,
+        totalTransferred: state.totalTransferred,
         pending: {
             count: state.pending.count,
             items: state.pending.items

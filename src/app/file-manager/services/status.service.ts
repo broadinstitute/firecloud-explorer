@@ -30,13 +30,56 @@ export class StatusService {
     private s3Service: S3ExportService,
     private electronService: ElectronService) {
 
-    this.electronService.ipcRenderer.on(constants.IPC_DOWNLOAD_STATUS, (event, data) => {
-      this.store.dispatch(new downloadActions.UpdateProgress(data));
+    /**
+     * Download progress listeners
+     */
+    this.electronService.ipcRenderer.on(constants.IPC_DOWNLOAD_STATUS, (event, item) => {
+      this.store.dispatch(new downloadActions.UpdateProgress(item));
+    });
+
+    this.electronService.ipcRenderer.on(constants.IPC_DOWNLOAD_COMPLETED, (event, item) => {
+      this.store.dispatch(new downloadActions.CompleteItem(item));
+      // TODO: must start next batch, if any
+      this.limitTransferables.pendingDownloadItem();
+    });
+
+    /**
+     * Upload progress listeners
+     */
+    this.electronService.ipcRenderer.on(constants.IPC_UPLOAD_STATUS, (event, item) => {
+      this.store.dispatch(new uploadActions.UpdateProgress(item));
+    });
+
+    this.electronService.ipcRenderer.on(constants.IPC_UPLOAD_COMPLETE, (event, item) => {
+      this.store.dispatch(new uploadActions.CompleteItem(item));
+      // TODO: must start next batch, if any
+    });
+
+    /**
+     * Export To GCS progress listeners
+     */
+    this.electronService.ipcRenderer.on(constants.IPC_EXPORT_GCS_DOWNLOAD_STATUS, (event, item) => {
+      this.store.dispatch(new exportToGCSActions.UpdateProgress(item));
+    });
+
+    this.electronService.ipcRenderer.on(constants.IPC_EXPORT_GCS_COMPLETE, (event, item) => {
+      this.store.dispatch(new exportToGCSActions.CompleteItem(item));
+      // TODO: must start next batch, if any
+    });
+
+    /**
+     * Export To S3 progress listeners
+     */
+    this.electronService.ipcRenderer.on(constants.IPC_EXPORT_S3_DOWNLOAD_STATUS, (event, item) => {
+      this.store.dispatch(new exportToS3Actions.UpdateProgress(item));
+    });
+
+    this.electronService.ipcRenderer.on(constants.IPC_EXPORT_S3_COMPLETE, (event, item) => {
+      this.store.dispatch(new exportToS3Actions.CompleteItem(item));
+      // TODO: must start next batch, if any
     });
 
   }
-
-
 
   /**
    *
@@ -60,9 +103,6 @@ export class StatusService {
 
   //   //   observer.next(this.generalProgress(Type.DOWNLOAD));
   //   // });
-
-
-
   // }
 
   updateExportS3Progress(): Observable<any> {

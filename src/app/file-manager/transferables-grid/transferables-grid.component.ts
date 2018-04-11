@@ -45,6 +45,7 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 })
 
 export class TransferablesGridComponent implements OnInit, AfterViewInit {
+
   static isExporting: Boolean = false;
   static firstIteration: Boolean = true;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -65,40 +66,57 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   exportToGcpItems = new FilesDatabase(this.store);
   exportToS3Canceled = false;
 
-  downPending = 0;
+  //---------------------------- progress info from here ----------------
+  downCompleted = 0;
   downTotal = 0;
   downProgress = 0;
 
-  currentState: Observable<DownloadState>;
+  upCompleted = 0;
+  upTotal = 0;
+  upProgress = 0;
+
+  gcsCompleted = 0;
+  gcsTotal = 0;
+  gcsProgress = 0;
+
+  s3Completed = 0;
+  s3Total = 0;
+  s3Progress = 0;
+
+  downloadState: Observable<DownloadState>;
+  uploadState: Observable<UploadState>;
+  exportToGCSState: Observable<ExportToGCSState>;
+  exportToS3State: Observable<ExportToS3State>;
+  //------------------------------ until here ------------------------
 
   itemsObs: Observable<TransferableState>;
 
-  initialState: TransferableState = {
-    count: 0,
-    selectedCount: 0,
-    downloadingCount: 0,
-    uploadingCount: 0,
-    exportingGCPCount: 0,
-    toDownloadCount: 0,
-    toUploadCount: 0,
-    toExportS3Count: 0,
-    exportingS3Count: 0,
-    toExportGCPCount: 0,
-    counter: [
-      [0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0]
+  // initialState: TransferableState = {
+  //   count: 0,
+  //   selectedCount: 0,
+  //   downloadingCount: 0,
+  //   uploadingCount: 0,
+  //   exportingGCPCount: 0,
+  //   toDownloadCount: 0,
+  //   toUploadCount: 0,
+  //   toExportS3Count: 0,
+  //   exportingS3Count: 0,
+  //   toExportGCPCount: 0,
+  //   counter: [
+  //     [0, 0, 0, 0, 0, 0, 0, 0, 0],
+  //     [0, 0, 0, 0, 0, 0, 0, 0, 0],
+  //     [0, 0, 0, 0, 0, 0, 0, 0, 0],
+  //     [0, 0, 0, 0, 0, 0, 0, 0, 0],
+  //     [0, 0, 0, 0, 0, 0, 0, 0, 0],
+  //     [0, 0, 0, 0, 0, 0, 0, 0, 0]
 
-    ],
-    items: [],
-    itemsMap: []
-  };
+  //   ],
+  //   items: [],
+  //   itemsMap: []
+  // };
 
-  stateChange: BehaviorSubject<TransferableState>
-    = new BehaviorSubject<TransferableState>(this.initialState);
+  // stateChange: BehaviorSubject<TransferableState>
+  //   = new BehaviorSubject<TransferableState>(this.initialState);
 
   modeVariable = 'determinate';
   generalExportToGCPProgress = 0;
@@ -121,33 +139,55 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
     private dialog: MatDialog) {
     this.filesDatabase = new FilesDatabase(store);
 
-    this.currentState = this.store.select('downloads');
+    this.downloadState = this.store.select('downloads');
+    this.uploadState = this.store.select('uploads');
+    this.exportToGCSState = this.store.select('exportToGCS');
+    this.exportToS3State = this.store.select('exportToS3');
 
-    this.currentState.subscribe(cs => {
-      // console.log('------------------- current state ------------------');
-      // console.log('totalCount       : ' + cs.totalCount);
-      // console.log('totalSize        : ' + cs.totalSize);
-      // console.log('totalTransferred : ' + cs.totalTransferred);
-      // console.log('totalProgress    : ' + cs.totalProgress);
-      // console.log('------------------------------------');
-
+    /**
+     * registering listeners to download progress info
+     */
+    this.downloadState.subscribe(cs => {
       this.zone.run(() => {
-        this.downPending = cs.pending.count;
+        this.downCompleted = cs.completed.count;
         this.downTotal = cs.totalCount;
         this.downProgress = cs.totalProgress;
       });
-
     });
 
-    // selectedCount: 0,
-    // downloadingCount: 0,
-    // uploadingCount: 0,
-    // exportingGCPCount: 0,
-    // toExportGCPCount: 0,
-    // toDownloadCount: 0,
-    // toUploadCount: 0,
-    // toExportS3Count: 0,
-    // exportingS3Count: 0,
+    /**
+     * registering listeners to upload progress info
+     */
+    this.uploadState.subscribe(cs => {
+      this.zone.run(() => {
+        this.upCompleted = cs.completed.count;
+        this.upTotal = cs.totalCount;
+        this.upProgress = cs.totalProgress;
+      });
+    });
+
+    /**
+     * registering listeners to export-to-gcs progress info
+     */
+    this.exportToGCSState.subscribe(cs => {
+      this.zone.run(() => {
+        this.gcsCompleted = cs.completed.count;
+        this.gcsTotal = cs.totalCount;
+        this.gcsProgress = cs.totalProgress;
+      });
+    });
+
+    /**
+     * registering listeners to export-to-s3 progress info
+     */
+    this.exportToS3State.subscribe(cs => {
+      this.zone.run(() => {
+        this.s3Completed = cs.completed.count;
+        this.s3Total = cs.totalCount;
+        this.s3Progress = cs.totalProgress;
+      });
+    });
+
   }
 
   load() {

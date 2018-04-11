@@ -11,25 +11,22 @@ const downloadStats = function (dl, item, win) {
             let stats = dl.getStats();
             item.progress = stats.total.completed;
             item.transferred = stats.total.downloaded;
-            console.log('-------- downloadInfo.dl.status === 1 ----------------');
-            console.log(item);
-            console.log('------------------------------------------------------');
+            // console.log('-------- reporting progress ------- ' + item.displayName + ' - ' + item.transferred);
             win.webContents.send(constants.IPC_DOWNLOAD_STATUS, item);
         } else if (dl.status === 3) {
             item.progress = 100;
+            item.transferred = item.size;
             if (win !== undefined) {
                 clearInterval(timer);
             }
             timer = null;
-            console.log('-------- downloadInfo.dl.status === 3 ----------------');
-            console.log(item);
-            console.log('------------------------------------------------------');
-            win.webContents.send(constants.IPC_DOWNLOAD_STATUS, item);
+            console.log('-------- reporting complete ------- ' + item.displayName + ' - ' + item.transferred);
+            win.webContents.send(constants.IPC_DOWNLOAD_COMPLETED, item);
         } else if (dl.status === -1 || dl.status === 3 || dl.status === -3) {
             clearInterval(timer);
             timer = null;
         }
-    }, 500);
+    }, 700);
 };
 
 module.exports = { downloadStats };

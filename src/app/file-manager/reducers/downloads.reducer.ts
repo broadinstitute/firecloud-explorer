@@ -83,7 +83,7 @@ export function DownloadsReducer(
             action.payload.status = EntityStatus.PENDING;
             state.pending.count++;
             state.totalCount++;
-            state.totalSize += action.payload.size;
+            state.totalSize += Number(action.payload.size);
             state.pending.items[action.payload.id] = action.payload;
             break;
 
@@ -95,7 +95,7 @@ export function DownloadsReducer(
                 item.status = EntityStatus.PENDING;
                 state.pending.count++;
                 state.totalCount++;
-                state.totalSize += item.size;
+                state.totalSize += Number(item.size);
                 state.pending.items[item.id] = item;
             });
             break;
@@ -232,12 +232,6 @@ export function DownloadsReducer(
             state.cancelled = { count: 0, items: {} };
             state.failed = { count: 0, items: {} };
             break;
-
-        // case DownloadItemActions.UPDATE_ITEM:
-        //     return downloadEntityAdapter.updateOne(action.payload.item, state);
-
-        // case DownloadItemActions.REMOVE_ITEM:
-        //     return downloadEntityAdapter.removeOne(action.payload.id, state);
 
         default:
             return state;
