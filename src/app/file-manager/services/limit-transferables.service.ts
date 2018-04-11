@@ -1,9 +1,16 @@
 import { Injectable, OnInit } from '@angular/core';
+
 import * as Transferables from '../actions/transferables.actions';
 import * as downloadActions from '../actions/download-item.actions';
+import * as uploadActions from '../actions/upload-item.actions';
+import * as exportToGCSActions from '../actions/export-to-gcs-item.actions';
+import * as exportToS3Actions from '../actions/export-to-s3-item.actions';
 
 import { Item } from '../models/item';
 import { DownloadItem } from '../models/download-item';
+import { ExportToGCSItem } from '../models/export-to-gcs-item';
+import { ExportToS3Item } from '../models/export-to-s3-item';
+
 import { Store } from '@ngrx/store';
 import { AppState } from '@app/file-manager/reducers';
 import { FilesDatabase } from '../dbstate/files-database';
@@ -29,7 +36,7 @@ export class LimitTransferablesService implements OnInit {
   ) {
     this.store.select('downloads').subscribe(
       data => {
-        this.downloadsPendingCount = data.pending.count;;
+        this.downloadsPendingCount = data.pending.count;
         this.downloadsInProgressCount = data.inProgress.count;
         this.downloadPendingItems = data.pending.items;
       }
@@ -94,6 +101,24 @@ export class LimitTransferablesService implements OnInit {
     this.gcsService.downloadFiles(maxFiles);
   }
 
+  public controlExportToGCSItemLimits(files: ExportToGCSItem[]): void {
+    if (files === undefined || files === null || files.length <= 0) {
+      console.log('---------------------controlExportToGCSItemLimits - files empty --------------------------', files);
+      return;
+    }
+
+    let maxFiles = [];
+    console.log('---------- files --------------', files);
+    this.store.dispatch(new exportToGCSActions.AddItems({ items: files }));
+
+    if (files.length > environment.LIMIT_EXPORTABLES) {
+      maxFiles = files.splice(0, environment.LIMIT_EXPORTABLES);
+    } else {
+      maxFiles = files;
+    }
+    this.gcsService.exportToGCSFiles(maxFiles, '');
+  }
+
   public controlLimitItems(files: Item[], type: Type, status: ItemStatus): void {
     let maxFiles = [];
 
@@ -113,7 +138,7 @@ export class LimitTransferablesService implements OnInit {
     if (type === Type.DOWNLOAD) {
       this.gcsService.downloadFiles(maxFiles);
     } else if (type === Type.UPLOAD) {
-      this.gcsService.uploadFiles(localStorage.getItem('uploadBucket'), maxFiles);
+      this.gcsService.uploadFiles(maxFiles, localStorage.getItem('uploadBucket'));
     } else if (type === Type.EXPORT_S3) {
       // Because the export S3 process works with one item at a time it's necessary to take the first one
       maxFiles[0].status = ItemStatus.EXPORTING_S3;
@@ -125,7 +150,7 @@ export class LimitTransferablesService implements OnInit {
 
   public exportItems(files: Item[]): void {
     const maxFiles = files.splice(0, environment.LIMIT_EXPORTABLES);
-    this.gcsService.exportToGCPFiles(localStorage.getItem('destinationBucket'), maxFiles);
+    this.gcsService.exportToGCSFiles(maxFiles, localStorage.getItem('destinationBucket'));
   }
 
   private proceedNextItem(files: Item[], type: Type, status: ItemStatus): void {
@@ -140,7 +165,7 @@ export class LimitTransferablesService implements OnInit {
       if (type === Type.DOWNLOAD) {
         this.gcsService.downloadFiles([item]);
       } else if (type === Type.UPLOAD) {
-        this.gcsService.uploadFiles(localStorage.getItem('uploadBucket'), [item]);
+        // this.gcsService.uploadFiles( [item], localStorage.getItem('uploadBucket'));
       } else if (type === Type.EXPORT_S3) {
         this.s3TransferService.startFileExportToS3(item);
       }

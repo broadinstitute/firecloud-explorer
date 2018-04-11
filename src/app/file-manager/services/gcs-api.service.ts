@@ -5,14 +5,19 @@ import { Observable } from 'rxjs/Observable';
 import { SecurityService } from './security.service';
 import { GcsService } from './gcs.service';
 import { ElectronService } from 'ngx-electron';
-import { Item } from '../models/item';
-import { DownloadItem } from '../models/download-item';
 
-import * as Transferables from '../actions/transferables.actions';
-import * as downloadActions from '../actions/download-item.actions';
+import { Item } from '@app/file-manager/models/item';
+import { DownloadItem } from '@app/file-manager/models/download-item';
+import { UploadItem } from '@app/file-manager/models/upload-item';
+import { ExportToGCSItem } from '@app/file-manager/models/export-to-gcs-item';
+import { ExportToS3Item } from '@app/file-manager/models/export-to-s3-item';
+
+import * as Transferables from '@app/file-manager/actions/transferables.actions';
+import * as downloadActions from '@app/file-manager/actions/download-item.actions';
+import * as exportToGCSActions from '@app/file-manager/actions/export-to-gcs-item.actions';
 
 import { Store } from '@ngrx/store';
-import { FilesDatabase } from '../dbstate/files-database';
+import { FilesDatabase } from '@app/file-manager/dbstate/files-database';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/retry';
@@ -22,7 +27,7 @@ import { WarningModalComponent } from '@app/file-manager/warning-modal/warning-m
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { forkJoin } from 'rxjs/observable/forkJoin';
 import { concatMap } from 'rxjs/operators';
-import { UpdateItemProgress } from '../actions/transferables.actions';
+import { UpdateItemProgress } from '@app/file-manager/actions/transferables.actions';
 
 
 const constants = require('../../../../electron_app/helpers/environment').constants;
@@ -37,18 +42,18 @@ export class GcsApiService extends GcsService {
     private zone: NgZone) {
     super();
 
-      // this.store.select('downloads').subscribe(
-      //   data => {
-      //     console.log('----------- GcsApiService store -------------------');
-      //       if (data.inProgress.count < 3 && data.pending.count > 0) {
-      //         console.log('---- inProgress.count: ' + data.inProgress.count + ' ---- pending.count: ' + data.pending.count);
-      //         for (var first in data.pending.items) break;
-      //         let nextItems = [];
-      //         nextItems.push(Object(first).value);
-      //           this.downloadFiles(nextItems);
-      //       }
-      //   }
-      // )
+    // this.store.select('downloads').subscribe(
+    //   data => {
+    //     console.log('----------- GcsApiService store -------------------');
+    //       if (data.inProgress.count < 3 && data.pending.count > 0) {
+    //         console.log('---- inProgress.count: ' + data.inProgress.count + ' ---- pending.count: ' + data.pending.count);
+    //         for (var first in data.pending.items) break;
+    //         let nextItems = [];
+    //         nextItems.push(Object(first).value);
+    //           this.downloadFiles(nextItems);
+    //       }
+    //   }
+    // )
   }
 
   public getBucketFiles(bucketName: String): Observable<any> {
@@ -67,7 +72,7 @@ export class GcsApiService extends GcsService {
     return this.http.get(url);
   }
 
-  public uploadFiles(bucketName: String, files: any[]) {
+  public uploadFiles(files: any[], bucketName: String) {
     if (files !== null && files.length > 0) {
       this.electronService.ipcRenderer.send(constants.IPC_START_UPLOAD, bucketName, files, SecurityService.getAccessToken());
     }
@@ -80,7 +85,7 @@ export class GcsApiService extends GcsService {
     }
 
     console.log('------------------ gcs-service downloadFiles ------- ', files);
-    this.store.dispatch(new downloadActions.ProcessItems({items: files}));
+    this.store.dispatch(new downloadActions.ProcessItems({ items: files }));
 
     this.electronService.ipcRenderer.send(constants.IPC_START_DOWNLOAD, files, SecurityService.getAccessToken());
   }
@@ -127,7 +132,6 @@ export class GcsApiService extends GcsService {
       this.cancelItemsStatus(Type.EXPORT_GCP);
     }
   }
-
 
   public cancelExportToS3(): MatDialogRef<WarningModalComponent, any> {
     return this.openModal('export-s3-cancel', 'cancelAllExportsToS3', Type.EXPORT_S3);
@@ -179,7 +183,7 @@ export class GcsApiService extends GcsService {
     return this.http.get(url);
   }
 
-  public exportToGCP(destinationBucket: string, file: Item): Observable<any> {
+  public exportToGCP(destinationBucket: string, file: ExportToGCSItem): Observable<any> {
     const sourceObject = file.path.substring(file.path.indexOf('/') + 1, file.path.length);
     const destinationObject = localStorage.getItem('preserveStructure') === 'true' ? sourceObject : file.displayName;
     const url = environment.GOOGLE_URL + 'storage/v1/b/' + file.bucketName + '/o/' +
@@ -194,7 +198,7 @@ export class GcsApiService extends GcsService {
     return this.http.post(url, null, httpOptions).retry(1);
   }
 
-  public exportToGCPFiles(destinationBucket: string, fileList: Item[]) {
+  public exportToGCSFiles(fileList: ExportToGCSItem[], destinationBucket: string) {
     const reqs = [];
     const responseCompleted = 0;
 
@@ -204,7 +208,9 @@ export class GcsApiService extends GcsService {
     //   })));
     // // });
 
-    const rq2 = Observable.from(fileList).pipe(concatMap(file => this.exportToGCP(destinationBucket, file)));
+    const rq2 = Observable.from(fileList).
+      pipe(
+        concatMap(file => this.exportToGCP(destinationBucket, file)));
 
     // forkJoin(reqs).subscribe(
     //   data => {
@@ -221,7 +227,7 @@ export class GcsApiService extends GcsService {
 
     rq2.subscribe(
       res => {
-        this.store.dispatch(new Transferables.UpdateItemCompleted({ id: res.id, size: res.totalBytesRewritten }));
+//        this.store.dispatch(new exportToGCSActions.CompleteItems({ items:  }));
       },
       err => {
         console.log(err);
@@ -231,4 +237,11 @@ export class GcsApiService extends GcsService {
       }
     );
   }
+
+
+  public exportToS3Files(fileList: ExportToS3Item[], destinationBucket: string) {
+    const reqs = [];
+    const responseCompleted = 0;
+  }
+
 }

@@ -1,9 +1,15 @@
 import { Observable } from 'rxjs/Observable';
 import { Item } from '../models/item';
 import { DownloadItem } from '../models/download-item';
+import { UploadItem } from '../models/upload-item';
+import { ExportToGCSItem } from '../models/export-to-gcs-item';
+import { ExportToS3Item } from '../models/export-to-s3-item';
+
+
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { WarningModalComponent } from '@app/file-manager/warning-modal/warning-modal.component';
 import { MatDialogRef } from '@angular/material';
+import { UploadFile } from 'electron';
 
 export abstract class GcsService {
 
@@ -14,9 +20,13 @@ export abstract class GcsService {
 
   abstract getBucketFiles(bucketName: String): Observable<any>;
 
-  abstract uploadFiles(bucketName: String, files: any[]);
-
   abstract downloadFiles(files: DownloadItem[]);
+
+  abstract uploadFiles( files: UploadFile[], bucketName: String);
+
+  abstract exportToGCSFiles(files: ExportToGCSItem[], destinationBucket: String);
+
+  abstract exportToS3Files(files: ExportToS3Item[], destinationBucket: String);
 
   abstract cancelAll();
 
@@ -30,7 +40,6 @@ export abstract class GcsService {
 
   abstract getBucketFilesWithMaxResult(bucketName: String, delimiter: String, token: String, useDelimiter: Boolean): Observable<any>;
 
-  abstract exportToGCPFiles(destinationBucket: String, files: any[]);
 
   abstract checkBucketPermissions(bucketName: String): Observable<any>;
 

@@ -355,6 +355,19 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
     this.limitTransferables.controlLimitItems(files, Type.UPLOAD, ItemStatus.UPLOADING);
   }
 
+  startGCSExport(files: ExportToGCSItem[], preserveStructure: Boolean) {
+    this.limitTransferables.controlExportToGCSItemLimits(files);
+
+    // const 2 = [...new FilesDatabase(this.store).data.filter(item => item.type === type && item.status === ItemStatus.PENDING)];
+
+    // localStorage.setItem('preserveStructure', preserveStructure.toString());
+    // this.spinner.hide();
+
+    // TransferablesGridComponent.isExporting = true;
+    // this.limitTransferables.exportItems(files);
+    // TransferablesGridComponent.firstIteration = false;
+  }
+
   startExport(preserveStructure: Boolean, type: Type) {
     const files = [...new FilesDatabase(this.store).data.filter(item => item.type === type && item.status === ItemStatus.PENDING)];
 
