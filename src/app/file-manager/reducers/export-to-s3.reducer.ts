@@ -1,5 +1,5 @@
-import { ExportToS3Item } from '../models/export-to-s3-item';
-import * as ExportToS3ItemActions from '../actions/export-to-s3-item.actions';
+import { ExportToS3Item } from '@app/file-manager/models/export-to-s3-item';
+import * as ExportToS3ItemActions from '@app/file-manager/actions/export-to-s3-item.actions';
 import { EntityStatus } from '@app/file-manager/models/entity-status';
 
 export interface ExportToS3State {

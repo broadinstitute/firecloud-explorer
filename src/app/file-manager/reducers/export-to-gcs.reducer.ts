@@ -1,5 +1,5 @@
-import { ExportToGCSItem } from '../models/export-to-gcs-item';
-import * as ExportToGCSItemActions from '../actions/export-to-gcs-item.actions';
+import { ExportToGCSItem } from '@app/file-manager/models/export-to-gcs-item';
+import * as ExportToGCSItemActions from '@app/file-manager/actions/export-to-gcs-item.actions';
 import { EntityStatus } from '@app/file-manager/models/entity-status';
 
 export interface ExportToGCSState {
@@ -66,7 +66,7 @@ export const exportToGCSInitialState: ExportToGCSState = {
     }
 };
 
-export function ExportToGCSsReducer(
+export function ExportToGCSReducer(
     state: ExportToGCSState = exportToGCSInitialState,
     action: ExportToGCSItemActions.All) {
 

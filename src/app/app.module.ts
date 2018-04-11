@@ -13,9 +13,6 @@ import { AppComponent } from './app.component';
 import { NgxElectronModule } from 'ngx-electron';
 import { GoogleLoginService } from '@app/file-manager/services/login-google.service';
 
-import { StoreModule } from '@ngrx/store';
-import { EffectsModule } from '@ngrx/effects';
-
 @NgModule({
   imports: [
     // angular
@@ -33,9 +30,6 @@ import { EffectsModule } from '@ngrx/effects';
 
     // app
     AppRoutingModule,
-
-    StoreModule.forRoot({}),
-    EffectsModule.forRoot([]),
   ],
   declarations: [
     AppComponent

@@ -1,4 +1,3 @@
-// transerables.ts
 import { Action } from '@app/core';
 import * as TransferablesActions from '../actions/transferables.actions';
 import { Item } from '../models/item';

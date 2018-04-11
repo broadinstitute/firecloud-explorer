@@ -5,8 +5,7 @@ import { SharedModule } from '@app/shared';
 
 import { Store, StoreModule } from '@ngrx/store';
 import { FileManagerRoutingModule } from './file-manager-routing.module';
-// import { TransferablesReducer } from './reducers/transferables.reducer';
-
+import { TransferablesReducer } from './reducers/transferables.reducer';
 import { DownloadsReducer } from './reducers/downloads.reducer';
 import { UploadsReducer } from './reducers/uploads.reducer';
 import { ExportToGCSReducer } from './reducers/export-to-gcs.reducer';
@@ -55,7 +54,7 @@ import { NgZone } from '@angular/core';
     CoreModule,
     SharedModule,
     FileManagerRoutingModule,
-
+    StoreModule.forFeature('transferables', TransferablesReducer),
     StoreModule.forFeature('downloads', DownloadsReducer),
     StoreModule.forFeature('uploads', UploadsReducer),
     StoreModule.forFeature('exportToGCS', ExportToGCSReducer),

@@ -12,7 +12,7 @@ import { ExportToS3Item } from '../models/export-to-s3-item';
 
 import { DownloadsReducer, DownloadState, downloadInitialState } from '../reducers/downloads.reducer';
 import { UploadsReducer, UploadState, uploadInitialState } from '../reducers/uploads.reducer';
-import { ExportToGCSsReducer, ExportToGCSState, exportToGCSInitialState } from '../reducers/export-to-gcs.reducer';
+import { ExportToGCSReducer, ExportToGCSState, exportToGCSInitialState } from '../reducers/export-to-gcs.reducer';
 import { ExportToS3Reducer, ExportToS3State, exportToS3InitialState } from '../reducers/export-to-s3.reducer';
 
 import { AppState } from '@app/file-manager/reducers';
@@ -43,16 +43,20 @@ export class FilesDatabase {
     return this.selectionChange.value;
   }
 
-  get downloadingCount(): number {
+  get downloadedCount(): number {
     return this.downloadsChange.getValue().completed.count;
   }
 
-  get uploadingCount(): number {
-    return 0; // return this.uploadsChange.value.entities;
+  get uploadedCount(): number {
+    return this.uploadsChange.getValue().completed.count;
   }
 
-  get exportingCount(): number {
-    return 0; //    return this.exportToGCSChange.value.exportingGCPCount;
+  get exportedToGCSount(): number {
+    return this.exportToGCSChange.getValue().completed.count;
+  }
+
+  get exportedToS3Count(): number {
+    return this.exportToS3Change.getValue().completed.count;
   }
 
   get toDownloadCount(): number {
@@ -65,23 +69,30 @@ export class FilesDatabase {
   }
 
   get toUploadCount(): number {
-    return 0; //   return this.stateChange.value.toUploadCount;
+    return this.uploadsChange.getValue().cancelled.count +
+      this.uploadsChange.getValue().completed.count +
+      this.uploadsChange.getValue().failed.count +
+      this.uploadsChange.getValue().inProgress.count +
+      this.uploadsChange.getValue().paused.count +
+      this.uploadsChange.getValue().pending.count;
   }
 
   get toExportS3Count(): number {
-    return 0; //   return this.stateChange.value.toExportS3Count;
+    return this.exportToS3Change.getValue().cancelled.count +
+      this.exportToS3Change.getValue().completed.count +
+      this.exportToS3Change.getValue().failed.count +
+      this.exportToS3Change.getValue().inProgress.count +
+      this.exportToS3Change.getValue().paused.count +
+      this.exportToS3Change.getValue().pending.count;
   }
 
-  get exportingS3Count(): number {
-    return 0; //   return this.stateChange.value.exportingS3Count;
-  }
-
-  get toExportGCPCount(): number {
-    return 0; //    return this.stateChange.value.toExportGCPCount;
-  }
-
-  get exportingGCPCount(): number {
-    return 0; //   return this.stateChange.value.exportingGCPCount;
+  get toExportGCSCount(): number {
+    return this.exportToGCSChange.getValue().cancelled.count +
+      this.exportToGCSChange.getValue().completed.count +
+      this.exportToGCSChange.getValue().failed.count +
+      this.exportToGCSChange.getValue().inProgress.count +
+      this.exportToGCSChange.getValue().paused.count +
+      this.exportToGCSChange.getValue().pending.count;
   }
 
   constructor(private store: Store<AppState>) {
@@ -90,14 +101,14 @@ export class FilesDatabase {
     this.exportsToGCS = store.select('exportToGCS');
     this.exportsToS3 = store.select('exportToS3');
 
-    this.downloads
-      .subscribe(
-        data => {
-          this.downloadsChange.next(data);
-          // this.dataChange.next(data.entities);
-          // this.selectionChange.next(data.selectedCount);
-          // this.stateChange.next(data);
-          // this.totalCount = data.count;
-        });
+    this.downloads.subscribe(data => { this.downloadsChange.next(data); });
+    this.uploads.subscribe(data => { this.uploadsChange.next(data); });
+    this.exportsToGCS.subscribe(data => { this.exportToGCSChange.next(data); });
+    this.exportsToS3.subscribe(data => { this.exportToS3Change.next(data); });
+
+    // this.dataChange.next(data.entities);
+    // this.selectionChange.next(data.selectedCount);
+    // this.stateChange.next(data);
+    // this.totalCount = data.count;
   }
 }

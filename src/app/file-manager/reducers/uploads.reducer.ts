@@ -1,5 +1,5 @@
-import { UploadItem } from '../models/upload-item';
-import * as UploadItemActions from '../actions/upload-item.actions';
+import { UploadItem } from '@app/file-manager/models/upload-item';
+import * as UploadItemActions from '@app/file-manager/actions/upload-item.actions';
 import { EntityStatus } from '@app/file-manager/models/entity-status';
 
 export interface UploadState {
@@ -192,7 +192,6 @@ export function UploadsReducer(
             state.inProgress.progress += state.inProgress.items[action.payload.id].progress;
             state.inProgress.transferred += state.inProgress.items[action.payload.id].transferred;
             break;
-
 
         // case UploadItemActions.UPDATE_ITEM:
         //     return downloadEntityAdapter.updateOne(action.payload.item, state);

@@ -1,9 +1,24 @@
 import { Component, OnInit, NgZone, AfterViewInit, ViewChild } from '@angular/core';
 import { Store } from '@ngrx/store';
+
 import * as Transferables from '../actions/transferables.actions';
+
 import { DownloadValidatorService } from '../services/download-validator.service';
+
+import { AppState } from '@app/file-manager/reducers';
+
 import { Item } from '../models/item';
 import { DownloadItem } from '../models/download-item';
+import { UploadItem } from '../models/upload-item';
+import { ExportToGCSItem } from '../models/export-to-gcs-item';
+import { ExportToS3Item } from '../models/export-to-s3-item';
+
+import { TransferableState } from '../reducers/transferables.reducer';
+import { DownloadState } from '../reducers/downloads.reducer';
+import { UploadState } from '../reducers/uploads.reducer';
+import { ExportToGCSState } from '../reducers/export-to-gcs.reducer';
+import { ExportToS3State } from '../reducers/export-to-s3.reducer';
+
 import { MatPaginator, MatSort, MatTableDataSource, MatDialog } from '@angular/material';
 import 'rxjs/add/operator/startWith';
 import 'rxjs/add/observable/forkJoin';
@@ -11,7 +26,6 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/observable/merge';
 import { GcsService } from '@app/file-manager/services/gcs.service';
 import { StatusService } from '../services/status.service';
-import { AppState } from '@app/file-manager/reducers';
 import { FilesDatabase } from '../dbstate/files-database';
 import { LimitTransferablesService } from '../services/limit-transferables.service';
 import { Type } from '@app/file-manager/models/type';
@@ -22,10 +36,10 @@ import { ProgressBar } from 'primeng/primeng';
 import { Observable } from 'rxjs/Observable';
 import { WarningModalComponent } from '@app/file-manager/warning-modal/warning-modal.component';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import { TransferableState } from '../reducers/transferables.reducer';
+
 
 @Component({
-  selector: 'app-transferalbes-grid',
+  selector: 'app-transferables-grid',
   templateUrl: './transferables-grid.component.html',
   styleUrls: ['./transferables-grid.component.css']
 })
@@ -185,7 +199,7 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
     this.exportToS3Canceled = this.gcsService.exportToS3Canceled;
 
     this.dataSource.data = this.filesDatabase.data;
-    
+
     this.statusService.updateDownloadProgress().subscribe(data => {
       this.zone.run(() => {
         this.generalProgress = data;

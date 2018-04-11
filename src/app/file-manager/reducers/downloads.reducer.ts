@@ -1,5 +1,5 @@
-import { DownloadItem } from '../models/download-item';
-import * as DownloadItemActions from '../actions/download-item.actions';
+import { DownloadItem } from '@app/file-manager/models/download-item';
+import * as DownloadItemActions from '@app/file-manager/actions/download-item.actions';
 import { EntityStatus } from '@app/file-manager/models/entity-status';
 
 export interface DownloadState {
