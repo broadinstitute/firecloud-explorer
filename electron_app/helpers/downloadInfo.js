@@ -11,7 +11,6 @@ const downloadStats = function (dl, item, win) {
             let stats = dl.getStats();
             item.progress = stats.total.completed;
             item.transferred = stats.total.downloaded;
-            // console.log('-------- reporting progress ------- ' + item.displayName + ' - ' + item.transferred);
             win.webContents.send(constants.IPC_DOWNLOAD_STATUS, item);
         } else if (dl.status === 3) {
             item.progress = 100;
@@ -20,7 +19,6 @@ const downloadStats = function (dl, item, win) {
                 clearInterval(timer);
             }
             timer = null;
-            console.log('-------- reporting complete ------- ' + item.displayName + ' - ' + item.transferred);
             win.webContents.send(constants.IPC_DOWNLOAD_COMPLETED, item);
         } else if (dl.status === -1 || dl.status === 3 || dl.status === -3) {
             clearInterval(timer);

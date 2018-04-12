@@ -80,12 +80,12 @@ export class FileExplorerComponent implements OnInit, AfterViewInit {
     //     });
     //   });
     
-    this.statusService.updateExportS3Progress().subscribe(data => {
-      this.zone.run(() => {
-        this.exportInProgress = data !== 100;
-        this.progressStatus = this.exportInProgress;
-      });
-    });
+    // this.statusService.updateExportS3Progress().subscribe(data => {
+    //   this.zone.run(() => {
+    //     this.exportInProgress = data !== 100;
+    //     this.progressStatus = this.exportInProgress;
+    //   });
+    // });
   }
 
   ngAfterViewInit() {
@@ -360,6 +360,7 @@ export class FileExplorerComponent implements OnInit, AfterViewInit {
       disableClose: true,
       data: items
     });
+
     dialogRef.afterClosed().subscribe(result => {
       if (result !== undefined) {
         if (result.cancel !== undefined) {
@@ -369,7 +370,7 @@ export class FileExplorerComponent implements OnInit, AfterViewInit {
             this.store.dispatch(new Transferables.RemoveItem(item));
           });
         } else {
-          this.transferablesGridComponent.startExport(result.preserveStructure, result.type);
+          //this.transferablesGridComponent.startExport(result.preserveStructure, result.type);
         }
       }
     });

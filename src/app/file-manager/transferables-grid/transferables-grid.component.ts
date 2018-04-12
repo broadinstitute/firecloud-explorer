@@ -173,7 +173,7 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
       this.zone.run(() => {
         this.gcsCompleted = cs.completed.count;
         this.gcsTotal = cs.totalCount;
-        this.gcsProgress = cs.totalProgress;
+        this.gcsProgress = 100.0 * this.gcsCompleted / this.gcsTotal;
       });
     });
 
@@ -184,7 +184,7 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
       this.zone.run(() => {
         this.s3Completed = cs.completed.count;
         this.s3Total = cs.totalCount;
-        this.s3Progress = cs.totalProgress;
+        this.s3Progress = 100.0 * this.s3Completed / this.s3Total;
       });
     });
 
@@ -242,51 +242,6 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
     this.exportToS3Canceled = this.gcsService.exportToS3Canceled;
 
     this.dataSource.data = this.filesDatabase.data();
-
-    // this.statusService.updateDownloadProgress().subscribe(data => {
-    //   console.log('---------- update progres -----------------');
-    //   console.log(data);
-    //   this.zone.run(() => {
-    //     this.generalProgress = data;
-    //     this.downloadInProgress = !(data === 100 || this.disabledDownload);
-    //   });
-    // });
-
-    this.statusService.updateUploadProgress().subscribe(data => {
-      this.zone.run(() => {
-        this.generalUploadProgress = data;
-        this.uploadInProgress = !(data === 100 || this.disabledUpload);
-      });
-    });
-
-    this.gcsService.exportItemCompleted.subscribe(() => {
-      if (!TransferablesGridComponent.firstIteration) {
-        const pendingItems = this.exportToGcpItems.data().filter(item => item.type === Type.EXPORT_GCP && item.status === ItemStatus.PENDING);
-        if (pendingItems.length !== 0) {
-          this.handleGcpExport(pendingItems);
-        } else if (TransferablesGridComponent.isExporting) {
-          TransferablesGridComponent.isExporting = false;
-          TransferablesGridComponent.firstIteration = true;
-        }
-      }
-    });
-
-    this.statusService.updateExportS3Progress().subscribe(data => {
-      this.zone.run(() => {
-        this.exportToS3InProgress = true;
-      });
-    });
-
-    this.statusService.updateExportS3Complete().subscribe(data => {
-      this.zone.run(() => {
-        const items = new FilesDatabase(this.store).data()
-          .filter(item => item.type === Type.EXPORT_S3 && item.status === ItemStatus.PENDING);
-        if (items.length === 0) {
-          this.exportToS3InProgress = true;
-        }
-        this.exportToS3InProgress = !(data === 100 || this.disabledDownload);
-      });
-    });
 
     if (localStorage.getItem('displaySpinner') === 'true') {
       this.spinner.show();
@@ -354,16 +309,16 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
     });
   }
 
-  handleGcpExport(pendingItems) {
-    // cancelGCPExports its a flag which indicates if cancel order has been given
-    if (!this.gcsService.cancelGCPExports) {
-      // exportToGcpItems passes the list of items to be exported when each chunk has already finished its export
-      this.limitTransferables.exportItems(pendingItems);
-    } else {
-      // prepares the Ui to indicate that exports to gcp have been cancelled
-      TransferablesGridComponent.isExporting = false;
-    }
-  }
+  // handleGcpExport(pendingItems) {
+  //   // cancelGCPExports its a flag which indicates if cancel order has been given
+  //   if (!this.gcsService.cancelGCPExports) {
+  //     // exportToGcpItems passes the list of items to be exported when each chunk has already finished its export
+  //     this.limitTransferables.exportItems(pendingItems);
+  //   } else {
+  //     // prepares the Ui to indicate that exports to gcp have been cancelled
+  //     TransferablesGridComponent.isExporting = false;
+  //   }
+  // }
 
   cancelExportsToS3() {
 
@@ -371,7 +326,6 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
       this.zone.run(() => {
         this.exportToS3InProgress = !modalResponse.exit;
         this.exportToS3Canceled = modalResponse.exit;
-        console.log('exportToS3InProgress: ', this.exportToS3InProgress);
       });
     });
   }
@@ -401,23 +355,11 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   }
 
   startGCSExport(files: ExportToGCSItem[], preserveStructure: Boolean) {
-    console.log('transferable-grid-component', files);
     this.limitTransferables.controlExportToGCSItemLimits(files);
   }
 
-  startExport(preserveStructure: Boolean, type: Type) {
-    // const files = [...new FilesDatabase(this.store).data().filter(item => item.type === type && item.status === ItemStatus.PENDING)];
-
-    // localStorage.setItem('preserveStructure', preserveStructure.toString());
-    // this.spinner.hide();
-    // if (type === Type.EXPORT_S3) {
-    //   this.exportToS3InProgress = true;
-    //   this.limitTransferables.controlLimitItems(files, Type.EXPORT_S3, ItemStatus.EXPORTING_S3);
-    // } else {
-    //   TransferablesGridComponent.isExporting = true;
-    //   this.limitTransferables.exportItems(files);
-    //   TransferablesGridComponent.firstIteration = false;
-    // }
+  startS3Export(files: ExportToS3Item[], preserveStructure: Boolean) {
+    this.limitTransferables.controlExportToS3ItemLimits(files);
   }
 
   getExportingStatus() {

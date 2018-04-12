@@ -1,48 +1,73 @@
+
+const axios = require("axios");
+const { Rxios } = require('rxios');
+const Rx = require('rxjs');
+const forkJoin = require('rxjs/observable/forkJoin');
+
 const req = require('request');
 const progress = require('progress-stream');
 var urlencode = require('urlencode');
 var requestList = [];
 const constants = require('./helpers/environment').constants;
 
-const exportGCPManager = (destinationBucket,  fileList = [], access_token, win) => {
+const exportGCPManager = (destinationBucket, fileList = [], access_token, win) => {
   var i = 0;
-  fileList.forEach(file => {
-    const sourceObject = file.path.substring(file.path.indexOf('/') + 1, file.path.length);
-    const destinationObject = file.preserveStructure ? sourceObject : file.name;   
-        
-   var url = constants.GCP_API + file.bucketName + '/o/' + urlencode(sourceObject) + '/rewriteTo/b/' + urlencode(destinationBucket) + '/o/' + urlencode('Imports/' + destinationObject);
-   var reqConfig = req.post({
-        headers: {
-          'Authorization': 'Bearer ' + access_token
-        },
-        uri: url,
-        method: 'POST'
+  let completed = [];
+  let failed = [];
+
+  const reqs = [];
+  const httpx = new Rxios(
+    {
+      headers: {
+        'Authorization': 'Bearer ' + access_token,
+        'Accept': 'application/json, text/plain, */*',
+        'Content-Length': 0,
+        'User-Agent': 'Firecloud DataShuttle'
       },
-      function (err, resp, body) {
-        if (err) {
-          console.log('Error!', err);
-        } else {
-          if(resp.statusCode === 200){
-            file.status = 0;
-            file.progress = 100;
-            file.transferred = new Number(file.size);
-            console.log('complete', file.displayName);
-            win.webContents.send(constants.IPC_EXPORT_TO_GCP_COMPLETE, file);
-          } else {
-            file.status = 0;
-            file.progress = 0;    
-            file.transferred = 0;       
-            console.log('failed', file.displayName);
-            win.webContents.send(constants.IPC_EXPORT_TO_GCP_FAILED, file);
+      params: {},
+      timeout: 4000000,
+    }
+  );
+
+  fileList.forEach(file => {
+
+    // build here an array of fileList.length requests 
+    const sourceObject = file.path.substring(file.path.indexOf('/') + 1, file.path.length);
+    const destinationObject = file.preserveStructure ? sourceObject : file.name;
+
+    var url = constants.GCP_API + file.bucketName
+      + '/o/' + urlencode(sourceObject)
+      + '/rewriteTo/b/' + urlencode(destinationBucket)
+      + '/o/' + urlencode('Imports/' + destinationObject)
+      + '?fields=done,totalBytesRewritten,resource';
+
+    reqs.push(httpx.post(url, {}));
+
+  });
+
+  // request all at once, get only one response 
+  Rx.Observable.forkJoin(reqs).subscribe(
+    response => {
+
+      response.forEach(item => {
+        completed.push(
+          {
+            id: item.resource.id,
+            transferred: item.totalBytesRewritten,
+            size: item.resource.size,
+            done: item.done,
+            md5hash: item.resource.md5hash
           }
-        
-        }
-        reqConfig.end();
-        requestList.push(reqConfig);
-      }
-    );
-  })
-  
+        );
+      });
+      // report progress 
+      win.webContents.send(constants.IPC_EXPORT_TO_GCP_COMPLETE, completed);
+
+    },
+    err => {
+      //how errors should be handled here ????
+      console.log(err);
+    });
 }
 
 const exportGCPManagerCancel = () => {

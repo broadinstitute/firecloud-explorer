@@ -81,15 +81,6 @@ export class FileExplorerUploadComponent implements OnInit {
 
     this.registerUpload.getLazyNodeContent(homeFolder);
 
-    this.statusService.updateUploadProgress().subscribe(data => {
-      this.zone.run(() => {
-        if (data === 100) {
-          this.uploadInProgress = false;
-        } else {
-          this.uploadInProgress = true;
-        }
-      });
-    });
   }
 
   countFiles() {

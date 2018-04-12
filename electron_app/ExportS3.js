@@ -81,7 +81,7 @@ const uploadS3 = (data) => {
   });
 
   uploadStream.on('uploaded', (details) => {
-    data.item.status = 'Exported to S3';
+    data.item.transferred = data.item.size;
     data.item.progress = 100;
     electronWin.webContents.send(constants.IPC_EXPORT_S3_COMPLETE, data.item);
   });

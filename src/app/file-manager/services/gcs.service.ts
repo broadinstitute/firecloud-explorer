@@ -9,7 +9,6 @@ import { ExportToS3Item } from '../models/export-to-s3-item';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { WarningModalComponent } from '@app/file-manager/warning-modal/warning-modal.component';
 import { MatDialogRef } from '@angular/material';
-import { UploadFile } from 'electron';
 
 export abstract class GcsService {
 
@@ -22,7 +21,7 @@ export abstract class GcsService {
 
   abstract downloadFiles(files: DownloadItem[]);
 
-  abstract uploadFiles( files: UploadFile[], bucketName: String);
+  abstract uploadFiles( files: UploadItem[], bucketName: String);
 
   abstract exportToGCSFiles(files: ExportToGCSItem[], destinationBucket: String);
 

@@ -139,12 +139,6 @@ export class FileExportModalComponent implements OnInit {
     return disableExport;
   }
 
-  setItemsS3() {
-    this.dispatchFiles(Type.EXPORT_S3);
-    this.dialogRef.close({ preserveStructure: this.preserveStructure, type: Type.EXPORT_S3 });
-    this.router.navigate(['/status']);
-  }
-
   createWarningMsg(warnMessage) {
     this.msgs.push({
       severity: 'warn',
@@ -153,7 +147,7 @@ export class FileExportModalComponent implements OnInit {
   }
 
   startExportToGCS(): void {
-    console.log('startExportToGCS', this.selectedFiles);
+
     const filesToExport: ExportToGCSItem[] = [];
     if (this.exportForm.get('bucketNameGCP').valid) {
       this.disable = true;
@@ -176,7 +170,6 @@ export class FileExportModalComponent implements OnInit {
               filesToExport.push(file);
             });
 
-            console.log('filesToExport', filesToExport);
             localStorage.setItem('destinationBucket', this.exportForm.controls.bucketNameGCP.value);
 
             this.transferablesGridComponent.startGCSExport(filesToExport, this.preserveStructure);
@@ -233,8 +226,9 @@ export class FileExportModalComponent implements OnInit {
     localStorage.setItem('S3AccessKey', this.exportForm.getRawValue().accessKeyIdAWS);
     localStorage.setItem('S3SecretKey', this.exportForm.getRawValue().secretAccessKeyAWS);
     this.s3Service.testCredentials();
+
     this.electronIpc.awsTestCredentials().then(
-      () => this.setItemsS3(),
+      () => this.exportToS3(),
     ).catch((reject) => {
       this.disableCancel = false;
       this.msgs = [];
@@ -242,27 +236,22 @@ export class FileExportModalComponent implements OnInit {
     });
   }
 
-  dispatchFiles(type: string) {
-
+  exportToS3() {
     const filesToExport = [];
+
     this.selectedFiles().forEach(file => {
-      // file.id = UUID.UUID();
-      file.type = type;
-      file.status = ItemStatus.PENDING;
-      file.istatus = ItemStatus.IPENDING;
-      file.itype = type === Type.EXPORT_GCP ? Type.IEXPORT_GCP : Type.IEXPORT_S3;
-      file.currentBatch = true;
+
+      const dataFile: ExportToS3Item = new ExportToS3Item(file.id, file.name,
+        file.updated, file.created, file.size, file.mediaLink, file.path,
+        '', EntityStatus.PENDING, '', '',
+        this.preserveStructure, false, '', file.displayName, '');
+
       filesToExport.push(file);
     });
 
-    this.store.dispatch(new Transferables.AddItems(
-      {
-        state: ItemStatus.IPENDING,
-        itype: type === Type.EXPORT_GCP ? Type.IEXPORT_GCP : Type.IEXPORT_S3,
-        items: filesToExport
-      }
-    ));
-    //    this.done.emit(true);
+    this.transferablesGridComponent.startS3Export(filesToExport, this.preserveStructure);
+
+    this.dialogRef.close({ preserveStructure: this.preserveStructure, type: Type.EXPORT_S3 });
     this.router.navigate(['/status']);
   }
 

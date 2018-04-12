@@ -60,59 +60,35 @@ export class FilesDatabase {
   }
 
   toDownloadCount(): number {
-    return this.downloadsChange.getValue().cancelled.count +
-      this.downloadsChange.getValue().completed.count +
-      this.downloadsChange.getValue().failed.count +
-      this.downloadsChange.getValue().inProgress.count +
-      this.downloadsChange.getValue().paused.count +
-      this.downloadsChange.getValue().pending.count;
+    return this.downloadsChange.getValue().totalCount;
   }
 
   toUploadCount(): number {
-    return this.uploadsChange.getValue().cancelled.count +
-      this.uploadsChange.getValue().completed.count +
-      this.uploadsChange.getValue().failed.count +
-      this.uploadsChange.getValue().inProgress.count +
-      this.uploadsChange.getValue().paused.count +
-      this.uploadsChange.getValue().pending.count;
+    return this.uploadsChange.getValue().totalCount;
   }
 
   toExportS3Count(): number {
-    return this.exportToS3Change.getValue().cancelled.count +
-      this.exportToS3Change.getValue().completed.count +
-      this.exportToS3Change.getValue().failed.count +
-      this.exportToS3Change.getValue().inProgress.count +
-      this.exportToS3Change.getValue().paused.count +
-      this.exportToS3Change.getValue().pending.count;
+    return this.exportToS3Change.getValue().totalCount;
   }
 
   toExportGCSCount(): number {
-    return this.exportToGCSChange.getValue().cancelled.count +
-      this.exportToGCSChange.getValue().completed.count +
-      this.exportToGCSChange.getValue().failed.count +
-      this.exportToGCSChange.getValue().inProgress.count +
-      this.exportToGCSChange.getValue().paused.count +
-      this.exportToGCSChange.getValue().pending.count;
+    return this.exportToGCSChange.getValue().totalCount;
   }
 
   downloadProgress(): number {
-    let progress = 100.0 * (this.downloadedCount() / this.toDownloadCount());
-    return progress;
+    return this.downloadsChange.getValue().totalProgress;
   }
   
   uploadProgress(): number {
-    let progress = 100.0 * (this.uploadedCount() / this.toUploadCount());
-    return progress;
+    return this.uploadsChange.getValue().totalProgress;
   }
 
   exportToGCSProgress(): number {
-    let progress = 100.0 * (this.exportedToGCSCount() / this.toExportGCSCount());
-    return progress;
+    return this.exportToGCSChange.getValue().totalProgress;
   }
 
   exportToS3Progress(): number {
-    let progress = 100.0 * (this.exportedToS3Count() / this.toExportS3Count());
-    return progress;
+    return this.exportToS3Change.getValue().totalProgress;
   }
 
   constructor(private store: Store<AppState>) {
@@ -125,10 +101,5 @@ export class FilesDatabase {
     this.uploads.subscribe(data => { this.uploadsChange.next(data); });
     this.exportsToGCS.subscribe(data => { this.exportToGCSChange.next(data); });
     this.exportsToS3.subscribe(data => { this.exportToS3Change.next(data); });
-
-    // this.dataChange.next(data.entities);
-    // this.selectionChange.next(data.selectedCount);
-    // this.stateChange.next(data);
-    // this.totalCount = data.count;
   }
 }

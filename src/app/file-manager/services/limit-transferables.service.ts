@@ -8,6 +8,7 @@ import * as exportToS3Actions from '../actions/export-to-s3-item.actions';
 
 import { Item } from '../models/item';
 import { DownloadItem } from '../models/download-item';
+import { UploadItem } from '../models/upload-item';
 import { ExportToGCSItem } from '../models/export-to-gcs-item';
 import { ExportToS3Item } from '../models/export-to-s3-item';
 
@@ -21,7 +22,6 @@ import { Type } from '@app/file-manager/models/type';
 import { environment } from '@env/environment';
 import { S3ExportService } from '@app/file-manager/services/s3-export.service';
 
-
 @Injectable()
 export class LimitTransferablesService implements OnInit {
 
@@ -32,7 +32,7 @@ export class LimitTransferablesService implements OnInit {
   constructor(
     public gcsService: GcsService,
     private store: Store<AppState>,
-    private s3TransferService: S3ExportService,
+    private s3ExportService: S3ExportService,
   ) {
 
     this.store.select('downloads').subscribe(
@@ -57,6 +57,45 @@ export class LimitTransferablesService implements OnInit {
       const item = Object.values(pendingItems)[0];
       items.push(item);
       this.gcsService.downloadFiles(items);
+    }
+  }
+
+  public pendingUploadItem(): void {
+    const pendingItems = new FilesDatabase(this.store).uploadsChange.getValue().pending.items;
+    const pendingCount = new FilesDatabase(this.store).uploadsChange.getValue().pending.count;
+    const inProgressCount = new FilesDatabase(this.store).uploadsChange.getValue().inProgress.count;
+    const items: UploadItem[] = [];
+    if (pendingCount > 0 && inProgressCount < environment.LIMIT_UPLOADS) {
+      let destinationBucket = localStorage.getItem('destinationBucket');
+      const item = Object.values(pendingItems)[0];
+      items.push(item);
+      this.gcsService.uploadFiles(items, destinationBucket);
+    }
+  }
+
+  public pendingGCSItem(): void {
+    const pendingItems = new FilesDatabase(this.store).exportToGCSChange.getValue().pending.items;
+    const pendingCount = new FilesDatabase(this.store).exportToGCSChange.getValue().pending.count;
+    const inProgressCount = new FilesDatabase(this.store).exportToGCSChange.getValue().inProgress.count;
+    let items: ExportToGCSItem[] = [];
+
+    if (pendingCount > 0 && inProgressCount === 0) { // < environment.LIMIT_GCS_EXPORTABLES) {
+      let destinationBucket = localStorage.getItem('destinationBucket');
+      let batchSize = environment.LIMIT_GCS_EXPORTABLES; // - inProgressCount;
+      items = Object.values(pendingItems).slice(0, batchSize);
+      this.gcsService.exportToGCSFiles(items, destinationBucket);
+    }
+  }
+
+  public pendingS3Item(): void {
+    const pendingItems = new FilesDatabase(this.store).exportToS3Change.getValue().pending.items;
+    const pendingCount = new FilesDatabase(this.store).exportToS3Change.getValue().pending.count;
+    const inProgressCount = new FilesDatabase(this.store).exportToS3Change.getValue().inProgress.count;
+    const items: ExportToS3Item[] = [];
+    if (pendingCount > 0 && inProgressCount < environment.LIMIT_S3_EXPORTABLES) {
+      const item = Object.values(pendingItems)[0];
+      items.push(item);
+      this.s3ExportService.startFileExportToS3(items);
     }
   }
 
@@ -100,13 +139,12 @@ export class LimitTransferablesService implements OnInit {
   }
 
   public controlExportToGCSItemLimits(files: ExportToGCSItem[]): void {
-    console.log('limit-transferables - gcs' , files);
     if (files === undefined || files === null || files.length <= 0) {
       return;
     }
-    let destinationBucket = localStorage.getItem('destinationBucket')
+    let destinationBucket = localStorage.getItem('destinationBucket');
     let maxFiles = [];
-    console.log('---------- files --------------', files);
+    this.store.dispatch(new exportToGCSActions.Reset());
     this.store.dispatch(new exportToGCSActions.AddItems({ items: files }));
 
     if (files.length > environment.LIMIT_GCS_EXPORTABLES) {
@@ -115,6 +153,23 @@ export class LimitTransferablesService implements OnInit {
       maxFiles = files;
     }
     this.gcsService.exportToGCSFiles(maxFiles, destinationBucket);
+  }
+
+  public controlExportToS3ItemLimits(files: ExportToS3Item[]): void {
+    if (files === undefined || files === null || files.length <= 0) {
+      return;
+    }
+
+    let maxFiles = [];
+    this.store.dispatch(new exportToS3Actions.Reset());
+    this.store.dispatch(new exportToS3Actions.AddItems({ items: files }));
+
+    if (files.length > environment.LIMIT_S3_EXPORTABLES) {
+      maxFiles = files.splice(0, environment.LIMIT_S3_EXPORTABLES);
+    } else {
+      maxFiles = files;
+    }
+    this.s3ExportService.startFileExportToS3(maxFiles);
   }
 
   public controlLimitItems(files: Item[], type: Type, status: ItemStatus): void {
@@ -141,10 +196,9 @@ export class LimitTransferablesService implements OnInit {
       // Because the export S3 process works with one item at a time it's necessary to take the first one
       maxFiles[0].status = ItemStatus.EXPORTING_S3;
       this.store.dispatch(new Transferables.UpdateItem(maxFiles[0]));
-      this.s3TransferService.startFileExportToS3(maxFiles[0]);
+      this.s3ExportService.startFileExportToS3(maxFiles[0]);
     }
   }
-
 
   public exportItems(files: Item[]): void {
     const maxFiles = files.splice(0, environment.LIMIT_EXPORTABLES);
@@ -165,7 +219,7 @@ export class LimitTransferablesService implements OnInit {
       } else if (type === Type.UPLOAD) {
         // this.gcsService.uploadFiles( [item], localStorage.getItem('uploadBucket'));
       } else if (type === Type.EXPORT_S3) {
-        this.s3TransferService.startFileExportToS3(item);
+        this.s3ExportService.startFileExportToS3([item]);
       }
     }
   }

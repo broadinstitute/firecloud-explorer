@@ -119,22 +119,53 @@ export function DownloadsReducer(
             break;
 
         case DownloadItemActions.COMPLETE_ITEM:
+            // update total transferred
+            state.totalTransferred -= state.inProgress.items[action.payload.id].transferred;
+            state.totalTransferred += action.payload.transferred;
+
+            // update inProgress transferred
+            state.inProgress.transferred -= state.inProgress.items[action.payload.id].transferred;
+            state.inProgress.transferred += action.payload.transferred;
+
+            // remove from "inProgress"
             state.inProgress.count--;
             delete state.inProgress.items[action.payload.id];
+
+            // add to "complete"
             action.payload.status = EntityStatus.COMPLETED;
             state.completed.count++;
             state.completed.items[action.payload.id] = action.payload;
+
+            // increment new values
+            // state.completed.transferred += action.payload.transferred;
+
+            state.totalProgress = state.totalSize !== 0 ? 100.0 * state.totalTransferred / state.totalSize : 0;
+            state.inProgress.progress = state.totalSize !== 0 ? state.inProgress.transferred / state.totalSize : 0;
             break;
 
         case DownloadItemActions.COMPLETE_ITEMS:
             console.log('complete-items: ', action.payload.items);
             action.payload.items.forEach(item => {
+                // update total transferred
+                state.totalTransferred -= state.inProgress.items[item.id].transferred;
+                state.totalTransferred += item.transferred;
+
+                // update inProgress transferred
+                state.inProgress.transferred -= state.inProgress.items[item.id].transferred;
+                state.inProgress.transferred += item.transferred;
+
+                // remove from "inProgress"
                 state.inProgress.count--;
                 delete state.inProgress.items[item.id];
+
+                // add to "complete"
                 item.status = EntityStatus.COMPLETED;
                 state.completed.count++;
                 state.completed.items[item.id] = item;
+
             });
+            state.totalProgress = state.totalSize !== 0 ? 100.0 * state.totalTransferred / state.totalSize : 0;
+            state.inProgress.progress = state.totalSize !== 0 ? state.inProgress.transferred / state.totalSize : 0;
             break;
 
         case DownloadItemActions.PAUSE_ITEM:

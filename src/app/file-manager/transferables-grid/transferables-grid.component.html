@@ -6,7 +6,7 @@
     <h4 class="subtitle medium">Downloaded:</h4>
     <div class="flex-container space-between">
       <p class="aclaration">{{ downCompleted + ' of ' + downTotal }} file(s)</p>
-      <h4 class="subtitle light">{{ downProgress | number:'1.2-2' }}%</h4>
+      <h4 class="subtitle light">{{ downProgress | number:'1.0-0' }}%</h4>
     </div>
 
     <p-progressBar mode="determinate" class="progress-bar" [ngClass]="{'success': downProgress === 100, 'failure': downloadCanceled}"
@@ -25,7 +25,7 @@
     <h4 class="subtitle medium">Uploaded:</h4>
     <div class="flex-container space-between">
       <p class="aclaration">{{ upCompleted + ' of ' + upTotal }} file(s)</p>
-      <h4 class="subtitle light">{{ upProgress | number:'1.2-2'  }}%</h4>
+      <h4 class="subtitle light">{{ upProgress | number:'1.0-0'  }}%</h4>
     </div>
 
     <p-progressBar mode="determinate" class="progress-bar" [ngClass]="{'success': upProgress === 100, 'failure': uploadCanceled}"
@@ -43,7 +43,7 @@
     <div class="flex-container space-between">
 
       <p class="aclaration">{{ filesDatabase.exportedToGCSCount() + ' of ' + filesDatabase.toExportGCSCount() }} file(s)</p>
-      <h4 class="subtitle light">{{ gcsProgress | number:'1.2-2'  }}%</h4>
+      <h4 class="subtitle light">{{ gcsProgress | number:'1.0-0'  }}%</h4>
     </div>
 
     <p-progressBar #pbg mode="determinate" class="progress-bar" [ngClass]="{'success': gcsProgress === 100, 'failure': exportToGCPCanceled === true}"
@@ -60,7 +60,7 @@
     <h4 class="subtitle medium">Exported to Amazon:</h4>
     <div class="flex-container space-between">
       <p class="aclaration">{{ s3Completed + ' of ' + s3Total }} file(s)</p>
-      <h4 class="subtitle light">{{ s3Progress | number:'1.2-2'  }}%</h4>
+      <h4 class="subtitle light">{{ s3Progress | number:'1.0-0'  }}%</h4>
     </div>
 
     <p-progressBar mode="determinate" class="progress-bar" [ngClass]="{'success': s3Progress === 100, 'failure': exportToS3Canceled === true}"
