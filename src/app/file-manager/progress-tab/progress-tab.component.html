@@ -31,8 +31,7 @@
         <mat-icon class="transfer-icon" *ngIf="source == 'Up'">file_upload</mat-icon>
         <i class="export-icon-dark" *ngIf="source == 'GCS' || source == 'S3' "></i>
         {{describeStatus(row.status)}}
-        <div *ngIf="row.status === 1"
-          class="progress-dots transfer-status">
+        <div *ngIf="row.status === 1" class="progress-dots transfer-status">
           <span class="dot"></span>
           <span class="dot"></span>
           <span class="dot"></span>
@@ -43,12 +42,16 @@
     <ng-container matColumnDef="progress">
       <mat-header-cell *matHeaderCellDef> Progress</mat-header-cell>
       <mat-cell *matCellDef="let row">
-        <p-progressBar *ngIf="row.status === 0 || (source === 'GCS' || source === 'S3') || row.status === 'Completed' || row.status === 'Canceled'"
+
+        <p-progressBar *ngIf="((source === 'GCS' || source === 'S3') && row.status === 3) || (source === 'Down' || source === 'Up')"
           mode="determinate" class="progress-bar-small" [ngClass]="{'success': row.status === 3, 'failure': row.status === 4}"
-          [value]=row.progress [showValue]="false"></p-progressBar>
-        <p-progressBar *ngIf="row.status === 1 && (source === 'GCS' || source === 'S3')" mode="indeterminate"
-          class="progress-bar-small" [ngClass]="{'success': row.status === 3, 'failure': row.status === 4 }"
-          [showValue]="false"></p-progressBar>
+          [value]="row.progress" [showValue]="false">
+        </p-progressBar>
+
+        <p-progressBar *ngIf="(source === 'GCS' || source === 'S3') &&  row.status === 1" mode="indeterminate" class="progress-bar-small"
+          [ngClass]="{'success': row.status === 3, 'failure': row.status === 4 }" [showValue]="false">
+        </p-progressBar>
+
       </mat-cell>
     </ng-container>
 

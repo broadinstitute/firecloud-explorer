@@ -119,12 +119,12 @@ export function DownloadsReducer(
             break;
 
         case DownloadItemActions.COMPLETE_ITEM:
-            // update total transferred
+            // revert previous values 
             state.totalTransferred -= state.inProgress.items[action.payload.id].transferred;
-            state.totalTransferred += action.payload.transferred;
-
-            // update inProgress transferred
             state.inProgress.transferred -= state.inProgress.items[action.payload.id].transferred;
+
+            // add new values 
+            state.totalTransferred += action.payload.transferred;
             state.inProgress.transferred += action.payload.transferred;
 
             // remove from "inProgress"
@@ -135,22 +135,17 @@ export function DownloadsReducer(
             action.payload.status = EntityStatus.COMPLETED;
             state.completed.count++;
             state.completed.items[action.payload.id] = action.payload;
-
-            // increment new values
-            // state.completed.transferred += action.payload.transferred;
-
-            state.totalProgress = state.totalSize !== 0 ? 100.0 * state.totalTransferred / state.totalSize : 0;
-            state.inProgress.progress = state.totalSize !== 0 ? state.inProgress.transferred / state.totalSize : 0;
             break;
 
         case DownloadItemActions.COMPLETE_ITEMS:
             action.payload.items.forEach(item => {
-                // update total transferred
-                state.totalTransferred -= state.inProgress.items[item.id].transferred;
-                state.totalTransferred += item.transferred;
 
-                // update inProgress transferred
+                // revert previous values 
+                state.totalTransferred -= state.inProgress.items[item.id].transferred;
                 state.inProgress.transferred -= state.inProgress.items[item.id].transferred;
+
+                // add new values 
+                state.totalTransferred += item.transferred;
                 state.inProgress.transferred += item.transferred;
 
                 // remove from "inProgress"
@@ -161,10 +156,8 @@ export function DownloadsReducer(
                 item.status = EntityStatus.COMPLETED;
                 state.completed.count++;
                 state.completed.items[item.id] = item;
-
             });
-            state.totalProgress = state.totalSize !== 0 ? 100.0 * state.totalTransferred / state.totalSize : 0;
-            state.inProgress.progress = state.totalSize !== 0 ? state.inProgress.transferred / state.totalSize : 0;
+
             break;
 
         case DownloadItemActions.PAUSE_ITEM:
@@ -222,20 +215,17 @@ export function DownloadsReducer(
             break;
 
         case DownloadItemActions.UPDATE_ITEM_PROGRESS:
-            // decrement old values
+            // revert previous values 
             state.totalTransferred -= state.inProgress.items[action.payload.id].transferred;
             state.inProgress.transferred -= state.inProgress.items[action.payload.id].transferred;
+
+            // add new values 
+            state.totalTransferred += action.payload.transferred;
+            state.inProgress.transferred += action.payload.transferred;
 
             // update item
             state.inProgress.items[action.payload.id].progress = action.payload.progress;
             state.inProgress.items[action.payload.id].transferred = action.payload.transferred;
-
-            // increment new values
-            state.totalTransferred += state.inProgress.items[action.payload.id].transferred;
-            state.inProgress.transferred += state.inProgress.items[action.payload.id].transferred;
-
-            state.totalProgress = state.totalSize !== 0 ? 100.0 * state.totalTransferred / state.totalSize : 0;
-            state.inProgress.progress = state.totalSize !== 0 ? state.inProgress.transferred / state.totalSize : 0;
             break;
 
         case DownloadItemActions.RESET:
@@ -266,6 +256,9 @@ export function DownloadsReducer(
         default:
             return state;
     }
+
+    state.totalProgress = state.totalSize !== 0 ? 100.0 * state.totalTransferred / state.totalSize : 0;
+    state.inProgress.progress = state.totalSize !== 0 ? 100.0 * state.inProgress.transferred / state.totalSize : 0;
 
     return {
         totalCount: state.totalCount,

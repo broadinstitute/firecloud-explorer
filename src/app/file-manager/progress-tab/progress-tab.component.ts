@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, AfterViewInit, Input, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, Input, OnDestroy, NgZone } from '@angular/core';
 import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
 import { NgxSpinnerService } from 'ngx-spinner';
 
@@ -50,7 +50,8 @@ export class ProgressTabComponent implements OnInit {
 
   private subscription: ISubscription;
 
-  constructor(private store: Store<AppState>, private spinner: NgxSpinnerService) {
+  constructor(private store: Store<AppState>, private spinner: NgxSpinnerService, private zone: NgZone, ) {
+
     this.downloads = store.select('downloads');
     this.uploads = store.select('uploads');
     this.exportsToGCS = store.select('exportToGCS');
@@ -113,13 +114,17 @@ export class ProgressTabComponent implements OnInit {
     let paused = Object.values(state.paused.items);
     let cancelled = Object.values(state.cancelled.items);
     let failed = Object.values(state.failed.items);
-    this.dataSource.data = [...pending, ...inProgress, ...completed, ...paused, ...cancelled, ...failed];
+
+    this.zone.run(() => {
+      this.dataSource.data = [...pending, ...inProgress, ...completed, ...paused, ...cancelled, ...failed];
+    });
+
   }
 
   ngAfterViewInit() {
     this.dataSource.sort = this.sort;
     this.dataSource.paginator = this.paginator;
-    this.dataSource.filterPredicate = (data: any, filter: string) => data.name.toLowerCase().indexOf(filter) !== -1;
+    this.dataSource.filterPredicate = (data: any, filter: string) => data.displayName.toLowerCase().indexOf(filter) !== -1;
   }
 
   // filtering method
@@ -137,28 +142,28 @@ export class ProgressTabComponent implements OnInit {
         statusDesc = 'Pending';
         break;
 
-        case EntityStatus.INPROGRESS:
+      case EntityStatus.INPROGRESS:
         statusDesc = 'In Progress';
         break;
 
-        case EntityStatus.PAUSED:
+      case EntityStatus.PAUSED:
         statusDesc = 'Paused';
         break;
 
-        case EntityStatus.COMPLETED:
+      case EntityStatus.COMPLETED:
         statusDesc = 'Completed';
         break;
 
-        case EntityStatus.CANCELED:
+      case EntityStatus.CANCELED:
         statusDesc = 'Canceled';
         break;
 
-        case EntityStatus.FAILED:
+      case EntityStatus.FAILED:
         statusDesc = 'Failed';
         break;
 
-      }
-      return statusDesc;
+    }
+    return statusDesc;
   }
 
   ngOnDestroy() {
