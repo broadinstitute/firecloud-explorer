@@ -16,9 +16,7 @@ export class S3ExportService {
   ) { }
 
   public startFileExportToS3(items: ExportToS3Item[]) {
-    console.log('S3ExportService.startFileExportToS3 ', items);
-    
-    this.store.dispatch(new exportToS3Actions.ProcessItems({ items: items }))
+     this.store.dispatch(new exportToS3Actions.ProcessItems({ items: items }))
     items.forEach(item => {
       const dataTransfer = {
         'preserveStructure': JSON.parse(localStorage.getItem('preserveStructure')),
@@ -39,15 +37,5 @@ export class S3ExportService {
     };
     this.electronService.setCredentials(dataTransfer);
   }
-
-  // public startUpload(item) {
-  //   const dataTransfer = {
-  //     'preserveStructure': JSON.parse(localStorage.getItem('preserveStructure')),
-  //     'gcsToken': SecurityService.getAccessToken(),
-  //     'bucketName': localStorage.getItem('S3BucketName'),
-  //     'item': item,
-  //   };
-  //   this.electronService.exportS3(dataTransfer);
-  // }
 
 }

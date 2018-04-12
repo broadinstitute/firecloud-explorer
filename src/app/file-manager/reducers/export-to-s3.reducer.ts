@@ -119,7 +119,6 @@ export function ExportToS3Reducer(
             break;
 
         case ExportToS3ItemActions.COMPLETE_ITEM:
-            console.log('complete-item: ', action.payload);
             state.inProgress.count--;
             delete state.inProgress.items[action.payload.id];
             action.payload.status = EntityStatus.COMPLETED;
@@ -128,7 +127,6 @@ export function ExportToS3Reducer(
             break;
 
         case ExportToS3ItemActions.COMPLETE_ITEMS:
-            console.log('complete-items: ', action.payload.items);
             action.payload.items.forEach(item => {
                 state.inProgress.count--;
                 delete state.inProgress.items[item.id];

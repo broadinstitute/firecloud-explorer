@@ -91,8 +91,6 @@ app.on('ready', function () {
   });
 
   ipcMain.on(constants.IPC_START_DOWNLOAD, (event, items, access_token) => {
-    console.log(constants.IPC_START_DOWNLOAD);
-    console.log(JSON.stringify(items));
     downloadManager(items, access_token, win);
   });
 

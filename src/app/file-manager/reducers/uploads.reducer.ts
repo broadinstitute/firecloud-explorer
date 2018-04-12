@@ -127,7 +127,6 @@ export function UploadsReducer(
             break;
 
         case UploadItemActions.COMPLETE_ITEMS:
-            console.log('complete-items: ', action.payload.items);
             action.payload.items.forEach(item => {
                 state.inProgress.count--;
                 delete state.inProgress.items[item.id];

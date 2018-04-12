@@ -62,7 +62,6 @@ export class StatusService {
     });
 
     this.electronService.ipcRenderer.on(constants.IPC_EXPORT_TO_GCP_COMPLETE, (event, items) => {
-      console.log(JSON.stringify(items, null, 2));
       this.store.dispatch(new exportToGCSActions.CompleteItems({items : items}));
       this.limitTransferables.pendingGCSItem();
     });
@@ -81,7 +80,6 @@ export class StatusService {
     });
 
     this.electronService.ipcRenderer.on(constants.IPC_EXPORT_S3_COMPLETE, (event, item) => {
-      // console.log('S3 Completed : ' + item.displayName);
       this.store.dispatch(new exportToS3Actions.CompleteItem(item));
       this.limitTransferables.pendingS3Item();
     });

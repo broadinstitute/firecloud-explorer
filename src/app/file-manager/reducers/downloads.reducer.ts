@@ -144,7 +144,6 @@ export function DownloadsReducer(
             break;
 
         case DownloadItemActions.COMPLETE_ITEMS:
-            console.log('complete-items: ', action.payload.items);
             action.payload.items.forEach(item => {
                 // update total transferred
                 state.totalTransferred -= state.inProgress.items[item.id].transferred;

@@ -44,7 +44,6 @@ const uploadManager = (bucketName, fileList = [], access_token, win) => {
             requestList.push(reqConfig);
 
           } else {
-            console.log(JSON.stringify(resp));
             console.error("There was an error trying to connect to google");
           }
 
