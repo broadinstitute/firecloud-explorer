@@ -47,6 +47,7 @@ import { FileExportModalComponent } from './file-export-modal/file-export-modal.
 import { S3ExportService } from '@app/file-manager/services/s3-export.service';
 import { SelectionService } from '@app/file-manager/services/selection.service';
 import { NgZone } from '@angular/core';
+import { ProgressTabComponent } from './progress-tab/progress-tab.component';
 
 @NgModule({
   imports: [
@@ -74,6 +75,7 @@ import { NgZone } from '@angular/core';
     WarningModalComponent,
     BreadcrumbComponent,
     FileExportModalComponent,
+    ProgressTabComponent,
   ],
   providers: [
     FilterSizePipe,

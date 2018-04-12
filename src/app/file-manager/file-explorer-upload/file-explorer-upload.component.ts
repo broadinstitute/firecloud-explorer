@@ -2,8 +2,9 @@ import { Component, OnInit, Output, ViewChild, EventEmitter, NgZone } from '@ang
 import { Message, TreeNode } from 'primeng/primeng';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
-import * as Transferables from '../actions/transferables.actions';
+import * as uploadsActions from '../actions/upload-item.actions';
 import { Item } from '../models/item';
+import { UploadItem } from '../models/upload-item';
 import { AppState } from '@app/file-manager/reducers';
 import { ElectronService } from 'ngx-electron';
 import { FilterSizePipe } from '../filters/filesize-filter';
@@ -15,10 +16,13 @@ import { TransferablesGridComponent } from '../transferables-grid/transferables-
 import { TreeTable } from 'primeng/primeng';
 import { ChangeDetectorRef } from '@angular/core';
 import { Type } from '@app/file-manager/models/type';
-import { ItemStatus } from '@app/file-manager/models/item-status';
-import { UUID } from 'angular2-uuid';
+import { EntityStatus } from '@app/file-manager/models/entity-status';
+
 import { StatusService } from '@app/file-manager/services/status.service';
 import { FilesDatabase } from '../dbstate/files-database';
+
+import { UUID } from 'angular2-uuid';
+import { UpdateItem } from '@app/file-manager/actions/export-to-gcs-item.actions';
 
 @Component({
   selector: 'app-file-explorer-upload',
@@ -33,9 +37,7 @@ export class FileExplorerUploadComponent implements OnInit {
   @Output('done') done: EventEmitter<any> = new EventEmitter();
 
   files: TreeNode[];
-  dataFile: Item;
   selectedFiles: TreeNode[] = [];
-  uploadFiles: Item[] = [];
   uploadInProgress = false;
 
   fileCount = 0;
@@ -199,19 +201,22 @@ export class FileExplorerUploadComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
+      let filesToUpload: UploadItem[] = [];
+      let dataFile: UploadItem;
+
       if (result !== undefined) {
-        this.updateCurrentBatch();
+
         this.selectedFiles
           .filter(file => file.data.type === Type.FILE)
           .forEach(file => {
-            this.dataFile = new Item(UUID.UUID(), file.data.name, file.data.updated, file.data.updated, file.data.size,
-              '', file.data.path, result.directory, Type.UPLOAD, ItemStatus.PENDING, '',
-              '', '', result.preserveStructure, false, '', file.data.name, '', true,Type.IUPLOAD, ItemStatus.IPENDING);
+            dataFile = new UploadItem(UUID.UUID(), file.data.name, file.data.updated,
+              file.data.updated, file.data.size, file.data.path, result.directory,
+              EntityStatus.PENDING, '', '', '', result.preserveStructure, '', file.data.name, '');
 
-            this.uploadFiles.push(this.dataFile);
-            this.store.dispatch(new Transferables.AddItem(this.dataFile));
+            filesToUpload.push(dataFile);
           });
-        this.transferablesGridComponent.startUpload(this.uploadFiles);
+
+        this.transferablesGridComponent.startUpload(filesToUpload);
         this.router.navigate(['/status']);
       }
     });
@@ -227,11 +232,4 @@ export class FileExplorerUploadComponent implements OnInit {
     return this.uploadInProgress || this.fileCount <= 0;
   }
 
-  updateCurrentBatch() {
-    const items = new FilesDatabase(this.store).data().filter(item => item.type === Type.UPLOAD && item.currentBatch);
-    items.forEach(item => {
-      item.currentBatch = false;
-      this.store.dispatch(new Transferables.UpdateItem(item));
-    });
-  }
 }

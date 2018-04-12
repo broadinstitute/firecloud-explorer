@@ -91,33 +91,6 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
 
   itemsObs: Observable<TransferableState>;
 
-  // initialState: TransferableState = {
-  //   count: 0,
-  //   selectedCount: 0,
-  //   downloadingCount: 0,
-  //   uploadingCount: 0,
-  //   exportingGCPCount: 0,
-  //   toDownloadCount: 0,
-  //   toUploadCount: 0,
-  //   toExportS3Count: 0,
-  //   exportingS3Count: 0,
-  //   toExportGCPCount: 0,
-  //   counter: [
-  //     [0, 0, 0, 0, 0, 0, 0, 0, 0],
-  //     [0, 0, 0, 0, 0, 0, 0, 0, 0],
-  //     [0, 0, 0, 0, 0, 0, 0, 0, 0],
-  //     [0, 0, 0, 0, 0, 0, 0, 0, 0],
-  //     [0, 0, 0, 0, 0, 0, 0, 0, 0],
-  //     [0, 0, 0, 0, 0, 0, 0, 0, 0]
-
-  //   ],
-  //   items: [],
-  //   itemsMap: []
-  // };
-
-  // stateChange: BehaviorSubject<TransferableState>
-  //   = new BehaviorSubject<TransferableState>(this.initialState);
-
   modeVariable = 'determinate';
   generalExportToGCPProgress = 0;
   INDETERMINATE = 'indeterminate';
@@ -350,8 +323,8 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
     this.limitTransferables.controlDownloadItemLimits(files);
   }
 
-  startUpload(files: Item[]) {
-    this.limitTransferables.controlLimitItems(files, Type.UPLOAD, ItemStatus.UPLOADING);
+  startUpload(files: UploadItem[]) {
+    this.limitTransferables.controlUploadItemLimits(files);
   }
 
   startGCSExport(files: ExportToGCSItem[], preserveStructure: Boolean) {

@@ -99,27 +99,27 @@ export class LimitTransferablesService implements OnInit {
     }
   }
 
-  public pendingItem(type: Type, status: ItemStatus): void {
-    let items = new FilesDatabase(this.store).data();
-    if (!this.maxDownloadsAtSameTime(items, status)) {
-      items = items.filter(item => item.type === type && item.status === ItemStatus.PENDING);
-      this.proceedNextItem(items, type, status);
-    }
-  }
+  // public pendingItem(type: Type, status: ItemStatus): void {
+  //   let items = new FilesDatabase(this.store).data();
+  //   if (!this.maxDownloadsAtSameTime(items, status)) {
+  //     items = items.filter(item => item.type === type && item.status === ItemStatus.PENDING);
+  //     this.proceedNextItem(items, type, status);
+  //   }
+  // }
 
-  private maxDownloadsAtSameTime(items: Item[], status: ItemStatus): boolean {
-    let max = 0;
-    items.forEach(item => {
-      if (item.status === status) {
-        max++;
-      }
-    });
+  // private maxDownloadsAtSameTime(items: Item[], status: ItemStatus): boolean {
+  //   let max = 0;
+  //   items.forEach(item => {
+  //     if (item.status === status) {
+  //       max++;
+  //     }
+  //   });
 
-    if (max === environment.LIMIT_TRANSFERABLES) {
-      return true;
-    }
-    return false;
-  }
+  //   if (max === environment.LIMIT_TRANSFERABLES) {
+  //     return true;
+  //   }
+  //   return false;
+  // }
 
   public controlDownloadItemLimits(files: DownloadItem[]): void {
     if (files === undefined || files === null || files.length <= 0) {
@@ -136,6 +136,24 @@ export class LimitTransferablesService implements OnInit {
       maxFiles = files;
     }
     this.gcsService.downloadFiles(maxFiles);
+  }
+
+  public controlUploadItemLimits(files: UploadItem[]): void {
+    if (files === undefined || files === null || files.length <= 0) {
+      return;
+    }
+
+    let uploadBucket = localStorage.getItem('uploadBucket');
+    let maxFiles = [];
+    this.store.dispatch(new uploadActions.Reset());
+    this.store.dispatch(new uploadActions.AddItems({ items: files, clear: false }));
+
+    if (files.length > environment.LIMIT_UPLOADS) {
+      maxFiles = files.splice(0, environment.LIMIT_UPLOADS);
+    } else {
+      maxFiles = files;
+    }
+    this.gcsService.uploadFiles(maxFiles, uploadBucket);
   }
 
   public controlExportToGCSItemLimits(files: ExportToGCSItem[]): void {
@@ -172,55 +190,55 @@ export class LimitTransferablesService implements OnInit {
     this.s3ExportService.startFileExportToS3(maxFiles);
   }
 
-  public controlLimitItems(files: Item[], type: Type, status: ItemStatus): void {
-    let maxFiles = [];
+  // public controlLimitItems(files: Item[], type: Type, status: ItemStatus): void {
+  //   let maxFiles = [];
 
-    if (files.length > environment.LIMIT_TRANSFERABLES) {
-      maxFiles = files.splice(0, environment.LIMIT_TRANSFERABLES);
-    } else {
-      maxFiles = files;
-    }
+  //   if (files.length > environment.LIMIT_TRANSFERABLES) {
+  //     maxFiles = files.splice(0, environment.LIMIT_TRANSFERABLES);
+  //   } else {
+  //     maxFiles = files;
+  //   }
 
-    maxFiles.forEach(item => {
-      if (item.type !== Type.EXPORT_S3) {
-        item.status = status;
-        this.store.dispatch(new Transferables.UpdateItem(item));
-      }
-    });
+  //   maxFiles.forEach(item => {
+  //     if (item.type !== Type.EXPORT_S3) {
+  //       item.status = status;
+  //       this.store.dispatch(new Transferables.UpdateItem(item));
+  //     }
+  //   });
 
-    if (type === Type.DOWNLOAD) {
-      this.gcsService.downloadFiles(maxFiles);
-    } else if (type === Type.UPLOAD) {
-      this.gcsService.uploadFiles(maxFiles, localStorage.getItem('uploadBucket'));
-    } else if (type === Type.EXPORT_S3) {
-      // Because the export S3 process works with one item at a time it's necessary to take the first one
-      maxFiles[0].status = ItemStatus.EXPORTING_S3;
-      this.store.dispatch(new Transferables.UpdateItem(maxFiles[0]));
-      this.s3ExportService.startFileExportToS3(maxFiles[0]);
-    }
-  }
+  //   if (type === Type.DOWNLOAD) {
+  //     this.gcsService.downloadFiles(maxFiles);
+  //   } else if (type === Type.UPLOAD) {
+  //     this.gcsService.uploadFiles(maxFiles, localStorage.getItem('uploadBucket'));
+  //   } else if (type === Type.EXPORT_S3) {
+  //     // Because the export S3 process works with one item at a time it's necessary to take the first one
+  //     maxFiles[0].status = ItemStatus.EXPORTING_S3;
+  //     this.store.dispatch(new Transferables.UpdateItem(maxFiles[0]));
+  //     this.s3ExportService.startFileExportToS3(maxFiles[0]);
+  //   }
+  // }
 
-  public exportItems(files: Item[]): void {
-    const maxFiles = files.splice(0, environment.LIMIT_EXPORTABLES);
-    this.gcsService.exportToGCSFiles(maxFiles, localStorage.getItem('destinationBucket'));
-  }
+  // public exportItems(files: Item[]): void {
+  //   const maxFiles = files.splice(0, environment.LIMIT_EXPORTABLES);
+  //   this.gcsService.exportToGCSFiles(maxFiles, localStorage.getItem('destinationBucket'));
+  // }
 
-  private proceedNextItem(files: Item[], type: Type, status: ItemStatus): void {
-    let item: Item;
+  // private proceedNextItem(files: Item[], type: Type, status: ItemStatus): void {
+  //   let item: Item;
 
-    if (files.length > 1 || files.length === 1) {
-      item = files.splice(0, 1)[0];
+  //   if (files.length > 1 || files.length === 1) {
+  //     item = files.splice(0, 1)[0];
 
-      item.status = status;
-      this.store.dispatch(new Transferables.UpdateItem(item));
+  //     item.status = status;
+  //     this.store.dispatch(new Transferables.UpdateItem(item));
 
-      if (type === Type.DOWNLOAD) {
-        this.gcsService.downloadFiles([item]);
-      } else if (type === Type.UPLOAD) {
-        // this.gcsService.uploadFiles( [item], localStorage.getItem('uploadBucket'));
-      } else if (type === Type.EXPORT_S3) {
-        this.s3ExportService.startFileExportToS3([item]);
-      }
-    }
-  }
+  //     if (type === Type.DOWNLOAD) {
+  //       this.gcsService.downloadFiles([item]);
+  //     } else if (type === Type.UPLOAD) {
+  //       // this.gcsService.uploadFiles( [item], localStorage.getItem('uploadBucket'));
+  //     } else if (type === Type.EXPORT_S3) {
+  //       this.s3ExportService.startFileExportToS3([item]);
+  //     }
+  //   }
+  // }
 }

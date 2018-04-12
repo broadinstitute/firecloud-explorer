@@ -66,26 +66,7 @@ export class FileExplorerComponent implements OnInit, AfterViewInit {
       'workspaces', 'workspaces', null, null, 0, '', '', '',
       'Folder', '', '', '', '', true, false, '', '', '', false, 0, 0);
 
-/* TODO 
-    this.rootItem = new Item('workspaces', 'workspaces', null, null, 0, '', '',
-      '', 'Folder', '', '', '', '', true, false, '', '', '', 0, 0);
-*/
     this.getWorkspacesObjects(this.rootItem);
-
-    // this.statusService.updateDownloadProgress()
-    //   .subscribe(data => {
-    //     this.zone.run(() => {
-    //       this.downloadInProgress = this.router.routerState.snapshot.url === '/file-download' && data !== 100;
-    //       this.progressStatus = this.downloadInProgress;
-    //     });
-    //   });
-    
-    // this.statusService.updateExportS3Progress().subscribe(data => {
-    //   this.zone.run(() => {
-    //     this.exportInProgress = data !== 100;
-    //     this.progressStatus = this.exportInProgress;
-    //   });
-    // });
   }
 
   ngAfterViewInit() {
