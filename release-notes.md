@@ -1,10 +1,10 @@
-# FireCloud Explorer Release Notes
+# FireCloud DataShuttle Release Notes
 
 ### Alpha version 0.1.0
 
 ## Feature summary
 
-This first alpha release of FireCloud Explorer includes the following features:
+This first alpha release of FireCloud DataShuttle includes the following features:
 
 * Login using FireCloud credentials.
 * Browse and select files associated with FireCloud workspaces.

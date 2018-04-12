@@ -1,9 +1,9 @@
 {
-  "name": "firecloud-explorer",
-  "productName": "FireCloud Explorer",
+  "name": "firecloud-datashuttle",
+  "productName": "FireCloud DataShuttle",
   "author": "Broad Institute",
-  "productDescription": "File explorer for FireCloud Workspaces to download and upload files",
-  "description": "FireCloud Download Client Description",
+  "productDescription": "Desktop app to transfer files from and to FireCloud",
+  "description": "Desktop app to transfer files from and to FireCloud",
   "maintainer": "Broad Institute.",
   "version": "0.1.0",
   "appVersion": "0.1.0",
