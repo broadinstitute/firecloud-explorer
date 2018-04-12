@@ -12,9 +12,9 @@
 
 .search-container{
   width: 25%;
-  position: absolute;
+  /* position: absolute;
   top: -30px;
-  right: 15px;
+  right: 15px; */
 }
 
 .subtitle {
@@ -26,3 +26,27 @@
   margin-bottom: 0;
   line-height: 1.7rem;
 }
+
+.tab-group.mat-tab-group {
+  margin-top: 10px;
+} 
+
+.tab-group .mat-tab-header {
+  background: #f5f5f5;
+  margin-bottom: 15px;
+} 
+
+.tab-group .mat-tab-label {
+  height: 40px;
+  border: 1px solid #f5f5f5;
+  border-bottom: none;
+} 
+
+.tab-group .mat-tab-label-active {
+  background: white;
+  opacity: 1;
+  border: 1px solid #bdbdbd;
+  border-bottom: none;
+  border-radius: 5px 5px 0 0;
+  color: black;
+} 

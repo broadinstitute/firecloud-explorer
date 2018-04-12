@@ -1,4 +1,4 @@
-import { Component, OnInit, NgZone, AfterViewInit, ViewChild } from '@angular/core';
+import { Component, OnInit, NgZone, AfterViewInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Store } from '@ngrx/store';
 
 import * as Transferables from '../actions/transferables.actions';
@@ -41,7 +41,8 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 @Component({
   selector: 'app-transferables-grid',
   templateUrl: './transferables-grid.component.html',
-  styleUrls: ['./transferables-grid.component.css']
+  styleUrls: ['./transferables-grid.component.css'],
+  encapsulation: ViewEncapsulation.None
 })
 
 export class TransferablesGridComponent implements OnInit, AfterViewInit {
