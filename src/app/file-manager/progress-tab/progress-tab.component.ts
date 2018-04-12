@@ -1,8 +1,9 @@
-import { Component, OnInit, ViewChild, AfterViewInit, Input } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, Input, OnDestroy } from '@angular/core';
 import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
 import { NgxSpinnerService } from 'ngx-spinner';
 
 import { Store } from '@ngrx/store';
+import { ISubscription } from "rxjs/Subscription";
 
 import { DownloadItem } from '../models/download-item';
 import { DownloadsReducer, DownloadState, downloadInitialState } from '../reducers/downloads.reducer';
@@ -20,6 +21,7 @@ import { Observable } from 'rxjs/Observable';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 import { AppState } from '@app/file-manager/reducers';
+import { EntityStatus } from '@app/file-manager/models/entity-status';
 
 @Component({
   selector: 'fc-progress-tab',
@@ -29,6 +31,8 @@ import { AppState } from '@app/file-manager/reducers';
 export class ProgressTabComponent implements OnInit {
 
   @Input('tabLabel') tabLabel;
+  @Input('source') source;
+
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   dataSource = new MatTableDataSource([]);
@@ -44,6 +48,8 @@ export class ProgressTabComponent implements OnInit {
   exportToGCSChange: BehaviorSubject<ExportToGCSState> = new BehaviorSubject<ExportToGCSState>(exportToGCSInitialState);
   exportToS3Change: BehaviorSubject<ExportToS3State> = new BehaviorSubject<ExportToS3State>(exportToS3InitialState);
 
+  private subscription: ISubscription;
+
   constructor(private store: Store<AppState>, private spinner: NgxSpinnerService) {
     this.downloads = store.select('downloads');
     this.uploads = store.select('uploads');
@@ -58,18 +64,56 @@ export class ProgressTabComponent implements OnInit {
 
   ngOnInit() {
 
-    this.dataSource.data = [];
+    switch (this.source) {
 
-      this.downloadsChange.subscribe(
-        state => {
-          this.dataSource.data = Object.values(state.completed.items);
-        }
-      )
+      case 'Down':
+        this.subscription = this.downloadsChange.subscribe(
+          state => {
+            this.processChanges(state);
+          }
+        );
+        break;
 
-    if (localStorage.getItem('displaySpinner') === 'true') {
-      this.spinner.show();
-      localStorage.removeItem('displaySpinner');
+      case 'Up':
+        this.subscription = this.uploadsChange.subscribe(
+          state => {
+            this.processChanges(state);
+          }
+        );
+        break;
+
+      case 'GCS':
+        this.subscription = this.exportsToGCS.subscribe(
+          state => {
+            this.processChanges(state);
+          }
+        );
+        break;
+
+      case 'S3':
+        this.subscription = this.exportsToS3.subscribe(
+          state => {
+            this.processChanges(state);
+          }
+        );
+        break;
+
     }
+
+    // if (localStorage.getItem('displaySpinner') === 'true') {
+    //   this.spinner.show();
+    //   localStorage.removeItem('displaySpinner');
+    // }
+  }
+
+  private processChanges(state) {
+    let pending = Object.values(state.pending.items);
+    let inProgress = Object.values(state.inProgress.items);
+    let completed = Object.values(state.completed.items);
+    let paused = Object.values(state.paused.items);
+    let cancelled = Object.values(state.cancelled.items);
+    let failed = Object.values(state.failed.items);
+    this.dataSource.data = [...pending, ...inProgress, ...completed, ...paused, ...cancelled, ...failed];
   }
 
   ngAfterViewInit() {
@@ -85,4 +129,39 @@ export class ProgressTabComponent implements OnInit {
     this.dataSource.filter = filterValue;
   }
 
+  describeStatus(statusCode): string {
+    let statusDesc = '';
+
+    switch (statusCode) {
+      case EntityStatus.PENDING:
+        statusDesc = 'Pending';
+        break;
+
+        case EntityStatus.INPROGRESS:
+        statusDesc = 'In Progress';
+        break;
+
+        case EntityStatus.PAUSED:
+        statusDesc = 'Paused';
+        break;
+
+        case EntityStatus.COMPLETED:
+        statusDesc = 'Completed';
+        break;
+
+        case EntityStatus.CANCELED:
+        statusDesc = 'Canceled';
+        break;
+
+        case EntityStatus.FAILED:
+        statusDesc = 'Failed';
+        break;
+
+      }
+      return statusDesc;
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
+  }
 }

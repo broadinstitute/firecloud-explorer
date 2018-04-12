@@ -27,11 +27,11 @@
     <ng-container matColumnDef="status">
       <mat-header-cell *matHeaderCellDef mat-sort-header> Status</mat-header-cell>
       <mat-cell *matCellDef="let row">
-        <mat-icon class="transfer-icon" *ngIf="row.type == 'Download'">file_download</mat-icon>
-        <mat-icon class="transfer-icon" *ngIf="row.type == 'Upload'">file_upload</mat-icon>
-        <i class="export-icon-dark" *ngIf="row.type == 'Export GCP' || row.type == 'Export S3' "></i>
-        {{row.status}}
-        <div *ngIf="row.status === 'Downloading' || row.status === 'Uploading' || row.status === 'Exporting to Google Cloud' || row.status === 'Exporting to Amazon'"
+        <mat-icon class="transfer-icon" *ngIf="source == 'Down'">file_download</mat-icon>
+        <mat-icon class="transfer-icon" *ngIf="source == 'Up'">file_upload</mat-icon>
+        <i class="export-icon-dark" *ngIf="source == 'GCS' || source == 'S3' "></i>
+        {{describeStatus(row.status)}}
+        <div *ngIf="row.status === 1"
           class="progress-dots transfer-status">
           <span class="dot"></span>
           <span class="dot"></span>
@@ -43,11 +43,11 @@
     <ng-container matColumnDef="progress">
       <mat-header-cell *matHeaderCellDef> Progress</mat-header-cell>
       <mat-cell *matCellDef="let row">
-        <p-progressBar *ngIf="row.status === 'Pending' || row.status === 'Downloading' || row.status === 'Uploading' || row.status === 'Completed' || row.status === 'Canceled'"
-          mode="determinate" class="progress-bar-small" [ngClass]="{'success': row.status === 'Completed', 'failure': row.status === 'Canceled'}"
+        <p-progressBar *ngIf="row.status === 0 || (source === 'GCS' || source === 'S3') || row.status === 'Completed' || row.status === 'Canceled'"
+          mode="determinate" class="progress-bar-small" [ngClass]="{'success': row.status === 3, 'failure': row.status === 4}"
           [value]=row.progress [showValue]="false"></p-progressBar>
-        <p-progressBar *ngIf="row.status === 'Exporting to Google Cloud' || row.status === 'Exporting to Amazon'" mode="indeterminate"
-          class="progress-bar-small" [ngClass]="{'success': row.status === 'Completed', 'failure': row.status === 'Canceled'}"
+        <p-progressBar *ngIf="row.status === 1 && (source === 'GCS' || source === 'S3')" mode="indeterminate"
+          class="progress-bar-small" [ngClass]="{'success': row.status === 3, 'failure': row.status === 4 }"
           [showValue]="false"></p-progressBar>
       </mat-cell>
     </ng-container>
@@ -68,6 +68,5 @@
     <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
   </mat-table>
 
-  <mat-paginator #paginator [pageIndex]="0" [pageSize]="10" [pageSizeOptions]="[5, 10, 25, 50, 100]"
-    class="paginator"></mat-paginator>
+  <mat-paginator #paginator [pageIndex]="0" [pageSize]="10" [pageSizeOptions]="[5, 10, 25, 50, 100]" class="paginator"></mat-paginator>
 </div>
