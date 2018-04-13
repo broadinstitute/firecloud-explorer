@@ -90,7 +90,6 @@ export function ExportToGCSReducer(
         case ExportToGCSItemActions.ADD_ITEMS:
             action.payload.items.forEach(item => {
                 item.status = EntityStatus.PENDING;
-                item.preserveStructure = action.payload.preserveStructure;
                 state.pending.count++;
                 state.totalCount++;
                 state.totalSize += Number(item.size);

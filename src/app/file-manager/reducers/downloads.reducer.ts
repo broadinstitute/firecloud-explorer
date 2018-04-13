@@ -88,9 +88,6 @@ export function DownloadsReducer(
             break;
 
         case DownloadItemActions.ADD_ITEMS:
-            if (action.payload.clear === true) {
-                state = downloadInitialState;
-            }
             action.payload.items.forEach(item => {
                 item.status = EntityStatus.PENDING;
                 state.pending.count++;

@@ -317,11 +317,11 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
     this.limitTransferables.controlUploadItemLimits(files);
   }
 
-  startGCSExport(files: ExportToGCSItem[], preserveStructure: Boolean) {
-    this.limitTransferables.controlExportToGCSItemLimits(files, preserveStructure);
+  startGCSExport(files: ExportToGCSItem[]) {
+    this.limitTransferables.controlExportToGCSItemLimits(files);
   }
 
-  startS3Export(files: ExportToS3Item[], preserveStructure: Boolean) {
+  startS3Export(files: ExportToS3Item[]) {
     this.limitTransferables.controlExportToS3ItemLimits(files);
   }
 
