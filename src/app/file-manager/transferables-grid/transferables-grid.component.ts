@@ -67,7 +67,7 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   exportToGcpItems = new FilesDatabase(this.store);
   exportToS3Canceled = false;
 
-  //---------------------------- progress info from here ----------------
+  // ---------------------------- progress info from here ----------------
   downCompleted = 0;
   downTotal = 0;
   downProgress = 0;
@@ -88,7 +88,7 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   uploadState: Observable<UploadState>;
   exportToGCSState: Observable<ExportToGCSState>;
   exportToS3State: Observable<ExportToS3State>;
-  //------------------------------ until here ------------------------
+  // ------------------------------ until here ------------------------
 
   itemsObs: Observable<TransferableState>;
 
