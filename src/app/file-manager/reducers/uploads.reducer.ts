@@ -88,10 +88,7 @@ export function UploadsReducer(
             break;
 
         case UploadItemActions.ADD_ITEMS:
-            if (action.payload.clear === true) {
-                state = uploadInitialState;
-            }
-            action.payload.items.forEach(item => {
+            action.payload.items.forEach((item: UploadItem) => {
                 item.status = EntityStatus.PENDING;
                 state.pending.count++;
                 state.totalCount++;
@@ -109,7 +106,7 @@ export function UploadsReducer(
             break;
 
         case UploadItemActions.PROCESS_ITEMS:
-            action.payload.items.forEach(item => {
+            action.payload.items.forEach((item: UploadItem)  => {
                 state.pending.count--;
                 delete state.pending.items[item.id];
                 item.status = EntityStatus.INPROGRESS;
@@ -127,7 +124,7 @@ export function UploadsReducer(
             break;
 
         case UploadItemActions.COMPLETE_ITEMS:
-            action.payload.items.forEach(item => {
+            action.payload.items.forEach((item: UploadItem) => {
                 state.inProgress.count--;
                 delete state.inProgress.items[item.id];
                 item.status = EntityStatus.COMPLETED;
@@ -145,7 +142,7 @@ export function UploadsReducer(
             break;
 
         case UploadItemActions.PAUSE_ITEMS:
-            action.payload.items.forEach(item => {
+            action.payload.items.forEach( (item: UploadItem) => {
                 state.inProgress.count--;
                 delete state.inProgress.items[item.id];
                 item.status = EntityStatus.PAUSED;
@@ -163,10 +160,10 @@ export function UploadsReducer(
             break;
 
         case UploadItemActions.CANCEL_ITEMS:
-            action.payload.items.forEach(item => {
+            action.payload.items.forEach((item: UploadItem) => {
                 state.inProgress.count--;
                 delete state.inProgress.items[item.id];
-                action.payload.status = EntityStatus.CANCELED;
+                item.status = EntityStatus.CANCELED;
                 state.cancelled.count++;
                 state.cancelled.items[item.id] = item;
             });
@@ -188,13 +185,13 @@ export function UploadsReducer(
         case UploadItemActions.FAIL_ITEM:
             state.inProgress.count--;
             delete state.inProgress.items[action.payload.id];
-            action.payload.state = EntityStatus.FAILED;
+            action.payload.status = EntityStatus.FAILED;
             state.failed.count++;
             state.failed.items[action.payload.id] = action.payload;
             break;
 
         case UploadItemActions.FAIL_ITEMS:
-            action.payload.items.forEach(item => {
+            action.payload.items.forEach((item: UploadItem) => {
                 state.inProgress.count--;
                 delete state.inProgress.items[item.id];
                 item.status = EntityStatus.FAILED;

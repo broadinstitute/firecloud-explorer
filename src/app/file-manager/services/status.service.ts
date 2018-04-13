@@ -4,6 +4,7 @@ import { Observable } from 'rxjs/Observable';
 import { Item } from '../models/item';
 import { DownloadItem } from '../models/download-item';
 import * as Transferables from '../actions/transferables.actions';
+
 import * as downloadActions from '../actions/download-item.actions';
 import * as uploadActions from '../actions/upload-item.actions';
 import * as exportToGCSActions from '../actions/export-to-gcs-item.actions';
@@ -44,7 +45,6 @@ export class StatusService {
 
     this.electronService.ipcRenderer.on(constants.IPC_DOWNLOAD_FAILED, (event, item) => {
       this.store.dispatch(new downloadActions.FailItem(item));
-      // TODO: must start next batch, if any
       this.limitTransferables.pendingDownloadItem();
     });
 
@@ -57,13 +57,11 @@ export class StatusService {
 
     this.electronService.ipcRenderer.on(constants.IPC_UPLOAD_COMPLETE, (event, item) => {
       this.store.dispatch(new uploadActions.CompleteItem(item));
-      // TODO: must start next batch, if any
       this.limitTransferables.pendingUploadItem();
     });
 
     this.electronService.ipcRenderer.on(constants.IPC_UPLOAD_FAILED, (event, item) => {
-      this.store.dispatch(new uploadActions.FailItem({items: item }));
-      // continue wih next, if any
+      this.store.dispatch(new uploadActions.FailItem(item));
       this.limitTransferables.pendingUploadItem();
     });
 
@@ -75,13 +73,12 @@ export class StatusService {
     });
 
     this.electronService.ipcRenderer.on(constants.IPC_EXPORT_TO_GCP_COMPLETE, (event, items) => {
-      this.store.dispatch(new exportToGCSActions.CompleteItems({items : items}));
+      this.store.dispatch(new exportToGCSActions.CompleteItems({ items: items }));
       this.limitTransferables.pendingGCSItem();
     });
 
     this.electronService.ipcRenderer.on(constants.IPC_EXPORT_TO_GCP_FAILED, (event, items) => {
-      this.store.dispatch(new exportToGCSActions.FailItems({items: items }));
-      // continue wih next, if any
+      this.store.dispatch(new exportToGCSActions.FailItems({ items: items }));
       this.limitTransferables.pendingGCSItem();
     });
 
@@ -98,8 +95,7 @@ export class StatusService {
     });
 
     this.electronService.ipcRenderer.on(constants.IPC_EXPORT_TO_S3_FAILED, (event, items) => {
-      this.store.dispatch(new exportToS3Actions.FailItems({items: items }));
-      // continue wih next, if any
+      this.store.dispatch(new exportToS3Actions.FailItems({ items: items }));
       this.limitTransferables.pendingS3Item();
     });
 

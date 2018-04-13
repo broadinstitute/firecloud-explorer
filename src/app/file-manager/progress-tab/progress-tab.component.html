@@ -1,12 +1,3 @@
-<ng-template class="tab" mat-tab-label>
-  <b>{{tabLabel}}</b>
-</ng-template>
-
-<!-- moved this to transferables-grid component, if works, delete the following lines -->
-<!-- <mat-form-field class="search-transfers-container">
-  <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Search...">
-</mat-form-field> -->
-
 <div class="table-container flex-container column table-common">
   <mat-table [dataSource]="dataSource" matSort>
     <ng-container matColumnDef="id">
@@ -43,7 +34,7 @@
     <ng-container matColumnDef="progress">
       <mat-header-cell *matHeaderCellDef> Progress</mat-header-cell>
       <mat-cell *matCellDef="let row">
-
+{{row.status}}
         <p-progressBar *ngIf="row.status === 0 || (row.status === 1 && source === 'Down') || (row.status === 1 && source === 'Up')  || row.status === 3 || row.status === 4"
           mode="determinate" class="progress-bar-small" [ngClass]="{'success': row.status === 3, 'failure': row.status === 4}"
           [value]="row.progress" [showValue]="false">

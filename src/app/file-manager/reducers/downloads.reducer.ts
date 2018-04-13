@@ -116,11 +116,13 @@ export function DownloadsReducer(
             break;
 
         case DownloadItemActions.COMPLETE_ITEM:
-            // revert previous values 
+            console.log('downloads.reducer COMPLETE_ITEM', action.payload);
+
+            // revert previous values
             state.totalTransferred -= state.inProgress.items[action.payload.id].transferred;
             state.inProgress.transferred -= state.inProgress.items[action.payload.id].transferred;
 
-            // add new values 
+            // add new values
             state.totalTransferred += action.payload.transferred;
             state.inProgress.transferred += action.payload.transferred;
 
@@ -137,11 +139,11 @@ export function DownloadsReducer(
         case DownloadItemActions.COMPLETE_ITEMS:
             action.payload.items.forEach(item => {
 
-                // revert previous values 
+                // revert previous values
                 state.totalTransferred -= state.inProgress.items[item.id].transferred;
                 state.inProgress.transferred -= state.inProgress.items[item.id].transferred;
 
-                // add new values 
+                // add new values
                 state.totalTransferred += item.transferred;
                 state.inProgress.transferred += item.transferred;
 
@@ -194,7 +196,7 @@ export function DownloadsReducer(
             break;
 
         case DownloadItemActions.CANCEL_ALL:
-        
+
             if (state.pending.count > 0) {
                 Object.keys(state.pending.items).forEach(id => {
                     state.cancelled.count++;
@@ -235,11 +237,11 @@ export function DownloadsReducer(
             break;
 
         case DownloadItemActions.UPDATE_ITEM_PROGRESS:
-            // revert previous values 
+            // revert previous values
             state.totalTransferred -= state.inProgress.items[action.payload.id].transferred;
             state.inProgress.transferred -= state.inProgress.items[action.payload.id].transferred;
 
-            // add new values 
+            // add new values
             state.totalTransferred += action.payload.transferred;
             state.inProgress.transferred += action.payload.transferred;
 

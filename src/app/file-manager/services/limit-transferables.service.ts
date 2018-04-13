@@ -66,7 +66,7 @@ export class LimitTransferablesService implements OnInit {
     const inProgressCount = new FilesDatabase(this.store).uploadsChange.getValue().inProgress.count;
     const items: UploadItem[] = [];
     if (pendingCount > 0 && inProgressCount < environment.LIMIT_UPLOADS) {
-      let destinationBucket = localStorage.getItem('destinationBucket');
+      const destinationBucket = localStorage.getItem('destinationBucket');
       const item = Object.values(pendingItems)[0];
       items.push(item);
       this.gcsService.uploadFiles(items, destinationBucket);
@@ -80,8 +80,8 @@ export class LimitTransferablesService implements OnInit {
     let items: ExportToGCSItem[] = [];
 
     if (pendingCount > 0 && inProgressCount === 0) { // < environment.LIMIT_GCS_EXPORTABLES) {
-      let destinationBucket = localStorage.getItem('destinationBucket');
-      let batchSize = environment.LIMIT_GCS_EXPORTABLES; // - inProgressCount;
+      const destinationBucket = localStorage.getItem('destinationBucket');
+      const batchSize = environment.LIMIT_GCS_EXPORTABLES; // - inProgressCount;
       items = Object.values(pendingItems).slice(0, batchSize);
       this.gcsService.exportToGCSFiles(items, destinationBucket);
     }
@@ -143,10 +143,10 @@ export class LimitTransferablesService implements OnInit {
       return;
     }
 
-    let uploadBucket = localStorage.getItem('uploadBucket');
-    let maxFiles = [];
+    const uploadBucket = localStorage.getItem('uploadBucket');
+    let maxFiles: UploadItem[] = [];
     this.store.dispatch(new uploadActions.Reset());
-    this.store.dispatch(new uploadActions.AddItems({ items: files, clear: false }));
+    this.store.dispatch(new uploadActions.AddItems({ items: files }));
 
     if (files.length > environment.LIMIT_UPLOADS) {
       maxFiles = files.splice(0, environment.LIMIT_UPLOADS);
@@ -160,7 +160,7 @@ export class LimitTransferablesService implements OnInit {
     if (files === undefined || files === null || files.length <= 0) {
       return;
     }
-    let destinationBucket = localStorage.getItem('destinationBucket');
+    const destinationBucket = localStorage.getItem('destinationBucket');
     let maxFiles = [];
     this.store.dispatch(new exportToGCSActions.Reset());
     this.store.dispatch(new exportToGCSActions.AddItems({ items: files }));
