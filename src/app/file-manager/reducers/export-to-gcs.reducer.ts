@@ -90,7 +90,6 @@ export function ExportToGCSReducer(
         case ExportToGCSItemActions.ADD_ITEMS:
             action.payload.items.forEach(item => {
                 item.status = EntityStatus.PENDING;
-                item.preserveStructure = action.payload.preserveStructure;
                 state.pending.count++;
                 state.totalCount++;
                 state.totalSize += Number(item.size);
@@ -167,6 +166,21 @@ export function ExportToGCSReducer(
                 action.payload.status = EntityStatus.CANCELED;
                 state.cancelled.count++;
                 state.cancelled.items[item.id] = item;
+            });
+            break;
+
+        case ExportToGCSItemActions.CANCEL_ALL:
+            if (state.inProgress.count <= 0) {
+                // nothing to cancel
+                break;
+            }
+
+            Object.keys(state.inProgress.items).forEach(id => {
+                state.cancelled.count++;
+                state.cancelled.items[id] = state.inProgress.items[id];
+                state.cancelled.items[id].status = EntityStatus.CANCELED;
+                state.inProgress.count--;
+                delete state.inProgress.items[id];
             });
             break;
 

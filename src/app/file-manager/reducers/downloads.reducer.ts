@@ -88,9 +88,6 @@ export function DownloadsReducer(
             break;
 
         case DownloadItemActions.ADD_ITEMS:
-            if (action.payload.clear === true) {
-                state = downloadInitialState;
-            }
             action.payload.items.forEach(item => {
                 item.status = EntityStatus.PENDING;
                 state.pending.count++;
@@ -193,6 +190,21 @@ export function DownloadsReducer(
                 action.payload.status = EntityStatus.CANCELED;
                 state.cancelled.count++;
                 state.cancelled.items[item.id] = item;
+            });
+            break;
+
+        case DownloadItemActions.CANCEL_ALL:
+            if (state.inProgress.count <= 0) {
+                // nothing to cancel
+                break;
+            }
+
+            Object.keys(state.inProgress.items).forEach(id => {
+                state.cancelled.count++;
+                state.cancelled.items[id] = state.inProgress.items[id];
+                state.cancelled.items[id].status = EntityStatus.CANCELED;
+                state.inProgress.count--;
+                delete state.inProgress.items[id];
             });
             break;
 

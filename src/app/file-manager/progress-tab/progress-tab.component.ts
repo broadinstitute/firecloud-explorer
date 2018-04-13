@@ -30,7 +30,10 @@ import { EntityStatus } from '@app/file-manager/models/entity-status';
 })
 export class ProgressTabComponent implements OnInit {
 
-  @Input('tabLabel') tabLabel;
+  @Input('filter') set setFilter(filter) {
+    this.applyFilter(filter);
+  }
+
   @Input('source') source;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;

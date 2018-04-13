@@ -67,16 +67,15 @@ export class FileDownloadModalComponent implements OnInit {
         if (!this.verify.hasErr) {
 
           this.dialogRef.close();
-
           this.selectedFiles()
             .forEach(
               file => {
                 if (file.type === 'File' && !ids.includes(file.id)) {
                   ids.push(file.id);
-                  const dataFile: DownloadItem = new DownloadItem(file.id, file.name,
-                    file.updated, file.created, file.size, file.mediaLink, file.path,
-                    this.directory, EntityStatus.PENDING, '', '',
-                    this.preserveStructure, false, '', file.displayName, '');
+                  const dataFile: DownloadItem = new DownloadItem
+                    (file.id, file.name, file.updated, file.created, file.size, file.mediaLink, file.path,
+                    this.directory, EntityStatus.PENDING, '', '', '',
+                    this.preserveStructure, '', file.displayName, '');
                   this.downloadFiles.push(dataFile);
                 }
               });

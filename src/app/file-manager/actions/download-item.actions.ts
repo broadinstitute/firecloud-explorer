@@ -23,6 +23,7 @@ export const PAUSE_ITEMS = '[Download] Pause Items';
 
 export const CANCEL_ITEM = '[Download] Cancel Item';
 export const CANCEL_ITEMS = '[Download] Cancel Items';
+export const CANCEL_ALL = '[Download] Cancel All Items';
 
 export const FAIL_ITEM = '[Download] Cancel Item';
 export const FAIL_ITEMS = '[Download] Cancel Items';
@@ -117,6 +118,11 @@ export class CancelItems implements Action {
     constructor(public payload: any) { }
 }
 
+export class CancelAllItems implements Action {
+    readonly type = CANCEL_ALL;
+    constructor() { }
+}
+
 export class FailItem implements Action {
     readonly type = FAIL_ITEM;
     constructor(public payload: any) { }
@@ -166,6 +172,7 @@ export type All
     | PauseItems
     | CancelItem
     | CancelItems
+    | CancelAllItems
     | FailItem
     | FailItems
     | UpdateItem

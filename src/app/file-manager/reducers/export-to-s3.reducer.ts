@@ -172,6 +172,21 @@ export function ExportToS3Reducer(
             });
             break;
 
+        case ExportToS3ItemActions.CANCEL_ALL:
+            if (state.inProgress.count <= 0) {
+                // nothing to cancel
+                break;
+            }
+
+            Object.keys(state.inProgress.items).forEach(id => {
+                state.cancelled.count++;
+                state.cancelled.items[id] = state.inProgress.items[id];
+                state.cancelled.items[id].status = EntityStatus.CANCELED;
+                state.inProgress.count--;
+                delete state.inProgress.items[id];
+            });
+            break;
+
         case ExportToS3ItemActions.FAIL_ITEM:
             state.inProgress.count--;
             delete state.inProgress.items[action.payload.id];

@@ -126,12 +126,12 @@ export class LimitTransferablesService implements OnInit {
       return;
     }
 
-    let maxFiles = [];
+    let maxFiles: DownloadItem[] = [];
     this.store.dispatch(new downloadActions.Reset());
-    this.store.dispatch(new downloadActions.AddItems({ items: files, clear: false }));
+    this.store.dispatch(new downloadActions.AddItems({ items: files }));
 
     if (files.length > environment.LIMIT_TRANSFERABLES) {
-      maxFiles = files.splice(0, environment.LIMIT_TRANSFERABLES);
+      maxFiles = files.splice(0, environment.LIMIT_DOWNLOADS);
     } else {
       maxFiles = files;
     }
@@ -156,14 +156,14 @@ export class LimitTransferablesService implements OnInit {
     this.gcsService.uploadFiles(maxFiles, uploadBucket);
   }
 
-  public controlExportToGCSItemLimits(files: ExportToGCSItem[], preserveStructure:Boolean): void {
+  public controlExportToGCSItemLimits(files: ExportToGCSItem[]): void {
     if (files === undefined || files === null || files.length <= 0) {
       return;
     }
     let destinationBucket = localStorage.getItem('destinationBucket');
     let maxFiles = [];
     this.store.dispatch(new exportToGCSActions.Reset());
-    this.store.dispatch(new exportToGCSActions.AddItems({ items: files, preserveStructure: preserveStructure }));
+    this.store.dispatch(new exportToGCSActions.AddItems({ items: files }));
 
     if (files.length > environment.LIMIT_GCS_EXPORTABLES) {
       maxFiles = files.splice(0, environment.LIMIT_GCS_EXPORTABLES);
