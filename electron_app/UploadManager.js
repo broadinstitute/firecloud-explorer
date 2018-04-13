@@ -53,6 +53,11 @@ const uploadManager = (bucketName, fileList = [], access_token, win) => {
           file.transferred = progress.transferred;
           win.webContents.send(constants.IPC_UPLOAD_STATUS, file);
         });
+        progressConf.on('end', function () {
+          file.progress = 100;
+          file.transferred = Number(file.size);
+          win.webContents.send(constants.IPC_UPLOAD_COMPLETE, file);
+        });
       }
     );
   })

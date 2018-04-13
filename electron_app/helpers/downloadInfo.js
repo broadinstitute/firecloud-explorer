@@ -19,7 +19,7 @@ const downloadStats = function (dl, item, win) {
                 clearInterval(timer);
             }
             timer = null;
-            win.webContents.send(constants.IPC_DOWNLOAD_COMPLETED, item);
+            win.webContents.send(constants.IPC_DOWNLOAD_COMPLETE, item);
         } else if (dl.status === -1 || dl.status === 3 || dl.status === -3) {
             clearInterval(timer);
             timer = null;
