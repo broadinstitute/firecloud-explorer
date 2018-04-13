@@ -32,7 +32,7 @@ export abstract class GcsService {
 
   abstract cancelExportsToGCP();
 
-  abstract cancelUploads(): MatDialogRef<WarningModalComponent, any>;
+  abstract cancelUploads();
 
   abstract getBucketFilesWithMaxResult(bucketName: String, delimiter: String, token: String, useDelimiter: Boolean): Observable<any>;
 

@@ -55,13 +55,14 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   filesDatabase: FilesDatabase;
   generalProgress = 0;
   generalUploadProgress = 0;
-  uploadInProgress = false;
   downloadInProgress = false;
   disabledDownload = false;
   disabledUpload = false;
   exportToS3InProgress = false;
   exportToGCSpending = false;
   exportToS3pending = false;
+  uploadPending = false;
+  uploadInProgress = false;
   exportToS3Canceled = false;
 
   // ---------------------------- progress info from here ----------------
@@ -140,6 +141,8 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
         if (!isFinite(this.upProgress)) {
           this.upProgress = 0;
         }
+        this.uploadPending = cs.pending.count > 0;
+        this.uploadInProgress = cs.inProgress.count > 0;
       });
     });
 
@@ -250,11 +253,15 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   }
 
   cancelUploads() {
-    this.gcsService.cancelUploads().afterClosed().subscribe(modalResponse => {
-      this.zone.run(() => {
-        this.uploadCanceled = modalResponse.exit;
-        this.uploadInProgress = !modalResponse.exit;
-      });
+    const dialogRef = this.dialog.open(WarningModalComponent, {
+      width: '500px',
+      disableClose: true,
+      data: 'cancelAllUploads'
+    });
+    dialogRef.afterClosed().subscribe(modalResponse => {
+      if (modalResponse.exit) {
+        this.gcsService.cancelUploads();
+      }
     });
   }
 

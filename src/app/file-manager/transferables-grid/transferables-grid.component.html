@@ -28,16 +28,15 @@
       <h4 class="subtitle light">{{ upProgress | number:'1.0-0' }}%</h4>
     </div>
 
-    <p-progressBar mode="determinate" class="progress-bar" [ngClass]="{'success': upProgress === 100, 'failure': uploadCanceled}"
+    <p-progressBar mode="determinate" class="progress-bar" [ngClass]="{'success': upProgress === 100, 'failure': !uploadPending && upTotal !== 0}"
       [value]="upProgress" [showValue]="false"></p-progressBar>
 
     <div class="flex-container end actions">
-      <button mat-raised-button (click)="cancelUploads()" class="button-secondary" [disabled]="!uploadInProgress">
+      <button mat-raised-button (click)="cancelUploads()" class="button-secondary" [disabled]="!uploadPending || !uploadInProgress">
         <i class="material-icons">highlight_off</i>Cancel Upload
       </button>
     </div>
   </div>
-
   <div class="status-box">
     <h4 class="subtitle medium">Exported to Google Cloud:</h4>
     <div class="flex-container space-between">

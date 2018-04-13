@@ -31,7 +31,7 @@ export class GcsApiMockService extends GcsService {
 
   public cancelDownloads(): MatDialogRef<WarningModalComponent, any> { return; }
 
-  public cancelUploads(): MatDialogRef<WarningModalComponent, any> { return; }
+  public cancelUploads() { return; }
 
   public cancelExportsToGCP() { }
 

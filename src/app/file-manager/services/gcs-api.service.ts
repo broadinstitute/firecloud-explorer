@@ -110,10 +110,10 @@ export class GcsApiService extends GcsService {
     }
   }
 
-  public cancelUploads(): MatDialogRef<WarningModalComponent, any> {
-    if (this.getFiles(Type.UPLOAD).length > 0) {
-      return this.openModal(constants.IPC_UPLOAD_CANCEL, 'cancelAllUploads', Type.UPLOAD);
-    }
+  public cancelUploads() {
+    this.electronService.ipcRenderer.send(constants.IPC_UPLOAD_CANCEL);
+    this.store.dispatch(new uploadActions.CancelAllItems());
+    // return this.openModal(constants.IPC_UPLOAD_CANCEL, 'cancelAllUploads', Type.UPLOAD);
   }
 
   public cancelExportsToGCP() {
