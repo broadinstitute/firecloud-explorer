@@ -66,12 +66,12 @@ app.on('ready', function () {
     win.show();
   });
 
-  ipcMain.on(constants.IPC_EXPORT_GCP, (event, destinationBucket, files, access_token) => {
+  ipcMain.on(constants.IPC_EXPORT_TO_GCP_START, (event, destinationBucket, files, access_token) => {
     exportGCPManager(destinationBucket, files, access_token, win);
   });
   
 
-  ipcMain.on(constants.IPC_EXPORT_GCP_CANCEL, (event, file, access_token) => {
+  ipcMain.on(constants.IPC_EXPORT_TO_GCP_CANCEL, (event, file, access_token) => {
     exportGCPManagerCancel(file, access_token);
   });
 
@@ -90,11 +90,11 @@ app.on('ready', function () {
     loginG.logOut();
   });
 
-  ipcMain.on(constants.IPC_START_DOWNLOAD, (event, items, access_token) => {
+  ipcMain.on(constants.IPC_DOWNLOAD_START, (event, items, access_token) => {
     downloadManager(items, access_token, win);
   });
 
-  ipcMain.on(constants.IPC_START_UPLOAD, (event, bucketName, files, access_token) => {
+  ipcMain.on(constants.IPC_UPLOAD_START, (event, bucketName, files, access_token) => {
     uploadManager(bucketName, files, access_token, win);
   });
 
@@ -130,11 +130,11 @@ app.on('ready', function () {
   });
 
   // ----- Export from GCS to S3 ------
-  ipcMain.on(constants.IPC_EXPORT_S3, (event, data) => {
+  ipcMain.on(constants.IPC_EXPORT_TO_S3_START, (event, data) => {
     ExportS3(win, data, app);
   });
 
-  ipcMain.on(constants.IPC_EXPORT_S3_CANCEL, (event) => {
+  ipcMain.on(constants.IPC_EXPORT_TO_S3_CANCEL, (event) => {
     exportS3Cancel();
   });
 
