@@ -29,6 +29,7 @@ import { MatDialog, MatDialogRef } from '@angular/material';
 import { forkJoin } from 'rxjs/observable/forkJoin';
 import { concatMap } from 'rxjs/operators';
 import { UpdateItemProgress } from '@app/file-manager/actions/transferables.actions';
+import * as exportToS3Actions from '@app/file-manager/actions/export-to-s3-item.actions';
 
 
 const constants = require('../../../../electron_app/helpers/environment').constants;
@@ -116,14 +117,12 @@ export class GcsApiService extends GcsService {
   }
 
   public cancelExportsToGCP() {
-    this.cancelGCPExports = true;
-    if (this.getFiles(Type.EXPORT_GCP).length > 0) {
-      this.cancelItemsStatus(Type.EXPORT_GCP);
-    }
+    this.store.dispatch(new exportToGCSActions.CancelAllItems());
   }
 
-  public cancelExportToS3(): MatDialogRef<WarningModalComponent, any> {
-    return this.openModal('export-s3-cancel', 'cancelAllExportsToS3', Type.EXPORT_S3);
+  public cancelExportToS3() {
+    this.electronService.ipcRenderer.send('export-s3-cancel');
+    this.store.dispatch(new exportToS3Actions.CancelAllItems());
   }
 
   openModal(action: string, data: string, type: string) {
@@ -157,8 +156,6 @@ export class GcsApiService extends GcsService {
       case Type.DOWNLOAD:
         currentStatus = ItemStatus.DOWNLOADING;
         break;
-      case Type.EXPORT_S3:
-        return new FilesDatabase(this.store).data().filter(item => (item.status === ItemStatus.PENDING && item.type === Type.EXPORT_S3));
       case Type.UPLOAD:
         currentStatus = ItemStatus.UPLOADING;
         break;

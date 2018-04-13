@@ -35,7 +35,7 @@ export class GcsApiMockService extends GcsService {
 
   public cancelExportsToGCP() { }
 
-  public cancelExportToS3(): MatDialogRef<WarningModalComponent, any> { return; }
+  public cancelExportToS3() { return; }
 
   public getBucketFilesWithMaxResult(bucketName: String, delimiter: String, token: String, useDelimiter: Boolean) {
     return Observable.of();

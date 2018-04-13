@@ -14,7 +14,7 @@
   width: 25%;
   padding-left: 10px;
   position: absolute;
-  z-index: 20000000;
+  z-index: 10;
   right: 0;
   top: 9px;
 }
