@@ -62,7 +62,7 @@
       <h4 class="subtitle light">{{ s3Progress | number:'1.0-0' }}%</h4>
     </div>
 
-    <p-progressBar mode="determinate" class="progress-bar" [ngClass]="{'success': s3Progress === 100, 'failure': ( !exportToS3pending && s3Total !== 0)}"
+    <p-progressBar mode="determinate" class="progress-bar" [ngClass]="{'success': s3Progress === 100, 'failure': ( !exportToS3pending && s3Total !== 0 && !s3InProgress)}"
       [value]="s3Progress" [showValue]="false"></p-progressBar>
 
     <div class="flex-container end actions">

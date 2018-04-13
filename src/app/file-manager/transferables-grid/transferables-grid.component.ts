@@ -64,6 +64,7 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   uploadPending = false;
   uploadInProgress = false;
   exportToS3Canceled = false;
+  s3InProgress = false;
 
   // ---------------------------- progress info from here ----------------
   downCompleted = 0;
@@ -164,6 +165,7 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
           this.s3Progress = 0;
         }
         this.exportToS3pending = cs.pending.count > 0;
+        this.s3InProgress = cs.inProgress.count > 0;
       });
     });
 
