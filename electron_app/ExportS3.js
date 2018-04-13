@@ -77,13 +77,13 @@ const uploadS3 = (data) => {
 
   uploadStream.on('part', (details) => {
     // the message is send when the first 5MB has already been transferred
-    electronWin.webContents.send(constants.IPC_EXPORT_S3_DOWNLOAD_STATUS, data.item);
+    electronWin.webContents.send(constants.IPC_EXPORT_TO_S3_STATUS, data.item);
   });
 
   uploadStream.on('uploaded', (details) => {
     data.item.transferred = data.item.size;
     data.item.progress = 100;
-    electronWin.webContents.send(constants.IPC_EXPORT_S3_COMPLETE, data.item);
+    electronWin.webContents.send(constants.IPC_EXPORT_TO_S3_COMPLETE, data.item);
   });
   s3List.push(s3);
 };

@@ -31,7 +31,9 @@ export class SelectionService {
     }
 
     nothingSelected(): boolean {
-        return this.selection.selected.length <= 0;
+        return this.selection.selected.length === 1
+            && this.selection.selected[0].id === 'workspaces'
+            || this.selection.selected.length <= 0 ? true : false;
     }
 
     findSelected(elem): Item {
@@ -65,9 +67,9 @@ export class SelectionService {
 
         childs = this.selection.selected
             .filter(
-                item => {
-                    return item.path.startsWith(row.path);
-                });
+            item => {
+                return item.path.startsWith(row.path);
+            });
 
         return childs;
     }

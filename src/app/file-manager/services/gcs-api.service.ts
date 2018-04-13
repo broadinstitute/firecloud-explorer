@@ -65,7 +65,7 @@ export class GcsApiService extends GcsService {
   public uploadFiles(files: any[], bucketName: String) {
     if (files !== null && files.length > 0) {
       this.store.dispatch(new uploadActions.ProcessItems({ items: files }));
-      this.electronService.ipcRenderer.send(constants.IPC_START_UPLOAD, bucketName, files, SecurityService.getAccessToken());
+      this.electronService.ipcRenderer.send(constants.IPC_UPLOAD_START, bucketName, files, SecurityService.getAccessToken());
     }
   }
 
@@ -76,7 +76,7 @@ export class GcsApiService extends GcsService {
 
     this.store.dispatch(new downloadActions.ProcessItems({ items: files }));
 
-    this.electronService.ipcRenderer.send(constants.IPC_START_DOWNLOAD, files, SecurityService.getAccessToken());
+    this.electronService.ipcRenderer.send(constants.IPC_DOWNLOAD_START, files, SecurityService.getAccessToken());
   }
 
 
@@ -179,7 +179,7 @@ export class GcsApiService extends GcsService {
     }
 
     this.store.dispatch(new exportToGCSActions.ProcessItems({ items: files }));
-    this.electronService.ipcRenderer.send(constants.IPC_EXPORT_GCP, destinationBucket, files, SecurityService.getAccessToken());
+    this.electronService.ipcRenderer.send(constants.IPC_EXPORT_TO_GCP_START, destinationBucket, files, SecurityService.getAccessToken());
   }
 
   public exportToS3Files(fileList: ExportToS3Item[], destinationBucket: string) {

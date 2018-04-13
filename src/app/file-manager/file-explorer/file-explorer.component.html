@@ -71,9 +71,9 @@
 
 <p-toolbar styleClass="toolbar-accent">
   <div class="ui-toolbar-group-left">
-    <div *ngIf="downloadInProgress() || exportInProgress()" class="warn-message">
-      <span *ngIf="downloadInProgress()">Please wait, download in progress</span>
-      <span *ngIf="exportInProgress()">Please wait, export in progress</span>
+    <div *ngIf="(router.url === '/file-download' && downloadInProgress()) || (router.url === '/file-export' && exportInProgress())" class="warn-message">
+      <span class="warn-message" *ngIf="router.url === '/file-download' && downloadInProgress()">Please wait, download in progress</span>
+      <span class="warn-message" *ngIf="router.url === '/file-export' && exportInProgress()">Please wait, export in progress</span>
       <div class="progress-dots">
         <span class="dot"></span>
         <span class="dot"></span>
