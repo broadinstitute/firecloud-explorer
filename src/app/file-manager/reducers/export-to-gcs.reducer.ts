@@ -169,6 +169,20 @@ export function ExportToGCSReducer(
             });
             break;
 
+        case ExportToGCSItemActions.CANCEL_ALL:
+            if (state.inProgress.count <= 0) {
+                // nothing to cancel
+                break;
+            }
+
+            Object.keys(state.inProgress.items).forEach(id => {
+                state.cancelled.count++;
+                state.cancelled.items[id] = state.inProgress.items[id];
+                state.inProgress.count--;
+                delete state.inProgress.items[id];
+            });
+            break;
+
         case ExportToGCSItemActions.FAIL_ITEM:
             state.inProgress.count--;
             delete state.inProgress.items[action.payload.id];
