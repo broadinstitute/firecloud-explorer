@@ -126,6 +126,7 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
         this.downCompleted = cs.completed.count;
         this.downTotal = cs.totalCount;
         this.downProgress = cs.totalProgress;
+        this.downloadInProgress = cs.inProgress.count > 0;
       });
     });
 

@@ -29,6 +29,8 @@ import { MatDialog, MatDialogRef } from '@angular/material';
 import { forkJoin } from 'rxjs/observable/forkJoin';
 import { concatMap } from 'rxjs/operators';
 import { UpdateItemProgress } from '@app/file-manager/actions/transferables.actions';
+import { DownloadState } from '@app/file-manager/reducers/downloads.reducer';
+import { AppState } from '@app/file-manager/reducers';
 
 
 const constants = require('../../../../electron_app/helpers/environment').constants;
@@ -38,9 +40,8 @@ export class GcsApiService extends GcsService {
 
   constructor(private http: HttpClient,
     private electronService: ElectronService,
-    private store: Store<any>,
-    private dialog: MatDialog,
-    private zone: NgZone) {
+    private store: Store<AppState>,
+    private dialog: MatDialog) {
     super();
 
   }
@@ -103,10 +104,12 @@ export class GcsApiService extends GcsService {
     }
   }
 
-  public cancelDownloads(): MatDialogRef<WarningModalComponent, any> {
-    if (this.getFiles(Type.DOWNLOAD).length > 0) {
-      return this.openModal(constants.IPC_DOWNLOAD_CANCEL, 'cancelAllDownloads', Type.DOWNLOAD);
-    }
+  public cancelDownloads(): void {
+    // this.store.dispatch(new downloadActions.);
+    this.store.dispatch(new downloadActions.Cancel);
+    // if (this.getFiles(Type.DOWNLOAD).length > 0) {
+    //   return this.openModal(constants.IPC_DOWNLOAD_CANCEL, 'cancelAllDownloads', Type.DOWNLOAD);
+    // }
   }
 
   public cancelUploads(): MatDialogRef<WarningModalComponent, any> {

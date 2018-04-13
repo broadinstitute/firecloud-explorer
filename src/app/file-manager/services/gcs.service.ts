@@ -29,7 +29,7 @@ export abstract class GcsService {
 
   abstract cancelAll();
 
-  abstract cancelDownloads(): MatDialogRef<WarningModalComponent, any>;
+  abstract cancelDownloads(): void;
 
   abstract cancelExportToS3(): MatDialogRef<WarningModalComponent, any>;
 
