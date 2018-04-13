@@ -302,21 +302,14 @@ export class FileExplorerComponent implements OnInit, AfterViewInit {
   }
 
   downloadInProgress(): Boolean {
-    let downloadInProgress = false;
-    if (new FilesDatabase(this.store).downloadsChange.getValue()
-      .inProgress.count > 0) {
-      downloadInProgress = true;
-    }
-    return downloadInProgress;
+    return new FilesDatabase(this.store).downloadsChange.getValue()
+    .inProgress.count > 0 ? true : false;
   }
 
   exportInProgress(): Boolean {
-    let exportInProgress = false;
-    if (new FilesDatabase(this.store).exportToGCSChange.getValue()
-      .inProgress.count > 0) {
-      exportInProgress = true;
-    }
-    return exportInProgress;
+    return new FilesDatabase(this.store).exportToGCSChange.getValue().inProgress.count > 0
+        || new FilesDatabase(this.store).exportToS3Change.getValue().inProgress.count > 0
+        ? true : false;
   }
 
   cleanSelection(): void {

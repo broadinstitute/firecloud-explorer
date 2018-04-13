@@ -1,5 +1,4 @@
 import { Observable } from 'rxjs/Observable';
-import { Item } from '../models/item';
 import { DownloadItem } from '../models/download-item';
 import { UploadItem } from '../models/upload-item';
 import { ExportToGCSItem } from '../models/export-to-gcs-item';
@@ -26,7 +25,7 @@ export abstract class GcsService {
 
   abstract cancelAll();
 
-  abstract cancelDownloads(): MatDialogRef<WarningModalComponent, any>;
+  abstract cancelDownloads(): void;
 
   abstract cancelExportToS3();
 

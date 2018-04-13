@@ -38,7 +38,6 @@ export class FileExplorerUploadComponent implements OnInit {
 
   files: TreeNode[];
   selectedFiles: TreeNode[] = [];
-  uploadInProgress = false;
 
   fileCount = 0;
   totalSize = 0;
@@ -229,7 +228,11 @@ export class FileExplorerUploadComponent implements OnInit {
   }
 
   disableButton() {
-    return this.uploadInProgress || this.fileCount <= 0;
+    return this.uploadInProgress() || this.fileCount <= 0;
   }
 
+  uploadInProgress() {
+    return new FilesDatabase(this.store).uploadsChange.getValue()
+    .inProgress.count > 0 ? true : false;
+  }
 }
