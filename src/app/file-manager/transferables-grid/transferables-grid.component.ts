@@ -46,11 +46,9 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 })
 
 export class TransferablesGridComponent implements OnInit, AfterViewInit {
-
-  static isExporting: Boolean = false;
   static firstIteration: Boolean = true;
   @ViewChild('pbg') pbg: ProgressBar;
-  tabFilter: string = '';
+  tabFilter = '';
 
   displayedColumns = ['name', 'size', 'status', 'progress', 'actions'];
 
@@ -62,10 +60,11 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   disabledDownload = false;
   disabledUpload = false;
   exportToS3InProgress = false;
-  exportToGcpItems = new FilesDatabase(this.store);
+  exportToGCSpending = false;
+  exportToS3pending = false;
   exportToS3Canceled = false;
 
-  //---------------------------- progress info from here ----------------
+  // ---------------------------- progress info from here ----------------
   downCompleted = 0;
   downTotal = 0;
   downProgress = 0;
@@ -86,7 +85,7 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   uploadState: Observable<UploadState>;
   exportToGCSState: Observable<ExportToGCSState>;
   exportToS3State: Observable<ExportToS3State>;
-  //------------------------------ until here ------------------------
+  // ------------------------------ until here ------------------------
 
   itemsObs: Observable<TransferableState>;
 
@@ -155,6 +154,7 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
         if (!isFinite(this.gcsProgress)) {
           this.gcsProgress = 0;
         }
+        this.exportToGCSpending = cs.pending.count > 0;
       });
     });
 
@@ -169,6 +169,7 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
         if (!isFinite(this.s3Progress)) {
           this.s3Progress = 0;
         }
+        this.exportToS3pending = cs.pending.count > 0;
       });
     });
 
@@ -276,11 +277,8 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
 
     dialogRef.afterClosed().subscribe(modalResponse => {
       this.zone.run(() => {
-        this.exportToGCPCanceled = modalResponse.exit;
         if (modalResponse.exit) {
           this.gcsService.cancelExportsToGCP();
-          this.gcsService.cancelGCPExports = true;
-          this.gcsService.exportItemCompleted.next(true);
           this.spinner.hide();
         } else {
           this.spinner.hide();
@@ -290,12 +288,16 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   }
 
   cancelExportsToS3() {
+    const dialogRef = this.dialog.open(WarningModalComponent, {
+      width: '500px',
+      disableClose: true,
+      data: 'cancelAllExportsToS3'
+    });
 
-    this.gcsService.cancelExportToS3().afterClosed().subscribe(modalResponse => {
-      this.zone.run(() => {
-        this.exportToS3InProgress = !modalResponse.exit;
-        this.exportToS3Canceled = modalResponse.exit;
-      });
+    dialogRef.afterClosed().subscribe(modalResponse => {
+      if (modalResponse.exit) {
+        this.gcsService.cancelExportToS3();
+      }
     });
   }
 
@@ -330,10 +332,5 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   startS3Export(files: ExportToS3Item[]) {
     this.limitTransferables.controlExportToS3ItemLimits(files);
   }
-
-  getExportingStatus() {
-    return TransferablesGridComponent.isExporting;
-  }
-
 
 }

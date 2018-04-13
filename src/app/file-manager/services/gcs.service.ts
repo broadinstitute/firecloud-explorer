@@ -11,9 +11,6 @@ import { WarningModalComponent } from '@app/file-manager/warning-modal/warning-m
 import { MatDialogRef } from '@angular/material';
 
 export abstract class GcsService {
-
-  exportItemCompleted: BehaviorSubject<Boolean> = new BehaviorSubject(false);
-
   cancelGCPExports = false;
   exportToS3Canceled = false;
 
@@ -31,7 +28,7 @@ export abstract class GcsService {
 
   abstract cancelDownloads(): MatDialogRef<WarningModalComponent, any>;
 
-  abstract cancelExportToS3(): MatDialogRef<WarningModalComponent, any>;
+  abstract cancelExportToS3();
 
   abstract cancelExportsToGCP();
 
