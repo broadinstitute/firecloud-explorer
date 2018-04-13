@@ -53,16 +53,15 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   tabFilter = '';
 
   displayedColumns = ['name', 'size', 'status', 'progress', 'actions'];
-
-  filesDatabase: FilesDatabase;
   generalProgress = 0;
   generalUploadProgress = 0;
-  uploadInProgress = false;
-  downloadInProgress = false;
   disabledDownload = false;
   disabledUpload = false;
-  exportToS3InProgress = false;
   exportToGcpItems = new FilesDatabase(this.store);
+  filesDatabase: FilesDatabase;
+  exportToS3InProgress = false;
+  uploadInProgress = false;
+  downloadInProgress = false;
   exportToS3Canceled = false;
 
   // ---------------------------- progress info from here ----------------
@@ -88,13 +87,6 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   exportToS3State: Observable<ExportToS3State>;
   // ------------------------------ until here ------------------------
 
-  itemsObs: Observable<TransferableState>;
-
-  modeVariable = 'determinate';
-  generalExportToGCPProgress = 0;
-  INDETERMINATE = 'indeterminate';
-  DETERMINATE = 'determinate';
-  exportItems = [];
   uploadCanceled = false;
   downloadCanceled = false;
   exportToGCPCanceled = false;

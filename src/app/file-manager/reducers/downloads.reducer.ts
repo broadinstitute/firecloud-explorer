@@ -236,6 +236,7 @@ export function DownloadsReducer(
 
         case DownloadItemActions.UPDATE_ITEM_PROGRESS:
             // revert previous values
+          if (action.payload.id !== undefined) {
             state.totalTransferred -= state.inProgress.items[action.payload.id].transferred;
             state.inProgress.transferred -= state.inProgress.items[action.payload.id].transferred;
 
@@ -246,6 +247,7 @@ export function DownloadsReducer(
             // update item
             state.inProgress.items[action.payload.id].progress = action.payload.progress;
             state.inProgress.items[action.payload.id].transferred = action.payload.transferred;
+          }
             break;
 
         case DownloadItemActions.RESET:
