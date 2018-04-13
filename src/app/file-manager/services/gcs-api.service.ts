@@ -105,11 +105,8 @@ export class GcsApiService extends GcsService {
   }
 
   public cancelDownloads(): void {
-    // this.store.dispatch(new downloadActions.);
-    this.store.dispatch(new downloadActions.Cancel);
-    // if (this.getFiles(Type.DOWNLOAD).length > 0) {
-    //   return this.openModal(constants.IPC_DOWNLOAD_CANCEL, 'cancelAllDownloads', Type.DOWNLOAD);
-    // }
+    this.store.dispatch(new downloadActions.CancelAllItems());
+    this.electronService.ipcRenderer.send(constants.IPC_DOWNLOAD_CANCEL);
   }
 
   public cancelUploads(): MatDialogRef<WarningModalComponent, any> {

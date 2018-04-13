@@ -172,6 +172,19 @@ export function UploadsReducer(
             });
             break;
 
+        case UploadItemActions.CANCEL_ALL:
+            if (state.pending.count > 0) {
+                // NOTE: UPLOADS, GCS, S3 cancel from PENDING instead of INPROGRESS
+                Object.keys(state.pending.items).forEach(id => {
+                    state.cancelled.count++;
+                    state.cancelled.items[id] = state.pending.items[id];
+                    state.cancelled.items[id].status = EntityStatus.CANCELED;
+                    state.pending.count--;
+                    delete state.pending.items[id];
+                });
+            }
+            break;
+
         case UploadItemActions.FAIL_ITEM:
             state.inProgress.count--;
             delete state.inProgress.items[action.payload.id];

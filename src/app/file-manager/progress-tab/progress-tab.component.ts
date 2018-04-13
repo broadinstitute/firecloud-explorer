@@ -30,7 +30,10 @@ import { EntityStatus } from '@app/file-manager/models/entity-status';
 })
 export class ProgressTabComponent implements OnInit {
 
-  @Input('tabLabel') tabLabel;
+  @Input('filter') set setFilter(filter) {
+    this.applyFilter(filter);
+  }
+
   @Input('source') source;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -108,12 +111,12 @@ export class ProgressTabComponent implements OnInit {
   }
 
   private processChanges(state) {
-    let pending = Object.values(state.pending.items);
-    let inProgress = Object.values(state.inProgress.items);
-    let completed = Object.values(state.completed.items);
-    let paused = Object.values(state.paused.items);
-    let cancelled = Object.values(state.cancelled.items);
-    let failed = Object.values(state.failed.items);
+    const pending = Object.values(state.pending.items);
+    const inProgress = Object.values(state.inProgress.items);
+    const completed = Object.values(state.completed.items);
+    const paused = Object.values(state.paused.items);
+    const cancelled = Object.values(state.cancelled.items);
+    const failed = Object.values(state.failed.items);
 
     this.zone.run(() => {
       this.dataSource.data = [...pending, ...inProgress, ...completed, ...paused, ...cancelled, ...failed];

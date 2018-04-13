@@ -21,13 +21,14 @@ import { Type } from '@app/file-manager/models/type';
 import { AppState } from '@app/file-manager/reducers';
 import { Store } from '@ngrx/store';
 import * as Transferables from '../actions/transferables.actions';
+import { downloadInitialState } from '@app/file-manager/reducers/downloads.reducer';
 
 @Component({
   selector: 'app-file-explorer',
   templateUrl: './file-explorer.component.html',
   styleUrls: ['./file-explorer.component.scss'],
   providers: [
-    {provide: MAT_CHECKBOX_CLICK_ACTION, useValue: 'check-indeterminate'}
+    { provide: MAT_CHECKBOX_CLICK_ACTION, useValue: 'check-indeterminate' }
   ]
 })
 export class FileExplorerComponent implements OnInit, AfterViewInit {
@@ -42,21 +43,18 @@ export class FileExplorerComponent implements OnInit, AfterViewInit {
   breadcrumbItems: Item[];
   headerItem: Item;
   rootItem: Item;
-  downloadInProgress = false;
-  exportInProgress = false;
-  progressStatus = false;
 
   constructor(private statusService: StatusService,
-              private zone: NgZone,
-              private firecloudService: FirecloudApiService,
-              private dialog: MatDialog,
-              private filterSize: FilterSizePipe,
-              private bucketService: BucketService,
-              private spinner: NgxSpinnerService,
-              private selectionService: SelectionService,
-              public router: Router,
-              private transferablesGridComponent: TransferablesGridComponent,
-              private store: Store<AppState>) {
+    private zone: NgZone,
+    private firecloudService: FirecloudApiService,
+    private dialog: MatDialog,
+    private filterSize: FilterSizePipe,
+    private bucketService: BucketService,
+    private spinner: NgxSpinnerService,
+    private selectionService: SelectionService,
+    public router: Router,
+    private transferablesGridComponent: TransferablesGridComponent,
+    private store: Store<AppState>) {
     this.breadcrumbItems = [];
 
   }
@@ -91,17 +89,17 @@ export class FileExplorerComponent implements OnInit, AfterViewInit {
 
     this.firecloudService.getUserFirecloudWorkspaces(this.headerItem, false)
       .subscribe(
-        workspaces => {
-          data = workspaces;
-        },
-        error => {
-          console.log('firecloudService error ....', error);
-        },
-        () => {
-          this.headerItem.children = data;
-          this.dataSource.data = this.headerItem.children;
-          this.spinner.hide();
-        });
+      workspaces => {
+        data = workspaces;
+      },
+      error => {
+        console.log('firecloudService error ....', error);
+      },
+      () => {
+        this.headerItem.children = data;
+        this.dataSource.data = this.headerItem.children;
+        this.spinner.hide();
+      });
   }
 
   /*
@@ -117,17 +115,17 @@ export class FileExplorerComponent implements OnInit, AfterViewInit {
 
     this.bucketService.getBucketData(node, null, true, true)
       .subscribe(
-        elements => {
-          data = elements;
-        },
-        error => {
-          console.log(JSON.stringify(error, null, 2));
-        },
-        () => {
-          this.headerItem.children = data;
-          this.dataSource.data = this.headerItem.children;
-          this.spinner.hide();
-        });
+      elements => {
+        data = elements;
+      },
+      error => {
+        console.log(JSON.stringify(error, null, 2));
+      },
+      () => {
+        this.headerItem.children = data;
+        this.dataSource.data = this.headerItem.children;
+        this.spinner.hide();
+      });
   }
 
   /*
@@ -187,13 +185,13 @@ export class FileExplorerComponent implements OnInit, AfterViewInit {
     });
     this.headerItem.children
       .forEach(
-        row => {
-          if (selected) {
-            this.selectionService.selectRow(row);
-          } else {
-            this.selectionService.deselectRow(row);
-          }
+      row => {
+        if (selected) {
+          this.selectionService.selectRow(row);
+        } else {
+          this.selectionService.deselectRow(row);
         }
+      }
       );
     this.zone.run(() => {
       this.spinner.hide();
@@ -298,7 +296,25 @@ export class FileExplorerComponent implements OnInit, AfterViewInit {
   }
 
   disableButton() {
-    return (this.downloadInProgress || this.exportInProgress || this.selectionService.nothingSelected());
+    return (this.downloadInProgress() || this.exportInProgress() || this.selectionService.nothingSelected());
+  }
+
+  downloadInProgress(): Boolean {
+    let downloadInProgress = false;
+    if (new FilesDatabase(this.store).downloadsChange.getValue()
+      .inProgress.count > 0) {
+      downloadInProgress = true;
+    }
+    return downloadInProgress;
+  }
+
+  exportInProgress(): Boolean {
+    let exportInProgress = false;
+    if (new FilesDatabase(this.store).exportToGCSChange.getValue()
+      .inProgress.count > 0) {
+        exportInProgress = true;
+    }
+    return exportInProgress;
   }
 
   cleanSelection(): void {

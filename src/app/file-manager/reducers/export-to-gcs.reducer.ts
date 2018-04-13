@@ -90,7 +90,6 @@ export function ExportToGCSReducer(
         case ExportToGCSItemActions.ADD_ITEMS:
             action.payload.items.forEach(item => {
                 item.status = EntityStatus.PENDING;
-                item.preserveStructure = action.payload.preserveStructure;
                 state.pending.count++;
                 state.totalCount++;
                 state.totalSize += Number(item.size);
@@ -168,6 +167,19 @@ export function ExportToGCSReducer(
                 state.cancelled.count++;
                 state.cancelled.items[item.id] = item;
             });
+            break;
+
+        case ExportToGCSItemActions.CANCEL_ALL:
+            if (state.pending.count > 0) {
+                // NOTE: UPLOADS, GCS, S3 cancel from PENDING instead of INPROGRESS
+                Object.keys(state.pending.items).forEach(id => {
+                    state.cancelled.count++;
+                    state.cancelled.items[id] = state.pending.items[id];
+                    state.cancelled.items[id].status = EntityStatus.CANCELED;
+                    state.pending.count--;
+                    delete state.pending.items[id];
+                });
+            }
             break;
 
         case ExportToGCSItemActions.FAIL_ITEM:

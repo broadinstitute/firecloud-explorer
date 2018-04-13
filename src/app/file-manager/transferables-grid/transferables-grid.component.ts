@@ -19,7 +19,7 @@ import { UploadState } from '../reducers/uploads.reducer';
 import { ExportToGCSState } from '../reducers/export-to-gcs.reducer';
 import { ExportToS3State } from '../reducers/export-to-s3.reducer';
 
-import { MatPaginator, MatSort, MatTableDataSource, MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material';
 import 'rxjs/add/operator/startWith';
 import 'rxjs/add/observable/forkJoin';
 import 'rxjs/add/operator/map';
@@ -49,13 +49,11 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
 
   static isExporting: Boolean = false;
   static firstIteration: Boolean = true;
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-  @ViewChild(MatSort) sort: MatSort;
   @ViewChild('pbg') pbg: ProgressBar;
+  tabFilter = '';
 
   displayedColumns = ['name', 'size', 'status', 'progress', 'actions'];
 
-  dataSource = new MatTableDataSource([]);
   filesDatabase: FilesDatabase;
   generalProgress = 0;
   generalUploadProgress = 0;
@@ -138,6 +136,9 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
         this.upCompleted = cs.completed.count;
         this.upTotal = cs.totalCount;
         this.upProgress = cs.totalProgress;
+        if (!isFinite(this.upProgress)) {
+          this.upProgress = 0;
+        }
       });
     });
 
@@ -149,6 +150,9 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
         this.gcsCompleted = cs.completed.count;
         this.gcsTotal = cs.totalCount;
         this.gcsProgress = 100.0 * this.gcsCompleted / this.gcsTotal;
+        if (!isFinite(this.gcsProgress)) {
+          this.gcsProgress = 0;
+        }
       });
     });
 
@@ -160,6 +164,9 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
         this.s3Completed = cs.completed.count;
         this.s3Total = cs.totalCount;
         this.s3Progress = 100.0 * this.s3Completed / this.s3Total;
+        if (!isFinite(this.s3Progress)) {
+          this.s3Progress = 0;
+        }
       });
     });
 
@@ -177,7 +184,7 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   applyFilter(filterValue: string) {
     filterValue = filterValue.trim();
     filterValue = filterValue.toLowerCase();
-    this.dataSource.filter = filterValue;
+    this.tabFilter = filterValue;
   }
 
   reset() {
@@ -216,8 +223,6 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
 
     this.exportToS3Canceled = this.gcsService.exportToS3Canceled;
 
-    this.dataSource.data = this.filesDatabase.data();
-
     if (localStorage.getItem('displaySpinner') === 'true') {
       this.spinner.show();
       localStorage.removeItem('displaySpinner');
@@ -225,9 +230,7 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.dataSource.sort = this.sort;
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.filterPredicate = (data: Item, filter: string) => data.name.toLowerCase().indexOf(filter) !== -1;
+
   }
 
   trackSelection(event) {
@@ -253,12 +256,25 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   }
 
   cancelDownloads() {
-    this.gcsService.cancelDownloads().afterClosed().subscribe(modalResponse => {
+    this.spinner.show();
+    const dialogRef = this.dialog.open(WarningModalComponent, {
+      width: '500px',
+      disableClose: true,
+      data: 'cancelAllDownloads'
+    });
+    dialogRef.afterClosed().subscribe(modalResponse => {
       this.zone.run(() => {
         this.downloadCanceled = modalResponse.exit;
         this.downloadInProgress = !modalResponse.exit;
+        this.gcsService.cancelDownloads();
+        this.spinner.hide();
       });
     });
+    //   this.zone.run(() => {
+    //     this.downloadCanceled = modalResponse.exit;
+    //     this.downloadInProgress = !modalResponse.exit;
+    //   });
+    // });
   }
 
   cancelExportsToGCP() {
@@ -318,15 +334,17 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
     this.limitTransferables.controlUploadItemLimits(files);
   }
 
-  startGCSExport(files: ExportToGCSItem[], preserveStructure: Boolean) {
-    this.limitTransferables.controlExportToGCSItemLimits(files, preserveStructure);
+  startGCSExport(files: ExportToGCSItem[]) {
+    this.limitTransferables.controlExportToGCSItemLimits(files);
   }
 
-  startS3Export(files: ExportToS3Item[], preserveStructure: Boolean) {
+  startS3Export(files: ExportToS3Item[]) {
     this.limitTransferables.controlExportToS3ItemLimits(files);
   }
 
   getExportingStatus() {
     return TransferablesGridComponent.isExporting;
   }
+
+
 }

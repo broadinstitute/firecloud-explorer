@@ -164,15 +164,15 @@ export class FileExportModalComponent implements OnInit {
 
               const dataFile: ExportToGCSItem = new ExportToGCSItem(file.id, file.name,
                 file.updated, file.created, file.size, file.mediaLink, file.path,
-                '', EntityStatus.PENDING, '', '',
-                this.preserveStructure, false, '', file.displayName, '');
+                '', EntityStatus.PENDING, '', '', '',
+                this.preserveStructure, '', file.displayName, '');
 
               filesToExport.push(file);
             });
 
             localStorage.setItem('destinationBucket', this.exportForm.controls.bucketNameGCP.value);
 
-            this.transferablesGridComponent.startGCSExport(filesToExport, this.preserveStructure);
+            this.transferablesGridComponent.startGCSExport(filesToExport);
             this.dialogRef.close({ preserveStructure: this.preserveStructure, type: Type.EXPORT_GCP });
 
             this.router.navigate(['/status']);
@@ -243,13 +243,13 @@ export class FileExportModalComponent implements OnInit {
 
       const dataFile: ExportToS3Item = new ExportToS3Item(file.id, file.name,
         file.updated, file.created, file.size, file.mediaLink, file.path,
-        '', EntityStatus.PENDING, '', '',
-        this.preserveStructure, false, '', file.displayName, '');
+        '', EntityStatus.PENDING, '', '', '',
+        this.preserveStructure, '', file.displayName, '');
 
       filesToExport.push(file);
     });
 
-    this.transferablesGridComponent.startS3Export(filesToExport, this.preserveStructure);
+    this.transferablesGridComponent.startS3Export(filesToExport);
 
     this.dialogRef.close({ preserveStructure: this.preserveStructure, type: Type.EXPORT_S3 });
     this.router.navigate(['/status']);

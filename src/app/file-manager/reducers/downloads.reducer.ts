@@ -88,9 +88,6 @@ export function DownloadsReducer(
             break;
 
         case DownloadItemActions.ADD_ITEMS:
-            if (action.payload.clear === true) {
-                state = downloadInitialState;
-            }
             action.payload.items.forEach(item => {
                 item.status = EntityStatus.PENDING;
                 state.pending.count++;
@@ -119,11 +116,11 @@ export function DownloadsReducer(
             break;
 
         case DownloadItemActions.COMPLETE_ITEM:
-            // revert previous values 
+            // revert previous values
             state.totalTransferred -= state.inProgress.items[action.payload.id].transferred;
             state.inProgress.transferred -= state.inProgress.items[action.payload.id].transferred;
 
-            // add new values 
+            // add new values
             state.totalTransferred += action.payload.transferred;
             state.inProgress.transferred += action.payload.transferred;
 
@@ -140,11 +137,11 @@ export function DownloadsReducer(
         case DownloadItemActions.COMPLETE_ITEMS:
             action.payload.items.forEach(item => {
 
-                // revert previous values 
+                // revert previous values
                 state.totalTransferred -= state.inProgress.items[item.id].transferred;
                 state.inProgress.transferred -= state.inProgress.items[item.id].transferred;
 
-                // add new values 
+                // add new values
                 state.totalTransferred += item.transferred;
                 state.inProgress.transferred += item.transferred;
 
@@ -196,6 +193,29 @@ export function DownloadsReducer(
             });
             break;
 
+        case DownloadItemActions.CANCEL_ALL:
+
+            if (state.pending.count > 0) {
+                Object.keys(state.pending.items).forEach(id => {
+                    state.cancelled.count++;
+                    state.cancelled.items[id] = state.pending.items[id];
+                    state.cancelled.items[id].status = EntityStatus.CANCELED;
+                    state.pending.count--;
+                    delete state.pending.items[id];
+                });
+            }
+
+            if (state.inProgress.count > 0) {
+                Object.keys(state.inProgress.items).forEach(id => {
+                    state.cancelled.count++;
+                    state.cancelled.items[id] = state.inProgress.items[id];
+                    state.cancelled.items[id].status = EntityStatus.CANCELED;
+                    state.inProgress.count--;
+                    delete state.inProgress.items[id];
+                });
+            }
+            break;
+
         case DownloadItemActions.FAIL_ITEM:
             state.inProgress.count--;
             delete state.inProgress.items[action.payload.id];
@@ -215,11 +235,11 @@ export function DownloadsReducer(
             break;
 
         case DownloadItemActions.UPDATE_ITEM_PROGRESS:
-            // revert previous values 
+            // revert previous values
             state.totalTransferred -= state.inProgress.items[action.payload.id].transferred;
             state.inProgress.transferred -= state.inProgress.items[action.payload.id].transferred;
 
-            // add new values 
+            // add new values
             state.totalTransferred += action.payload.transferred;
             state.inProgress.transferred += action.payload.transferred;
 

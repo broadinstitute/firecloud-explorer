@@ -23,6 +23,7 @@ export const PAUSE_ITEMS = '[ExportToGCS] Pause Items';
 
 export const CANCEL_ITEM = '[ExportToGCS] Cancel Item';
 export const CANCEL_ITEMS = '[ExportToGCS] Cancel Items';
+export const CANCEL_ALL = '[ExportToGCS] Cancel All Items';
 
 export const FAIL_ITEM = '[ExportToGCS] Cancel Item';
 export const FAIL_ITEMS = '[ExportToGCS] Cancel Items';
@@ -33,7 +34,6 @@ export const REMOVE_ITEM = '[ExportToGCS] Remove Item';
 export const SELECT_ITEM = '[ExportToGCS] Select Item';
 
 export const UPDATE_ITEM_PROGRESS = '[ExportToGCS] Update Item Progress';
-
 
 export class Load implements Action {
     readonly type = LOAD;
@@ -119,6 +119,10 @@ export class CancelItems implements Action {
     constructor(public payload: any) { }
 }
 
+export class CancelAllItems implements Action {
+    readonly type = CANCEL_ALL;
+    constructor() { }
+}
 export class FailItem implements Action {
     readonly type = FAIL_ITEM;
     constructor(public payload: any) { }
@@ -168,6 +172,7 @@ export type All
     | PauseItems
     | CancelItem
     | CancelItems
+    | CancelAllItems
     | FailItem
     | FailItems
     | UpdateItem

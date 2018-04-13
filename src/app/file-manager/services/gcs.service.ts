@@ -1,5 +1,4 @@
 import { Observable } from 'rxjs/Observable';
-import { Item } from '../models/item';
 import { DownloadItem } from '../models/download-item';
 import { UploadItem } from '../models/upload-item';
 import { ExportToGCSItem } from '../models/export-to-gcs-item';
