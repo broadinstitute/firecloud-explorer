@@ -78,6 +78,8 @@ export function ExportToGCSReducer(
     state: ExportToGCSState = exportToGCSInitialState,
     action: ExportToGCSItemActions.All) {
 
+    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><< action : ' + action.type);
+
     switch (action.type) {
         case ExportToGCSItemActions.ADD_ITEM:
             action.payload.status = EntityStatus.PENDING;
@@ -223,21 +225,10 @@ export function ExportToGCSReducer(
             state.totalCount = 0;
             state.totalProgress = 0;
             state.totalTransferred = 0;
-
-            state.pending.count = 0;
-            state.pending.items = {};
-
-            state.inProgress.count = 0;
-            state.inProgress.progress = 0;
-            state.inProgress.transferred = 0;
-            state.inProgress.items = {};
-
-            state.completed.count = 0;
-            state.completed.items = {};
-
-            state.paused.count = 0;
-            state.paused.items = {};
-
+            state.pending = { count: 0, items: {} };
+            state.inProgress = { count: 0, progress: 0, transferred: 0, items: {} };
+            state.completed = { count: 0, items: {} };
+            state.paused = { count: 0, items: {} };
             state.cancelled = { count: 0, items: {} };
             state.failed = { count: 0, items: {} };
             break;
@@ -245,6 +236,14 @@ export function ExportToGCSReducer(
         default:
             return state;
     }
+
+    console.log('pending    : ' + state.pending.count);
+    console.log('inProgress : ' + state.inProgress.count);
+    console.log('completed  : ' + state.completed.count);
+    console.log('paused     : ' + state.paused.count);
+    console.log('failed     : ' + state.failed.count);
+    console.log('cancelled  : ' + state.cancelled.count);
+    console.log('----------------------------------------------------------');
 
     return {
         totalCount: state.totalCount,

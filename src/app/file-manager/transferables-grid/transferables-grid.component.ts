@@ -51,13 +51,13 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   tabFilter = '';
 
   displayedColumns = ['name', 'size', 'status', 'progress', 'actions'];
-
-  filesDatabase: FilesDatabase;
   generalProgress = 0;
   generalUploadProgress = 0;
   downloadInProgress = false;
   disabledDownload = false;
   disabledUpload = false;
+  exportToGcpItems = new FilesDatabase(this.store);
+  filesDatabase: FilesDatabase;
   exportToS3InProgress = false;
   exportToGCSpending = false;
   exportToS3pending = false;
@@ -88,13 +88,6 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   exportToS3State: Observable<ExportToS3State>;
   // ------------------------------ until here ------------------------
 
-  itemsObs: Observable<TransferableState>;
-
-  modeVariable = 'determinate';
-  generalExportToGCPProgress = 0;
-  INDETERMINATE = 'indeterminate';
-  DETERMINATE = 'determinate';
-  exportItems = [];
   uploadCanceled = false;
   downloadCanceled = false;
   exportToGCPCanceled = false;
@@ -124,9 +117,7 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
         this.downCompleted = cs.completed.count;
         this.downTotal = cs.totalCount;
         this.downProgress = cs.totalProgress;
-        if (!isFinite(this.downProgress)) {
-          this.downProgress = 0;
-        }
+        this.downloadInProgress = cs.inProgress.count > 0;
       });
     });
 
@@ -266,12 +257,25 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   }
 
   cancelDownloads() {
-    this.gcsService.cancelDownloads().afterClosed().subscribe(modalResponse => {
+    this.spinner.show();
+    const dialogRef = this.dialog.open(WarningModalComponent, {
+      width: '500px',
+      disableClose: true,
+      data: 'cancelAllDownloads'
+    });
+    dialogRef.afterClosed().subscribe(modalResponse => {
       this.zone.run(() => {
         this.downloadCanceled = modalResponse.exit;
         this.downloadInProgress = !modalResponse.exit;
+        this.gcsService.cancelDownloads();
+        this.spinner.hide();
       });
     });
+    //   this.zone.run(() => {
+    //     this.downloadCanceled = modalResponse.exit;
+    //     this.downloadInProgress = !modalResponse.exit;
+    //   });
+    // });
   }
 
   cancelExportsToGCP() {

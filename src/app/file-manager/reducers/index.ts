@@ -9,12 +9,12 @@ import * as fromUploads from './uploads.reducer';
 import * as fromExportToGCS from './export-to-gcs.reducer';
 import * as fromExportToS3 from './export-to-s3.reducer';
 
-export const reducers: ActionReducerMap<any> = {
-  downloads: fromDownloads.DownloadsReducer,
-  uploads: fromUploads.UploadsReducer,
-  exportToGCS: fromExportToGCS.ExportToGCSReducer,
-  exportToS3: fromExportToS3.exportToS3InitialState
-};
+// export const reducersMap: ActionReducerMap<any> = {
+//   downloads: fromDownloads.DownloadsReducer,
+//   uploads: fromUploads.UploadsReducer,
+//   exportToGCS: fromExportToGCS.ExportToGCSReducer,
+//   exportToS3: fromExportToS3.exportToS3InitialState
+// };
 
 export interface AppState {
   downloads: fromDownloads.DownloadState;
