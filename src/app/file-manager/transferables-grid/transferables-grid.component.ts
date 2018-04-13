@@ -124,6 +124,9 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
         this.downCompleted = cs.completed.count;
         this.downTotal = cs.totalCount;
         this.downProgress = cs.totalProgress;
+        if (!isFinite(this.downProgress)) {
+          this.downProgress = 0;
+        }
       });
     });
 
@@ -135,6 +138,9 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
         this.upCompleted = cs.completed.count;
         this.upTotal = cs.totalCount;
         this.upProgress = cs.totalProgress;
+        if (!isFinite(this.upProgress)) {
+          this.upProgress = 0;
+        }
       });
     });
 
@@ -146,6 +152,9 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
         this.gcsCompleted = cs.completed.count;
         this.gcsTotal = cs.totalCount;
         this.gcsProgress = 100.0 * this.gcsCompleted / this.gcsTotal;
+        if (!isFinite(this.gcsProgress)) {
+          this.gcsProgress = 0;
+        }
       });
     });
 
@@ -157,6 +166,9 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
         this.s3Completed = cs.completed.count;
         this.s3Total = cs.totalCount;
         this.s3Progress = 100.0 * this.s3Completed / this.s3Total;
+        if (!isFinite(this.s3Progress)) {
+          this.s3Progress = 0;
+        }
       });
     });
 
