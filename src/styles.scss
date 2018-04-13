@@ -457,49 +457,6 @@ a.sidenav-link p {
   margin-right: 0;
 }
 
-/*EXPAND PANEL*/
-
-.expand-panel.mat-expansion-panel {
-  margin: 0;
-  box-shadow: none;
-  background: transparent;
-  position: relative;
-}
-
-.expand-panel.mat-expansion-panel:not([class*=mat-elevation-z]) {
-  box-shadow: none;
-}
-
-.expand-panel.mat-expansion-panel .mat-expansion-panel-header {
-  width: 50%;
-}
-
-.expand-panel.mat-expansion-panel .mat-expansion-panel-header.mat-expanded,
-.expand-panel.mat-expansion-panel .mat-expansion-panel-header,
-.mat-expansion-panel-header.ng-animating {
-  padding: 0 !important;
-  transition: all 0.2s ease;
-  font-size: 1rem;
-}
-
-.expand-panel.mat-expansion-panel .mat-expansion-panel-header:hover{
-  color: mat-color($fcExplorer-accent);
-}
-
-.expand-panel .mat-expansion-panel-header .mat-expansion-indicator {
-  display: none;
-}
-
-.expand-panel .mat-expansion-panel-header .mat-icon {
-  margin-right: 5px;
-}
-
-.expand-panel .mat-expansion-panel-body {
-  margin: 0;
-  padding: 0;
-  position: relative;
-}
-
 /*PROGRESS*/
 
 .progress-bar .ui-widget-content,

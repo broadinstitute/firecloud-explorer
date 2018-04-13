@@ -2,11 +2,6 @@
   <b>{{tabLabel}}</b>
 </ng-template>
 
-<!-- moved this to transferables-grid component, if works, delete the following lines -->
-<!-- <mat-form-field class="search-transfers-container">
-  <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Search...">
-</mat-form-field> -->
-
 <div class="table-container flex-container column table-common">
   <mat-table [dataSource]="dataSource" matSort>
     <ng-container matColumnDef="id">

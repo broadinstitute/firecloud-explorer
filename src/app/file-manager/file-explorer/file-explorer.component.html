@@ -72,8 +72,10 @@
 <p-toolbar styleClass="toolbar-accent">
   <div class="ui-toolbar-group-left">
     <div *ngIf="(router.url === '/file-download' && downloadInProgress()) || (router.url === '/file-export' && exportInProgress())" class="warn-message">
-      <span class="warn-message" *ngIf="router.url === '/file-download' && downloadInProgress()">Please wait, download in progress</span>
-      <span class="warn-message" *ngIf="router.url === '/file-export' && exportInProgress()">Please wait, export in progress</span>
+      Please wait,
+      <span *ngIf="router.url === '/file-download' && downloadInProgress()"> download </span>
+      <span *ngIf="router.url === '/file-export' && exportInProgress()"> export </span>
+      in progress
       <div class="progress-dots">
         <span class="dot"></span>
         <span class="dot"></span>
@@ -81,15 +83,6 @@
       </div>
     </div>
   </div>
-
-  <!--<div *ngIf="exportInProgress" class="warn-message">-->
-    <!--Please wait, export in progress-->
-    <!--<div class="progress-dots">-->
-      <!--<span class="dot"></span>-->
-      <!--<span class="dot"></span>-->
-      <!--<span class="dot"></span>-->
-    <!--</div>-->
-  <!--</div>-->
 
   <div class="ui-toolbar-group-right">
     <button mat-raised-button (click)="cleanSelection()" class="button-secondary" [disabled]="disableButton()">

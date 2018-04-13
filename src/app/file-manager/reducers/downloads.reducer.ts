@@ -117,6 +117,7 @@ export function DownloadsReducer(
 
         case DownloadItemActions.COMPLETE_ITEM:
             // revert previous values
+          if (state.inProgress.items[action.payload.id] !== undefined) {
             state.totalTransferred -= state.inProgress.items[action.payload.id].transferred;
             state.inProgress.transferred -= state.inProgress.items[action.payload.id].transferred;
 
@@ -132,6 +133,7 @@ export function DownloadsReducer(
             action.payload.status = EntityStatus.COMPLETED;
             state.completed.count++;
             state.completed.items[action.payload.id] = action.payload;
+          }
             break;
 
         case DownloadItemActions.COMPLETE_ITEMS:
@@ -236,7 +238,7 @@ export function DownloadsReducer(
 
         case DownloadItemActions.UPDATE_ITEM_PROGRESS:
             // revert previous values
-          if (action.payload.id !== undefined) {
+          if (state.inProgress.items[action.payload.id] !== undefined) {
             state.totalTransferred -= state.inProgress.items[action.payload.id].transferred;
             state.inProgress.transferred -= state.inProgress.items[action.payload.id].transferred;
 

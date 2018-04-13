@@ -46,11 +46,11 @@
       <h4 class="subtitle light">{{ gcsProgress | number:'1.0-0' }}%</h4>
     </div>
 
-    <p-progressBar #pbg mode="determinate" class="progress-bar" [ngClass]="{'success': gcsProgress === 100, 'failure': exportToGCPCanceled === true}"
+    <p-progressBar #pbg mode="determinate" class="progress-bar" [ngClass]="{'success': gcsProgress === 100, 'failure': ( !exportToGCSpending && gcsTotal !== 0)}"
       [value]="gcsProgress" [showValue]="false"></p-progressBar>
 
     <div class="flex-container end actions">
-      <button mat-raised-button (click)="cancelExportsToGCP()" class="button-secondary" [disabled]="!getExportingStatus()">
+      <button mat-raised-button (click)="cancelExportsToGCP()" class="button-secondary" [disabled]="!exportToGCSpending">
         <i class="material-icons">highlight_off</i>Cancel Export
       </button>
     </div>
@@ -63,11 +63,11 @@
       <h4 class="subtitle light">{{ s3Progress | number:'1.0-0' }}%</h4>
     </div>
 
-    <p-progressBar mode="determinate" class="progress-bar" [ngClass]="{'success': s3Progress === 100, 'failure': exportToS3Canceled === true}"
+    <p-progressBar mode="determinate" class="progress-bar" [ngClass]="{'success': s3Progress === 100, 'failure': ( !exportToS3pending && s3Total !== 0)}"
       [value]="s3Progress" [showValue]="false"></p-progressBar>
 
     <div class="flex-container end actions">
-      <button mat-raised-button (click)="cancelExportsToS3()" class="button-secondary" [disabled]="!(exportToS3InProgress && exportToS3Canceled === false)">
+      <button mat-raised-button (click)="cancelExportsToS3()" class="button-secondary" [disabled]="!exportToS3pending">
         <i class="material-icons">highlight_off</i>Cancel Export
       </button>
     </div>
