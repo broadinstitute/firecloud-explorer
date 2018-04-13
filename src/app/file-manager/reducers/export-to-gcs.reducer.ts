@@ -178,6 +178,7 @@ export function ExportToGCSReducer(
             Object.keys(state.inProgress.items).forEach(id => {
                 state.cancelled.count++;
                 state.cancelled.items[id] = state.inProgress.items[id];
+                state.cancelled.items[id].status = EntityStatus.CANCELED;
                 state.inProgress.count--;
                 delete state.inProgress.items[id];
             });
