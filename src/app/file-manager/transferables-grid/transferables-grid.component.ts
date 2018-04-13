@@ -283,17 +283,6 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
     });
   }
 
-  // handleGcpExport(pendingItems) {
-  //   // cancelGCPExports its a flag which indicates if cancel order has been given
-  //   if (!this.gcsService.cancelGCPExports) {
-  //     // exportToGcpItems passes the list of items to be exported when each chunk has already finished its export
-  //     this.limitTransferables.exportItems(pendingItems);
-  //   } else {
-  //     // prepares the Ui to indicate that exports to gcp have been cancelled
-  //     TransferablesGridComponent.isExporting = false;
-  //   }
-  // }
-
   cancelExportsToS3() {
 
     this.gcsService.cancelExportToS3().afterClosed().subscribe(modalResponse => {
@@ -329,7 +318,7 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   }
 
   startGCSExport(files: ExportToGCSItem[], preserveStructure: Boolean) {
-    this.limitTransferables.controlExportToGCSItemLimits(files);
+    this.limitTransferables.controlExportToGCSItemLimits(files, preserveStructure);
   }
 
   startS3Export(files: ExportToS3Item[], preserveStructure: Boolean) {

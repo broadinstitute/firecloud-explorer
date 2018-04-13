@@ -156,14 +156,14 @@ export class LimitTransferablesService implements OnInit {
     this.gcsService.uploadFiles(maxFiles, uploadBucket);
   }
 
-  public controlExportToGCSItemLimits(files: ExportToGCSItem[]): void {
+  public controlExportToGCSItemLimits(files: ExportToGCSItem[], preserveStructure:Boolean): void {
     if (files === undefined || files === null || files.length <= 0) {
       return;
     }
     let destinationBucket = localStorage.getItem('destinationBucket');
     let maxFiles = [];
     this.store.dispatch(new exportToGCSActions.Reset());
-    this.store.dispatch(new exportToGCSActions.AddItems({ items: files }));
+    this.store.dispatch(new exportToGCSActions.AddItems({ items: files, preserveStructure: preserveStructure }));
 
     if (files.length > environment.LIMIT_GCS_EXPORTABLES) {
       maxFiles = files.splice(0, environment.LIMIT_GCS_EXPORTABLES);
