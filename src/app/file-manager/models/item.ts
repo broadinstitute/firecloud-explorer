@@ -30,9 +30,9 @@ export class Item {
   istatus: number;
   itype: number;
 
-  constructor(id, name, created, updated, size, mediaLink, path, destination,
-    type, status, bucketName, prefix, delimiter, preserveStructure, open,
-    workspaceName, displayName, namespace, currentBatch, itype, istatus) {
+  constructor(id: string, name: string, created: Date, updated: Date, size: number, mediaLink: string, path: string, destination: string,
+    type: Type, status: ItemStatus, bucketName: string, prefix: string, delimiter: string, preserveStructure: boolean, open: boolean,
+    workspaceName: string, displayName: string, namespace: string, currentBatch: boolean, itype: number, istatus: number) {
 
     this.id = id;
     this.name = name;
