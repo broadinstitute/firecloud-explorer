@@ -296,7 +296,9 @@ export class FileExplorerComponent implements OnInit, AfterViewInit {
   }
 
   disableButton() {
-    return (this.downloadInProgress() || this.exportInProgress() || this.selectionService.nothingSelected());
+    return (this.router.url === '/file-download' && this.downloadInProgress())
+      || (this.router.url === '/file-export' && this.exportInProgress())
+      || this.selectionService.nothingSelected();
   }
 
   downloadInProgress(): Boolean {
@@ -312,7 +314,7 @@ export class FileExplorerComponent implements OnInit, AfterViewInit {
     let exportInProgress = false;
     if (new FilesDatabase(this.store).exportToGCSChange.getValue()
       .inProgress.count > 0) {
-        exportInProgress = true;
+      exportInProgress = true;
     }
     return exportInProgress;
   }
