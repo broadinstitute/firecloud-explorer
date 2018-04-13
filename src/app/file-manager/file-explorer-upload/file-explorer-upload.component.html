@@ -34,7 +34,7 @@
   </div>
 
   <div class="ui-toolbar-group-right">
-    <div *ngIf="uploadInProgress" class="warn-message">
+    <div *ngIf="uploadInProgress()" class="warn-message">
       Please wait, upload in progress
       <div class="progress-dots">
         <span class="dot"></span>
