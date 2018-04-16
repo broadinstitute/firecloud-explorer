@@ -135,6 +135,7 @@ export function DownloadsReducer(
                 state.completed.count++;
                 state.completed.items[action.payload.id] = action.payload;
             }
+
             break;
 
         case DownloadItemActions.COMPLETE_ITEMS:
@@ -190,15 +191,15 @@ export function DownloadsReducer(
             action.payload.items.forEach(item => {
                 state.inProgress.count--;
                 delete state.inProgress.items[item.id];
-                action.payload.status = EntityStatus.CANCELED;
+                item.status = EntityStatus.CANCELED;
                 state.cancelled.count++;
                 state.cancelled.items[item.id] = item;
             });
             break;
 
         case DownloadItemActions.CANCEL_ALL:
-
             if (state.pending.count > 0) {
+                // NOTE: UPLOADS, GCS, S3 cancel from PENDING instead of INPROGRESS
                 Object.keys(state.pending.items).forEach(id => {
                     state.cancelled.count++;
                     state.cancelled.items[id] = state.pending.items[id];

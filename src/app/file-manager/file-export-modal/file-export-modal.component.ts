@@ -209,6 +209,7 @@ export class FileExportModalComponent implements OnInit {
     localStorage.setItem('S3BucketName', this.exportForm.getRawValue().bucketNameAWS);
     localStorage.setItem('S3AccessKey', this.exportForm.getRawValue().accessKeyIdAWS);
     localStorage.setItem('S3SecretKey', this.exportForm.getRawValue().secretAccessKeyAWS);
+    this.disable = true;
     this.s3Service.testCredentials();
 
     this.electronIpc.awsTestCredentials().then(
@@ -217,6 +218,7 @@ export class FileExportModalComponent implements OnInit {
         localStorage.setItem('operation-type', Type.EXPORT_S3);
       }
     ).catch((reject) => {
+      this.disable = false;
       this.disableCancel = false;
       this.msgs = [];
       this.createWarningMsg(reject);

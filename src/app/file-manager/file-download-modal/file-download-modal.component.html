@@ -29,6 +29,6 @@
   disableRipple>Preserve folder structure</mat-checkbox>
 <p-messages class="error-messages" [(value)]="msgs"></p-messages>
 <mat-dialog-actions>
-  <button mat-raised-button [disabled]="isLoading()" (click)="cancel()" class="button-secondary">Cancel</button>
-  <button mat-raised-button [disabled]="!isValid || isLoading()" (click)="startDownload()" class="button-primary">Start Download!</button>
+  <button mat-raised-button [disabled]="isLoading() || disableButton" (click)="cancel()" class="button-secondary">Cancel</button>
+  <button mat-raised-button [disabled]="!isValid || isLoading() || disableButton" (click)="startDownload()" class="button-primary">Start Download!</button>
 </mat-dialog-actions>

@@ -15,6 +15,7 @@ import * as Transferables from '@app/file-manager/actions/transferables.actions'
 import * as downloadActions from '@app/file-manager/actions/download-item.actions';
 import * as uploadActions from '@app/file-manager/actions/upload-item.actions';
 import * as exportToGCSActions from '@app/file-manager/actions/export-to-gcs-item.actions';
+import * as exportToS3Actions from '@app/file-manager/actions/export-to-s3-item.actions';
 
 import { Store } from '@ngrx/store';
 import { FilesDatabase } from '@app/file-manager/dbstate/files-database';
@@ -25,7 +26,6 @@ import { Type } from '@app/file-manager/models/type';
 import { ItemStatus } from '@app/file-manager/models/item-status';
 import { MatDialog } from '@angular/material';
 import { AppState } from '@app/file-manager/reducers';
-import * as exportToS3Actions from '@app/file-manager/actions/export-to-s3-item.actions';
 
 
 const constants = require('../../../../electron_app/helpers/environment').constants;
@@ -81,14 +81,15 @@ export class GcsApiService extends GcsService {
 
   public cancelAll() {
     this.electronService.ipcRenderer.send(constants.IPC_DOWNLOAD_CANCEL);
-    this.cancelItemsStatus(Type.DOWNLOAD);
+    this.cancelDownloads();
+    this.cancelExportToS3();
+    this.cancelUploads();
+    this.cancelExportsToGCP();
 
-    this.electronService.ipcRenderer.send(constants.IPC_UPLOAD_CANCEL);
-    this.cancelItemsStatus(Type.UPLOAD);
-
-    this.cancelItemsStatus(Type.EXPORT_S3);
-
-    this.cancelItemsStatus(Type.EXPORT_GCP);
+    this.store.dispatch(new downloadActions.Reset());
+    this.store.dispatch(new exportToS3Actions.Reset());
+    this.store.dispatch(new exportToGCSActions .Reset());
+    this.store.dispatch(new uploadActions.Reset());
   }
 
   public cancelDownloads(): void {
