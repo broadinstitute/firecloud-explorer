@@ -171,7 +171,7 @@ export class FileExportModalComponent implements OnInit {
             });
 
             localStorage.setItem('destinationBucket', this.exportForm.controls.bucketNameGCP.value);
-
+            localStorage.setItem('operation-type', Type.EXPORT_GCP);
             this.transferablesGridComponent.startGCSExport(filesToExport);
             this.dialogRef.close({ preserveStructure: this.preserveStructure, type: Type.EXPORT_GCP });
 
@@ -202,22 +202,6 @@ export class FileExportModalComponent implements OnInit {
     }
   }
 
-  // dispatchGCSFiles() {
-  //   const filesToExport = [];
-  //   this.selectedFiles().forEach(file => {
-
-  //     const dataFile: ExportToGCSItem = new ExportToGCSItem(file.id, file.name,
-  //       file.updated, file.created, file.size, file.mediaLink, file.path,
-  //       '', EntityStatus.PENDING, '', '',
-  //       this.preserveStructure, false, '', file.displayName, '');
-
-  //     filesToExport.push(file);
-  //   });
-
-  //   this.store.dispatch(new exportToGCSActions.AddItems({ items: filesToExport }));
-  //   //    this.done.emit(true);
-  //   this.router.navigate(['/status']);
-  // }
 
   startExportToS3(): void {
     SecurityService.setS3AccessKey(this.exportForm.getRawValue().accessKeyIdAWS);
@@ -225,11 +209,16 @@ export class FileExportModalComponent implements OnInit {
     localStorage.setItem('S3BucketName', this.exportForm.getRawValue().bucketNameAWS);
     localStorage.setItem('S3AccessKey', this.exportForm.getRawValue().accessKeyIdAWS);
     localStorage.setItem('S3SecretKey', this.exportForm.getRawValue().secretAccessKeyAWS);
+    this.disable = true;
     this.s3Service.testCredentials();
 
     this.electronIpc.awsTestCredentials().then(
-      () => this.exportToS3(),
+      () => {
+        this.exportToS3();
+        localStorage.setItem('operation-type', Type.EXPORT_S3);
+      }
     ).catch((reject) => {
+      this.disable = false;
       this.disableCancel = false;
       this.msgs = [];
       this.createWarningMsg(reject);

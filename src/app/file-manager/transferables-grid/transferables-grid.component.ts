@@ -48,7 +48,7 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 export class TransferablesGridComponent implements OnInit, AfterViewInit {
 
   tabFilter = '';
-
+  selectedIndex: number;
   displayedColumns = ['name', 'size', 'status', 'progress', 'actions'];
 
   // ---------------------------- progress info from here ----------------
@@ -96,12 +96,12 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
     private s3Service: S3ExportService,
     private spinner: NgxSpinnerService,
     private dialog: MatDialog) {
-
+    this.selectedIndex = 0;
     this.downloadState = this.store.select('downloads');
     this.uploadState = this.store.select('uploads');
     this.exportToGCSState = this.store.select('exportToGCS');
     this.exportToS3State = this.store.select('exportToS3');
-
+    this.selectedIndex = 0;
     /**
      * registering listeners to download progress info
      */
@@ -170,6 +170,7 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
       });
     });
 
+
   }
 
   load() {
@@ -227,6 +228,29 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
       this.spinner.show();
       localStorage.removeItem('displaySpinner');
     }
+
+    switch (localStorage.getItem('operation-type')) {
+      case Type.DOWNLOAD: {
+        this.selectedIndex = 0;
+        break;
+      }
+      case Type.UPLOAD: {
+        this.selectedIndex = 1;
+        break;
+      }
+      case Type.EXPORT_GCP: {
+        this.selectedIndex = 2;
+        break;
+      }
+      case Type.EXPORT_S3: {
+        this.selectedIndex = 3;
+        break;
+      }
+      default: {
+        this.selectedIndex = 0;
+        break;
+      }
+    }
   }
 
   ngAfterViewInit() {
@@ -247,15 +271,19 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   }
 
   cancelUploads() {
+    this.spinner.show();
     const dialogRef = this.dialog.open(WarningModalComponent, {
       width: '500px',
       disableClose: true,
       data: 'cancelAllUploads'
     });
     dialogRef.afterClosed().subscribe(modalResponse => {
-      if (modalResponse.exit) {
+      this.zone.run(() => {
+        this.upCanceled = modalResponse.exit;
+        this.upInProgress = !modalResponse.exit;
         this.gcsService.cancelUploads();
-      }
+        this.spinner.hide();
+      });
     });
   }
 
@@ -274,11 +302,6 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
         this.spinner.hide();
       });
     });
-    //   this.zone.run(() => {
-    //     this.downloadCanceled = modalResponse.exit;
-    //     this.downloadInProgress = !modalResponse.exit;
-    //   });
-    // });
   }
 
   cancelExportsToGCP() {

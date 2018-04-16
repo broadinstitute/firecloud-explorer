@@ -77,7 +77,7 @@
   </mat-form-field>
 </div>
 
-<mat-tab-group class="tab-group">
+<mat-tab-group class="tab-group" [selectedIndex]="selectedIndex">
 
   <mat-tab label="Downloads">
     <app-progress-tab source="Down" [filter]="tabFilter">

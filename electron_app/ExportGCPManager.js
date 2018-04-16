@@ -1,20 +1,11 @@
-
-const axios = require("axios");
 const { Rxios } = require('rxios');
 const Rx = require('rxjs');
-const forkJoin = require('rxjs/observable/forkJoin');
-
-const req = require('request');
-const progress = require('progress-stream');
-var urlencode = require('urlencode');
-var requestList = [];
+const urlencode = require('urlencode');
+const requestList = [];
 const constants = require('./helpers/environment').constants;
 
 const exportGCPManager = (destinationBucket, fileList = [], access_token, win) => {
-  var i = 0;
   let completed = [];
-  let failed = [];
-
   const reqs = [];
   const httpx = new Rxios(
     {
@@ -33,9 +24,9 @@ const exportGCPManager = (destinationBucket, fileList = [], access_token, win) =
 
     // build here an array of fileList.length requests 
     const sourceObject = file.path.substring(file.path.indexOf('/') + 1, file.path.length);
-    const destinationObject = file.preserveStructure ? sourceObject : file.name;
+    const destinationObject = file.preserveStructure ? file.path : file.name;
 
-    var url = constants.GCP_API + file.bucketName
+    let url = constants.GCP_API + file.bucketName
       + '/o/' + urlencode(sourceObject)
       + '/rewriteTo/b/' + urlencode(destinationBucket)
       + '/o/' + urlencode('Imports/' + destinationObject)
@@ -50,26 +41,7 @@ const exportGCPManager = (destinationBucket, fileList = [], access_token, win) =
         }
       )
       );
-
-    // if (error.response) {
-    //   // The request was made and the server responded with a status code
-    //   // that falls out of the range of 2xx
-    //   console.log(error.response.data);
-    //   console.log(error.response.status);
-    //   console.log(error.response.headers);
-    // } else if (error.request) {
-    //   // The request was made but no response was received
-    //   // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-    //   // http.ClientRequest in node.js
-    //   console.log(error.request);
-    // } else {
-    //   // Something happened in setting up the request that triggered an Error
-    //   console.log('Error', error.message);
-    // }
-    // console.log(error.config);
-
     reqs.push(postReq);
-
   });
 
   // request all at once, get only one response 
@@ -108,13 +80,13 @@ const exportGCPManager = (destinationBucket, fileList = [], access_token, win) =
         //how errors should be handled here ????
         console.log(err);
       });
-}
+};
 
 const exportGCPManagerCancel = () => {
   requestList.forEach(request => {
     request.abort();
   });
-}
+};
 
 module.exports = {
   exportGCPManager,
