@@ -116,8 +116,6 @@ export function DownloadsReducer(
             break;
 
         case DownloadItemActions.COMPLETE_ITEM:
-            console.log('downloads.reducer COMPLETE_ITEM', action.payload);
-
             // revert previous values
             if (state.inProgress.items[action.payload.id] !== undefined) {
 

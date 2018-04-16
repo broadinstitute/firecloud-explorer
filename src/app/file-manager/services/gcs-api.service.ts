@@ -55,7 +55,7 @@ export class GcsApiService extends GcsService {
   public getBucketFilesWithMaxResult(bucketName: String, prefix: String, pageToken: String, useDelimiter: Boolean): Observable<any> {
     let url = environment.GOOGLE_URL + 'storage/v1/b/'
       + bucketName + '/o?maxResults=' + environment.BUCKETS_MAX_RESULT
-      + '&fields=nextPageToken,prefixes,items(id,name,bucket,timeCreated,updated,size,mediaLink)';
+      + '&fields=nextPageToken,prefixes,items(id,name,bucket,timeCreated,updated,size,mediaLink,metadata)';
 
     url = useDelimiter ? url.concat('&delimiter=' + '/') : url;
     url = pageToken !== null ? url.concat('&pageToken=' + pageToken) : url;

@@ -41,7 +41,7 @@ const exportGCPManager = (destinationBucket, fileList = [], access_token, win) =
       + '/o/' + urlencode('Imports/' + destinationObject)
       + '?fields=done,totalBytesRewritten,resource';
 
-    reqs.push(httpx.post(url, {}));
+    reqs.push(httpx.post(url, { "metadata": { "sourceId" : file.id } } ));
 
   });
 
@@ -50,18 +50,21 @@ const exportGCPManager = (destinationBucket, fileList = [], access_token, win) =
     response => {
 
       response.forEach(item => {
+
         completed.push(
           {
             id: item.resource.id,
             transferred: item.totalBytesRewritten,
             size: item.resource.size,
             done: item.done,
+            sourceId: item.resource.metadata.sourceId,
             md5hash: item.resource.md5hash
           }
         );
       });
       // report progress 
       win.webContents.send(constants.IPC_EXPORT_TO_GCP_COMPLETE, completed);
+
 
     },
     err => {
