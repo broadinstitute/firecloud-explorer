@@ -6,6 +6,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { Observable } from 'rxjs/Observable';
 import { Message } from 'primeng/components/common/api';
 import { Router } from '@angular/router';
+import { Type } from '@app/file-manager/models/type';
 
 @Component({
   selector: 'app-file-upload',
@@ -64,6 +65,7 @@ export class FileUploadModalComponent implements OnInit {
   uploadFiles(): void {
     this.disableUpload = true;
     localStorage.setItem('uploadBucket', this.workspaceCtrl.value.bucketName);
+    localStorage.setItem('operation-type', Type.UPLOAD);
     this.dialogRef.close({status: 'upload'});
     this.router.navigate(['/status']);
   }

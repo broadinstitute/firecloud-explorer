@@ -58,7 +58,6 @@ export class FileDownloadModalComponent implements OnInit {
         this.verify = diskVerification;
 
         if (!this.verify.hasErr) {
-
           this.dialogRef.close();
           this.selectedFiles()
             .forEach(
@@ -72,8 +71,8 @@ export class FileDownloadModalComponent implements OnInit {
                   this.downloadFiles.push(dataFile);
                 }
               });
-          localStorage.setItem('operation-type', Type.DOWNLOAD);
           this.transferablesGridComponent.startDownload(this.downloadFiles);
+          localStorage.setItem('operation-type', Type.DOWNLOAD);
           this.router.navigate(['/status']);
 
         } else {

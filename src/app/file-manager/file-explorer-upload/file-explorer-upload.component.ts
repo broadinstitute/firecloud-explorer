@@ -199,7 +199,6 @@ export class FileExplorerUploadComponent implements OnInit {
       let dataFile: UploadItem;
 
       if (result !== undefined) {
-
         this.selectedFiles
           .filter(file => file.data.type === Type.FILE)
           .forEach(file => {
@@ -209,7 +208,6 @@ export class FileExplorerUploadComponent implements OnInit {
 
             filesToUpload.push(dataFile);
           });
-        localStorage.setItem('operation-type', Type.UPLOAD);
         this.transferablesGridComponent.startUpload(filesToUpload);
       }
     });

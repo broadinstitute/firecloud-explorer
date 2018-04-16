@@ -214,8 +214,8 @@ export class FileExportModalComponent implements OnInit {
 
     this.electronIpc.awsTestCredentials().then(
       () => {
-        this.exportToS3();
         localStorage.setItem('operation-type', Type.EXPORT_S3);
+        this.exportToS3();
       }
     ).catch((reject) => {
       this.disable = false;
