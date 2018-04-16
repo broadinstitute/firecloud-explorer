@@ -54,8 +54,7 @@ const uploadManager = (bucketName, fileList = [], access_token, win) => {
         }
 
         progressConf.on('progress', function (progress) {
-          let p = progress.percentage;
-          if (p >= 100.0) {
+          if (progress.percentage >= 100.0 && progress.delta === 0) {
             file.progress = 100;
             file.transferred = Number(file.size);
             win.webContents.send(constants.IPC_UPLOAD_COMPLETE, file);

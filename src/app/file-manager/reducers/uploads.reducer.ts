@@ -88,7 +88,7 @@ export function UploadsReducer(
             break;
 
         case UploadItemActions.ADD_ITEMS:
-            action.payload.items.forEach((item: UploadItem) => {
+            action.payload.items.forEach(item => {
                 item.status = EntityStatus.PENDING;
                 state.pending.count++;
                 state.totalCount++;
@@ -106,7 +106,7 @@ export function UploadsReducer(
             break;
 
         case UploadItemActions.PROCESS_ITEMS:
-            action.payload.items.forEach((item: UploadItem)  => {
+            action.payload.items.forEach(item => {
                 state.pending.count--;
                 delete state.pending.items[item.id];
                 item.status = EntityStatus.INPROGRESS;
@@ -116,21 +116,49 @@ export function UploadsReducer(
             break;
 
         case UploadItemActions.COMPLETE_ITEM:
-            state.inProgress.count--;
-            delete state.inProgress.items[action.payload.id];
-            action.payload.status = EntityStatus.COMPLETED;
-            state.completed.count++;
-            state.completed.items[action.payload.id] = action.payload;
+            // revert previous values
+            if (state.inProgress.items[action.payload.id] !== undefined) {
+
+                state.totalTransferred -= state.inProgress.items[action.payload.id].transferred;
+                state.inProgress.transferred -= state.inProgress.items[action.payload.id].transferred;
+
+                // add new values
+                state.totalTransferred += action.payload.transferred;
+                state.inProgress.transferred += action.payload.transferred;
+
+                // remove from "inProgress"
+                state.inProgress.count--;
+                delete state.inProgress.items[action.payload.id];
+
+                // add to "complete"
+                action.payload.status = EntityStatus.COMPLETED;
+                state.completed.count++;
+                state.completed.items[action.payload.id] = action.payload;
+            }
+
             break;
 
         case UploadItemActions.COMPLETE_ITEMS:
-            action.payload.items.forEach((item: UploadItem) => {
+            action.payload.items.forEach(item => {
+
+                // revert previous values
+                state.totalTransferred -= state.inProgress.items[item.id].transferred;
+                state.inProgress.transferred -= state.inProgress.items[item.id].transferred;
+
+                // add new values
+                state.totalTransferred += item.transferred;
+                state.inProgress.transferred += item.transferred;
+
+                // remove from "inProgress"
                 state.inProgress.count--;
                 delete state.inProgress.items[item.id];
+
+                // add to "complete"
                 item.status = EntityStatus.COMPLETED;
                 state.completed.count++;
                 state.completed.items[item.id] = item;
             });
+
             break;
 
         case UploadItemActions.PAUSE_ITEM:
@@ -142,7 +170,7 @@ export function UploadsReducer(
             break;
 
         case UploadItemActions.PAUSE_ITEMS:
-            action.payload.items.forEach( (item: UploadItem) => {
+            action.payload.items.forEach((item: UploadItem) => {
                 state.inProgress.count--;
                 delete state.inProgress.items[item.id];
                 item.status = EntityStatus.PAUSED;
@@ -180,6 +208,16 @@ export function UploadsReducer(
                     delete state.pending.items[id];
                 });
             }
+
+            if (state.inProgress.count > 0) {
+                Object.keys(state.inProgress.items).forEach(id => {
+                    state.cancelled.count++;
+                    state.cancelled.items[id] = state.inProgress.items[id];
+                    state.cancelled.items[id].status = EntityStatus.CANCELED;
+                    state.inProgress.count--;
+                    delete state.inProgress.items[id];
+                });
+            }
             break;
 
         case UploadItemActions.FAIL_ITEM:
@@ -201,20 +239,21 @@ export function UploadsReducer(
             break;
 
         case UploadItemActions.UPDATE_ITEM_PROGRESS:
-            // decrement old values
-            state.totalTransferred -= state.inProgress.items[action.payload.id].transferred;
-            state.inProgress.transferred -= state.inProgress.items[action.payload.id].transferred;
+            // revert previous values
 
-            // update item
-            state.inProgress.items[action.payload.id].progress = action.payload.progress;
-            state.inProgress.items[action.payload.id].transferred = action.payload.transferred;
+            if (state.inProgress.items[action.payload.id] !== undefined) {
 
-            // increment new values
-            state.totalTransferred += state.inProgress.items[action.payload.id].transferred;
-            state.inProgress.transferred += state.inProgress.items[action.payload.id].transferred;
+                state.totalTransferred -= state.inProgress.items[action.payload.id].transferred;
+                state.inProgress.transferred -= state.inProgress.items[action.payload.id].transferred;
 
-            state.totalProgress = state.totalSize !== 0 ? 100.0 * state.totalTransferred / state.totalSize : 0;
-            state.inProgress.progress = state.totalSize !== 0 ? state.inProgress.transferred / state.totalSize : 0;
+                // add new values
+                state.totalTransferred += action.payload.transferred;
+                state.inProgress.transferred += action.payload.transferred;
+
+                // update item
+                state.inProgress.items[action.payload.id].progress = action.payload.progress;
+                state.inProgress.items[action.payload.id].transferred = action.payload.transferred;
+            }
             break;
 
         case UploadItemActions.RESET:
@@ -245,6 +284,9 @@ export function UploadsReducer(
         default:
             return state;
     }
+
+    state.totalProgress = state.totalSize !== 0 ? 100.0 * state.totalTransferred / state.totalSize : 0;
+    state.inProgress.progress = state.totalSize !== 0 ? 100.0 * state.inProgress.transferred / state.totalSize : 0;
 
     return {
         totalCount: state.totalCount,

@@ -9,15 +9,13 @@
       <h4 class="subtitle light">{{ downProgress | number:'1.0-0' }}%</h4>
     </div>
 
-    <p-progressBar mode="determinate" class="progress-bar" [ngClass]="{'success': downProgress === 100, 'failure': downloadCanceled}"
+    <p-progressBar mode="determinate" class="progress-bar" [ngClass]="{'success': downProgress === 100, 'failure': downCanceled}"
       [value]="downProgress" [showValue]="false"></p-progressBar>
 
     <div class="flex-container end actions">
-      <button mat-raised-button (click)="cancelDownloads()" class="button-secondary" [disabled]="!downloadInProgress">
+      <button mat-raised-button (click)="cancelDownloads()" class="button-secondary" [disabled]="!downInProgress">
         <i class="material-icons">highlight_off</i>Cancel Download
       </button>
-      <!-- <button mat-raised-button (click)="resumeSelected()" class="button-primary">
-        <i class="material-icons">pause_circle_outline</i>Pause all</button> -->
     </div>
   </div>
 
@@ -28,11 +26,11 @@
       <h4 class="subtitle light">{{ upProgress | number:'1.0-0' }}%</h4>
     </div>
 
-    <p-progressBar mode="determinate" class="progress-bar" [ngClass]="{'success': upProgress === 100, 'failure': !uploadPending && upTotal !== 0}"
+    <p-progressBar mode="determinate" class="progress-bar" [ngClass]="{'success': upProgress === 100, 'failure': upCanceled}"
       [value]="upProgress" [showValue]="false"></p-progressBar>
 
     <div class="flex-container end actions">
-      <button mat-raised-button (click)="cancelUploads()" class="button-secondary" [disabled]="!uploadPending || !uploadInProgress">
+      <button mat-raised-button (click)="cancelUploads()" class="button-secondary" [disabled]="!upInProgress">
         <i class="material-icons">highlight_off</i>Cancel Upload
       </button>
     </div>
@@ -41,15 +39,15 @@
     <h4 class="subtitle medium">Exported to Google Cloud:</h4>
     <div class="flex-container space-between">
 
-      <p class="aclaration">{{ filesDatabase.exportedToGCSCount() + ' of ' + filesDatabase.toExportGCSCount() }} file(s)</p>
+      <p class="aclaration">{{ gcsCompleted + ' of ' + gcsTotal }} file(s)</p>
       <h4 class="subtitle light">{{ gcsProgress | number:'1.0-0' }}%</h4>
     </div>
 
-    <p-progressBar #pbg mode="determinate" class="progress-bar" [ngClass]="{'success': gcsProgress === 100, 'failure': ( !exportToGCSpending && gcsTotal !== 0)}"
+    <p-progressBar mode="determinate" class="progress-bar" [ngClass]="{'success': gcsProgress === 100, 'failure': gcsCanceled}"
       [value]="gcsProgress" [showValue]="false"></p-progressBar>
 
     <div class="flex-container end actions">
-      <button mat-raised-button (click)="cancelExportsToGCP()" class="button-secondary" [disabled]="!exportToGCSpending">
+      <button mat-raised-button (click)="cancelExportsToGCP()" class="button-secondary" [disabled]="!gcsInProgress">
         <i class="material-icons">highlight_off</i>Cancel Export
       </button>
     </div>
@@ -62,11 +60,11 @@
       <h4 class="subtitle light">{{ s3Progress | number:'1.0-0' }}%</h4>
     </div>
 
-    <p-progressBar mode="determinate" class="progress-bar" [ngClass]="{'success': s3Progress === 100, 'failure': ( !exportToS3pending && s3Total !== 0 && !s3InProgress)}"
+    <p-progressBar mode="determinate" class="progress-bar" [ngClass]="{'success': s3Progress === 100, 'failure': s3Canceled}"
       [value]="s3Progress" [showValue]="false"></p-progressBar>
 
     <div class="flex-container end actions">
-      <button mat-raised-button (click)="cancelExportsToS3()" class="button-secondary" [disabled]="!exportToS3pending">
+      <button mat-raised-button (click)="cancelExportsToS3()" class="button-secondary" [disabled]="!s3InProgress">
         <i class="material-icons">highlight_off</i>Cancel Export
       </button>
     </div>
@@ -91,7 +89,7 @@
     </app-progress-tab>
   </mat-tab>
 
-  <mat-tab  label="Exports to Google Cloud">
+  <mat-tab label="Exports to Google Cloud">
     <app-progress-tab source="GCS" [filter]="tabFilter">
     </app-progress-tab>
   </mat-tab>
@@ -102,4 +100,3 @@
   </mat-tab>
 
 </mat-tab-group>
-
