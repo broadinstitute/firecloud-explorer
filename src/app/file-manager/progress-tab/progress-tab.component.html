@@ -34,7 +34,6 @@
     <ng-container matColumnDef="progress">
       <mat-header-cell *matHeaderCellDef> Progress</mat-header-cell>
       <mat-cell *matCellDef="let row">
-        {{row.status}}
 
         <p-progressBar *ngIf="(source === 'Down' || source === 'Up') &&  row.status === 1" mode="determinate" class="progress-bar-small"
           [ngClass]="{'success': row.status === 3, 'failure': (row.status === 4 || row.status === 5) }" [value]="row.progress"
