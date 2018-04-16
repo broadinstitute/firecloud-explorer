@@ -78,8 +78,6 @@ export function ExportToGCSReducer(
     state: ExportToGCSState = exportToGCSInitialState,
     action: ExportToGCSItemActions.All) {
 
-    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><< action : ' + action.type);
-
     switch (action.type) {
         case ExportToGCSItemActions.ADD_ITEM:
             action.payload.status = EntityStatus.PENDING;
@@ -109,6 +107,11 @@ export function ExportToGCSReducer(
 
         case ExportToGCSItemActions.PROCESS_ITEMS:
             action.payload.items.forEach(item => {
+                if (item.metadata) {
+                    item.metadata['sourceId'] = item.id;
+                } else {
+                    item.metadata = { 'sourceId': item.id };
+                }
                 state.pending.count--;
                 delete state.pending.items[item.id];
                 item.status = EntityStatus.INPROGRESS;
@@ -127,11 +130,15 @@ export function ExportToGCSReducer(
 
         case ExportToGCSItemActions.COMPLETE_ITEMS:
             action.payload.items.forEach(item => {
-                state.inProgress.count--;
-                delete state.inProgress.items[item.id];
-                item.status = EntityStatus.COMPLETED;
+                const sourceId = item.sourceId;
                 state.completed.count++;
-                state.completed.items[item.id] = item;
+                state.completed.items[sourceId] = state.inProgress.items[sourceId];
+                state.completed.items[sourceId].status = EntityStatus.COMPLETED;
+                state.completed.items[sourceId].progress = 100;
+                state.completed.items[sourceId].transferred = item.transferred;
+
+                delete state.inProgress.items[sourceId];
+                state.inProgress.count--;
             });
             break;
 
@@ -236,14 +243,6 @@ export function ExportToGCSReducer(
         default:
             return state;
     }
-
-    console.log('pending    : ' + state.pending.count);
-    console.log('inProgress : ' + state.inProgress.count);
-    console.log('completed  : ' + state.completed.count);
-    console.log('paused     : ' + state.paused.count);
-    console.log('failed     : ' + state.failed.count);
-    console.log('cancelled  : ' + state.cancelled.count);
-    console.log('----------------------------------------------------------');
 
     return {
         totalCount: state.totalCount,

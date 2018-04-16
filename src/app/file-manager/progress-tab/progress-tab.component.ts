@@ -118,16 +118,10 @@ export class ProgressTabComponent implements OnInit, AfterViewInit, OnDestroy {
     const cancelled = Object.values(state.cancelled.items);
     const failed = Object.values(state.failed.items);
 
-    console.log('pending    ', pending);
-    console.log('inProgress ', inProgress);
-    console.log('completed  ', completed);
-    console.log('paused     ', paused);
-    console.log('cancelled  ', cancelled);
-    console.log('failed     ', failed);
-    console.log('-----------------------------------------------------------');
-
-    this.dataSource.data = [];
-    this.dataSource.data = [...pending, ...inProgress, ...completed, ...paused, ...cancelled, ...failed];
+    this.zone.run(() => {
+      this.dataSource.data = [];
+      this.dataSource.data = [...pending, ...inProgress, ...completed, ...paused, ...cancelled, ...failed];
+    });
 
   }
 

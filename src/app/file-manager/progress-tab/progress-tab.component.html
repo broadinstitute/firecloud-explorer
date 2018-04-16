@@ -34,14 +34,19 @@
     <ng-container matColumnDef="progress">
       <mat-header-cell *matHeaderCellDef> Progress</mat-header-cell>
       <mat-cell *matCellDef="let row">
-{{row.status}}
-        <p-progressBar *ngIf="row.status === 0 || (row.status === 1 && source === 'Down') || (row.status === 1 && source === 'Up')  || row.status === 3 || row.status === 4"
-          mode="determinate" class="progress-bar-small" [ngClass]="{'success': row.status === 3, 'failure': row.status === 4}"
-          [value]="row.progress" [showValue]="false">
+        {{row.status}}
+
+        <p-progressBar *ngIf="(source === 'Down' || source === 'Up') &&  row.status === 1" mode="determinate" class="progress-bar-small"
+          [ngClass]="{'success': row.status === 3, 'failure': (row.status === 4 || row.status === 5) }" [value]="row.progress"
+          [showValue]="false">
         </p-progressBar>
 
         <p-progressBar *ngIf="(source === 'GCS' || source === 'S3') &&  row.status === 1" mode="indeterminate" class="progress-bar-small"
-          [ngClass]="{'success': row.status === 3, 'failure': row.status === 4 }" [showValue]="false">
+          [ngClass]="{'success': row.status === 3, 'failure': (row.status === 4 || row.status === 5) }" [showValue]="false">
+        </p-progressBar>
+
+        <p-progressBar *ngIf="row.status !== 1" mode="determinate" class="progress-bar-small" [ngClass]="{'success': row.status === 3, 'failure': (row.status === 4 || row.status === 5)}"
+          [value]="row.progress" [showValue]="false">
         </p-progressBar>
 
       </mat-cell>

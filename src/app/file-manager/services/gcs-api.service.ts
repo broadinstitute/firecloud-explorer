@@ -1,5 +1,5 @@
-import { Injectable, NgZone } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { environment } from '@env/environment';
 import { Observable } from 'rxjs/Observable';
 import { SecurityService } from './security.service';
@@ -8,7 +8,6 @@ import { ElectronService } from 'ngx-electron';
 
 import { Item } from '@app/file-manager/models/item';
 import { DownloadItem } from '@app/file-manager/models/download-item';
-import { UploadItem } from '@app/file-manager/models/upload-item';
 import { ExportToGCSItem } from '@app/file-manager/models/export-to-gcs-item';
 import { ExportToS3Item } from '@app/file-manager/models/export-to-s3-item';
 
@@ -24,12 +23,7 @@ import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/retry';
 import { Type } from '@app/file-manager/models/type';
 import { ItemStatus } from '@app/file-manager/models/item-status';
-import { WarningModalComponent } from '@app/file-manager/warning-modal/warning-modal.component';
-import { MatDialog, MatDialogRef } from '@angular/material';
-import { forkJoin } from 'rxjs/observable/forkJoin';
-import { concatMap } from 'rxjs/operators';
-import { UpdateItemProgress } from '@app/file-manager/actions/transferables.actions';
-import { DownloadState } from '@app/file-manager/reducers/downloads.reducer';
+import { MatDialog } from '@angular/material';
 import { AppState } from '@app/file-manager/reducers';
 import * as exportToS3Actions from '@app/file-manager/actions/export-to-s3-item.actions';
 
@@ -55,7 +49,7 @@ export class GcsApiService extends GcsService {
   public getBucketFilesWithMaxResult(bucketName: String, prefix: String, pageToken: String, useDelimiter: Boolean): Observable<any> {
     let url = environment.GOOGLE_URL + 'storage/v1/b/'
       + bucketName + '/o?maxResults=' + environment.BUCKETS_MAX_RESULT
-      + '&fields=nextPageToken,prefixes,items(id,name,bucket,timeCreated,updated,size,mediaLink)';
+      + '&fields=nextPageToken,prefixes,items(id,name,bucket,timeCreated,updated,size,mediaLink,metadata)';
 
     url = useDelimiter ? url.concat('&delimiter=' + '/') : url;
     url = pageToken !== null ? url.concat('&pageToken=' + pageToken) : url;
@@ -86,23 +80,15 @@ export class GcsApiService extends GcsService {
   }
 
   public cancelAll() {
-    if (new FilesDatabase(this.store).data().filter(item =>
-      item.status === ItemStatus.PENDING
-      || item.status === ItemStatus.DOWNLOADING
-      || item.status === ItemStatus.UPLOADING
-      || item.status === ItemStatus.EXPORTING_GCP
-      || item.status === ItemStatus.EXPORTING_S3).length > 0) {
+    this.electronService.ipcRenderer.send(constants.IPC_DOWNLOAD_CANCEL);
+    this.cancelItemsStatus(Type.DOWNLOAD);
 
-      this.electronService.ipcRenderer.send(constants.IPC_DOWNLOAD_CANCEL);
-      this.cancelItemsStatus(Type.DOWNLOAD);
+    this.electronService.ipcRenderer.send(constants.IPC_UPLOAD_CANCEL);
+    this.cancelItemsStatus(Type.UPLOAD);
 
-      this.electronService.ipcRenderer.send(constants.IPC_UPLOAD_CANCEL);
-      this.cancelItemsStatus(Type.UPLOAD);
+    this.cancelItemsStatus(Type.EXPORT_S3);
 
-      this.cancelItemsStatus(Type.EXPORT_S3);
-
-      this.cancelItemsStatus(Type.EXPORT_GCP);
-    }
+    this.cancelItemsStatus(Type.EXPORT_GCP);
   }
 
   public cancelDownloads(): void {
@@ -113,7 +99,6 @@ export class GcsApiService extends GcsService {
   public cancelUploads() {
     this.electronService.ipcRenderer.send(constants.IPC_UPLOAD_CANCEL);
     this.store.dispatch(new uploadActions.CancelAllItems());
-    // return this.openModal(constants.IPC_UPLOAD_CANCEL, 'cancelAllUploads', Type.UPLOAD);
   }
 
   public cancelExportsToGCP() {
@@ -123,22 +108,6 @@ export class GcsApiService extends GcsService {
   public cancelExportToS3() {
     this.electronService.ipcRenderer.send('export-s3-cancel');
     this.store.dispatch(new exportToS3Actions.CancelAllItems());
-  }
-
-  openModal(action: string, data: string, type: string) {
-    const dialogRef = this.dialog.open(WarningModalComponent, {
-      width: '500px',
-      disableClose: true,
-      data: data
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result.exit) {
-        this.electronService.ipcRenderer.send(action);
-        this.cancelItemsStatus(type);
-      }
-    });
-    return dialogRef;
   }
 
   cancelItemsStatus(type: string) {
