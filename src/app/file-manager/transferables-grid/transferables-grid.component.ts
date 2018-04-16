@@ -36,7 +36,7 @@ import { ProgressBar } from 'primeng/primeng';
 import { Observable } from 'rxjs/Observable';
 import { WarningModalComponent } from '@app/file-manager/warning-modal/warning-modal.component';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-
+import { MatTabChangeEvent } from '@angular/material';
 
 @Component({
   selector: 'app-transferables-grid',
@@ -49,7 +49,7 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   static firstIteration: Boolean = true;
   @ViewChild('pbg') pbg: ProgressBar;
   tabFilter = '';
-
+  selectedIndex: number;
   displayedColumns = ['name', 'size', 'status', 'progress', 'actions'];
   generalProgress = 0;
   generalUploadProgress = 0;
@@ -103,13 +103,14 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
     private s3Service: S3ExportService,
     private spinner: NgxSpinnerService,
     private dialog: MatDialog) {
+    this.selectedIndex = 0;
     this.filesDatabase = new FilesDatabase(store);
 
     this.downloadState = this.store.select('downloads');
     this.uploadState = this.store.select('uploads');
     this.exportToGCSState = this.store.select('exportToGCS');
     this.exportToS3State = this.store.select('exportToS3');
-
+    this.selectedIndex = 0;
     /**
      * registering listeners to download progress info
      */
@@ -169,6 +170,7 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
       });
     });
 
+
   }
 
   load() {
@@ -226,6 +228,29 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
       this.spinner.show();
       localStorage.removeItem('displaySpinner');
     }
+
+    switch (localStorage.getItem('operation-type')) {
+      case Type.DOWNLOAD: {
+        this.selectedIndex = 0;
+        break;
+      }
+      case Type.UPLOAD: {
+        this.selectedIndex = 1;
+        break;
+      }
+      case Type.EXPORT_GCP: {
+        this.selectedIndex = 2;
+        break;
+      }
+      case Type.EXPORT_S3: {
+        this.selectedIndex = 3;
+        break;
+      }
+      default: {
+        this.selectedIndex = 0;
+        break;
+      }
+    }
   }
 
   ngAfterViewInit() {
@@ -273,11 +298,6 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
         this.spinner.hide();
       });
     });
-    //   this.zone.run(() => {
-    //     this.downloadCanceled = modalResponse.exit;
-    //     this.downloadInProgress = !modalResponse.exit;
-    //   });
-    // });
   }
 
   cancelExportsToGCP() {

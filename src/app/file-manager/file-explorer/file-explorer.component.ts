@@ -352,20 +352,6 @@ export class FileExplorerComponent implements OnInit, AfterViewInit {
       disableClose: true,
       data: items
     });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result !== undefined) {
-        if (result.cancel !== undefined) {
-          const itemsToRemove = new FilesDatabase(this.store).data()
-            .filter(item => (item.type === Type.EXPORT_GCP || item.type === Type.EXPORT_S3) && item.status === ItemStatus.PENDING);
-          itemsToRemove.forEach(item => {
-            this.store.dispatch(new Transferables.RemoveItem(item));
-          });
-        } else {
-          //this.transferablesGridComponent.startExport(result.preserveStructure, result.type);
-        }
-      }
-    });
   }
 }
 

@@ -200,7 +200,7 @@ export class FileExplorerUploadComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      let filesToUpload: UploadItem[] = [];
+      const filesToUpload: UploadItem[] = [];
       let dataFile: UploadItem;
 
       if (result !== undefined) {
@@ -214,7 +214,7 @@ export class FileExplorerUploadComponent implements OnInit {
 
             filesToUpload.push(dataFile);
           });
-
+        localStorage.setItem('operation-type', Type.UPLOAD);
         this.transferablesGridComponent.startUpload(filesToUpload);
         this.router.navigate(['/status']);
       }

@@ -79,7 +79,7 @@ export class FileDownloadModalComponent implements OnInit {
                   this.downloadFiles.push(dataFile);
                 }
               });
-
+          localStorage.setItem('operation-type', Type.DOWNLOAD);
           this.transferablesGridComponent.startDownload(this.downloadFiles);
           this.router.navigate(['/status']);
 
