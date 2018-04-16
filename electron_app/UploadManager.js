@@ -11,6 +11,7 @@ const uploadManager = (bucketName, fileList = [], access_token, win) => {
   fileList.forEach(file => {
     const contentType = mime.lookup(file.path) ? mime.lookup(file.path) : 'application/octet-stream';
     const size = Number(file.size);
+    const uri = url + 'Uploads/' + file.name;
     var progressConf = progress({
       length: size
     });
@@ -21,7 +22,7 @@ const uploadManager = (bucketName, fileList = [], access_token, win) => {
         'X-Upload-Content-Type': contentType,
         'X-Upload-Content-Length': size
       },
-      uri: url + 'Uploads/' + file.name,
+      uri: uri,
       method: 'POST',
       json: false,
       resolveWithFullResponse: true
@@ -47,7 +48,7 @@ const uploadManager = (bucketName, fileList = [], access_token, win) => {
             requestList.push(reqConfig);
 
           } else {
-            console.error("There was an error trying to connect to google");
+            console.error("There was an error trying to get location for the following url: ", uri);
             win.webContents.send(constants.IPC_UPLOAD_FAILED, file);
           }
         }

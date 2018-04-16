@@ -66,10 +66,10 @@ export class LimitTransferablesService implements OnInit {
     const inProgressCount = new FilesDatabase(this.store).uploadsChange.getValue().inProgress.count;
     const items: UploadItem[] = [];
     if (pendingCount > 0 && inProgressCount < environment.LIMIT_UPLOADS) {
-      const destinationBucket = localStorage.getItem('destinationBucket');
+      const uploadBucket = localStorage.getItem('uploadBucket');
       const item = Object.values(pendingItems)[0];
       items.push(item);
-      this.gcsService.uploadFiles(items, destinationBucket);
+      this.gcsService.uploadFiles(items, uploadBucket);
     }
   }
 
