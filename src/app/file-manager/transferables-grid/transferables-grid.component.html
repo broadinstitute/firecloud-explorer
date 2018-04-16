@@ -62,7 +62,7 @@
       <h4 class="subtitle light">{{ s3Progress | number:'1.0-0' }}%</h4>
     </div>
 
-    <p-progressBar mode="determinate" class="progress-bar" [ngClass]="{'success': s3Progress === 100, 'failure': ( !exportToS3pending && s3Total !== 0)}"
+    <p-progressBar mode="determinate" class="progress-bar" [ngClass]="{'success': s3Progress === 100, 'failure': ( !exportToS3pending && s3Total !== 0 && !s3InProgress)}"
       [value]="s3Progress" [showValue]="false"></p-progressBar>
 
     <div class="flex-container end actions">
@@ -82,23 +82,23 @@
 <mat-tab-group class="tab-group">
 
   <mat-tab label="Downloads">
-    <fc-progress-tab source="Down" [filter]="tabFilter">
-    </fc-progress-tab>
+    <app-progress-tab source="Down" [filter]="tabFilter">
+    </app-progress-tab>
   </mat-tab>
 
   <mat-tab label="Uploads">
-    <fc-progress-tab source="Up" [filter]="tabFilter">
-    </fc-progress-tab>
+    <app-progress-tab source="Up" [filter]="tabFilter">
+    </app-progress-tab>
   </mat-tab>
 
   <mat-tab  label="Exports to Google Cloud">
-    <fc-progress-tab source="GCS" [filter]="tabFilter">
-    </fc-progress-tab>
+    <app-progress-tab source="GCS" [filter]="tabFilter">
+    </app-progress-tab>
   </mat-tab>
 
   <mat-tab label="Exports to Amazon S3">
-    <fc-progress-tab source="S3" [filter]="tabFilter">
-    </fc-progress-tab>
+    <app-progress-tab source="S3" [filter]="tabFilter">
+    </app-progress-tab>
   </mat-tab>
 
 </mat-tab-group>

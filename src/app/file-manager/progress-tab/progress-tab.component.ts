@@ -3,7 +3,7 @@ import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
 import { NgxSpinnerService } from 'ngx-spinner';
 
 import { Store } from '@ngrx/store';
-import { ISubscription } from "rxjs/Subscription";
+import { ISubscription } from 'rxjs/Subscription';
 
 import { DownloadItem } from '../models/download-item';
 import { DownloadsReducer, DownloadState, downloadInitialState } from '../reducers/downloads.reducer';
@@ -24,11 +24,11 @@ import { AppState } from '@app/file-manager/reducers';
 import { EntityStatus } from '@app/file-manager/models/entity-status';
 
 @Component({
-  selector: 'fc-progress-tab',
+  selector: 'app-progress-tab',
   templateUrl: './progress-tab.component.html',
   styleUrls: ['./progress-tab.component.scss']
 })
-export class ProgressTabComponent implements OnInit {
+export class ProgressTabComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @Input('filter') set setFilter(filter) {
     this.applyFilter(filter);
@@ -46,10 +46,10 @@ export class ProgressTabComponent implements OnInit {
   exportsToGCS: Observable<ExportToGCSState>;
   exportsToS3: Observable<ExportToS3State>;
 
-  downloadsChange: BehaviorSubject<DownloadState> = new BehaviorSubject<DownloadState>(downloadInitialState);
-  uploadsChange: BehaviorSubject<UploadState> = new BehaviorSubject<UploadState>(uploadInitialState);
-  exportToGCSChange: BehaviorSubject<ExportToGCSState> = new BehaviorSubject<ExportToGCSState>(exportToGCSInitialState);
-  exportToS3Change: BehaviorSubject<ExportToS3State> = new BehaviorSubject<ExportToS3State>(exportToS3InitialState);
+  // downloadsChange: BehaviorSubject<DownloadState> = new BehaviorSubject<DownloadState>(downloadInitialState);
+  // uploadsChange: BehaviorSubject<UploadState> = new BehaviorSubject<UploadState>(uploadInitialState);
+  // exportToGCSChange: BehaviorSubject<ExportToGCSState> = new BehaviorSubject<ExportToGCSState>(exportToGCSInitialState);
+  // exportToS3Change: BehaviorSubject<ExportToS3State> = new BehaviorSubject<ExportToS3State>(exportToS3InitialState);
 
   private subscription: ISubscription;
 
@@ -60,10 +60,10 @@ export class ProgressTabComponent implements OnInit {
     this.exportsToGCS = store.select('exportToGCS');
     this.exportsToS3 = store.select('exportToS3');
 
-    this.downloads.subscribe(data => { this.downloadsChange.next(data); });
-    this.uploads.subscribe(data => { this.uploadsChange.next(data); });
-    this.exportsToGCS.subscribe(data => { this.exportToGCSChange.next(data); });
-    this.exportsToS3.subscribe(data => { this.exportToS3Change.next(data); });
+    // this.downloads.subscribe(data => { this.downloadsChange.next(data); });
+    // this.uploads.subscribe(data => { this.uploadsChange.next(data); });
+    // this.exportsToGCS.subscribe(data => { this.exportToGCSChange.next(data); });
+    // this.exportsToS3.subscribe(data => { this.exportToS3Change.next(data); });
   }
 
   ngOnInit() {
@@ -71,7 +71,7 @@ export class ProgressTabComponent implements OnInit {
     switch (this.source) {
 
       case 'Down':
-        this.subscription = this.downloadsChange.subscribe(
+        this.subscription = this.downloads.subscribe(
           state => {
             this.processChanges(state);
           }
@@ -79,7 +79,7 @@ export class ProgressTabComponent implements OnInit {
         break;
 
       case 'Up':
-        this.subscription = this.uploadsChange.subscribe(
+        this.subscription = this.uploads.subscribe(
           state => {
             this.processChanges(state);
           }
@@ -111,16 +111,23 @@ export class ProgressTabComponent implements OnInit {
   }
 
   private processChanges(state) {
-    let pending = Object.values(state.pending.items);
-    let inProgress = Object.values(state.inProgress.items);
-    let completed = Object.values(state.completed.items);
-    let paused = Object.values(state.paused.items);
-    let cancelled = Object.values(state.cancelled.items);
-    let failed = Object.values(state.failed.items);
+    const pending = Object.values(state.pending.items);
+    const inProgress = Object.values(state.inProgress.items);
+    const completed = Object.values(state.completed.items);
+    const paused = Object.values(state.paused.items);
+    const cancelled = Object.values(state.cancelled.items);
+    const failed = Object.values(state.failed.items);
 
-    this.zone.run(() => {
-      this.dataSource.data = [...pending, ...inProgress, ...completed, ...paused, ...cancelled, ...failed];
-    });
+    console.log('pending    ', pending);
+    console.log('inProgress ', inProgress);
+    console.log('completed  ', completed);
+    console.log('paused     ', paused);
+    console.log('cancelled  ', cancelled);
+    console.log('failed     ', failed);
+    console.log('-----------------------------------------------------------');
+
+    this.dataSource.data = [];
+    this.dataSource.data = [...pending, ...inProgress, ...completed, ...paused, ...cancelled, ...failed];
 
   }
 

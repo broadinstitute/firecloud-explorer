@@ -96,11 +96,11 @@ import { ProgressTabComponent } from './progress-tab/progress-tab.component';
     {
       provide: GcsService,
       deps: [HttpClient, ElectronService, Store, MatDialog, NgZone],
-      useFactory(http: HttpClient, electronService: ElectronService, store: Store<any>, dialog: MatDialog, zone: NgZone) {
+      useFactory(http: HttpClient, electronService: ElectronService, store: Store<any>, dialog: MatDialog) {
         if (environment.testing) {
           return new GcsApiMockService();
         } else {
-          return new GcsApiService(http, electronService, store, dialog, zone);
+          return new GcsApiService(http, electronService, store, dialog);
         }
       }
     },

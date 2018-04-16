@@ -116,32 +116,37 @@ export function DownloadsReducer(
             break;
 
         case DownloadItemActions.COMPLETE_ITEM:
-            // revert previous values 
-            state.totalTransferred -= state.inProgress.items[action.payload.id].transferred;
-            state.inProgress.transferred -= state.inProgress.items[action.payload.id].transferred;
+            console.log('downloads.reducer COMPLETE_ITEM', action.payload);
 
-            // add new values 
-            state.totalTransferred += action.payload.transferred;
-            state.inProgress.transferred += action.payload.transferred;
+            // revert previous values
+            if (state.inProgress.items[action.payload.id] !== undefined) {
 
-            // remove from "inProgress"
-            state.inProgress.count--;
-            delete state.inProgress.items[action.payload.id];
+                state.totalTransferred -= state.inProgress.items[action.payload.id].transferred;
+                state.inProgress.transferred -= state.inProgress.items[action.payload.id].transferred;
 
-            // add to "complete"
-            action.payload.status = EntityStatus.COMPLETED;
-            state.completed.count++;
-            state.completed.items[action.payload.id] = action.payload;
+                // add new values
+                state.totalTransferred += action.payload.transferred;
+                state.inProgress.transferred += action.payload.transferred;
+
+                // remove from "inProgress"
+                state.inProgress.count--;
+                delete state.inProgress.items[action.payload.id];
+
+                // add to "complete"
+                action.payload.status = EntityStatus.COMPLETED;
+                state.completed.count++;
+                state.completed.items[action.payload.id] = action.payload;
+            }
             break;
 
         case DownloadItemActions.COMPLETE_ITEMS:
             action.payload.items.forEach(item => {
 
-                // revert previous values 
+                // revert previous values
                 state.totalTransferred -= state.inProgress.items[item.id].transferred;
                 state.inProgress.transferred -= state.inProgress.items[item.id].transferred;
 
-                // add new values 
+                // add new values
                 state.totalTransferred += item.transferred;
                 state.inProgress.transferred += item.transferred;
 
@@ -194,7 +199,7 @@ export function DownloadsReducer(
             break;
 
         case DownloadItemActions.CANCEL_ALL:
-        
+
             if (state.pending.count > 0) {
                 Object.keys(state.pending.items).forEach(id => {
                     state.cancelled.count++;
@@ -235,17 +240,21 @@ export function DownloadsReducer(
             break;
 
         case DownloadItemActions.UPDATE_ITEM_PROGRESS:
-            // revert previous values 
-            state.totalTransferred -= state.inProgress.items[action.payload.id].transferred;
-            state.inProgress.transferred -= state.inProgress.items[action.payload.id].transferred;
+            // revert previous values
 
-            // add new values 
-            state.totalTransferred += action.payload.transferred;
-            state.inProgress.transferred += action.payload.transferred;
+            if (state.inProgress.items[action.payload.id] !== undefined) {
 
-            // update item
-            state.inProgress.items[action.payload.id].progress = action.payload.progress;
-            state.inProgress.items[action.payload.id].transferred = action.payload.transferred;
+                state.totalTransferred -= state.inProgress.items[action.payload.id].transferred;
+                state.inProgress.transferred -= state.inProgress.items[action.payload.id].transferred;
+
+                // add new values
+                state.totalTransferred += action.payload.transferred;
+                state.inProgress.transferred += action.payload.transferred;
+
+                // update item
+                state.inProgress.items[action.payload.id].progress = action.payload.progress;
+                state.inProgress.items[action.payload.id].transferred = action.payload.transferred;
+            }
             break;
 
         case DownloadItemActions.RESET:

@@ -25,8 +25,8 @@ export const CANCEL_ITEM = '[Download] Cancel Item';
 export const CANCEL_ITEMS = '[Download] Cancel Items';
 export const CANCEL_ALL = '[Download] Cancel All Items';
 
-export const FAIL_ITEM = '[Download] Cancel Item';
-export const FAIL_ITEMS = '[Download] Cancel Items';
+export const FAIL_ITEM = '[Download] Fail Item';
+export const FAIL_ITEMS = '[Download] Fail Items';
 
 export const UPDATE_ITEM = '[Download] Update Item';
 export const REMOVE_ITEM = '[Download] Remove Item';

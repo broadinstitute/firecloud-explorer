@@ -25,8 +25,8 @@ export const CANCEL_ITEM = '[ExportToS3] Cancel Item';
 export const CANCEL_ITEMS = '[ExportToS3] Cancel Items';
 export const CANCEL_ALL = '[ExportToS3] Cancel All Items';
 
-export const FAIL_ITEM = '[ExportToS3] Cancel Item';
-export const FAIL_ITEMS = '[ExportToS3] Cancel Items';
+export const FAIL_ITEM = '[ExportToS3] Fail Item';
+export const FAIL_ITEMS = '[ExportToS3] Fail Items';
 
 export const UPDATE_ITEM = '[ExportToS3] Update Item';
 export const REMOVE_ITEM = '[ExportToS3] Remove Item';

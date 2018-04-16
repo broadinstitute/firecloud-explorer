@@ -25,8 +25,8 @@ export const CANCEL_ITEM = '[Upload] Cancel Item';
 export const CANCEL_ITEMS = '[Upload] Cancel Items';
 export const CANCEL_ALL = '[Upload] Cancel All Items';
 
-export const FAIL_ITEM = '[Upload] Cancel Item';
-export const FAIL_ITEMS = '[Upload] Cancel Items';
+export const FAIL_ITEM = '[Upload] Fail Item';
+export const FAIL_ITEMS = '[Upload] Fail Items';
 
 export const UPDATE_ITEM = '[Upload] Update Item';
 export const REMOVE_ITEM = '[Upload] Remove Item';
@@ -36,17 +36,17 @@ export const UPDATE_ITEM_PROGRESS = '[Upload] Update Item Progress';
 
 export class Load implements Action {
     readonly type = LOAD;
-    constructor(public payload: { item: UploadItem }) {}
+    constructor(public payload: { item: UploadItem[] }) { }
 }
 
 export class Filter implements Action {
     readonly type = FILTER;
-    constructor(public payload: { item: UploadItem }) {}
+    constructor(public payload: { item: UploadItem[] }) { }
 }
 
 export class Reset implements Action {
     readonly type = RESET;
-    constructor() {}
+    constructor() { }
 }
 
 export class SelectAll implements Action {
@@ -55,7 +55,7 @@ export class SelectAll implements Action {
 
 export class UnselectAll implements Action {
     readonly type = UNSELECT_ALL;
-    constructor(public payload: { item: UploadItem }) {}
+    constructor(public payload: { item: UploadItem[] }) { }
 }
 
 export class ToggleSelection implements Action {
@@ -70,52 +70,52 @@ export class ToggleItemSelection implements Action {
 
 export class AddItem implements Action {
     readonly type = ADD_ITEM;
-    constructor(public payload: any) { }
+    constructor(public payload: UploadItem) { }
 }
 
 export class AddItems implements Action {
     readonly type = ADD_ITEMS;
-    constructor(public payload: any) { }
+    constructor(public payload: { items: UploadItem[] }) { }
 }
 
 export class ProcessItem implements Action {
     readonly type = PROCESS_ITEM;
-    constructor(public payload: any) { }
+    constructor(public payload: UploadItem) { }
 }
 
 export class ProcessItems implements Action {
     readonly type = PROCESS_ITEMS;
-    constructor(public payload: any) { }
+    constructor(public payload: { items: UploadItem[] }) { }
 }
 
 export class CompleteItem implements Action {
     readonly type = COMPLETE_ITEM;
-    constructor(public payload: any) { }
+    constructor(public payload: UploadItem) { }
 }
 
 export class CompleteItems implements Action {
     readonly type = COMPLETE_ITEMS;
-    constructor(public payload: any) { }
+    constructor(public payload: { items: UploadItem[] }) { }
 }
 
 export class PauseItem implements Action {
     readonly type = PAUSE_ITEM;
-    constructor(public payload: any) { }
+    constructor(public payload: UploadItem) { }
 }
 
 export class PauseItems implements Action {
     readonly type = PAUSE_ITEMS;
-    constructor(public payload: any) { }
+    constructor(public payload: { items: UploadItem[] }) { }
 }
 
 export class CancelItem implements Action {
     readonly type = CANCEL_ITEM;
-    constructor(public payload: any) { }
+    constructor(public payload: UploadItem) { }
 }
 
 export class CancelItems implements Action {
     readonly type = CANCEL_ITEMS;
-    constructor(public payload: any) { }
+    constructor(public payload: { items: UploadItem[] }) { }
 }
 
 export class CancelAllItems implements Action {
@@ -125,33 +125,33 @@ export class CancelAllItems implements Action {
 
 export class FailItem implements Action {
     readonly type = FAIL_ITEM;
-    constructor(public payload: any) { }
+    constructor(public payload: UploadItem) { }
 }
 
 export class FailItems implements Action {
     readonly type = FAIL_ITEMS;
-    constructor(public payload: any) { }
+    constructor(public payload: { items: UploadItem[] }) { }
 }
 
 export class UpdateItem implements Action {
     readonly type = UPDATE_ITEM;
-    constructor(public payload: any) { }
+    constructor(public payload: UploadItem) { }
 }
 
 export class RemoveItem implements Action {
     readonly type = REMOVE_ITEM;
-    constructor(public payload: any) { }
+    constructor(public payload: UploadItem) { }
 }
 
 export class SelectItem implements Action {
     readonly type = SELECT_ITEM;
-    constructor(public payload: any) { }
+    constructor(public payload: UploadItem) { }
 }
 
 export class UpdateProgress implements Action {
-  readonly type = UPDATE_ITEM_PROGRESS;
+    readonly type = UPDATE_ITEM_PROGRESS;
 
-  constructor(public payload: any) { }
+    constructor(public payload: UploadItem) { }
 }
 
 export type All

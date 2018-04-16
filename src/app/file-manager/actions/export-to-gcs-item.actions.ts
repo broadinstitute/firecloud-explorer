@@ -25,8 +25,8 @@ export const CANCEL_ITEM = '[ExportToGCS] Cancel Item';
 export const CANCEL_ITEMS = '[ExportToGCS] Cancel Items';
 export const CANCEL_ALL = '[ExportToGCS] Cancel All Items';
 
-export const FAIL_ITEM = '[ExportToGCS] Cancel Item';
-export const FAIL_ITEMS = '[ExportToGCS] Cancel Items';
+export const FAIL_ITEM = '[ExportToGCS] Fail Item';
+export const FAIL_ITEMS = '[ExportToGCS] Fail Items';
 
 export const UPDATE_ITEM = '[ExportToGCS] Update Item';
 export const REMOVE_ITEM = '[ExportToGCS] Remove Item';
