@@ -41,36 +41,73 @@ const exportGCPManager = (destinationBucket, fileList = [], access_token, win) =
       + '/o/' + urlencode('Imports/' + destinationObject)
       + '?fields=done,totalBytesRewritten,resource';
 
-    reqs.push(httpx.post(url, { "metadata": { "sourceId" : file.id } } ));
+    const postReq = httpx.post(url, { "metadata": { "sourceId": file.id } })
+      .catch(err => Rx.Observable.of(
+        {
+          done: false,
+          error: err,
+          sourceId: file.id
+        }
+      )
+      );
+
+    // if (error.response) {
+    //   // The request was made and the server responded with a status code
+    //   // that falls out of the range of 2xx
+    //   console.log(error.response.data);
+    //   console.log(error.response.status);
+    //   console.log(error.response.headers);
+    // } else if (error.request) {
+    //   // The request was made but no response was received
+    //   // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+    //   // http.ClientRequest in node.js
+    //   console.log(error.request);
+    // } else {
+    //   // Something happened in setting up the request that triggered an Error
+    //   console.log('Error', error.message);
+    // }
+    // console.log(error.config);
+
+    reqs.push(postReq);
 
   });
 
   // request all at once, get only one response 
-  Rx.Observable.forkJoin(reqs).subscribe(
-    response => {
+  Rx.Observable.forkJoin(reqs)
+    .subscribe(
+      response => {
+        response.forEach(item => {
 
-      response.forEach(item => {
-
-        completed.push(
-          {
-            id: item.resource.id,
-            transferred: item.totalBytesRewritten,
-            size: item.resource.size,
-            done: item.done,
-            sourceId: item.resource.metadata.sourceId,
-            md5hash: item.resource.md5hash
+          if (item.done === true) {
+            completed.push(
+              {
+                id: item.resource.id,
+                transferred: item.totalBytesRewritten,
+                size: item.resource.size,
+                done: item.done,
+                sourceId: item.resource.metadata.sourceId,
+                md5hash: item.resource.md5hash
+              }
+            );
+          } else {
+            failed.push(
+              {
+                id: item.sourceId,
+                transferred: 0,
+                done: item.done,
+                sourceId: item.sourceId,
+              });
           }
-        );
+        });
+
+        // report progress 
+        win.webContents.send(constants.IPC_EXPORT_TO_GCP_COMPLETE, completed);
+        win.webContents.send(constants.IPC_EXPORT_TO_GCP_FAILED, failed);
+      },
+      err => {
+        //how errors should be handled here ????
+        console.log(err);
       });
-      // report progress 
-      win.webContents.send(constants.IPC_EXPORT_TO_GCP_COMPLETE, completed);
-
-
-    },
-    err => {
-      //how errors should be handled here ????
-      console.log(err);
-    });
 }
 
 const exportGCPManagerCancel = () => {
