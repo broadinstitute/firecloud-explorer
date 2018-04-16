@@ -240,12 +240,7 @@ export class FileExportModalComponent implements OnInit {
     const filesToExport = [];
 
     this.selectedFiles().forEach(file => {
-
-      const dataFile: ExportToS3Item = new ExportToS3Item(file.id, file.name,
-        file.updated, file.created, file.size, file.mediaLink, file.path,
-        '', EntityStatus.PENDING, '', '', '',
-        this.preserveStructure, '', file.displayName, '');
-
+      localStorage.setItem('preserveStructureS3', String(this.preserveStructure));
       filesToExport.push(file);
     });
 

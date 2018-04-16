@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Item } from '@app/file-manager/models/item';
 import { SecurityService } from '@app/file-manager/services/security.service';
 import { ElectronIpcApiService } from '@app/file-manager/services/electron-ipc.api.service';
 import { AppState } from '@app/file-manager/reducers';
@@ -16,10 +15,10 @@ export class S3ExportService {
   ) { }
 
   public startFileExportToS3(items: ExportToS3Item[]) {
-     this.store.dispatch(new exportToS3Actions.ProcessItems({ items: items }))
+    this.store.dispatch(new exportToS3Actions.ProcessItems({ items: items }));
     items.forEach(item => {
       const dataTransfer = {
-        'preserveStructure': JSON.parse(localStorage.getItem('preserveStructure')),
+        'preserveStructure': JSON.parse(localStorage.getItem('preserveStructureS3')),
         'gcsToken': SecurityService.getAccessToken(),
         'bucketName': localStorage.getItem('S3BucketName'),
         'item': item
