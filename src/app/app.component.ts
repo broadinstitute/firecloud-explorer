@@ -74,13 +74,7 @@ export class AppComponent implements OnInit, OnDestroy {
   @HostListener('window:beforeunload')
   checkBeforeClose() {
     event.preventDefault();
-    const items = new FilesDatabase(this.store).data().
-    filter(item =>
-         item.status === ItemStatus.DOWNLOADING
-      || item.status === ItemStatus.UPLOADING
-      || (item.status === ItemStatus.PENDING && item.type === Type.EXPORT_GCP)
-      || (item.status === ItemStatus.EXPORTING_S3 && item.type === Type.EXPORT_S3));
-    if (items.length > 0) {
+    if (this.inProgress) {
       const dialogRef = this.dialog.open(WarningModalComponent, {
         width: '500px',
         disableClose: false,
@@ -147,9 +141,6 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   onLogoutClick() {
-
-    console.log(this.inProgress);
-
     if (this.inProgress) {
       const dialogRef = this.dialog.open(WarningModalComponent, {
         width: '500px',
@@ -158,7 +149,6 @@ export class AppComponent implements OnInit, OnDestroy {
       });
       dialogRef.afterClosed().subscribe(result => {
         if (result.exit) {
-          console.log('CANCEL ALL');
           this.store.dispatch(new Transferables.Reset());
           this.gcsService.cancelAll();
           this.logout();
