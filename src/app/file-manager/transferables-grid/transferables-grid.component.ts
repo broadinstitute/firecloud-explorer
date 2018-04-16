@@ -243,15 +243,19 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   }
 
   cancelUploads() {
+    this.spinner.show();
     const dialogRef = this.dialog.open(WarningModalComponent, {
       width: '500px',
       disableClose: true,
       data: 'cancelAllUploads'
     });
     dialogRef.afterClosed().subscribe(modalResponse => {
-      if (modalResponse.exit) {
+      this.zone.run(() => {
+        this.upCanceled = modalResponse.exit;
+        this.upInProgress = !modalResponse.exit;
         this.gcsService.cancelUploads();
-      }
+        this.spinner.hide();
+      });
     });
   }
 
