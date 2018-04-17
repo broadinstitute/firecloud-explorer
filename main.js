@@ -1,7 +1,7 @@
 if (require('electron-squirrel-startup')) return;
 
 // ./main.js
-const { app, BrowserWindow, ipcMain, } = require('electron');
+const { app, BrowserWindow, ipcMain, Menu} = require('electron');
 const path = require('path');
 const url = require('url');
 const {
@@ -65,6 +65,26 @@ app.on('ready', function () {
   win.once('ready-to-show', () => {
     win.show();
   });
+
+  if (process.platform === 'darwin') {
+    // Create our menu entries so that we can use MAC shortcuts
+    Menu.setApplicationMenu(Menu.buildFromTemplate([
+      {
+        label: 'Edit',
+        submenu: [
+          { role: 'undo' },
+          { role: 'redo' },
+          { type: 'separator' },
+          { role: 'cut' },
+          { role: 'copy' },
+          { role: 'paste' },
+          { role: 'pasteandmatchstyle' },
+          { role: 'delete' },
+          { role: 'selectall' }
+        ]
+      }
+    ]));
+  }
 
   ipcMain.on(constants.IPC_EXPORT_TO_GCP_START, (event, destinationBucket, files, access_token) => {
     exportGCPManager(destinationBucket, files, access_token, win);

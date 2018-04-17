@@ -1,5 +1,5 @@
 {
-  "options.name":"firecloud-explorer",
+  "options.name":"firecloud-datashuttle",
   "dest": "app/linux/installers/",
   "icon": "src/assets/icons/png/1024x1024.png",
   "categories": [
@@ -8,6 +8,6 @@
   "lintianOverrides": [
     "changelog-file-missing-in-native-package"
   ],
-  "bin":"FireCloud Explorer"
+  "bin":"FireCloud DataShuttle"
 }
 
