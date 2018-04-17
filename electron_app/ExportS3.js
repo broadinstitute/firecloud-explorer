@@ -18,10 +18,7 @@ const ExportS3 = (win, data) => {
 const testS3Credentials = (data) => {
   let errorMessage = null;
   AWS.config.update({ accessKeyId: data.accessKey, secretAccessKey: data.secretKey });
-
   s3 = new AWS.S3({
-    accessKeyId: data.accessKey,
-    secretAccessKey: data.secretKey,
     params: { Bucket: data.bucketName }
   });
 

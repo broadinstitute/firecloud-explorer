@@ -205,6 +205,7 @@ export class FileExplorerUploadComponent implements OnInit {
       let dataFile: UploadItem;
 
       if (result !== undefined) {
+        this.transferablesGridComponent.updateCurrentBatch(Type.UPLOAD);
         this.selectedFiles
           .filter(file => file.data.type === Type.FILE)
           .forEach(file => {

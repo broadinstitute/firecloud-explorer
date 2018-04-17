@@ -66,7 +66,6 @@ export class FileExportModalComponent implements OnInit {
   }
 
   ngOnInit() {
-
     if (localStorage.getItem('S3BucketName') !== undefined) {
       this.exportForm = this.formBuilder.group({
         exportDestination: [''],
