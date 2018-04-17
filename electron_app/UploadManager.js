@@ -73,7 +73,6 @@ const uploadManager = (bucketName, fileList = [], access_token, win) => {
 const uploadManagerCancel = () => {
   requestList.forEach(request => {
     request.abort();
-    console.log(request.path);
   });
   requestList = [];
 };
