@@ -15,7 +15,7 @@ const exportGCPManager = (destinationBucket, fileList = [], access_token, win) =
         'User-Agent': 'Firecloud DataShuttle'
       },
       params: {},
-      timeout: 4000000,
+      timeout: 60000,
     }
   );
 
@@ -44,15 +44,12 @@ const exportGCPManager = (destinationBucket, fileList = [], access_token, win) =
   });
 
   // request all at once, get only one response 
-
-
-  Rx.Observable.forkJoin(reqs)
+  const completed = [];
+  const failed = [];
+  Rx.Observable.forkJoin(reqs).delay(500).timeout(30000)
     .subscribe(
       response => {
-        
-        const completed = [];
-        const failed = [];
-        
+
         response.forEach(item => {
 
           if (item.done === true) {
@@ -76,7 +73,12 @@ const exportGCPManager = (destinationBucket, fileList = [], access_token, win) =
               });
           }
         });
-
+      },
+      err => {
+        //how errors should be handled here ????
+        console.log(err);
+      },
+      () => {
         // report progress 
         if (completed.length > 0) {
           win.webContents.send(constants.IPC_EXPORT_TO_GCP_COMPLETE, completed);
@@ -85,10 +87,6 @@ const exportGCPManager = (destinationBucket, fileList = [], access_token, win) =
         if (failed.length > 0) {
           win.webContents.send(constants.IPC_EXPORT_TO_GCP_FAILED, failed);
         }
-      },
-      err => {
-        //how errors should be handled here ????
-        console.log(err);
       });
 };
 
