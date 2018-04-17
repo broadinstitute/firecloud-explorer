@@ -323,17 +323,6 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
     });
   }
 
-  handleGcpExport(pendingItems) {
-    // cancelGCPExports its a flag which indicates if cancel order has been given
-    if (!this.gcsService.cancelGCPExports) {
-      // exportToGcpItems passes the list of items to be exported when each chunk has already finished its export
-      this.limitTransferables.exportItems(pendingItems);
-    } else {
-      // prepares the Ui to indicate that exports to gcp have been cancelled
-      TransferablesGridComponent.isExporting = false;
-    }
-  }
-
   cancelExportsToS3() {
     const dialogRef = this.dialog.open(WarningModalComponent, {
       width: '500px',
