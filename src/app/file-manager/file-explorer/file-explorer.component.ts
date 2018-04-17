@@ -1,4 +1,4 @@
-import { Component, OnInit, NgZone, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, NgZone, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { Item } from '@app/file-manager/models/item';
 
 import { FilterSizePipe } from '../filters/filesize-filter';
@@ -16,12 +16,11 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { SelectionService } from '@app/file-manager/services/selection.service';
 import { FileExportModalComponent } from '@app/file-manager/file-export-modal/file-export-modal.component';
 import { TransferablesGridComponent } from '@app/file-manager/transferables-grid/transferables-grid.component';
-import { FilesDatabase } from '@app/file-manager/dbstate/files-database';
 import { Type } from '@app/file-manager/models/type';
 import { AppState } from '@app/file-manager/reducers';
 import { Store } from '@ngrx/store';
-import * as Transferables from '@app/file-manager/actions/transferables.actions';
-import { downloadInitialState } from '@app/file-manager/reducers/downloads.reducer';
+
+import { ISubscription } from 'rxjs/Subscription';
 
 @Component({
   selector: 'app-file-explorer',
@@ -31,7 +30,16 @@ import { downloadInitialState } from '@app/file-manager/reducers/downloads.reduc
     { provide: MAT_CHECKBOX_CLICK_ACTION, useValue: 'check-indeterminate' }
   ]
 })
-export class FileExplorerComponent implements OnInit, AfterViewInit {
+export class FileExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
+
+  downSubscription: ISubscription;
+  isDownInProgress: any;
+
+  gcsSubscription: ISubscription;
+  isGCSInProgress: any;
+
+  s3Subscription: ISubscription;
+  isS3InProgress: any;
 
   isHome: Boolean = false;
   displayedColumns = ['select', 'displayName', 'size', 'updated'];
@@ -57,6 +65,23 @@ export class FileExplorerComponent implements OnInit, AfterViewInit {
     private store: Store<AppState>) {
     this.breadcrumbItems = [];
 
+    this.downSubscription = this.store.select('downloads').subscribe(
+      data => {
+        this.isDownInProgress = data.inProgress.count > 0;
+      }
+    );
+
+    this.gcsSubscription = this.store.select('exportToGCS').subscribe(
+      data => {
+        this.isGCSInProgress = data.inProgress.count > 0;
+      }
+    );
+
+    this.s3Subscription = this.store.select('exportToS3').subscribe(
+      data => {
+        this.isS3InProgress = data.inProgress.count > 0;
+      }
+    );
   }
 
   ngOnInit() {
@@ -89,17 +114,17 @@ export class FileExplorerComponent implements OnInit, AfterViewInit {
 
     this.firecloudService.getUserFirecloudWorkspaces(this.headerItem, false)
       .subscribe(
-      workspaces => {
-        data = workspaces;
-      },
-      error => {
-        console.log('firecloudService error ....', error);
-      },
-      () => {
-        this.headerItem.children = data;
-        this.dataSource.data = this.headerItem.children;
-        this.spinner.hide();
-      });
+        workspaces => {
+          data = workspaces;
+        },
+        error => {
+          console.log('firecloudService error ....', error);
+        },
+        () => {
+          this.headerItem.children = data;
+          this.dataSource.data = this.headerItem.children;
+          this.spinner.hide();
+        });
   }
 
   /*
@@ -115,17 +140,17 @@ export class FileExplorerComponent implements OnInit, AfterViewInit {
 
     this.bucketService.getBucketData(node, null, true, true)
       .subscribe(
-      elements => {
-        data = elements;
-      },
-      error => {
-        console.log(JSON.stringify(error, null, 2));
-      },
-      () => {
-        this.headerItem.children = data;
-        this.dataSource.data = this.headerItem.children;
-        this.spinner.hide();
-      });
+        elements => {
+          data = elements;
+        },
+        error => {
+          console.log(JSON.stringify(error, null, 2));
+        },
+        () => {
+          this.headerItem.children = data;
+          this.dataSource.data = this.headerItem.children;
+          this.spinner.hide();
+        });
   }
 
   /*
@@ -185,13 +210,13 @@ export class FileExplorerComponent implements OnInit, AfterViewInit {
     });
     this.headerItem.children
       .forEach(
-      row => {
-        if (selected) {
-          this.selectionService.selectRow(row);
-        } else {
-          this.selectionService.deselectRow(row);
+        row => {
+          if (selected) {
+            this.selectionService.selectRow(row);
+          } else {
+            this.selectionService.deselectRow(row);
+          }
         }
-      }
       );
     this.zone.run(() => {
       this.spinner.hide();
@@ -302,14 +327,11 @@ export class FileExplorerComponent implements OnInit, AfterViewInit {
   }
 
   downloadInProgress(): Boolean {
-    return new FilesDatabase(this.store).downloadsChange.getValue()
-    .inProgress.count > 0 ? true : false;
+    return this.isDownInProgress;
   }
 
   exportInProgress(): Boolean {
-    return new FilesDatabase(this.store).exportToGCSChange.getValue().inProgress.count > 0
-        || new FilesDatabase(this.store).exportToS3Change.getValue().inProgress.count > 0
-        ? true : false;
+    return this.isGCSInProgress || this.isS3InProgress;
   }
 
   cleanSelection(): void {
@@ -352,6 +374,12 @@ export class FileExplorerComponent implements OnInit, AfterViewInit {
       disableClose: true,
       data: items
     });
+  }
+
+  ngOnDestroy(): void {
+    this.downSubscription.unsubscribe();
+    this.gcsSubscription.unsubscribe();
+    this.s3Subscription.unsubscribe();
   }
 }
 

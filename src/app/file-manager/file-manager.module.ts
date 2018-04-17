@@ -18,7 +18,6 @@ import { TransferablesGridComponent } from './transferables-grid/transferables-g
 import { FilesService } from './services/files.service';
 import { GcsService } from './services/gcs.service';
 import { StatusService } from './services/status.service';
-import { FilesDatabase } from './dbstate/files-database';
 import { BucketService } from './services/bucket.service';
 
 import { DownloadValidatorService } from './services/download-validator.service';
@@ -81,7 +80,6 @@ import { ProgressTabComponent } from './progress-tab/progress-tab.component';
     FilterSizePipe,
     TransferablesGridComponent,
     StatusService,
-    FilesDatabase,
     FilesService,
     PreflightService,
     BucketService,

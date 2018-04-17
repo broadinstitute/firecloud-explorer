@@ -14,10 +14,8 @@ import { TreeTable } from 'primeng/primeng';
 import { ChangeDetectorRef } from '@angular/core';
 import { Type } from '@app/file-manager/models/type';
 import { EntityStatus } from '@app/file-manager/models/entity-status';
-
+import { ISubscription } from 'rxjs/Subscription';
 import { StatusService } from '@app/file-manager/services/status.service';
-import { FilesDatabase } from '../dbstate/files-database';
-
 import { UUID } from 'angular2-uuid';
 
 @Component({
@@ -29,8 +27,10 @@ export class FileExplorerUploadComponent implements OnInit {
   msgs: Message[];
 
   @ViewChild(TreeTable) tt: TreeTable;
-
   @Output('done') done: EventEmitter<any> = new EventEmitter();
+
+  upSubscription: ISubscription;
+  isUpInProgress: any;
 
   files: TreeNode[];
   selectedFiles: TreeNode[] = [];
@@ -50,6 +50,12 @@ export class FileExplorerUploadComponent implements OnInit {
     private changeDetectorRef: ChangeDetectorRef,
     private zone: NgZone
   ) {
+
+    this.upSubscription = this.store.select('uploads').subscribe(
+      data => {
+        this.isUpInProgress = data.inProgress.count > 0;
+      }
+    );
   }
 
   ngOnInit() {
@@ -224,7 +230,6 @@ export class FileExplorerUploadComponent implements OnInit {
   }
 
   uploadInProgress() {
-    return new FilesDatabase(this.store).uploadsChange.getValue()
-      .inProgress.count > 0;
+    return this.isUpInProgress;
   }
 }
