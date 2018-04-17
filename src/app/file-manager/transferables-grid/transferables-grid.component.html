@@ -9,7 +9,7 @@
       <h4 class="subtitle light">{{ downProgress | number:'1.0-0' }}%</h4>
     </div>
 
-    <p-progressBar mode="determinate" class="progress-bar" [ngClass]="{'success': downProgress === 100, 'failure': downCanceled}"
+    <p-progressBar mode="determinate" class="progress-bar" [ngClass]="{'success': downFinished, 'failure': downCanceled}"
       [value]="downProgress" [showValue]="false"></p-progressBar>
 
     <div class="flex-container end actions">
@@ -26,7 +26,7 @@
       <h4 class="subtitle light">{{ upProgress | number:'1.0-0' }}%</h4>
     </div>
 
-    <p-progressBar mode="determinate" class="progress-bar" [ngClass]="{'success': upProgress === 100, 'failure': upCanceled}"
+    <p-progressBar mode="determinate" class="progress-bar" [ngClass]="{'success': upFinished, 'failure': upCanceled}"
       [value]="upProgress" [showValue]="false"></p-progressBar>
 
     <div class="flex-container end actions">
@@ -43,7 +43,7 @@
       <h4 class="subtitle light">{{ gcsProgress | number:'1.0-0' }}%</h4>
     </div>
 
-    <p-progressBar mode="determinate" class="progress-bar" [ngClass]="{'success': gcsProgress === 100, 'failure': gcsCanceled}"
+    <p-progressBar mode="determinate" class="progress-bar" [ngClass]="{'success': gcsFinished, 'failure': gcsCanceled}"
       [value]="gcsProgress" [showValue]="false"></p-progressBar>
 
     <div class="flex-container end actions">
@@ -60,7 +60,7 @@
       <h4 class="subtitle light">{{ s3Progress | number:'1.0-0' }}%</h4>
     </div>
 
-    <p-progressBar mode="determinate" class="progress-bar" [ngClass]="{'success': s3Progress === 100, 'failure': s3Canceled}"
+    <p-progressBar mode="determinate" class="progress-bar" [ngClass]="{'success': s3Finished, 'failure': s3Canceled}"
       [value]="s3Progress" [showValue]="false"></p-progressBar>
 
     <div class="flex-container end actions">

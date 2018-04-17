@@ -58,6 +58,7 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   downPending = false;
   downInProgress = false;
   downCanceled = false;
+  downFinished = false;
 
   upCompleted = 0;
   upTotal = 0;
@@ -65,6 +66,7 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   upPending = false;
   upInProgress = false;
   upCanceled = false;
+  upFinished = false;
 
   gcsCompleted = 0;
   gcsTotal = 0;
@@ -72,6 +74,7 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   gcsPending = false;
   gcsInProgress = false;
   gcsCanceled = false;
+  gcsFinished = false;
 
   s3Completed = 0;
   s3Total = 0;
@@ -79,6 +82,7 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   s3Pending = false;
   s3InProgress = false;
   s3Canceled = false;
+  s3Finished = false;
 
   downloadState: Observable<DownloadState>;
   uploadState: Observable<UploadState>;
@@ -115,6 +119,7 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
         this.downInProgress = cs.inProgress.count > 0;
         this.downPending = cs.pending.count > 0;
         this.downCanceled = (cs.cancelled.count + cs.failed.count) > 0;
+        this.downFinished = (cs.cancelled.count + cs.failed.count + this.downCompleted) == this.downTotal;
       });
     });
 
@@ -132,6 +137,7 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
         this.upInProgress = cs.inProgress.count > 0;
         this.upPending = cs.pending.count > 0;
         this.upCanceled = (cs.cancelled.count + cs.failed.count) > 0;
+        this.upFinished = (cs.cancelled.count + cs.failed.count + this.upCompleted) == this.upTotal;
       });
     });
 
@@ -149,6 +155,7 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
         this.gcsInProgress = cs.inProgress.count > 0;
         this.gcsPending = cs.pending.count > 0;
         this.gcsCanceled = (cs.cancelled.count + cs.failed.count) > 0;
+        this.gcsFinished = (cs.cancelled.count + cs.failed.count + this.gcsCompleted) == this.gcsTotal;
       });
     });
 
@@ -166,6 +173,7 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
         this.s3InProgress = cs.inProgress.count > 0;
         this.s3Pending = cs.pending.count > 0;
         this.s3Canceled = (cs.cancelled.count + cs.failed.count) > 0;
+        this.s3Finished = (cs.cancelled.count + cs.failed.count + this.s3Completed) == this.s3Total;
       });
     });
 
