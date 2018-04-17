@@ -69,10 +69,11 @@ const uploadS3 = (data) => {
   request.get(url, setHeader(data.gcsToken))
     .on('error', (err) => {
       console.error(err);
+      electronWin.webContents.send(constants.IPC_EXPORT_TO_S3_FAILED, data.item);
     }).pipe(uploadStream);
   // Handle errors.
   uploadStream.on('error', (error) => {
-    console.error('ERROR --> ', error);
+    console.error(error);
     electronWin.webContents.send(constants.IPC_EXPORT_TO_S3_FAILED, data.item);
   });
 

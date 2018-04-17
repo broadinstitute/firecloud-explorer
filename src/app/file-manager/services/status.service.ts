@@ -88,7 +88,7 @@ export class StatusService {
     });
 
     this.electronService.ipcRenderer.on(constants.IPC_EXPORT_TO_S3_FAILED, (event, items) => {
-      this.store.dispatch(new exportToS3Actions.FailItems({ items: items }));
+      this.store.dispatch(new exportToS3Actions.FailItems({ items: [items] }));
       this.limitTransferables.pendingS3Item();
     });
 
