@@ -72,7 +72,8 @@ const uploadS3 = (data) => {
     }).pipe(uploadStream);
   // Handle errors.
   uploadStream.on('error', (error) => {
-    console.error(error);
+    console.error('ERROR --> ', error);
+    electronWin.webContents.send(constants.IPC_EXPORT_TO_S3_FAILED, data.item);
   });
 
   uploadStream.on('part', (details) => {

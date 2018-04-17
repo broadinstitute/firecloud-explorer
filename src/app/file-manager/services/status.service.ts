@@ -1,15 +1,11 @@
 import { Injectable } from '@angular/core';
 import { ElectronService } from 'ngx-electron';
 
-import { Observable } from 'rxjs/Observable';
-import { Item } from '../models/item';
-import { DownloadItem } from '../models/download-item';
-import * as Transferables from '../actions/transferables.actions';
-
 import * as downloadActions from '../actions/download-item.actions';
 import * as uploadActions from '../actions/upload-item.actions';
 import * as exportToGCSActions from '../actions/export-to-gcs-item.actions';
 import * as exportToS3Actions from '../actions/export-to-s3-item.actions';
+
 import { Store } from '@ngrx/store';
 import { AppState } from '@app/file-manager/reducers';
 import { LimitTransferablesService } from '@app/file-manager/services/limit-transferables.service';
