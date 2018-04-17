@@ -117,7 +117,7 @@ export class GcsApiService extends GcsService {
   }
 
   public exportToGCSFiles(files: ExportToGCSItem[], destinationBucket: string) {
-    if (files !== undefined && files === null && files.length > 0) {
+    if (files !== undefined && files !== null && files.length > 0) {
       this.store.dispatch(new exportToGCSActions.ProcessItems({ items: files }));
       this.electronService.ipcRenderer.send(constants.IPC_EXPORT_TO_GCP_START, destinationBucket, files, SecurityService.getAccessToken());
     }
