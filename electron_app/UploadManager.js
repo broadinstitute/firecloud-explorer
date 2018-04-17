@@ -3,7 +3,7 @@ const mime = require('mime-types');
 const req = require('request');
 const constants = require('./helpers/environment').constants;
 const progress = require('progress-stream');
-var requestList = [];
+let requestList = [];
 
 const uploadManager = (bucketName, fileList = [], access_token, win) => {
 
@@ -12,7 +12,7 @@ const uploadManager = (bucketName, fileList = [], access_token, win) => {
     const contentType = mime.lookup(file.path) ? mime.lookup(file.path) : 'application/octet-stream';
     const size = Number(file.size);
     const uri = url + 'Uploads/' + file.name;
-    var progressConf = progress({
+    let progressConf = progress({
       length: size
     });
 
@@ -28,17 +28,17 @@ const uploadManager = (bucketName, fileList = [], access_token, win) => {
       resolveWithFullResponse: true
     },
 
-      function (err, resp, body) {
+      (err, resp, body) => {
         if (err) {
           console.log('Error!', err);
         } else {
-          var location = resp.headers['location'];
+          let location = resp.headers['location'];
 
           if (location !== undefined) {
-            var reqConfig = req.put({
+            let reqConfig = req.put({
               uri: location
             },
-              function (err, resp, body) {
+              (err, resp, body) => {
                 if (err) {
                   console.log('Error!', err);
                 }
@@ -53,7 +53,7 @@ const uploadManager = (bucketName, fileList = [], access_token, win) => {
           }
         }
 
-        progressConf.on('progress', function (progress) {
+        progressConf.on('progress', (progress) => {
           if (progress.percentage >= 100.0 && progress.delta === 0) {
             file.progress = 100;
             file.transferred = Number(file.size);
@@ -68,15 +68,14 @@ const uploadManager = (bucketName, fileList = [], access_token, win) => {
     )
 
   });
-}
+};
 
 const uploadManagerCancel = () => {
   requestList.forEach(request => {
     request.abort();
+    console.log(request.path);
   });
-}
-
-module.exports = {
-  uploadManager,
-  uploadManagerCancel
+  requestList = [];
 };
+
+module.exports = { uploadManager, uploadManagerCancel };

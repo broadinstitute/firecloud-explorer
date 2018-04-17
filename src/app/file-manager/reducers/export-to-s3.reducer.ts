@@ -188,7 +188,7 @@ export function ExportToS3Reducer(
         case ExportToS3ItemActions.FAIL_ITEM:
             state.inProgress.count--;
             delete state.inProgress.items[action.payload.id];
-            action.payload.state = EntityStatus.FAILED;
+            action.payload.status = EntityStatus.FAILED;
             state.failed.count++;
             state.failed.items[action.payload.id] = action.payload;
             break;
@@ -241,7 +241,7 @@ export function ExportToS3Reducer(
             state.completed.items = {};
 
             state.paused.count = 0;
-            state.paused.items = {};
+        state.paused.items = {};
 
             state.cancelled = { count: 0, items: {} };
             state.failed = { count: 0, items: {} };

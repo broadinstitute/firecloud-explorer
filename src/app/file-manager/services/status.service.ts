@@ -1,15 +1,11 @@
 import { Injectable } from '@angular/core';
 import { ElectronService } from 'ngx-electron';
 
-import { Observable } from 'rxjs/Observable';
-import { Item } from '@app/file-manager/models/item';
-import { DownloadItem } from '@app/file-manager/models/download-item';
-import * as Transferables from '@app/file-manager/actions/transferables.actions';
-
 import * as downloadActions from '@app/file-manager/actions/download-item.actions';
 import * as uploadActions from '@app/file-manager/actions/upload-item.actions';
 import * as exportToGCSActions from '@app/file-manager/actions/export-to-gcs-item.actions';
 import * as exportToS3Actions from '@app/file-manager/actions/export-to-s3-item.actions';
+
 import { Store } from '@ngrx/store';
 import { AppState } from '@app/file-manager/reducers';
 import { LimitTransferablesService } from '@app/file-manager/services/limit-transferables.service';
@@ -96,8 +92,8 @@ export class StatusService {
       this.limitTransferables.continueExportingToS3();
     });
 
-    this.electronService.ipcRenderer.on(constants.IPC_EXPORT_TO_S3_FAILED, (event, items) => {
-      this.store.dispatch(new exportToS3Actions.FailItems({ items: items }));
+    this.electronService.ipcRenderer.on(constants.IPC_EXPORT_TO_S3_FAILED, (event, item) => {
+      this.store.dispatch(new exportToS3Actions.FailItem(item));
       this.limitTransferables.continueExportingToS3();
     });
 

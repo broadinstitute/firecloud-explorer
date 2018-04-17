@@ -1,6 +1,6 @@
 let AWS = require('aws-sdk');
 let s3Stream = require('s3-upload-stream');
-AWS.config.httpOptions = { timeout: 5000 };
+AWS.config.httpOptions = { timeout: 60000 };
 const constants = require('./helpers/environment').constants;
 const request = require('request');
 
@@ -67,12 +67,12 @@ const uploadS3 = (data) => {
   });
 
   request.get(url, setHeader(data.gcsToken))
-    .on('error', (err) => {
-      console.error(err);
+    .on('error', (error) => {
+      electronWin.webContents.send(constants.IPC_EXPORT_TO_S3_FAILED, data.item);
     }).pipe(uploadStream);
   // Handle errors.
   uploadStream.on('error', (error) => {
-    console.error(error);
+    electronWin.webContents.send(constants.IPC_EXPORT_TO_S3_FAILED, data.item);
   });
 
   uploadStream.on('part', (details) => {
