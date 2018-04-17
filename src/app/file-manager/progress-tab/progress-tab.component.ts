@@ -46,11 +46,6 @@ export class ProgressTabComponent implements OnInit, AfterViewInit, OnDestroy {
   exportsToGCS: Observable<ExportToGCSState>;
   exportsToS3: Observable<ExportToS3State>;
 
-  // downloadsChange: BehaviorSubject<DownloadState> = new BehaviorSubject<DownloadState>(downloadInitialState);
-  // uploadsChange: BehaviorSubject<UploadState> = new BehaviorSubject<UploadState>(uploadInitialState);
-  // exportToGCSChange: BehaviorSubject<ExportToGCSState> = new BehaviorSubject<ExportToGCSState>(exportToGCSInitialState);
-  // exportToS3Change: BehaviorSubject<ExportToS3State> = new BehaviorSubject<ExportToS3State>(exportToS3InitialState);
-
   private subscription: ISubscription;
 
   constructor(private store: Store<AppState>, private spinner: NgxSpinnerService, private zone: NgZone, ) {
@@ -60,10 +55,6 @@ export class ProgressTabComponent implements OnInit, AfterViewInit, OnDestroy {
     this.exportsToGCS = store.select('exportToGCS');
     this.exportsToS3 = store.select('exportToS3');
 
-    // this.downloads.subscribe(data => { this.downloadsChange.next(data); });
-    // this.uploads.subscribe(data => { this.uploadsChange.next(data); });
-    // this.exportsToGCS.subscribe(data => { this.exportToGCSChange.next(data); });
-    // this.exportsToS3.subscribe(data => { this.exportToS3Change.next(data); });
   }
 
   ngOnInit() {
@@ -104,10 +95,6 @@ export class ProgressTabComponent implements OnInit, AfterViewInit, OnDestroy {
 
     }
 
-    // if (localStorage.getItem('displaySpinner') === 'true') {
-    //   this.spinner.show();
-    //   localStorage.removeItem('displaySpinner');
-    // }
   }
 
   private processChanges(state) {
