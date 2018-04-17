@@ -87,8 +87,8 @@ export class StatusService {
       this.limitTransferables.pendingS3Item();
     });
 
-    this.electronService.ipcRenderer.on(constants.IPC_EXPORT_TO_S3_FAILED, (event, items) => {
-      this.store.dispatch(new exportToS3Actions.FailItems({ items: [items] }));
+    this.electronService.ipcRenderer.on(constants.IPC_EXPORT_TO_S3_FAILED, (event, item) => {
+      this.store.dispatch(new exportToS3Actions.FailItem(item));
       this.limitTransferables.pendingS3Item();
     });
 
