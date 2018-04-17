@@ -120,7 +120,8 @@ export class ProgressTabComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.zone.run(() => {
       this.dataSource.data = [];
-      this.dataSource.data = [...pending, ...inProgress, ...completed, ...paused, ...cancelled, ...failed];
+      // this.dataSource.data = [...pending, ...inProgress, ...completed, ...paused, ...cancelled, ...failed];
+      this.dataSource.data = [ ...inProgress, ...failed];
     });
 
   }
