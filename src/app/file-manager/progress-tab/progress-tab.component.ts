@@ -5,17 +5,17 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { Store } from '@ngrx/store';
 import { ISubscription } from 'rxjs/Subscription';
 
-import { DownloadItem } from '../models/download-item';
-import { DownloadsReducer, DownloadState, downloadInitialState } from '../reducers/downloads.reducer';
+import { DownloadItem } from '@app/file-manager/models/download-item';
+import { DownloadsReducer, DownloadState, downloadInitialState } from '@app/file-manager/reducers/downloads.reducer';
 
-import { UploadItem } from '../models/upload-item';
-import { UploadsReducer, UploadState, uploadInitialState } from '../reducers/uploads.reducer';
+import { UploadItem } from '@app/file-manager/models/upload-item';
+import { UploadsReducer, UploadState, uploadInitialState } from '@app/file-manager/reducers/uploads.reducer';
 
-import { ExportToGCSItem } from '../models/export-to-gcs-item';
-import { ExportToGCSReducer, ExportToGCSState, exportToGCSInitialState } from '../reducers/export-to-gcs.reducer';
+import { ExportToGCSItem } from '@app/file-manager/models/export-to-gcs-item';
+import { ExportToGCSReducer, ExportToGCSState, exportToGCSInitialState } from '@app/file-manager/reducers/export-to-gcs.reducer';
 
-import { ExportToS3Item } from '../models/export-to-s3-item';
-import { ExportToS3Reducer, ExportToS3State, exportToS3InitialState } from '../reducers/export-to-s3.reducer';
+import { ExportToS3Item } from '@app/file-manager/models/export-to-s3-item';
+import { ExportToS3Reducer, ExportToS3State, exportToS3InitialState } from '@app/file-manager/reducers/export-to-s3.reducer';
 
 import { Observable } from 'rxjs/Observable';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';

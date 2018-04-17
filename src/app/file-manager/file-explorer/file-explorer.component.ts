@@ -1,12 +1,12 @@
 import { Component, OnInit, NgZone, ViewChild, AfterViewInit } from '@angular/core';
-import { Item } from '../models/item';
+import { Item } from '@app/file-manager/models/item';
 
 import { FilterSizePipe } from '../filters/filesize-filter';
 import { FileDownloadModalComponent } from '../file-download-modal/file-download-modal.component';
 import { MatDialog, MatPaginator, MAT_CHECKBOX_CLICK_ACTION } from '@angular/material';
 import { MatTableDataSource, MatSort } from '@angular/material';
-import { StatusService } from '../services/status.service';
-import { BucketService } from '../services/bucket.service';
+import { StatusService } from '@app/file-manager/services/status.service';
+import { BucketService } from '@app/file-manager/services/bucket.service';
 import { FirecloudApiService } from '@app/file-manager/services/firecloud-api.service';
 import { WarningModalComponent } from '@app/file-manager/warning-modal/warning-modal.component';
 import { ItemStatus } from '@app/file-manager/models/item-status';
@@ -20,7 +20,7 @@ import { FilesDatabase } from '@app/file-manager/dbstate/files-database';
 import { Type } from '@app/file-manager/models/type';
 import { AppState } from '@app/file-manager/reducers';
 import { Store } from '@ngrx/store';
-import * as Transferables from '../actions/transferables.actions';
+import * as Transferables from '@app/file-manager/actions/transferables.actions';
 import { downloadInitialState } from '@app/file-manager/reducers/downloads.reducer';
 
 @Component({

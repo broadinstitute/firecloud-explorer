@@ -1,5 +1,5 @@
 import { Action } from '@ngrx/store';
-import { ExportToS3Item } from '../models/export-to-s3-item';
+import { ExportToS3Item } from '@app/file-manager/models/export-to-s3-item';
 
 export const LOAD = '[ExportToS3] Load';
 export const FILTER = '[ExportToS3] Filter';

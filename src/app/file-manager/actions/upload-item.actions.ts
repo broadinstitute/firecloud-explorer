@@ -1,5 +1,5 @@
 import { Action } from '@ngrx/store';
-import { UploadItem } from '../models/upload-item';
+import { UploadItem } from '@app/file-manager/models/upload-item';
 
 export const LOAD = '[Upload] Load';
 export const FILTER = '[Upload] Filter';

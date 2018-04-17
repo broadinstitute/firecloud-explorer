@@ -3,13 +3,13 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { DownloadItem } from '@app/file-manager/models/download-item';
 
 import { Message } from 'primeng/components/common/api';
-import { DiskStatus } from '../models/diskStatus';
+import { DiskStatus } from '@app/file-manager/models/diskStatus';
 import { DownloadValidatorService } from '@app/file-manager/services/download-validator.service';
 import { Type } from '@app/file-manager/models/type';
 import { Router } from '@angular/router';
 import { EntityStatus } from '@app/file-manager/models/entity-status';
 import { TransferablesGridComponent } from '@app/file-manager/transferables-grid/transferables-grid.component';
-import { PreflightService } from '../services/preflight.service';
+import { PreflightService } from '@app/file-manager/services/preflight.service';
 
 @Component({
   selector: 'app-file-download-modal',

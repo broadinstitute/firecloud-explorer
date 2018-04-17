@@ -1,13 +1,13 @@
 import { Component, OnInit, Output, ViewChild, EventEmitter, NgZone } from '@angular/core';
 import { Message, TreeNode } from 'primeng/primeng';
 import { Store } from '@ngrx/store';
-import { UploadItem } from '../models/upload-item';
+import { UploadItem } from '@app/file-manager/models/upload-item';
 import { AppState } from '@app/file-manager/reducers';
 import { ElectronService } from 'ngx-electron';
 import { FilterSizePipe } from '../filters/filesize-filter';
-import { GcsService } from '../services/gcs.service';
+import { GcsService } from '@app/file-manager/services/gcs.service';
 import { MatDialog } from '@angular/material';
-import { RegisterUploadService } from '../services/register-upload.service';
+import { RegisterUploadService } from '@app/file-manager/services/register-upload.service';
 import { FileUploadModalComponent } from '../file-upload-modal/file-upload-modal.component';
 import { TransferablesGridComponent } from '../transferables-grid/transferables-grid.component';
 import { TreeTable } from 'primeng/primeng';

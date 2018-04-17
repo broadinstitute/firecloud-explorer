@@ -14,7 +14,7 @@ export class S3ExportService {
     private electronService: ElectronIpcApiService,
   ) { }
 
-  public startFileExportToS3(items: ExportToS3Item[]) {
+  public exportToS3(items: ExportToS3Item[]) {
     this.store.dispatch(new exportToS3Actions.ProcessItems({ items: items }));
     items.forEach(item => {
       const dataTransfer = {

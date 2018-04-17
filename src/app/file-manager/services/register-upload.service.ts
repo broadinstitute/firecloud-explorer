@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ElectronService } from 'ngx-electron';
-import { Item } from '../models/item';
+import { Item } from '@app/file-manager/models/item';
 
 @Injectable()
 export class RegisterUploadService {
