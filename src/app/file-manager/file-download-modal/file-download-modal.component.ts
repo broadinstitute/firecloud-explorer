@@ -1,10 +1,7 @@
-import { Component, Inject, Output, OnInit, EventEmitter } from '@angular/core';
+import { Component, Inject, OnInit} from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { DownloadItem } from '@app/file-manager/models/download-item';
 
-import * as downloadActions from '../actions/download-item.actions';
-
-import { AppState } from '@app/file-manager/reducers';
 import { Message } from 'primeng/components/common/api';
 import { DiskStatus } from '../models/diskStatus';
 import { DownloadValidatorService } from '@app/file-manager/services/download-validator.service';
@@ -13,12 +10,6 @@ import { Router } from '@angular/router';
 import { EntityStatus } from '@app/file-manager/models/entity-status';
 import { TransferablesGridComponent } from '@app/file-manager/transferables-grid/transferables-grid.component';
 import { PreflightService } from '../services/preflight.service';
-import { FilterSizePipe } from '../filters/filesize-filter';
-import { Observable } from 'rxjs/Observable';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import { UUID } from 'angular2-uuid';
-import { DownloadState } from '@app/file-manager/reducers/downloads.reducer';
-
 
 @Component({
   selector: 'app-file-download-modal',
@@ -32,6 +23,7 @@ export class FileDownloadModalComponent implements OnInit {
   msgs: Message[] = [];
   verify: DiskStatus;
   downloadFiles: DownloadItem[] = [];
+  disableButton = false;
 
   constructor(
     private downloadValidator: DownloadValidatorService,
@@ -58,6 +50,7 @@ export class FileDownloadModalComponent implements OnInit {
 
 
   startDownload() {
+    this.disableButton = true;
     this.downloadFiles = [];
     const ids: string[] = [];
     this.downloadValidator.verifyDisk(this.directory, this.totalSize()).then(
@@ -65,7 +58,6 @@ export class FileDownloadModalComponent implements OnInit {
         this.verify = diskVerification;
 
         if (!this.verify.hasErr) {
-
           this.dialogRef.close();
           this.selectedFiles()
             .forEach(
@@ -79,11 +71,12 @@ export class FileDownloadModalComponent implements OnInit {
                   this.downloadFiles.push(dataFile);
                 }
               });
-
           this.transferablesGridComponent.startDownload(this.downloadFiles);
+          localStorage.setItem('operation-type', Type.DOWNLOAD);
           this.router.navigate(['/status']);
 
         } else {
+          this.disableButton = false;
           this.msgs = [];
           this.createWarningMsg(this.verify.errMsg);
         }

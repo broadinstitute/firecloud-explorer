@@ -1,9 +1,6 @@
 import { Component, OnInit, Output, ViewChild, EventEmitter, NgZone } from '@angular/core';
 import { Message, TreeNode } from 'primeng/primeng';
-import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
-import * as uploadsActions from '../actions/upload-item.actions';
-import { Item } from '../models/item';
 import { UploadItem } from '../models/upload-item';
 import { AppState } from '@app/file-manager/reducers';
 import { ElectronService } from 'ngx-electron';
@@ -22,7 +19,6 @@ import { StatusService } from '@app/file-manager/services/status.service';
 import { FilesDatabase } from '../dbstate/files-database';
 
 import { UUID } from 'angular2-uuid';
-import { UpdateItem } from '@app/file-manager/actions/export-to-gcs-item.actions';
 
 @Component({
   selector: 'app-file-explorer-upload',
@@ -52,7 +48,6 @@ export class FileExplorerUploadComponent implements OnInit {
     private filterSize: FilterSizePipe,
     private registerUpload: RegisterUploadService,
     private changeDetectorRef: ChangeDetectorRef,
-    private router: Router,
     private zone: NgZone
   ) {
   }
@@ -200,11 +195,10 @@ export class FileExplorerUploadComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      let filesToUpload: UploadItem[] = [];
+      const filesToUpload: UploadItem[] = [];
       let dataFile: UploadItem;
 
       if (result !== undefined) {
-
         this.selectedFiles
           .filter(file => file.data.type === Type.FILE)
           .forEach(file => {
@@ -214,9 +208,7 @@ export class FileExplorerUploadComponent implements OnInit {
 
             filesToUpload.push(dataFile);
           });
-
         this.transferablesGridComponent.startUpload(filesToUpload);
-        this.router.navigate(['/status']);
       }
     });
   }
@@ -233,6 +225,6 @@ export class FileExplorerUploadComponent implements OnInit {
 
   uploadInProgress() {
     return new FilesDatabase(this.store).uploadsChange.getValue()
-    .inProgress.count > 0 ? true : false;
+      .inProgress.count > 0;
   }
 }

@@ -5,6 +5,8 @@ import { FormControl } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { Observable } from 'rxjs/Observable';
 import { Message } from 'primeng/components/common/api';
+import { Router } from '@angular/router';
+import { Type } from '@app/file-manager/models/type';
 
 @Component({
   selector: 'app-file-upload',
@@ -23,7 +25,8 @@ export class FileUploadModalComponent implements OnInit {
   disableUpload = true;
 
   constructor(public dialogRef: MatDialogRef<FileUploadModalComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any) {
+              private router: Router,
+              @Inject(MAT_DIALOG_DATA) public data: any) {
 
     this.getWritableWorkspaces();
 
@@ -36,6 +39,7 @@ export class FileUploadModalComponent implements OnInit {
 
   ngOnInit() {
     if (this.writableWorkspaces.length === 0) {
+      this.disableUpload = false;
       this.msgs.push({
         severity: 'warn',
         summary: 'Sorry, you don\'t have permission to upload data to any workspace ',
@@ -59,8 +63,11 @@ export class FileUploadModalComponent implements OnInit {
   }
 
   uploadFiles(): void {
+    this.disableUpload = true;
     localStorage.setItem('uploadBucket', this.workspaceCtrl.value.bucketName);
+    localStorage.setItem('operation-type', Type.UPLOAD);
     this.dialogRef.close({status: 'upload'});
+    this.router.navigate(['/status']);
   }
 
   getWritableWorkspaces() {

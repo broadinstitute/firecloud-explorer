@@ -201,11 +201,16 @@ export function ExportToGCSReducer(
 
         case ExportToGCSItemActions.FAIL_ITEMS:
             action.payload.items.forEach(item => {
-                state.inProgress.count--;
-                delete state.inProgress.items[item.id];
-                item.status = EntityStatus.FAILED;
+
+                const sourceId = item.id;
                 state.failed.count++;
-                state.failed.items[item.id] = item;
+                state.failed.items[sourceId] = state.inProgress.items[sourceId];
+                state.failed.items[sourceId].status = EntityStatus.FAILED;
+                state.failed.items[sourceId].progress = 100;
+                state.failed.items[sourceId].transferred = item.transferred;
+
+                delete state.inProgress.items[sourceId];
+                state.inProgress.count--;
             });
             break;
 
