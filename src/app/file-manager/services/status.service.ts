@@ -74,6 +74,11 @@ export class StatusService {
       this.limitTransferables.continueExportingToGCS();
     });
 
+    this.electronService.ipcRenderer.on(constants.IPC_EXPORT_TO_GCP_COMPLETE_SINGLE, (event, item) => {
+      this.store.dispatch(new exportToGCSActions.CompleteItem(item));
+      this.limitTransferables.continueExportingToGCS();
+    });
+
     this.electronService.ipcRenderer.on(constants.IPC_EXPORT_TO_GCP_FAILED, (event, items) => {
       this.store.dispatch(new exportToGCSActions.FailItems({ items: items }));
       this.limitTransferables.continueExportingToGCS();

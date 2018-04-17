@@ -1,4 +1,4 @@
-import { Injectable, OnInit } from '@angular/core';
+import { Injectable, OnInit, OnDestroy } from '@angular/core';
 
 import * as Transferables from '@app/file-manager/actions/transferables.actions';
 import * as downloadActions from '@app/file-manager/actions/download-item.actions';
@@ -14,7 +14,7 @@ import { ExportToS3Item } from '@app/file-manager/models/export-to-s3-item';
 
 import { Store } from '@ngrx/store';
 import { AppState } from '@app/file-manager/reducers';
-import { FilesDatabase } from '../dbstate/files-database';
+
 import { ItemStatus } from '@app/file-manager/models/item-status';
 import { EntityStatus } from '@app/file-manager/models/entity-status';
 import { GcsService } from '@app/file-manager/services/gcs.service';
@@ -22,24 +22,76 @@ import { Type } from '@app/file-manager/models/type';
 import { environment } from '@env/environment';
 import { S3ExportService } from '@app/file-manager/services/s3-export.service';
 
+import { Observable } from 'rxjs/Observable';
+import { ISubscription } from 'rxjs/Subscription';
+
+import { DownloadState } from '@app/file-manager/reducers/downloads.reducer';
+import { UploadState } from '@app/file-manager/reducers/uploads.reducer';
+import { ExportToGCSState } from '@app/file-manager/reducers/export-to-gcs.reducer';
+import { ExportToS3State } from '@app/file-manager/reducers/export-to-s3.reducer';
+
 @Injectable()
-export class LimitTransferablesService implements OnInit {
+export class LimitTransferablesService implements OnInit, OnDestroy {
 
   downloadsPendingCount = 0;
   downloadsInProgressCount = 0;
   downloadPendingItems: { [id: string]: DownloadItem };
+
+  downSubscription: ISubscription;
+  upSubscription: ISubscription;
+  gcsSubscription: ISubscription;
+  s3Subscription: ISubscription;
+
+  downPendingCount = 0;
+  downInProgressCount = 0;
+  downPendingItems: { [id: string]: DownloadItem };
+
+  upPendingCount = 0;
+  upInProgressCount = 0;
+  upPendingItems: { [id: string]: UploadItem };
+
+  gcsPendingCount = 0;
+  gcsInProgressCount = 0;
+  gcsPendingItems: { [id: string]: ExportToGCSItem };
+
+  s3PendingCount = 0;
+  s3InProgressCount = 0;
+  s3PendingItems: { [id: string]: ExportToS3Item };
 
   constructor(
     public gcsService: GcsService,
     private store: Store<AppState>,
     private s3ExportService: S3ExportService,
   ) {
-
-    this.store.select('downloads').subscribe(
+    this.downSubscription = this.store.select('downloads').subscribe(
       data => {
-        this.downloadsPendingCount = data.pending.count;
-        this.downloadsInProgressCount = data.inProgress.count;
-        this.downloadPendingItems = data.pending.items;
+        this.downPendingCount = data.pending.count;
+        this.downInProgressCount = data.inProgress.count;
+        this.downPendingItems = data.pending.items;
+      }
+    );
+
+    this.upSubscription = this.store.select('uploads').subscribe(
+      data => {
+        this.upPendingCount = data.pending.count;
+        this.upInProgressCount = data.inProgress.count;
+        this.upPendingItems = data.pending.items;
+      }
+    );
+
+    this.gcsSubscription = this.store.select('exportToGCS').subscribe(
+      data => {
+        this.gcsPendingCount = data.pending.count;
+        this.gcsInProgressCount = data.inProgress.count;
+        this.gcsPendingItems = data.pending.items;
+      }
+    );
+
+    this.s3Subscription = this.store.select('exportToS3').subscribe(
+      data => {
+        this.s3PendingCount = data.pending.count;
+        this.s3InProgressCount = data.inProgress.count;
+        this.s3PendingItems = data.pending.items;
       }
     );
   }
@@ -59,12 +111,9 @@ export class LimitTransferablesService implements OnInit {
   }
 
   public continueDownloading(): void {
-    const pendingItems = new FilesDatabase(this.store).downloadsChange.getValue().pending.items;
-    const pendingCount = new FilesDatabase(this.store).downloadsChange.getValue().pending.count;
-    const inProgressCount = new FilesDatabase(this.store).downloadsChange.getValue().inProgress.count;
     const items: DownloadItem[] = [];
-    if (pendingCount > 0 && inProgressCount < environment.LIMIT_DOWNLOADS) {
-      const item = Object.values(pendingItems)[0];
+    if (this.downPendingCount > 0 && this.downInProgressCount < environment.LIMIT_DOWNLOADS) {
+      const item: DownloadItem = Object.values(this.downPendingItems)[0];
       items.push(item);
       this.gcsService.downloadFiles(items);
     }
@@ -82,13 +131,10 @@ export class LimitTransferablesService implements OnInit {
   }
 
   public continueUploading(): void {
-    const pendingItems = new FilesDatabase(this.store).uploadsChange.getValue().pending.items;
-    const pendingCount = new FilesDatabase(this.store).uploadsChange.getValue().pending.count;
-    const inProgressCount = new FilesDatabase(this.store).uploadsChange.getValue().inProgress.count;
     const items: UploadItem[] = [];
-    if (pendingCount > 0 && inProgressCount < environment.LIMIT_UPLOADS) {
+    if (this.upPendingCount > 0 && this.upInProgressCount < environment.LIMIT_UPLOADS) {
       const uploadBucket = localStorage.getItem('uploadBucket');
-      const item = Object.values(pendingItems)[0];
+      const item = Object.values(this.upPendingItems)[0];
       items.push(item);
       this.gcsService.uploadFiles(items, uploadBucket);
     }
@@ -106,15 +152,11 @@ export class LimitTransferablesService implements OnInit {
   }
 
   public continueExportingToGCS(): void {
-    const pendingItems = new FilesDatabase(this.store).exportToGCSChange.getValue().pending.items;
-    const pendingCount = new FilesDatabase(this.store).exportToGCSChange.getValue().pending.count;
-    const inProgressCount = new FilesDatabase(this.store).exportToGCSChange.getValue().inProgress.count;
     let items: ExportToGCSItem[] = [];
-
-    if (pendingCount > 0 && inProgressCount === 0) {
+    if (this.gcsPendingCount > 0 && this.gcsInProgressCount === 0) {
       const destinationBucket = localStorage.getItem('destinationBucket');
       const batchSize = environment.LIMIT_GCS_EXPORTABLES;
-      items = Object.values(pendingItems).slice(0, batchSize);
+      items = Object.values(this.gcsPendingItems).slice(0, batchSize);
       this.gcsService.exportToGCSFiles(items, destinationBucket);
     }
   }
@@ -130,15 +172,19 @@ export class LimitTransferablesService implements OnInit {
   }
 
   public continueExportingToS3(): void {
-    const pendingItems = new FilesDatabase(this.store).exportToS3Change.getValue().pending.items;
-    const pendingCount = new FilesDatabase(this.store).exportToS3Change.getValue().pending.count;
-    const inProgressCount = new FilesDatabase(this.store).exportToS3Change.getValue().inProgress.count;
     const items: ExportToS3Item[] = [];
-    if (pendingCount > 0 && inProgressCount < environment.LIMIT_S3_EXPORTABLES) {
-      const item = Object.values(pendingItems)[0];
+    if (this.s3PendingCount > 0 && this.s3InProgressCount < environment.LIMIT_S3_EXPORTABLES) {
+      const item = Object.values(this.s3PendingItems)[0];
       items.push(item);
       this.s3ExportService.exportToS3(items);
     }
+  }
+
+  ngOnDestroy() {
+    this.downSubscription.unsubscribe();
+    this.upSubscription.unsubscribe();
+    this.gcsSubscription.unsubscribe();
+    this.s3Subscription.unsubscribe();
   }
 
 }

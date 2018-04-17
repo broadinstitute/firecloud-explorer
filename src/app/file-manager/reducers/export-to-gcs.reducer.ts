@@ -121,11 +121,13 @@ export function ExportToGCSReducer(
             break;
 
         case ExportToGCSItemActions.COMPLETE_ITEM:
-            state.inProgress.count--;
-            delete state.inProgress.items[action.payload.id];
-            action.payload.status = EntityStatus.COMPLETED;
             state.completed.count++;
-            state.completed.items[action.payload.id] = action.payload;
+            state.completed.items[action.payload.sourceId] = state.inProgress.items[action.payload.sourceId];
+            state.completed.items[action.payload.sourceId].status = EntityStatus.COMPLETED;
+            state.completed.items[action.payload.sourceId].progress = 100;
+            state.completed.items[action.payload.sourceId].transferred = action.payload.transferred;
+            delete state.inProgress.items[action.payload.sourceId];
+            state.inProgress.count--;
             break;
 
         case ExportToGCSItemActions.COMPLETE_ITEMS:
@@ -136,7 +138,6 @@ export function ExportToGCSReducer(
                 state.completed.items[sourceId].status = EntityStatus.COMPLETED;
                 state.completed.items[sourceId].progress = 100;
                 state.completed.items[sourceId].transferred = item.transferred;
-
                 delete state.inProgress.items[sourceId];
                 state.inProgress.count--;
             });

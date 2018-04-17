@@ -41,7 +41,8 @@ const constants = {
   IPC_EXPORT_TO_GCP_STATUS: 'export-to-gcp-status',
   IPC_EXPORT_TO_GCP_FAILED: 'export-to-gcp-failed',
   IPC_EXPORT_TO_GCP_COMPLETE: 'export-to-gcp-complete',
-
+  IPC_EXPORT_TO_GCP_COMPLETE_SINGLE: 'export-to-gcp-complete-single',
+  
   GCP_API: 'https://www.googleapis.com/storage/v1/b/'
 };
 
