@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { GcsService } from './gcs.service';
-import { Item } from '../models/item';
+import { Item } from '@app/file-manager/models/item';
 import { Observable } from 'rxjs/Observable';
 import { SelectionService } from '@app/file-manager/services/selection.service';
 

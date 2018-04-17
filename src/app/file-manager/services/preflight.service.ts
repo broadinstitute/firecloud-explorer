@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
-import { Item } from '../models/item';
-import { BucketService } from '../services/bucket.service';
+import { Item } from '@app/file-manager/models/item';
+import { BucketService } from '@app/file-manager/services/bucket.service';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Type } from '@app/file-manager/models/type';
 import { ItemStatus } from '@app/file-manager/models/item-status';
 import { Store } from '@ngrx/store';
 import { AppState } from '@app/file-manager/reducers';
-import * as Transferables from '../actions/transferables.actions';
+import * as Transferables from '@app/file-manager/actions/transferables.actions';
 
 @Injectable()
 export class PreflightService {

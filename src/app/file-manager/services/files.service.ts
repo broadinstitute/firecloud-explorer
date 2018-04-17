@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { TreeNode } from 'primeng/primeng';
 import { GcsService } from './gcs.service';
 import { Observable } from 'rxjs/Rx';
-import { FileData } from '../models/filedata';
+import { FileData } from '@app/file-manager/models/filedata';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/retry';

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { environment } from '@env/environment';
 import { Store } from '@ngrx/store';
 import { login } from '@app/core';
-import { SecurityService } from '../services/security.service';
+import { SecurityService } from '@app/file-manager/services/security.service';
 import { LoginService } from '@app/file-manager/services/login.service';
 import { ElectronIpcApiService } from '@app/file-manager/services/electron-ipc.api.service';
 import { FirecloudApiService } from '@app/file-manager/services/firecloud-api.service';

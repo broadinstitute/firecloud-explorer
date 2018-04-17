@@ -1,6 +1,6 @@
 import { Action } from '@app/core';
-import * as TransferablesActions from '../actions/transferables.actions';
-import { Item } from '../models/item';
+import * as TransferablesActions from '@app/file-manager/actions/transferables.actions';
+import { Item } from '@app/file-manager/models/item';
 import { ItemStatus } from '@app/file-manager/models/item-status';
 import { Type } from '@app/file-manager/models/type';
 

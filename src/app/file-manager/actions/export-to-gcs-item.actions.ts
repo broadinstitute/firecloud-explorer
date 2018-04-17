@@ -1,5 +1,5 @@
 import { Action } from '@ngrx/store';
-import { ExportToGCSItem } from '../models/export-to-gcs-item';
+import { ExportToGCSItem } from '@app/file-manager/models/export-to-gcs-item';
 
 export const LOAD = '[ExportToGCS] Load';
 export const FILTER = '[ExportToGCS] Filter';

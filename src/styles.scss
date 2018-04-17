@@ -54,6 +54,7 @@ h1 {
   font-weight: 700;
   font-size: 1.4rem;
   margin-bottom: 20px;
+  width: 75%;
 }
 
 h3.subtitle {
@@ -447,6 +448,16 @@ a.sidenav-link p {
   color: mat-color($fcExplorer-warn, 900);
 }
 
+.warn {
+  color: mat-color($fcExplorer-warn, 900);
+}
+
+.warn p {
+  font-style: italic;
+  font-weight: 400;
+  display: inline;
+}
+
 .status-box {
   width: 50%;
   padding: 15px;
@@ -508,7 +519,7 @@ a.sidenav-link p {
   display: inline;
 }
 
-.progress-dots.download-modal {
+.progress-dots.modal {
   margin-left: 4px;
   display: inline;
 }
@@ -525,10 +536,6 @@ a.sidenav-link p {
   width: 2px;
   height: 2px;
   background-color: mat-color($fcExplorer-primary, 700);
-}
-
-.progress-dots.download-modal .dot {
-  background-color: black;
 }
 
 .progress-dots .dot:first-child,
@@ -727,7 +734,15 @@ mat-error {
 /*SEARCH CONTAINER*/
 
 .search-container {
-  width: 25px;
+  width: 25%;
+  display: inline-flex;
+  background: whitesmoke;
+  border: 1px solid #bdbdbd;
+  border-radius: 2px;
+  padding: 10px;
+  height: 45px;
+  margin-top: -15px;
+  z-index: 10;
 }
 
 .search-container .mat-form-field-infix{
@@ -736,6 +751,30 @@ mat-error {
 
 .search-container > .mat-form-field-wrapper{
   padding-bottom: 1em !important;
+}
+
+.search-input {
+  width: 100%;
+  margin-left: 5px;
+}
+
+.search-input .mat-input-underline {
+  display: none;
+}
+
+.search-input .mat-form-field-label {
+  top: 1em !important;
+  color: mat-color($fcExplorer-primary, 600);
+}
+
+.search-input.mat-form-field-should-float .mat-form-field-label,
+.search-input.mat-focused .mat-form-field-label {
+  display: none !important;
+}
+
+.search-input.mat-form-field-should-float .mat-form-field-infix,
+.search-input.mat-focused .mat-form-field-infix {
+  padding: 0.2em 0 0.4375em 0;
 }
 
 /*TABS*/

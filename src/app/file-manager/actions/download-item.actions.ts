@@ -1,5 +1,5 @@
 import { Action } from '@ngrx/store';
-import { DownloadItem } from '../models/download-item';
+import { DownloadItem } from '@app/file-manager/models/download-item';
 
 export const LOAD = '[Download] Load';
 export const FILTER = '[Download] Filter';

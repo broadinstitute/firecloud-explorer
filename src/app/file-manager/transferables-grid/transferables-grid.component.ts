@@ -1,24 +1,24 @@
 import { Component, OnInit, NgZone, AfterViewInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Store } from '@ngrx/store';
 
-import * as Transferables from '../actions/transferables.actions';
+import * as Transferables from '@app/file-manager/actions/transferables.actions';
 
-import { DownloadValidatorService } from '../services/download-validator.service';
+import { DownloadValidatorService } from '@app/file-manager/services/download-validator.service';
 
 import { AppState } from '@app/file-manager/reducers';
 
-import { Item } from '../models/item';
-import { DownloadItem } from '../models/download-item';
-import { UploadItem } from '../models/upload-item';
-import { ExportToGCSItem } from '../models/export-to-gcs-item';
-import { ExportToS3Item } from '../models/export-to-s3-item';
+import { Item } from '@app/file-manager/models/item';
+import { DownloadItem } from '@app/file-manager/models/download-item';
+import { UploadItem } from '@app/file-manager/models/upload-item';
+import { ExportToGCSItem } from '@app/file-manager/models/export-to-gcs-item';
+import { ExportToS3Item } from '@app/file-manager/models/export-to-s3-item';
 
-import { TransferableState } from '../reducers/transferables.reducer';
+import { TransferableState } from '@app/file-manager/reducers/transferables.reducer';
 
-import { DownloadState } from '../reducers/downloads.reducer';
-import { UploadState } from '../reducers/uploads.reducer';
-import { ExportToGCSState } from '../reducers/export-to-gcs.reducer';
-import { ExportToS3State } from '../reducers/export-to-s3.reducer';
+import { DownloadState } from '@app/file-manager/reducers/downloads.reducer';
+import { UploadState } from '@app/file-manager/reducers/uploads.reducer';
+import { ExportToGCSState } from '@app/file-manager/reducers/export-to-gcs.reducer';
+import { ExportToS3State } from '@app/file-manager/reducers/export-to-s3.reducer';
 
 import { MatDialog } from '@angular/material';
 import 'rxjs/add/operator/startWith';
@@ -26,9 +26,9 @@ import 'rxjs/add/observable/forkJoin';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/observable/merge';
 import { GcsService } from '@app/file-manager/services/gcs.service';
-import { StatusService } from '../services/status.service';
+import { StatusService } from '@app/file-manager/services/status.service';
 
-import { LimitTransferablesService } from '../services/limit-transferables.service';
+import { LimitTransferablesService } from '@app/file-manager/services/limit-transferables.service';
 import { Type } from '@app/file-manager/models/type';
 import { ItemStatus } from '@app/file-manager/models/item-status';
 import { S3ExportService } from '@app/file-manager/services/s3-export.service';
@@ -354,19 +354,19 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   }
 
   startDownload(files: DownloadItem[]) {
-    this.limitTransferables.controlDownloadItemLimits(files);
+    this.limitTransferables.startDownloading(files);
   }
 
   startUpload(files: UploadItem[]) {
-    this.limitTransferables.controlUploadItemLimits(files);
+    this.limitTransferables.startUploading(files);
   }
 
   startGCSExport(files: ExportToGCSItem[]) {
-    this.limitTransferables.controlExportToGCSItemLimits(files);
+    this.limitTransferables.startExportingToGCS(files);
   }
 
   startS3Export(files: ExportToS3Item[]) {
-    this.limitTransferables.controlExportToS3ItemLimits(files);
+    this.limitTransferables.startExportingToS3(files);
   }
 
 }

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Item } from '../models/item';
+import { Item } from '@app/file-manager/models/item';
 import { SelectionModel } from '@angular/cdk/collections';
 
 @Injectable()

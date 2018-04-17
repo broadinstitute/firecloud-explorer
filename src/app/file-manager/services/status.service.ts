@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { ElectronService } from 'ngx-electron';
 
-import * as downloadActions from '../actions/download-item.actions';
-import * as uploadActions from '../actions/upload-item.actions';
-import * as exportToGCSActions from '../actions/export-to-gcs-item.actions';
-import * as exportToS3Actions from '../actions/export-to-s3-item.actions';
+import * as downloadActions from '@app/file-manager/actions/download-item.actions';
+import * as uploadActions from '@app/file-manager/actions/upload-item.actions';
+import * as exportToGCSActions from '@app/file-manager/actions/export-to-gcs-item.actions';
+import * as exportToS3Actions from '@app/file-manager/actions/export-to-s3-item.actions';
 
 import { Store } from '@ngrx/store';
 import { AppState } from '@app/file-manager/reducers';
@@ -33,12 +33,12 @@ export class StatusService {
 
     this.electronService.ipcRenderer.on(constants.IPC_DOWNLOAD_COMPLETE, (event, item) => {
       this.store.dispatch(new downloadActions.CompleteItem(item));
-      this.limitTransferables.pendingDownloadItem();
+      this.limitTransferables.continueDownloading();
     });
 
     this.electronService.ipcRenderer.on(constants.IPC_DOWNLOAD_FAILED, (event, item) => {
       this.store.dispatch(new downloadActions.FailItem(item));
-      this.limitTransferables.pendingDownloadItem();
+      this.limitTransferables.continueDownloading();
     });
 
     /**
@@ -50,12 +50,12 @@ export class StatusService {
 
     this.electronService.ipcRenderer.on(constants.IPC_UPLOAD_COMPLETE, (event, item) => {
       this.store.dispatch(new uploadActions.CompleteItem(item));
-      this.limitTransferables.pendingUploadItem();
+      this.limitTransferables.continueUploading();
     });
 
     this.electronService.ipcRenderer.on(constants.IPC_UPLOAD_FAILED, (event, item) => {
       this.store.dispatch(new uploadActions.FailItem(item));
-      this.limitTransferables.pendingUploadItem();
+      this.limitTransferables.continueUploading();
     });
 
     /**
@@ -67,12 +67,12 @@ export class StatusService {
 
     this.electronService.ipcRenderer.on(constants.IPC_EXPORT_TO_GCP_COMPLETE, (event, items) => {
       this.store.dispatch(new exportToGCSActions.CompleteItems({ items: items }));
-      this.limitTransferables.pendingGCSItem();
+      this.limitTransferables.continueExportingToGCS();
     });
 
     this.electronService.ipcRenderer.on(constants.IPC_EXPORT_TO_GCP_FAILED, (event, items) => {
       this.store.dispatch(new exportToGCSActions.FailItems({ items: items }));
-      this.limitTransferables.pendingGCSItem();
+      this.limitTransferables.continueExportingToGCS();
     });
 
     /**
@@ -84,12 +84,12 @@ export class StatusService {
 
     this.electronService.ipcRenderer.on(constants.IPC_EXPORT_TO_S3_COMPLETE, (event, item) => {
       this.store.dispatch(new exportToS3Actions.CompleteItem(item));
-      this.limitTransferables.pendingS3Item();
+      this.limitTransferables.continueExportingToS3();
     });
 
     this.electronService.ipcRenderer.on(constants.IPC_EXPORT_TO_S3_FAILED, (event, item) => {
       this.store.dispatch(new exportToS3Actions.FailItem(item));
-      this.limitTransferables.pendingS3Item();
+      this.limitTransferables.continueExportingToS3();
     });
 
   }

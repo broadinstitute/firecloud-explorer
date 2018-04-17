@@ -3,17 +3,17 @@ import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs/Observable';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
-import { Item } from '../models/item';
+import { Item } from '@app/file-manager/models/item';
 
-import { DownloadItem } from '../models/download-item';
-import { UploadItem } from '../models/upload-item';
-import { ExportToGCSItem } from '../models/export-to-gcs-item';
-import { ExportToS3Item } from '../models/export-to-s3-item';
+import { DownloadItem } from '@app/file-manager/models/download-item';
+import { UploadItem } from '@app/file-manager/models/upload-item';
+import { ExportToGCSItem } from '@app/file-manager/models/export-to-gcs-item';
+import { ExportToS3Item } from '@app/file-manager/models/export-to-s3-item';
 
-import { DownloadsReducer, DownloadState, downloadInitialState } from '../reducers/downloads.reducer';
-import { UploadsReducer, UploadState, uploadInitialState } from '../reducers/uploads.reducer';
-import { ExportToGCSReducer, ExportToGCSState, exportToGCSInitialState } from '../reducers/export-to-gcs.reducer';
-import { ExportToS3Reducer, ExportToS3State, exportToS3InitialState } from '../reducers/export-to-s3.reducer';
+import { DownloadsReducer, DownloadState, downloadInitialState } from '@app/file-manager/reducers/downloads.reducer';
+import { UploadsReducer, UploadState, uploadInitialState } from '@app/file-manager/reducers/uploads.reducer';
+import { ExportToGCSReducer, ExportToGCSState, exportToGCSInitialState } from '@app/file-manager/reducers/export-to-gcs.reducer';
+import { ExportToS3Reducer, ExportToS3State, exportToS3InitialState } from '@app/file-manager/reducers/export-to-s3.reducer';
 
 import { AppState } from '@app/file-manager/reducers';
 import { Dictionary } from '@ngrx/entity/src/models';
@@ -78,7 +78,7 @@ export class FilesDatabase {
   downloadProgress(): number {
     return this.downloadsChange.getValue().totalProgress;
   }
-  
+
   uploadProgress(): number {
     return this.uploadsChange.getValue().totalProgress;
   }

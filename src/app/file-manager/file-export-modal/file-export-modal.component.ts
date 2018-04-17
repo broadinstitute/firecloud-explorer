@@ -20,10 +20,10 @@ import { DownloadValidatorService } from '@app/file-manager/services/download-va
 import { FilesDatabase } from '../dbstate/files-database';
 
 import { Item } from '@app/file-manager/models/item';
-import * as Transferables from '../actions/transferables.actions';
+import * as Transferables from '@app/file-manager/actions/transferables.actions';
 
 import { ExportToGCSItem } from '@app/file-manager/models/export-to-gcs-item';
-import * as exportToGCSActions from '../actions/export-to-gcs-item.actions';
+import * as exportToGCSActions from '@app/file-manager/actions/export-to-gcs-item.actions';
 
 import { ExportToS3Item } from '@app/file-manager/models/export-to-s3-item';
 import * as exportToS3Actions from '@app/file-manager/actions/export-to-s3-item.actions';
