@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, AfterViewInit, Input, OnDestroy, NgZone } from '@angular/core';
-import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
+import { MatTableDataSource, MatPaginator, MatSort, MatSortable } from '@angular/material';
 import { NgxSpinnerService } from 'ngx-spinner';
 
 import { Store } from '@ngrx/store';
@@ -121,15 +121,23 @@ export class ProgressTabComponent implements OnInit, AfterViewInit, OnDestroy {
     this.zone.run(() => {
       this.dataSource.data = [];
       // this.dataSource.data = [...pending, ...inProgress, ...completed, ...paused, ...cancelled, ...failed];
-      this.dataSource.data = [ ...inProgress, ...failed];
+      this.dataSource.data = [...inProgress, ...failed];
     });
 
   }
 
   ngAfterViewInit() {
+
+    this.sort.sort(<MatSortable>{
+      id: 'status',
+      start: 'desc'
+    }
+    );
+
     this.dataSource.sort = this.sort;
     this.dataSource.paginator = this.paginator;
     this.dataSource.filterPredicate = (data: any, filter: string) => data.displayName.toLowerCase().indexOf(filter) !== -1;
+
   }
 
   // filtering method
