@@ -11,10 +11,10 @@ mkdir -p app/mac/installers
 
 # Sign generated .app 
 # <identity> is the hex id of imported certificate
-#cd app/mac/builds/FireCloud Explorer-darwin-x64
-codesign --deep --force --verbose --sign <identityId> app/mac/builds/FireCloud\ Explorer-darwin-x64/FireCloud\ Explorer.app
+#cd app/mac/builds/FireCloud DataShuttle-darwin-x64
+codesign --deep --force --verbose --sign <identityId> app/mac/builds/FireCloud\ DataShuttle-darwin-x64/FireCloud\ DataShuttle.app
 
 
 # create .dmg installer
-./node_modules/.bin/electron-installer-dmg './app/mac/builds/FireCloud Explorer-darwin-x64/FireCloud Explorer.app' 'FireCloud Explorer' --out=app/mac/installers --overwrite --format=UDZO --icon=src/assets/icons/mac/FCExplorer.icns
+./node_modules/.bin/electron-installer-dmg './app/mac/builds/FireCloud DataShuttle-darwin-x64/FireCloud DataShuttle.app' 'FireCloud DataShuttle' --out=app/mac/installers --overwrite --format=UDZO --icon=src/assets/icons/mac/FCExplorer.icns
 

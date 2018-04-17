@@ -19,15 +19,15 @@ function getInstallerConfig() {
 //
 
   return Promise.resolve({
-    appDirectory: path.join(basePath, 'builds/Firecloud Explorer-win32-x64/'),
+    appDirectory: path.join(basePath, 'builds/Firecloud DataShuttle-win32-x64/'),
     authors: 'Broad Institute',
     noMsi: true,
     certificateFile: './electron.p12',
     certificatePassword: 'broad',
     outputDirectory: path.join(basePath, 'installers'),
-    exe: 'Firecloud Explorer.exe',
-    setupExe: 'Firecloud Explorer Installer.exe',
-    setupMsi: 'Firecloud Explorer Installer.msi',
+    exe: 'Firecloud DataShuttle.exe',
+    setupExe: 'Firecloud DataShuttle Installer.exe',
+    setupMsi: 'Firecloud DataShuttle Installer.msi',
     setupIcon: path.join(rootPath, 'src', 'assets', 'icons', 'win', 'firecloud-explorer.ico')
   });
 }
