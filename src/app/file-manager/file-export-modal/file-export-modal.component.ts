@@ -17,7 +17,6 @@ import { ItemStatus } from '@app/file-manager/models/item-status';
 import { Store } from '@ngrx/store';
 import { AppState } from '@app/file-manager/reducers';
 import { DownloadValidatorService } from '@app/file-manager/services/download-validator.service';
-import { FilesDatabase } from '../dbstate/files-database';
 
 import { Item } from '@app/file-manager/models/item';
 import * as Transferables from '@app/file-manager/actions/transferables.actions';

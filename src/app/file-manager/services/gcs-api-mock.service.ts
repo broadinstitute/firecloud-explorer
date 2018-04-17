@@ -43,8 +43,6 @@ export class GcsApiMockService extends GcsService {
 
   public exportToGCSFiles(files: ExportToGCSItem[], destinationBucket: String) { }
 
-  public exportToS3Files(files: ExportToS3Item[], destinationBucket: String) { }
-
   public checkBucketPermissions(bucketName: String): Observable<any> { return; }
 
 }

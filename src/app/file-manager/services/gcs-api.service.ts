@@ -18,7 +18,7 @@ import * as exportToGCSActions from '@app/file-manager/actions/export-to-gcs-ite
 import * as exportToS3Actions from '@app/file-manager/actions/export-to-s3-item.actions';
 
 import { Store } from '@ngrx/store';
-import { FilesDatabase } from '@app/file-manager/dbstate/files-database';
+
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/retry';
@@ -88,7 +88,7 @@ export class GcsApiService extends GcsService {
 
     this.store.dispatch(new downloadActions.Reset());
     this.store.dispatch(new exportToS3Actions.Reset());
-    this.store.dispatch(new exportToGCSActions .Reset());
+    this.store.dispatch(new exportToGCSActions.Reset());
     this.store.dispatch(new uploadActions.Reset());
   }
 
@@ -111,47 +111,16 @@ export class GcsApiService extends GcsService {
     this.store.dispatch(new exportToS3Actions.CancelAllItems());
   }
 
-  cancelItemsStatus(type: string) {
-    this.getFiles(type).forEach(item => {
-      this.store.dispatch(new Transferables.UpdateItemCanceled(item));
-    });
-  }
-
-  getFiles(type: String): Item[] {
-    let currentStatus = null;
-    switch (type) {
-      case Type.EXPORT_GCP:
-        currentStatus = ItemStatus.EXPORTING_GCP;
-        break;
-      case Type.DOWNLOAD:
-        currentStatus = ItemStatus.DOWNLOADING;
-        break;
-      case Type.UPLOAD:
-        currentStatus = ItemStatus.UPLOADING;
-        break;
-    }
-    return new FilesDatabase(this.store).data().filter(item => item.status === currentStatus ||
-      (item.status === ItemStatus.PENDING && item.type === type));
-  }
-
   public checkBucketPermissions(bucketName: String): Observable<any> {
     const url = environment.GOOGLE_URL + 'storage/v1/b/' + bucketName + '/iam/testPermissions?permissions=storage.objects.create';
     return this.http.get(url);
   }
 
   public exportToGCSFiles(files: ExportToGCSItem[], destinationBucket: string) {
-
-    if (files === undefined || files === null || files.length <= 0) {
-      return;
+    if (files !== undefined && files === null && files.length > 0) {
+      this.store.dispatch(new exportToGCSActions.ProcessItems({ items: files }));
+      this.electronService.ipcRenderer.send(constants.IPC_EXPORT_TO_GCP_START, destinationBucket, files, SecurityService.getAccessToken());
     }
-
-    this.store.dispatch(new exportToGCSActions.ProcessItems({ items: files }));
-    this.electronService.ipcRenderer.send(constants.IPC_EXPORT_TO_GCP_START, destinationBucket, files, SecurityService.getAccessToken());
-  }
-
-  public exportToS3Files(fileList: ExportToS3Item[], destinationBucket: string) {
-    const reqs = [];
-    const responseCompleted = 0;
   }
 
 }

@@ -21,8 +21,6 @@ export abstract class GcsService {
 
   abstract exportToGCSFiles(files: ExportToGCSItem[], destinationBucket: String);
 
-  abstract exportToS3Files(files: ExportToS3Item[], destinationBucket: String);
-
   abstract cancelAll();
 
   abstract cancelDownloads(): void;
@@ -34,7 +32,6 @@ export abstract class GcsService {
   abstract cancelUploads();
 
   abstract getBucketFilesWithMaxResult(bucketName: String, delimiter: String, token: String, useDelimiter: Boolean): Observable<any>;
-
 
   abstract checkBucketPermissions(bucketName: String): Observable<any>;
 

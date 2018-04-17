@@ -15,7 +15,7 @@ import { environment } from '@env/environment';
 import { selectorSettings } from './settings';
 import { MatDialog } from '@angular/material';
 import { WarningModalComponent } from '@app/file-manager/warning-modal/warning-modal.component';
-import { FilesDatabase } from '@app/file-manager/dbstate/files-database';
+
 import { ItemStatus } from '@app/file-manager/models/item-status';
 import { Type } from '@app/file-manager/models/type';
 import { GcsService } from '@app/file-manager/services/gcs.service';
