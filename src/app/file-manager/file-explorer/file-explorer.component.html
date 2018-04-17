@@ -9,9 +9,13 @@
   <div class="breadcrumb-container">
     <app-breadcrumb [items]="breadcrumbItems" (home)="goHome($event)" (change)="pathChanged($event)"></app-breadcrumb>
   </div>
-  <mat-form-field class="search-container">
-    <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Search...">
-  </mat-form-field>
+
+  <div class="search-container">
+    <i class="material-icons">search</i>
+    <mat-form-field class="search-input">  
+      <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Search...">
+    </mat-form-field>
+  </div>
 </div>
 
 <div class="table-container flex-container column table-downloads">

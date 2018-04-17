@@ -10,13 +10,12 @@
   margin-right: 5px;
 }
 
-.search-transfers-container {
+.search-container-transfers {
   width: 25%;
-  padding-left: 10px;
   position: absolute;
-  z-index: 10;
   right: 0;
-  top: 9px;
+  margin-top: 10px;
+  background: white;
 }
 
 .subtitle {

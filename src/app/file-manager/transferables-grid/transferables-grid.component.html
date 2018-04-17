@@ -72,9 +72,12 @@
 </div>
 
 <div class="position-relative">
-  <mat-form-field class="search-transfers-container">
-    <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Search...">
-  </mat-form-field>
+  <div class="search-container search-container-transfers">
+    <i class="material-icons">search</i>
+    <mat-form-field class="search-input">
+      <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Search...">
+    </mat-form-field>
+  </div>
 </div>
 
 <mat-tab-group class="tab-group" [selectedIndex]="selectedIndex">
