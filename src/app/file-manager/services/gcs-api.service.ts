@@ -80,7 +80,6 @@ export class GcsApiService extends GcsService {
   }
 
   public cancelAll() {
-    this.electronService.ipcRenderer.send(constants.IPC_DOWNLOAD_CANCEL);
     this.cancelDownloads();
     this.cancelExportToS3();
     this.cancelUploads();

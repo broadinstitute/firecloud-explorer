@@ -44,7 +44,7 @@ const exportGCPManager = (destinationBucket, fileList = [], access_token, win) =
 
     // build here an array of fileList.length requests 
     const sourceObject = file.path.substring(file.path.indexOf('/') + 1, file.path.length);
-    const destinationObject = file.preserveStructure ? file.path : file.name;
+    const destinationObject = file.preserveStructure ? file.path : file.displayName;
 
     let url = constants.GCP_API + file.bucketName
       + '/o/' + urlencode(sourceObject)

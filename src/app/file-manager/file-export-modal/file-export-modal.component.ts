@@ -162,10 +162,10 @@ export class FileExportModalComponent implements OnInit {
 
               const dataFile: ExportToGCSItem = new ExportToGCSItem(file.id, file.name,
                 file.updated, file.created, file.size, file.mediaLink, file.path,
-                '', EntityStatus.PENDING, '', '', '',
+                '', EntityStatus.PENDING, file.bucketName, '', '',
                 this.preserveStructure, '', file.displayName, '');
 
-              filesToExport.push(file);
+              filesToExport.push(dataFile);
             });
 
             localStorage.setItem('destinationBucket', this.exportForm.controls.bucketNameGCP.value);
