@@ -187,3 +187,7 @@ app.on('window-all-closed', function () {
 process.on('unhandledRejection', (reason, p) => {
   console.log('Unhandled Rej at Promise:', p, '', reason);
 });
+
+process.on('uncaughtException', function (error) {
+  console.log(error);
+});
