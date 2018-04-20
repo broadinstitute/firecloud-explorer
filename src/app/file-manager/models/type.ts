@@ -10,7 +10,7 @@ export class Type {
     static readonly EXPORT_GCP = 'Export GCP';
 
     /**
-     * currently, only following numeric types should be used 
+     * currently, only following numeric types should be used
      */
     static readonly IDOWNLOAD = 0;
     static readonly IUPLOAD = 1;
