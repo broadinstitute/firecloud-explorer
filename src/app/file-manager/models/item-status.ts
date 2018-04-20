@@ -18,8 +18,5 @@ export class ItemStatus {
   static readonly IEXPORTED_S3 = 6;
   static readonly IEXPORTING_GCP = 7;
   static readonly IFAILED = 8;
-
-  static lenght = 9;
-
 }
 

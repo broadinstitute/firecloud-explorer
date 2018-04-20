@@ -12,6 +12,4 @@ export class Type {
     static readonly IFOLDER = 3;
     static readonly IEXPORT_S3 = 4;
     static readonly IEXPORT_GCP = 5;
-
-    static lenght = 6;
 }

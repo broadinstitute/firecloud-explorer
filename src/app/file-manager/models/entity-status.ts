@@ -7,7 +7,5 @@ export class EntityStatus {
   static readonly CANCELED = 4;
   static readonly FAILED = 5;
 
-  static lenght = 6;
-
 }
 
