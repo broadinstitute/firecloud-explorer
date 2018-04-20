@@ -1,5 +1,5 @@
 import { Component, OnInit, Output, ViewChild, EventEmitter, NgZone } from '@angular/core';
-import { Message, TreeNode } from 'primeng/primeng';
+import { Message, TreeNode, TreeTable } from 'primeng/primeng';
 import { Store } from '@ngrx/store';
 import { UploadItem } from '@app/file-manager/models/upload-item';
 import { AppState } from '@app/file-manager/reducers';
@@ -10,13 +10,14 @@ import { MatDialog } from '@angular/material';
 import { RegisterUploadService } from '@app/file-manager/services/register-upload.service';
 import { FileUploadModalComponent } from '../file-upload-modal/file-upload-modal.component';
 import { TransferablesGridComponent } from '../transferables-grid/transferables-grid.component';
-import { TreeTable } from 'primeng/primeng';
 import { ChangeDetectorRef } from '@angular/core';
 import { Type } from '@app/file-manager/models/type';
 import { EntityStatus } from '@app/file-manager/models/entity-status';
 import { ISubscription } from 'rxjs/Subscription';
 import { StatusService } from '@app/file-manager/services/status.service';
 import { UUID } from 'angular2-uuid';
+import { environment } from '@env/environment';
+const constants = require('../../../../electron_app/helpers/environment').constants;
 
 @Component({
   selector: 'app-file-explorer-upload',
@@ -73,7 +74,7 @@ export class FileExplorerUploadComponent implements OnInit {
     this.files = [];
     this.files.push(rootNode);
 
-    this.electronService.ipcRenderer.once('get-node-content', (event, localFiles) => {
+    this.electronService.ipcRenderer.once(constants.IPC_GET_NODE_CONTENT, (event, localFiles) => {
       this.zone.run(() => {
         rootNode.children = localFiles.result;
         rootNode.data.name = localFiles.nodePath;
@@ -113,16 +114,19 @@ export class FileExplorerUploadComponent implements OnInit {
   }
 
   nodeExpand(evt) {
-    let node: TreeNode;
-    if (evt.node) {
-      this.electronService.ipcRenderer.once('get-node-content', (event, nodeFiles) => {
-        node = evt.node;
+    // let node: TreeNode;
+    console.log('nodeExpand ', evt.node);
+    if (evt.node && !evt.node.expanded) {
+      this.electronService.ipcRenderer.once(constants.IPC_GET_NODE_CONTENT, (event, nodeFiles) => {
+        console.log('nodeExpand callback ', evt.node, nodeFiles);
+        // node = evt.node;
         this.zone.run(() => {
-          node.children = nodeFiles.result;
-          node.expanded = true;
+          evt.node.children = nodeFiles.result;
+          evt.node.expanded = true;
         });
         return;
       });
+
       this.registerUpload.getLazyNodeContent(evt.node.data.path);
     }
   }

@@ -60,7 +60,7 @@ app.on('ready', function () {
 
   // Show dev tools
   // Remove this line before distributing
-  // win.webContents.openDevTools();
+   win.webContents.openDevTools();
 
   win.once('ready-to-show', () => {
     win.show();
@@ -127,6 +127,8 @@ app.on('ready', function () {
   });
 
   ipcMain.on(constants.IPC_GET_NODE_CONTENT, (event, nodePath) => {
+    console.log('ipcMain.on GET NODE CONTENT', event, nodePath);
+
     if (nodePath === '/') {
       nodePath = os.homedir();
     }

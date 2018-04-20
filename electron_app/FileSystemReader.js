@@ -3,6 +3,8 @@ const fs = require('fs');
 
 const lazyNodeReader = (dir, fileList = []) => {
 
+  console.log('lazyNodeReader dir ', dir);
+
   fs.readdirSync(dir).forEach(file => {
     const filePath = path.join(dir, file);
     let node = {};
@@ -49,6 +51,8 @@ const lazyNodeReader = (dir, fileList = []) => {
       // console.log('error reading file stats ');
     }
   });
+
+  console.log('lazyNodeReader fileList ', JSON.stringify(fileList, null, 2));
   return fileList;
 }
 

@@ -26,6 +26,7 @@ import { GcsApiService } from './services/gcs-api.service';
 import { GcsApiMockService } from './services/gcs-api-mock.service';
 import { FirecloudApiService } from './services/firecloud-api.service';
 import { PreflightService } from './services/preflight.service';
+import { UploadPreflightService } from './services/upload-preflight.service';
 import { ElectronService } from 'ngx-electron';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { RequestInterceptor } from './services/request.interceptor';
@@ -81,6 +82,7 @@ import { ProgressTabComponent } from './progress-tab/progress-tab.component';
     TransferablesGridComponent,
     StatusService,
     FilesService,
+    UploadPreflightService,
     PreflightService,
     BucketService,
     GoogleLoginService,
