@@ -2,7 +2,24 @@
 
 <h1>Progress Status</h1>
 <div class="flex-container space-between">
+
   <div class="status-box">
+    <app-status-box title="Downloaded:" storeName="downloads" cancelLabel='Cancel Download' (cancelRequest)="cancelDownloads()"></app-status-box>
+  </div>
+
+  <div class="status-box">
+    <app-status-box title="Uploaded:" storeName="uploads" cancelLabel='Cancel Upload' (cancelRequest)="cancelUploads()"></app-status-box>
+  </div>
+
+  <div class="status-box">
+    <app-status-box title="Exported to Google Cloud:" storeName="exportToGCS" cancelLabel='Cancel Export' (cancelRequest)="cancelExportsToGCP()"></app-status-box>
+  </div>
+
+  <div class="status-box">
+    <app-status-box title="Exported to Amazon:" storeName="exportToS3" cancelLabel='Cancel Export' (cancelRequest)="cancelExportsToS3()"></app-status-box>
+  </div>
+
+  <!-- <div class="status-box">
     <h4 class="subtitle medium">Downloaded:</h4>
     <div class="flex-container space-between">
       <p class="aclaration">{{ downCompleted + ' of ' + downTotal }} file(s)</p>
@@ -17,25 +34,27 @@
         <i class="material-icons">highlight_off</i>Cancel Download
       </button>
     </div>
-  </div>
+  </div> -->
 
-  <div class="status-box">
+  <!-- <div class="status-box">
     <h4 class="subtitle medium">Uploaded:</h4>
     <div class="flex-container space-between">
+
       <p class="aclaration">{{ upCompleted + ' of ' + upTotal }} file(s)</p>
       <h4 class="subtitle light">{{ upProgress | number:'1.0-0' }}%</h4>
     </div>
 
-    <p-progressBar mode="determinate" class="progress-bar" [ngClass]="{'success': upFinished, 'failure': upCanceled}"
-      [value]="upProgress" [showValue]="false"></p-progressBar>
+    <p-progressBar mode="determinate" class="progress-bar" [ngClass]="{'success': upFinished, 'failure': upCanceled}" [value]="upProgress"
+      [showValue]="false"></p-progressBar>
 
     <div class="flex-container end actions">
       <button mat-raised-button (click)="cancelUploads()" class="button-secondary" [disabled]="!upInProgress">
         <i class="material-icons">highlight_off</i>Cancel Upload
       </button>
     </div>
-  </div>
-  <div class="status-box">
+  </div> -->
+
+  <!-- <div class="status-box">
     <h4 class="subtitle medium">Exported to Google Cloud:</h4>
     <div class="flex-container space-between">
 
@@ -43,32 +62,33 @@
       <h4 class="subtitle light">{{ gcsProgress | number:'1.0-0' }}%</h4>
     </div>
 
-    <p-progressBar mode="determinate" class="progress-bar" [ngClass]="{'success': gcsFinished, 'failure': gcsCanceled}"
-      [value]="gcsProgress" [showValue]="false"></p-progressBar>
+    <p-progressBar mode="determinate" class="progress-bar" [ngClass]="{'success': gcsFinished, 'failure': gcsCanceled}" [value]="gcsProgress"
+      [showValue]="false"></p-progressBar>
 
     <div class="flex-container end actions">
       <button mat-raised-button (click)="cancelExportsToGCP()" class="button-secondary" [disabled]="!gcsInProgress">
         <i class="material-icons">highlight_off</i>Cancel Export
       </button>
     </div>
-  </div>
+  </div> -->
 
-  <div class="status-box">
+  <!-- <div class="status-box">
     <h4 class="subtitle medium">Exported to Amazon:</h4>
     <div class="flex-container space-between">
       <p class="aclaration">{{ s3Completed + ' of ' + s3Total }} file(s)</p>
       <h4 class="subtitle light">{{ s3Progress | number:'1.0-0' }}%</h4>
     </div>
 
-    <p-progressBar mode="determinate" class="progress-bar" [ngClass]="{'success': s3Finished, 'failure': s3Canceled}"
-      [value]="s3Progress" [showValue]="false"></p-progressBar>
+    <p-progressBar mode="determinate" class="progress-bar" [ngClass]="{'success': s3Finished, 'failure': s3Canceled}" [value]="s3Progress"
+      [showValue]="false"></p-progressBar>
 
     <div class="flex-container end actions">
       <button mat-raised-button (click)="cancelExportsToS3()" class="button-secondary" [disabled]="!s3InProgress">
         <i class="material-icons">highlight_off</i>Cancel Export
       </button>
     </div>
-  </div>
+  </div> -->
+
 </div>
 
 <div class="position-relative">

@@ -1,0 +1,15 @@
+<h4 class="subtitle medium">
+  {{title}}</h4>
+<div class="flex-container space-between">
+  <p class="aclaration">{{ completed + ' of ' + total }} file(s)</p>
+  <h4 class="subtitle light">{{ progress | number:'1.0-0' }}%</h4>
+</div>
+
+<p-progressBar mode="determinate" class="progress-bar" [ngClass]="{'success': finished, 'failure': canceled}" [value]="progress"
+  [showValue]="false"></p-progressBar>
+
+<div class="flex-container end actions">
+  <button mat-raised-button (click)="cancel()" class="button-secondary" [disabled]="!inProgress">
+    <i class="material-icons">highlight_off</i>{{ cancelLabel }}
+  </button>
+</div>

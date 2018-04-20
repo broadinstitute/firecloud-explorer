@@ -52,42 +52,43 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   displayedColumns = ['name', 'size', 'status', 'progress', 'actions'];
 
   // ---------------------------- progress info from here ----------------
-  downCompleted = 0;
-  downTotal = 0;
-  downProgress = 0;
-  downPending = false;
-  downInProgress = false;
-  downCanceled = false;
-  downFinished = false;
+  // downCompleted = 0;
+  // downTotal = 0;
+  // downProgress = 0;
+  // downPending = false;
+  // downInProgress = false;
+  // downCanceled = false;
+  // downFinished = false;
 
-  upCompleted = 0;
-  upTotal = 0;
-  upProgress = 0;
-  upPending = false;
-  upInProgress = false;
-  upCanceled = false;
-  upFinished = false;
+  // upCompleted = 0;
+  // upTotal = 0;
+  // upProgress = 0;
+  // upPending = false;
+  // upInProgress = false;
+  // upCanceled = false;
+  // upFinished = false;
 
-  gcsCompleted = 0;
-  gcsTotal = 0;
-  gcsProgress = 0;
-  gcsPending = false;
-  gcsInProgress = false;
-  gcsCanceled = false;
-  gcsFinished = false;
+  // gcsCompleted = 0;
+  // gcsTotal = 0;
+  // gcsProgress = 0;
+  // gcsPending = false;
+  // gcsInProgress = false;
+  // gcsCanceled = false;
+  // gcsFinished = false;
 
-  s3Completed = 0;
-  s3Total = 0;
-  s3Progress = 0;
-  s3Pending = false;
-  s3InProgress = false;
-  s3Canceled = false;
-  s3Finished = false;
+  // s3Completed = 0;
+  // s3Total = 0;
+  // s3Progress = 0;
+  // s3Pending = false;
+  // s3InProgress = false;
+  // s3Canceled = false;
+  // s3Finished = false;
 
-  downloadState: Observable<DownloadState>;
-  uploadState: Observable<UploadState>;
-  exportToGCSState: Observable<ExportToGCSState>;
-  exportToS3State: Observable<ExportToS3State>;
+  // downloadState: Observable<DownloadState>;
+  // uploadState: Observable<UploadState>;
+  // exportToGCSState: Observable<ExportToGCSState>;
+  // exportToS3State: Observable<ExportToS3State>;
+
   // ------------------------------ to here ------------------------
   constructor(
     private statusService: StatusService,
@@ -100,82 +101,83 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
     private spinner: NgxSpinnerService,
     private dialog: MatDialog) {
     this.selectedIndex = 0;
-    this.downloadState = this.store.select('downloads');
-    this.uploadState = this.store.select('uploads');
-    this.exportToGCSState = this.store.select('exportToGCS');
-    this.exportToS3State = this.store.select('exportToS3');
-    this.selectedIndex = 0;
+
+    // this.downloadState = this.store.select('downloads');
+    // this.uploadState = this.store.select('uploads');
+    // this.exportToGCSState = this.store.select('exportToGCS');
+    // this.exportToS3State = this.store.select('exportToS3');
+
     /**
      * registering listeners to download progress info
      */
-    this.downloadState.subscribe(cs => {
-      this.zone.run(() => {
-        this.downCompleted = cs.completed.count;
-        this.downTotal = cs.totalCount;
-        this.downProgress = cs.totalProgress;
-        if (!isFinite(this.downProgress)) {
-          this.downProgress = 0;
-        }
-        this.downInProgress = cs.inProgress.count > 0;
-        this.downPending = cs.pending.count > 0;
-        this.downCanceled = (cs.cancelled.count + cs.failed.count) > 0;
-        this.downFinished = (cs.cancelled.count + cs.failed.count + this.downCompleted) === this.downTotal;
-      });
-    });
+    // this.downloadState.subscribe(cs => {
+    //   this.zone.run(() => {
+    //     this.downCompleted = cs.completed.count;
+    //     this.downTotal = cs.totalCount;
+    //     this.downProgress = cs.totalProgress;
+    //     if (!isFinite(this.downProgress)) {
+    //       this.downProgress = 0;
+    //     }
+    //     this.downInProgress = cs.inProgress.count > 0;
+    //     this.downPending = cs.pending.count > 0;
+    //     this.downCanceled = (cs.cancelled.count + cs.failed.count) > 0;
+    //     this.downFinished = (cs.cancelled.count + cs.failed.count + this.downCompleted) === this.downTotal;
+    //   });
+    // });
 
     /**
      * registering listeners to upload progress info
      */
-    this.uploadState.subscribe(cs => {
-      this.zone.run(() => {
-        this.upCompleted = cs.completed.count;
-        this.upTotal = cs.totalCount;
-        this.upProgress = cs.totalProgress;
-        if (!isFinite(this.upProgress)) {
-          this.upProgress = 0;
-        }
-        this.upInProgress = cs.inProgress.count > 0;
-        this.upPending = cs.pending.count > 0;
-        this.upCanceled = (cs.cancelled.count + cs.failed.count) > 0;
-        this.upFinished = (cs.cancelled.count + cs.failed.count + this.upCompleted) === this.upTotal;
-      });
-    });
+    // this.uploadState.subscribe(cs => {
+    //   this.zone.run(() => {
+    //     this.upCompleted = cs.completed.count;
+    //     this.upTotal = cs.totalCount;
+    //     this.upProgress = cs.totalProgress;
+    //     if (!isFinite(this.upProgress)) {
+    //       this.upProgress = 0;
+    //     }
+    //     this.upInProgress = cs.inProgress.count > 0;
+    //     this.upPending = cs.pending.count > 0;
+    //     this.upCanceled = (cs.cancelled.count + cs.failed.count) > 0;
+    //     this.upFinished = (cs.cancelled.count + cs.failed.count + this.upCompleted) === this.upTotal;
+    //   });
+    // });
 
     /**
      * registering listeners to export-to-gcs progress info
      */
-    this.exportToGCSState.subscribe(cs => {
-      this.zone.run(() => {
-        this.gcsCompleted = cs.completed.count;
-        this.gcsTotal = cs.totalCount;
-        this.gcsProgress = 100.0 * this.gcsCompleted / this.gcsTotal;
-        if (!isFinite(this.gcsProgress)) {
-          this.gcsProgress = 0;
-        }
-        this.gcsInProgress = cs.inProgress.count > 0;
-        this.gcsPending = cs.pending.count > 0;
-        this.gcsCanceled = (cs.cancelled.count + cs.failed.count) > 0;
-        this.gcsFinished = (cs.cancelled.count + cs.failed.count + this.gcsCompleted) === this.gcsTotal;
-      });
-    });
+    // this.exportToGCSState.subscribe(cs => {
+    //   this.zone.run(() => {
+    //     this.gcsCompleted = cs.completed.count;
+    //     this.gcsTotal = cs.totalCount;
+    //     this.gcsProgress = 100.0 * this.gcsCompleted / this.gcsTotal;
+    //     if (!isFinite(this.gcsProgress)) {
+    //       this.gcsProgress = 0;
+    //     }
+    //     this.gcsInProgress = cs.inProgress.count > 0;
+    //     this.gcsPending = cs.pending.count > 0;
+    //     this.gcsCanceled = (cs.cancelled.count + cs.failed.count) > 0;
+    //     this.gcsFinished = (cs.cancelled.count + cs.failed.count + this.gcsCompleted) === this.gcsTotal;
+    //   });
+    // });
 
     /**
      * registering listeners to export-to-s3 progress info
      */
-    this.exportToS3State.subscribe(cs => {
-      this.zone.run(() => {
-        this.s3Completed = cs.completed.count;
-        this.s3Total = cs.totalCount;
-        this.s3Progress = 100.0 * this.s3Completed / this.s3Total;
-        if (!isFinite(this.s3Progress)) {
-          this.s3Progress = 0;
-        }
-        this.s3InProgress = cs.inProgress.count > 0;
-        this.s3Pending = cs.pending.count > 0;
-        this.s3Canceled = (cs.cancelled.count + cs.failed.count) > 0;
-        this.s3Finished = (cs.cancelled.count + cs.failed.count + this.s3Completed) === this.s3Total;
-      });
-    });
+    // this.exportToS3State.subscribe(cs => {
+    //   this.zone.run(() => {
+    //     this.s3Completed = cs.completed.count;
+    //     this.s3Total = cs.totalCount;
+    //     this.s3Progress = 100.0 * this.s3Completed / this.s3Total;
+    //     if (!isFinite(this.s3Progress)) {
+    //       this.s3Progress = 0;
+    //     }
+    //     this.s3InProgress = cs.inProgress.count > 0;
+    //     this.s3Pending = cs.pending.count > 0;
+    //     this.s3Canceled = (cs.cancelled.count + cs.failed.count) > 0;
+    //     this.s3Finished = (cs.cancelled.count + cs.failed.count + this.s3Completed) === this.s3Total;
+    //   });
+    // });
 
 
   }
@@ -229,7 +231,7 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
 
-    this.s3Canceled = this.gcsService.exportToS3Canceled;
+    // this.s3Canceled = this.gcsService.exportToS3Canceled;
 
     if (localStorage.getItem('displaySpinner') === 'true') {
       this.spinner.show();
@@ -284,11 +286,14 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
       disableClose: true,
       data: 'cancelAllUploads'
     });
+
     dialogRef.afterClosed().subscribe(modalResponse => {
       this.zone.run(() => {
-        this.upCanceled = modalResponse.exit;
-        this.upInProgress = !modalResponse.exit;
-        this.gcsService.cancelUploads();
+        if (modalResponse.exit) {
+          // this.upCanceled = modalResponse.exit;
+          // this.upInProgress = !modalResponse.exit;
+          this.gcsService.cancelUploads();
+        }
         this.spinner.hide();
       });
     });
@@ -301,11 +306,14 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
       disableClose: true,
       data: 'cancelAllDownloads'
     });
+
     dialogRef.afterClosed().subscribe(modalResponse => {
       this.zone.run(() => {
-        this.downCanceled = modalResponse.exit;
-        this.downInProgress = !modalResponse.exit;
-        this.gcsService.cancelDownloads();
+        if (modalResponse.exit) {
+          // this.downCanceled = modalResponse.exit;
+          // this.downInProgress = !modalResponse.exit;
+          this.gcsService.cancelDownloads();
+        }
         this.spinner.hide();
       });
     });
@@ -323,10 +331,8 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
       this.zone.run(() => {
         if (modalResponse.exit) {
           this.gcsService.cancelExportsToGCP();
-          this.spinner.hide();
-        } else {
-          this.spinner.hide();
         }
+        this.spinner.hide();
       });
     });
   }
@@ -342,6 +348,7 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
       if (modalResponse.exit) {
         this.gcsService.cancelExportToS3();
       }
+      this.spinner.hide();
     });
   }
 
