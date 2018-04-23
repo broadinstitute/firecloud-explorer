@@ -250,6 +250,8 @@ export function ExportToGCSReducer(
             return state;
     }
 
+    state.totalProgress = state.totalCount !== 0 ? 100.0 * state.completed.count / state.totalCount : 0;
+
     return {
         totalCount: state.totalCount,
         totalSize: state.totalSize,
