@@ -10,11 +10,14 @@ let allDownloads = [];
 let fileExists = true;
 
 const downloadManager = (items, access_token, electronWin) => {
+
   items.forEach(item => {
+
     let count = 0;
     let fileName = item.displayName;
     const destination = item.preserveStructure ?
       path.join(item.destination, item.path.substring(item.path.lastIndexOf('/'), 0)) : item.destination;
+
     do {
       fileExists = fileAlreadyExists(path.join(destination, fileName));
       if (fileExists) {
@@ -23,14 +26,13 @@ const downloadManager = (items, access_token, electronWin) => {
           item.displayName.substring(item.displayName.indexOf('.'));
       }
     } while (fileExists);
-    item.displayName = fileName;
-    processItem(item, destination, access_token, electronWin);
-  });
-};
 
-const processItem = (item, itemDestination, token, win) => {
-  handleFolder(itemDestination, (result) => {
-    allDownloads.push(processDownload(token, item, result, win));
+    item.displayName = fileName;
+
+    handleFolder(destination, (result) => {
+      allDownloads.push(processDownload(access_token, item, result, electronWin));
+    });
+
   });
 };
 

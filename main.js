@@ -1,7 +1,7 @@
 if (require('electron-squirrel-startup')) return;
 
 // ./main.js
-const { app, BrowserWindow, ipcMain, } = require('electron');
+const { app, BrowserWindow, ipcMain, Menu} = require('electron');
 const path = require('path');
 const url = require('url');
 const {
@@ -23,6 +23,10 @@ const {
   uploadManager,
   uploadManagerCancel
 } = require('./electron_app/UploadManager');
+const {
+  exportGCPManager,
+  exportGCPManagerCancel
+} = require('./electron_app/ExportGCPManager');
 
 require('dotenv').config();
 
@@ -62,6 +66,49 @@ app.on('ready', function () {
     win.show();
   });
 
+  if (process.platform === 'darwin') {
+    // Create our menu entries so that we can use MAC shortcuts
+
+    var template = [{
+      label: app.getName(),
+      submenu: [
+        { label: "About " + app.getName(), selector: "orderFrontStandardAboutPanel:" },
+        { type: "separator" },
+        { role: 'services', submenu: [] },
+        { type: 'separator' },
+        { role: 'hide' },
+        { role: 'hideothers' },
+        { role: 'unhide' },
+        { type: 'separator' },
+        { label: "Quit", accelerator: "Command+Q", click: function () { app.quit(); } }
+      ]
+    }, {
+      label: "Edit",
+      submenu: [
+        { label: "Undo", accelerator: "Cmd+Z", selector: "undo:" },
+        { label: "Redo", accelerator: "Shift+Cmd+Z", selector: "redo:" },
+        { type: "separator" },
+        { label: "Cut", accelerator: "Cmd+X", selector: "cut:" },
+        { label: "Copy", accelerator: "Cmd+C", selector: "copy:" },
+        { label: "Paste", accelerator: "Cmd+V", selector: "paste:" },
+        { label: "Select All", accelerator: "Cmd+A", selector: "selectAll:" }
+      ]
+    }
+    ];
+
+    Menu.setApplicationMenu(Menu.buildFromTemplate(template));
+
+  };
+
+  ipcMain.on(constants.IPC_EXPORT_TO_GCP_START, (event, destinationBucket, files, access_token) => {
+    exportGCPManager(destinationBucket, files, access_token, win);
+  });
+  
+
+  ipcMain.on(constants.IPC_EXPORT_TO_GCP_CANCEL, (event, file, access_token) => {
+    exportGCPManagerCancel(file, access_token);
+  });
+
   ipcMain.on(constants.IPC_CONFIGURE_ACCOUNT, (event, googleConfig, googleOptions) => {
     this.googleConfig = googleConfig;
     this.googleOptions = googleOptions;
@@ -77,11 +124,11 @@ app.on('ready', function () {
     loginG.logOut();
   });
 
-  ipcMain.on(constants.IPC_START_DOWNLOAD, (event, items, access_token) => {
+  ipcMain.on(constants.IPC_DOWNLOAD_START, (event, items, access_token) => {
     downloadManager(items, access_token, win);
   });
 
-  ipcMain.on(constants.IPC_START_UPLOAD, (event, bucketName, files, access_token) => {
+  ipcMain.on(constants.IPC_UPLOAD_START, (event, bucketName, files, access_token) => {
     uploadManager(bucketName, files, access_token, win);
   });
 
@@ -117,11 +164,11 @@ app.on('ready', function () {
   });
 
   // ----- Export from GCS to S3 ------
-  ipcMain.on(constants.IPC_EXPORT_S3, (event, data) => {
+  ipcMain.on(constants.IPC_EXPORT_TO_S3_START, (event, data) => {
     ExportS3(win, data, app);
   });
 
-  ipcMain.on(constants.IPC_EXPORT_S3_CANCEL, (event) => {
+  ipcMain.on(constants.IPC_EXPORT_TO_S3_CANCEL, (event) => {
     exportS3Cancel();
   });
 
@@ -153,4 +200,8 @@ app.on('window-all-closed', function () {
 
 process.on('unhandledRejection', (reason, p) => {
   console.log('Unhandled Rej at Promise:', p, '', reason);
+});
+
+process.on('uncaughtException', function (error) {
+  console.log(error);
 });

@@ -1,4 +1,4 @@
-import { Component, HostBinding, OnDestroy, OnInit, HostListener } from '@angular/core';
+import { Component, HostBinding, OnDestroy, OnInit, HostListener, NgZone } from '@angular/core';
 import { OverlayContainer } from '@angular/cdk/overlay';
 import { Store } from '@ngrx/store';
 import { Subject } from 'rxjs/Subject';
@@ -15,11 +15,17 @@ import { environment } from '@env/environment';
 import { selectorSettings } from './settings';
 import { MatDialog } from '@angular/material';
 import { WarningModalComponent } from '@app/file-manager/warning-modal/warning-modal.component';
-import { FilesDatabase } from '@app/file-manager/dbstate/files-database';
+
 import { ItemStatus } from '@app/file-manager/models/item-status';
 import { Type } from '@app/file-manager/models/type';
 import { GcsService } from '@app/file-manager/services/gcs.service';
 import { GoogleLoginService } from '@app/file-manager/services/login-google.service';
+import * as Transferables from '@app/file-manager/actions/transferables.actions';
+import { DownloadState } from '@app/file-manager/reducers/downloads.reducer';
+import { UploadState } from '@app/file-manager/reducers/uploads.reducer';
+import { ExportToGCSState } from '@app/file-manager/reducers/export-to-gcs.reducer';
+import { ExportToS3State } from '@app/file-manager/reducers/export-to-s3.reducer';
+import { Observable } from 'rxjs/Observable';
 
 @Component({
   selector: 'app-root',
@@ -41,6 +47,12 @@ export class AppComponent implements OnInit, OnDestroy {
   year = new Date().getFullYear();
   isAuthenticated;
 
+  downloadState: Observable<DownloadState>;
+  uploadState: Observable<UploadState>;
+  exportToGCSState: Observable<ExportToGCSState>;
+  exportToS3State: Observable<ExportToS3State>;
+  inProgress = false;
+
   constructor(
     private dialog: MatDialog,
     public overlayContainer: OverlayContainer,
@@ -48,22 +60,21 @@ export class AppComponent implements OnInit, OnDestroy {
     private router: Router,
     private electronService: ElectronService,
     private gcsService: GcsService,
+    private zone: NgZone,
     private loginService: GoogleLoginService) {
     AppComponent.updateUserEmail.subscribe(email => {
       this.userEmail = email;
     });
+    this.downloadState = this.store.select('downloads');
+    this.uploadState = this.store.select('uploads');
+    this.exportToGCSState = this.store.select('exportToGCS');
+    this.exportToS3State = this.store.select('exportToS3');
    }
 
   @HostListener('window:beforeunload')
   checkBeforeClose() {
     event.preventDefault();
-    const items = new FilesDatabase(this.store).data.
-    filter(item =>
-         item.status === ItemStatus.DOWNLOADING
-      || item.status === ItemStatus.UPLOADING
-      || (item.status === ItemStatus.PENDING && item.type === Type.EXPORT_GCP)
-      || (item.status === ItemStatus.EXPORTING_S3 && item.type === Type.EXPORT_S3));
-    if (items.length > 0) {
+    if (this.inProgress) {
       const dialogRef = this.dialog.open(WarningModalComponent, {
         width: '500px',
         disableClose: false,
@@ -93,6 +104,30 @@ export class AppComponent implements OnInit, OnDestroy {
       .select(selectorAuth)
       .takeUntil(this.unsubscribe$)
       .subscribe(auth => this.isAuthenticated = auth.isAuthenticated);
+
+    this.downloadState.subscribe(cs => {
+      this.zone.run(() => {
+        this.inProgress = cs.inProgress.count > 0;
+      });
+    });
+
+    this.uploadState.subscribe(cs => {
+      this.zone.run(() => {
+        this.inProgress = cs.inProgress.count > 0;
+      });
+    });
+
+    this.exportToGCSState.subscribe(cs => {
+      this.zone.run(() => {
+        this.inProgress = cs.inProgress.count > 0;
+      });
+    });
+
+    this.exportToS3State.subscribe(cs => {
+      this.zone.run(() => {
+        this.inProgress = cs.inProgress.count > 0;
+      });
+    });
     this.onLogoutClick();
   }
 
@@ -106,11 +141,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   onLogoutClick() {
-    const items = new FilesDatabase(this.store).data.
-    filter(item => item.status === ItemStatus.DOWNLOADING
-      || item.status === ItemStatus.UPLOADING
-      || (item.status === ItemStatus.PENDING && Type.EXPORT_GCP));
-    if (items.length > 0) {
+    if (this.inProgress) {
       const dialogRef = this.dialog.open(WarningModalComponent, {
         width: '500px',
         disableClose: false,
@@ -118,6 +149,7 @@ export class AppComponent implements OnInit, OnDestroy {
       });
       dialogRef.afterClosed().subscribe(result => {
         if (result.exit) {
+          this.store.dispatch(new Transferables.Reset());
           this.gcsService.cancelAll();
           this.logout();
         }

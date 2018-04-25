@@ -41,7 +41,7 @@ export class ElectronIpcApiService extends ElectronIpcService {
   }
 
   public exportS3(dataTransfer: any): void {
-    this.electronService.ipcRenderer.send(constants.IPC_EXPORT_S3, dataTransfer);
+    this.electronService.ipcRenderer.send(constants.IPC_EXPORT_TO_S3_START, dataTransfer);
   }
 
   public setCredentials(credentials): void {

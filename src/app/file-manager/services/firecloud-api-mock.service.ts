@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { FirecloudService } from './firecloud.service';
 import { Observable } from 'rxjs/Observable';
-import { Item } from '../models/item';
+import { Item } from '@app/file-manager/models/item';
 import * as workspaces from 'assets/demo/workspaces';
 import { SelectionService } from '@app/file-manager/services/selection.service';
 

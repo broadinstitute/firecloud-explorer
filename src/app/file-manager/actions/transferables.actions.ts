@@ -9,6 +9,7 @@ export const UNSELECT_ALL = '[Transferables] Unselect All';
 export const TOGGLE_SELECTION = '[Transferables] Toggle Selection';
 export const TOGGLE_ITEM_SELECTION = '[Transferables] Toggle Item Selection';
 export const ADD_ITEM = '[Transferables] Add Item';
+export const ADD_ITEMS = '[Transferables] Add Items';
 export const UPDATE_ITEM = '[Transferables] Update Item';
 export const REMOVE_ITEM = '[Transferables] Remove Item';
 export const SELECT_ITEM = '[Transferables] Select Item';
@@ -48,6 +49,12 @@ export class ToggleItemSelection implements Action {
 
 export class AddItem implements Action {
     readonly type = ADD_ITEM;
+
+    constructor(public payload: any) { }
+}
+
+export class AddItems implements Action {
+    readonly type = ADD_ITEMS;
 
     constructor(public payload: any) { }
 }
@@ -103,6 +110,7 @@ export type All
     | ToggleSelection
     | ToggleItemSelection
     | AddItem
+    | AddItems
     | UpdateItem
     | RemoveItem
     | SelectItem

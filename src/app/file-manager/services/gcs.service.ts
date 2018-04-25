@@ -1,33 +1,37 @@
 import { Observable } from 'rxjs/Observable';
-import { Item } from '../models/item';
+import { DownloadItem } from '@app/file-manager/models/download-item';
+import { UploadItem } from '@app/file-manager/models/upload-item';
+import { ExportToGCSItem } from '@app/file-manager/models/export-to-gcs-item';
+import { ExportToS3Item } from '@app/file-manager/models/export-to-s3-item';
+
+
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { WarningModalComponent } from '@app/file-manager/warning-modal/warning-modal.component';
+import { MatDialogRef } from '@angular/material';
 
 export abstract class GcsService {
-
-  exportItemCompleted: BehaviorSubject<Boolean> = new BehaviorSubject(false);
-
   cancelGCPExports = false;
   exportToS3Canceled = false;
 
   abstract getBucketFiles(bucketName: String): Observable<any>;
 
-  abstract uploadFiles(bucketName: String, files: any[]);
+  abstract downloadFiles(files: DownloadItem[]);
 
-  abstract downloadFiles(files: Item[]);
+  abstract uploadFiles( files: UploadItem[], bucketName: String);
+
+  abstract exportToGCSFiles(files: ExportToGCSItem[], destinationBucket: String);
 
   abstract cancelAll();
 
-  abstract cancelDownloads(): Promise<boolean>;
+  abstract cancelDownloads(): void;
 
   abstract cancelExportToS3();
 
   abstract cancelExportsToGCP();
 
-  abstract cancelUploads(): Promise<boolean>;
+  abstract cancelUploads();
 
   abstract getBucketFilesWithMaxResult(bucketName: String, delimiter: String, token: String, useDelimiter: Boolean): Observable<any>;
-
-  abstract exportToGCPFiles(destinationBucket: String, files: any[]);
 
   abstract checkBucketPermissions(bucketName: String): Observable<any>;
 

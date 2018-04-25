@@ -14,9 +14,9 @@
       <span *ngIf="!isLoading()">Total size: {{ totalSize()  | filesize}}</span>
       <span *ngIf="isLoading()">Size: {{ totalSize() | filesize}}</span>
     </h4>
-    <div *ngIf="isLoading()">
-      <small>Please wait, loading selected content</small>
-      <div class="progress-dots download-modal">
+    <div *ngIf="isLoading()" class="warn">
+      <p>Please wait, loading selected content</p>
+      <div class="progress-dots modal">
         <span class="dot"></span>
         <span class="dot"></span>
         <span class="dot"></span>
@@ -29,6 +29,6 @@
   disableRipple>Preserve folder structure</mat-checkbox>
 <p-messages class="error-messages" [(value)]="msgs"></p-messages>
 <mat-dialog-actions>
-  <button mat-raised-button [disabled]="isLoading()" (click)="cancel()" class="button-secondary">Cancel</button>
-  <button mat-raised-button [disabled]="(!isValid || isLoading())" (click)="startDownload()" class="button-primary">Start Download!</button>
+  <button mat-raised-button [disabled]="isLoading() || disableButton" (click)="cancel()" class="button-secondary">Cancel</button>
+  <button mat-raised-button [disabled]="!isValid || isLoading() || disableButton" (click)="startDownload()" class="button-primary">Start Download!</button>
 </mat-dialog-actions>

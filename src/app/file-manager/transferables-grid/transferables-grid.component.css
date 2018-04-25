@@ -1,5 +1,5 @@
-.actions{
-  margin-top: 20px;
+.actions {
+  margin-top: 15px;
 }
 
 .export-icon-dark {
@@ -10,9 +10,20 @@
   margin-right: 5px;
 }
 
-.search-container{
-  width: 30%;
+.search-container-transfers {
+  width: 25%;
   position: absolute;
-  top: 25px;
   right: 0;
+  margin-top: 10px;
+  background: white;
+}
+
+.subtitle {
+  line-height: 1.7rem;
+}
+
+.aclaration {
+  font-size: 0.9rem;
+  margin-bottom: 0;
+  line-height: 1.7rem;
 }

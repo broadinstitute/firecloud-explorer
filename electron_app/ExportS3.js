@@ -1,6 +1,6 @@
 let AWS = require('aws-sdk');
 let s3Stream = require('s3-upload-stream');
-AWS.config.httpOptions = { timeout: 5000 };
+AWS.config.httpOptions = { timeout: 60000 };
 const constants = require('./helpers/environment').constants;
 const request = require('request');
 
@@ -18,7 +18,6 @@ const ExportS3 = (win, data) => {
 const testS3Credentials = (data) => {
   let errorMessage = null;
   AWS.config.update({ accessKeyId: data.accessKey, secretAccessKey: data.secretKey });
-  
   s3 = new AWS.S3({
     params: { Bucket: data.bucketName }
   });
@@ -65,23 +64,23 @@ const uploadS3 = (data) => {
   });
 
   request.get(url, setHeader(data.gcsToken))
-  .on('error', (err) => {
-    console.error(err);
-  }).pipe(uploadStream);
+    .on('error', (error) => {
+      electronWin.webContents.send(constants.IPC_EXPORT_TO_S3_FAILED, data.item);
+    }).pipe(uploadStream);
   // Handle errors.
   uploadStream.on('error', (error) => {
-    console.error(error);
+    electronWin.webContents.send(constants.IPC_EXPORT_TO_S3_FAILED, data.item);
   });
 
   uploadStream.on('part', (details) => {
     // the message is send when the first 5MB has already been transferred
-    electronWin.webContents.send(constants.IPC_EXPORT_S3_DOWNLOAD_STATUS, data.item);
+    electronWin.webContents.send(constants.IPC_EXPORT_TO_S3_STATUS, data.item);
   });
 
   uploadStream.on('uploaded', (details) => {
-    data.item.status = 'Exported to S3';
+    data.item.transferred = data.item.size;
     data.item.progress = 100;
-    electronWin.webContents.send(constants.IPC_EXPORT_S3_COMPLETE, data.item);
+    electronWin.webContents.send(constants.IPC_EXPORT_TO_S3_COMPLETE, data.item);
   });
   s3List.push(s3);
 };

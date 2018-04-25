@@ -1,24 +1,22 @@
 import { Component, OnInit, Output, ViewChild, EventEmitter, NgZone } from '@angular/core';
 import { Message, TreeNode } from 'primeng/primeng';
-import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
-import * as Transferables from '../actions/transferables.actions';
-import { Item } from '../models/item';
-import { AppState } from '../dbstate/app-state';
+import { UploadItem } from '@app/file-manager/models/upload-item';
+import { AppState } from '@app/file-manager/reducers';
 import { ElectronService } from 'ngx-electron';
 import { FilterSizePipe } from '../filters/filesize-filter';
-import { GcsService } from '../services/gcs.service';
+import { GcsService } from '@app/file-manager/services/gcs.service';
 import { MatDialog } from '@angular/material';
-import { RegisterUploadService } from '../services/register-upload.service';
+import { RegisterUploadService } from '@app/file-manager/services/register-upload.service';
 import { FileUploadModalComponent } from '../file-upload-modal/file-upload-modal.component';
 import { TransferablesGridComponent } from '../transferables-grid/transferables-grid.component';
 import { TreeTable } from 'primeng/primeng';
 import { ChangeDetectorRef } from '@angular/core';
 import { Type } from '@app/file-manager/models/type';
-import { ItemStatus } from '@app/file-manager/models/item-status';
-import { UUID } from 'angular2-uuid';
+import { EntityStatus } from '@app/file-manager/models/entity-status';
+import { ISubscription } from 'rxjs/Subscription';
 import { StatusService } from '@app/file-manager/services/status.service';
-import { FilesDatabase } from '../dbstate/files-database';
+import { UUID } from 'angular2-uuid';
 
 @Component({
   selector: 'app-file-explorer-upload',
@@ -29,14 +27,13 @@ export class FileExplorerUploadComponent implements OnInit {
   msgs: Message[];
 
   @ViewChild(TreeTable) tt: TreeTable;
-
   @Output('done') done: EventEmitter<any> = new EventEmitter();
 
+  upSubscription: ISubscription;
+  isUpInProgress: any;
+
   files: TreeNode[];
-  dataFile: Item;
   selectedFiles: TreeNode[] = [];
-  uploadFiles: Item[] = [];
-  uploadInProgress = false;
 
   fileCount = 0;
   totalSize = 0;
@@ -51,9 +48,14 @@ export class FileExplorerUploadComponent implements OnInit {
     private filterSize: FilterSizePipe,
     private registerUpload: RegisterUploadService,
     private changeDetectorRef: ChangeDetectorRef,
-    private router: Router,
     private zone: NgZone
   ) {
+
+    this.upSubscription = this.store.select('uploads').subscribe(
+      data => {
+        this.isUpInProgress = data.inProgress.count > 0;
+      }
+    );
   }
 
   ngOnInit() {
@@ -81,15 +83,6 @@ export class FileExplorerUploadComponent implements OnInit {
 
     this.registerUpload.getLazyNodeContent(homeFolder);
 
-    this.statusService.updateUploadProgress().subscribe(data => {
-      this.zone.run(() => {
-        if (data === 100) {
-          this.uploadInProgress = false;
-        } else {
-          this.uploadInProgress = true;
-        }
-      });
-    });
   }
 
   countFiles() {
@@ -208,19 +201,20 @@ export class FileExplorerUploadComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
+      const filesToUpload: UploadItem[] = [];
+      let dataFile: UploadItem;
+
       if (result !== undefined) {
-        this.transferablesGridComponent.updateCurrentBatch(Type.UPLOAD);
         this.selectedFiles
           .filter(file => file.data.type === Type.FILE)
           .forEach(file => {
-            this.dataFile = new Item(UUID.UUID(), file.data.name, file.data.updated, file.data.updated, file.data.size,
-              '', file.data.path, result.directory, Type.UPLOAD, ItemStatus.PENDING, '',
-              '', '', result.preserveStructure, false, '', file.data.name, '', true);
-            this.uploadFiles.push(this.dataFile);
-            this.store.dispatch(new Transferables.AddItem(this.dataFile));
+            dataFile = new UploadItem(UUID.UUID(), file.data.name, file.data.updated,
+              file.data.updated, file.data.size, file.data.path, result.directory,
+              EntityStatus.PENDING, '', '', '', result.preserveStructure, '', file.data.name, '');
+
+            filesToUpload.push(dataFile);
           });
-        this.transferablesGridComponent.startUpload(this.uploadFiles);
-        this.router.navigate(['/status']);
+        this.transferablesGridComponent.startUpload(filesToUpload);
       }
     });
   }
@@ -232,6 +226,10 @@ export class FileExplorerUploadComponent implements OnInit {
   }
 
   disableButton() {
-    return this.uploadInProgress || this.fileCount <= 0;
+    return this.uploadInProgress() || this.fileCount <= 0;
+  }
+
+  uploadInProgress() {
+    return this.isUpInProgress;
   }
 }

@@ -9,9 +9,13 @@
   <div class="breadcrumb-container">
     <app-breadcrumb [items]="breadcrumbItems" (home)="goHome($event)" (change)="pathChanged($event)"></app-breadcrumb>
   </div>
-  <mat-form-field class="search-container">
-    <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Search...">
-  </mat-form-field>
+
+  <div class="search-container">
+    <i class="material-icons">search</i>
+    <mat-form-field class="search-input">  
+      <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Search...">
+    </mat-form-field>
+  </div>
 </div>
 
 <div class="table-container flex-container column table-downloads">
@@ -71,9 +75,11 @@
 
 <p-toolbar styleClass="toolbar-accent">
   <div class="ui-toolbar-group-left">
-    <div *ngIf="progressStatus" class="warn-message">
-      <span *ngIf="downloadInProgress">Please wait, download in progress</span>
-      <span *ngIf="exportInProgress">Please wait, export in progress</span>
+    <div *ngIf="(router.url === '/file-download' && downloadInProgress()) || (router.url === '/file-export' && exportInProgress())" class="warn-message">
+      Please wait,
+      <span *ngIf="router.url === '/file-download' && downloadInProgress()"> download </span>
+      <span *ngIf="router.url === '/file-export' && exportInProgress()"> export </span>
+      in progress
       <div class="progress-dots">
         <span class="dot"></span>
         <span class="dot"></span>
@@ -81,15 +87,6 @@
       </div>
     </div>
   </div>
-
-  <!--<div *ngIf="exportInProgress" class="warn-message">-->
-    <!--Please wait, export in progress-->
-    <!--<div class="progress-dots">-->
-      <!--<span class="dot"></span>-->
-      <!--<span class="dot"></span>-->
-      <!--<span class="dot"></span>-->
-    <!--</div>-->
-  <!--</div>-->
 
   <div class="ui-toolbar-group-right">
     <button mat-raised-button (click)="cleanSelection()" class="button-secondary" [disabled]="disableButton()">

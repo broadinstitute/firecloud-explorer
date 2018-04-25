@@ -27,10 +27,12 @@ export class Item {
   namespace: string;
   children?: Item[];
   currentBatch: boolean;
+  istatus: number;
+  itype: number;
 
   constructor(id: string, name: string, created: Date, updated: Date, size: number, mediaLink: string, path: string, destination: string,
     type: Type, status: ItemStatus, bucketName: string, prefix: string, delimiter: string, preserveStructure: boolean, open: boolean,
-    workspaceName: string, displayName: string, namespace: string, currentBatch: boolean) {
+    workspaceName: string, displayName: string, namespace: string, currentBatch: boolean, itype: number, istatus: number) {
 
     this.id = id;
     this.name = name;
@@ -54,6 +56,8 @@ export class Item {
     this.setProgressData();
     this.namespace = namespace;
     this.currentBatch = currentBatch;
+    this.istatus = itype;
+    this.itype = istatus;
     this.children = [];
 
   }

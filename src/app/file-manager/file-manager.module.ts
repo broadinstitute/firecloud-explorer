@@ -6,6 +6,10 @@ import { SharedModule } from '@app/shared';
 import { Store, StoreModule } from '@ngrx/store';
 import { FileManagerRoutingModule } from './file-manager-routing.module';
 import { TransferablesReducer } from './reducers/transferables.reducer';
+import { DownloadsReducer } from './reducers/downloads.reducer';
+import { UploadsReducer } from './reducers/uploads.reducer';
+import { ExportToGCSReducer } from './reducers/export-to-gcs.reducer';
+import { ExportToS3Reducer } from './reducers/export-to-s3.reducer';
 
 import { LoginComponent } from './login/login.component';
 import { FileExplorerComponent } from './file-explorer/file-explorer.component';
@@ -14,7 +18,6 @@ import { TransferablesGridComponent } from './transferables-grid/transferables-g
 import { FilesService } from './services/files.service';
 import { GcsService } from './services/gcs.service';
 import { StatusService } from './services/status.service';
-import { FilesDatabase } from './dbstate/files-database';
 import { BucketService } from './services/bucket.service';
 
 import { DownloadValidatorService } from './services/download-validator.service';
@@ -43,6 +46,8 @@ import { FileExportModalComponent } from './file-export-modal/file-export-modal.
 import { S3ExportService } from '@app/file-manager/services/s3-export.service';
 import { SelectionService } from '@app/file-manager/services/selection.service';
 import { NgZone } from '@angular/core';
+import { ProgressTabComponent } from './progress-tab/progress-tab.component';
+import { StatusBoxComponent } from './status-box/status-box.component';
 
 @NgModule({
   imports: [
@@ -51,6 +56,11 @@ import { NgZone } from '@angular/core';
     SharedModule,
     FileManagerRoutingModule,
     StoreModule.forFeature('transferables', TransferablesReducer),
+    StoreModule.forFeature('downloads', DownloadsReducer),
+    StoreModule.forFeature('uploads', UploadsReducer),
+    StoreModule.forFeature('exportToGCS', ExportToGCSReducer),
+    StoreModule.forFeature('exportToS3', ExportToS3Reducer),
+
     MatDialogModule,
 
   ],
@@ -65,12 +75,13 @@ import { NgZone } from '@angular/core';
     WarningModalComponent,
     BreadcrumbComponent,
     FileExportModalComponent,
+    ProgressTabComponent,
+    StatusBoxComponent,
   ],
   providers: [
     FilterSizePipe,
     TransferablesGridComponent,
     StatusService,
-    FilesDatabase,
     FilesService,
     PreflightService,
     BucketService,
@@ -85,11 +96,11 @@ import { NgZone } from '@angular/core';
     {
       provide: GcsService,
       deps: [HttpClient, ElectronService, Store, MatDialog, NgZone],
-      useFactory(http: HttpClient, electronService: ElectronService, store: Store<any>, dialog: MatDialog, zone: NgZone) {
+      useFactory(http: HttpClient, electronService: ElectronService, store: Store<any>, dialog: MatDialog) {
         if (environment.testing) {
           return new GcsApiMockService();
         } else {
-          return new GcsApiService(http, electronService, store, dialog, zone);
+          return new GcsApiService(http, electronService, store, dialog);
         }
       }
     },

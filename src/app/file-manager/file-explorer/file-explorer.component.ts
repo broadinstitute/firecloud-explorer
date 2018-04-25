@@ -1,11 +1,12 @@
-import { Component, OnInit, NgZone, ViewChild, AfterViewInit } from '@angular/core';
-import { Item } from '../models/item';
+import { Component, OnInit, NgZone, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
+import { Item } from '@app/file-manager/models/item';
+
 import { FilterSizePipe } from '../filters/filesize-filter';
 import { FileDownloadModalComponent } from '../file-download-modal/file-download-modal.component';
 import { MatDialog, MatPaginator, MAT_CHECKBOX_CLICK_ACTION } from '@angular/material';
 import { MatTableDataSource, MatSort } from '@angular/material';
-import { StatusService } from '../services/status.service';
-import { BucketService } from '../services/bucket.service';
+import { StatusService } from '@app/file-manager/services/status.service';
+import { BucketService } from '@app/file-manager/services/bucket.service';
 import { FirecloudApiService } from '@app/file-manager/services/firecloud-api.service';
 import { WarningModalComponent } from '@app/file-manager/warning-modal/warning-modal.component';
 import { ItemStatus } from '@app/file-manager/models/item-status';
@@ -15,21 +16,30 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { SelectionService } from '@app/file-manager/services/selection.service';
 import { FileExportModalComponent } from '@app/file-manager/file-export-modal/file-export-modal.component';
 import { TransferablesGridComponent } from '@app/file-manager/transferables-grid/transferables-grid.component';
-import { FilesDatabase } from '@app/file-manager/dbstate/files-database';
 import { Type } from '@app/file-manager/models/type';
-import { AppState } from '../dbstate/app-state';
+import { AppState } from '@app/file-manager/reducers';
 import { Store } from '@ngrx/store';
-import * as Transferables from '../actions/transferables.actions';
+
+import { ISubscription } from 'rxjs/Subscription';
 
 @Component({
   selector: 'app-file-explorer',
   templateUrl: './file-explorer.component.html',
   styleUrls: ['./file-explorer.component.scss'],
   providers: [
-    {provide: MAT_CHECKBOX_CLICK_ACTION, useValue: 'check-indeterminate'}
+    { provide: MAT_CHECKBOX_CLICK_ACTION, useValue: 'check-indeterminate' }
   ]
 })
-export class FileExplorerComponent implements OnInit, AfterViewInit {
+export class FileExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
+
+  downSubscription: ISubscription;
+  isDownInProgress: any;
+
+  gcsSubscription: ISubscription;
+  isGCSInProgress: any;
+
+  s3Subscription: ISubscription;
+  isS3InProgress: any;
 
   isHome: Boolean = false;
   displayedColumns = ['select', 'displayName', 'size', 'updated'];
@@ -41,45 +51,45 @@ export class FileExplorerComponent implements OnInit, AfterViewInit {
   breadcrumbItems: Item[];
   headerItem: Item;
   rootItem: Item;
-  downloadInProgress = false;
-  exportInProgress = false;
-  progressStatus = false;
 
   constructor(private statusService: StatusService,
-              private zone: NgZone,
-              private firecloudService: FirecloudApiService,
-              private dialog: MatDialog,
-              private filterSize: FilterSizePipe,
-              private bucketService: BucketService,
-              private spinner: NgxSpinnerService,
-              private selectionService: SelectionService,
-              public router: Router,
-              private transferablesGridComponent: TransferablesGridComponent,
-              private store: Store<AppState>) {
+    private zone: NgZone,
+    private firecloudService: FirecloudApiService,
+    private dialog: MatDialog,
+    private filterSize: FilterSizePipe,
+    private bucketService: BucketService,
+    private spinner: NgxSpinnerService,
+    private selectionService: SelectionService,
+    public router: Router,
+    private transferablesGridComponent: TransferablesGridComponent,
+    private store: Store<AppState>) {
     this.breadcrumbItems = [];
 
+    this.downSubscription = this.store.select('downloads').subscribe(
+      data => {
+        this.isDownInProgress = data.inProgress.count > 0;
+      }
+    );
+
+    this.gcsSubscription = this.store.select('exportToGCS').subscribe(
+      data => {
+        this.isGCSInProgress = data.inProgress.count > 0;
+      }
+    );
+
+    this.s3Subscription = this.store.select('exportToS3').subscribe(
+      data => {
+        this.isS3InProgress = data.inProgress.count > 0;
+      }
+    );
   }
 
   ngOnInit() {
     this.rootItem = new Item(
       'workspaces', 'workspaces', null, null, 0, '', '', '',
-      'Folder', '', '', '', '', true, false, '', '', '', false);
+      'Folder', '', '', '', '', true, false, '', '', '', false, 0, 0);
 
     this.getWorkspacesObjects(this.rootItem);
-
-    this.statusService.updateDownloadProgress()
-      .subscribe(data => {
-        this.zone.run(() => {
-          this.downloadInProgress = this.router.routerState.snapshot.url === '/file-download' && data !== 100;
-          this.progressStatus = this.downloadInProgress;
-        });
-      });
-    this.statusService.updateExportS3Progress().subscribe(data => {
-      this.zone.run(() => {
-        this.exportInProgress = data !== 100;
-        this.progressStatus = this.exportInProgress;
-      });
-    });
   }
 
   ngAfterViewInit() {
@@ -311,7 +321,17 @@ export class FileExplorerComponent implements OnInit, AfterViewInit {
   }
 
   disableButton() {
-    return (this.downloadInProgress || this.exportInProgress || this.selectionService.nothingSelected());
+    return (this.router.url === '/file-download' && this.downloadInProgress())
+      || (this.router.url === '/file-export' && this.exportInProgress())
+      || this.selectionService.nothingSelected();
+  }
+
+  downloadInProgress(): Boolean {
+    return this.isDownInProgress;
+  }
+
+  exportInProgress(): Boolean {
+    return this.isGCSInProgress || this.isS3InProgress;
   }
 
   cleanSelection(): void {
@@ -348,25 +368,18 @@ export class FileExplorerComponent implements OnInit, AfterViewInit {
   }
 
   exportSelectionDone() {
-    const items = {selectedFiles: this.selectionService.selectedItems()};
+    const items = { selectedFiles: this.selectionService.selectedItems() };
     const dialogRef = this.dialog.open(FileExportModalComponent, {
       width: '500px',
       disableClose: true,
       data: items
     });
-    dialogRef.afterClosed().subscribe(result => {
-      if (result !== undefined) {
-        if (result.cancel !== undefined) {
-          const itemsToRemove = new FilesDatabase(this.store).data
-            .filter(item => (item.type === Type.EXPORT_GCP || item.type === Type.EXPORT_S3) && item.status === ItemStatus.PENDING);
-          itemsToRemove.forEach(item => {
-            this.store.dispatch(new Transferables.RemoveItem(item));
-          });
-        } else {
-          this.transferablesGridComponent.startExport(result.preserveStructure, result.type);
-        }
-      }
-    });
+  }
+
+  ngOnDestroy(): void {
+    this.downSubscription.unsubscribe();
+    this.gcsSubscription.unsubscribe();
+    this.s3Subscription.unsubscribe();
   }
 }
 

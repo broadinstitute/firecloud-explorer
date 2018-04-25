@@ -1,0 +1,72 @@
+<div class="table-container flex-container column table-common">
+  <mat-table [dataSource]="dataSource" matSort>
+    <ng-container matColumnDef="id">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Id</mat-header-cell>
+      <mat-cell *matCellDef="let row"> {{row.id}}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="name">
+      <mat-header-cell *matHeaderCellDef mat-sort-header style="flex: 0 0 40%;"> Name</mat-header-cell>
+      <mat-cell *matCellDef="let row" style="flex: 0 0 40%;" title="{{row.displayName}}"> {{row.displayName}}
+      </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="size">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Size</mat-header-cell>
+      <mat-cell *matCellDef="let row"> {{row.size | filesize}}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="status">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Status</mat-header-cell>
+      <mat-cell *matCellDef="let row">
+        <mat-icon class="transfer-icon" *ngIf="storeName == 'downloads'">file_download</mat-icon>
+        <mat-icon class="transfer-icon" *ngIf="storeName == 'uploads'">file_upload</mat-icon>
+        <i class="export-icon-dark" *ngIf="storeName == 'exportToGCS' || storeName == 'exportToS3' "></i>
+        {{describeStatus(row.status)}}
+        <div *ngIf="row.status === 1" class="progress-dots transfer-status">
+          <span class="dot"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+        </div>
+      </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="progress">
+      <mat-header-cell *matHeaderCellDef> Progress</mat-header-cell>
+      <mat-cell *matCellDef="let row">
+
+        <p-progressBar *ngIf="(storeName === 'downloads' || storeName === 'uploads') &&  row.status === 1" mode="determinate" class="progress-bar-small"
+          [ngClass]="{'success': row.status === 3, 'failure': (row.status === 4 || row.status === 5) }" [value]="row.progress"
+          [showValue]="false">
+        </p-progressBar>
+
+        <p-progressBar *ngIf="(storeName === 'exportToGCS' || storeName === 'exportToS3') &&  row.status === 1" mode="indeterminate"
+          class="progress-bar-small" [ngClass]="{'success': row.status === 3, 'failure': (row.status === 4 || row.status === 5) }"
+          [showValue]="false">
+        </p-progressBar>
+
+        <p-progressBar *ngIf="row.status !== 1" mode="determinate" class="progress-bar-small" [ngClass]="{'success': row.status === 3, 'failure': (row.status === 4 || row.status === 5)}"
+          [value]="row.progress" [showValue]="false">
+        </p-progressBar>
+
+      </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <mat-header-cell *matHeaderCellDef style="flex: 0 0 85px; text-align: center;"> Actions</mat-header-cell>
+      <mat-cell *matCellDef="let row" style="flex: 0 0 85px;">
+        <button mat-icon-button class="button-icon" disabled>
+          <mat-icon aria-label="Cancel file download">highlight_off</mat-icon>
+        </button>
+        <button mat-icon-button class="button-icon" disabled>
+          <mat-icon aria-label="Pause file download">pause_circle_outline</mat-icon>
+        </button>
+      </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+  </mat-table>
+
+  <mat-paginator #paginator [pageIndex]="0" [pageSize]="10" [pageSizeOptions]="[5, 10, 25, 50, 100]" class="paginator"></mat-paginator>
+</div>
