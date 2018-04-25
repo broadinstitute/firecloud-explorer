@@ -25,6 +25,8 @@ export abstract class GcsService {
 
   abstract cancelDownloads(): void;
 
+  abstract destroyDownloads(): void;
+
   abstract cancelExportToS3();
 
   abstract cancelExportsToGCP();

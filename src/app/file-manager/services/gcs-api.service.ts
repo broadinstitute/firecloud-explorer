@@ -80,7 +80,7 @@ export class GcsApiService extends GcsService {
   }
 
   public cancelAll() {
-    this.cancelDownloads();
+    this.destroyDownloads();
     this.cancelExportToS3();
     this.cancelUploads();
     this.cancelExportsToGCP();
@@ -94,6 +94,11 @@ export class GcsApiService extends GcsService {
   public cancelDownloads(): void {
     this.store.dispatch(new downloadActions.CancelAllItems());
     this.electronService.ipcRenderer.send(constants.IPC_DOWNLOAD_CANCEL);
+  }
+
+  public destroyDownloads(): void {
+    this.store.dispatch(new downloadActions.CancelAllItems());
+    this.electronService.ipcRenderer.send(constants.IPC_DOWNLOAD_DESTROY);
   }
 
   public cancelUploads() {

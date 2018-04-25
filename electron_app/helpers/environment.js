@@ -11,6 +11,7 @@ const constants = {
   IPC_DOWNLOAD_STATUS: 'download-status',
   IPC_DOWNLOAD_FAILED: 'download-failed',
   IPC_DOWNLOAD_COMPLETE: 'download-complete',
+  IPC_DOWNLOAD_DESTROY: 'download-destroy',
 
   IPC_GET_FILESYSTEM: 'get-filesystem',
   IPC_GET_NODE_CONTENT: 'get-node-content',

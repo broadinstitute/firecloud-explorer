@@ -134,6 +134,7 @@ export class AppComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.unsubscribe$.next();
     this.unsubscribe$.complete();
+    this.gcsService.destroyDownloads();
   }
 
   openForumOnBrowser() {
@@ -141,6 +142,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   onLogoutClick() {
+    this.gcsService.destroyDownloads();
     if (this.inProgress) {
       const dialogRef = this.dialog.open(WarningModalComponent, {
         width: '500px',

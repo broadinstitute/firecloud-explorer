@@ -6,7 +6,8 @@ const path = require('path');
 const url = require('url');
 const {
   downloadManager,
-  destroyDownloads
+  destroyDownloads,
+  stopAllDownloads
 } = require('./electron_app/DownloadManager');
 const { ExportS3, testS3Credentials, exportS3Cancel } = require('./electron_app/ExportS3');
 const lazyNodeReader = require('./electron_app/FileSystemReader').lazyNodeReader;
@@ -131,6 +132,10 @@ app.on('ready', function () {
   });
 
   ipcMain.on(constants.IPC_DOWNLOAD_CANCEL, (event) => {
+    stopAllDownloads();
+  });
+
+  ipcMain.on(constants.IPC_DOWNLOAD_DESTROY, (event) => {
     destroyDownloads();
   });
 
@@ -138,7 +143,7 @@ app.on('ready', function () {
     if (nodePath === '/') {
       nodePath = os.homedir();
     }
-    var files = lazyNodeReader(nodePath, []);
+    let files = lazyNodeReader(nodePath, []);
 
     win.webContents.send(constants.IPC_GET_NODE_CONTENT, {
       result: files,
@@ -185,6 +190,7 @@ app.on('activate', () => {
 });
 
 app.on('window-all-closed', function () {
+  destroyDownloads();
   if (process.platform !== 'darwin') {
     app.quit();
   }

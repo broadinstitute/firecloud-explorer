@@ -33,6 +33,8 @@ export class GcsApiMockService extends GcsService {
 
   public cancelUploads() { return; }
 
+  public destroyDownloads() { return; }
+
   public cancelExportsToGCP() { }
 
   public cancelExportToS3() { return; }

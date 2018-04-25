@@ -2,8 +2,8 @@ const Download = require('./Download');
 const Formatters = require('./Formatters');
 const util = require('util');
 
-var extend = function (target) {
-  var sources = [].slice.call(arguments, 1);
+let extend = function (target) {
+  let sources = [].slice.call(arguments, 1);
   sources.forEach(function (source) {
     for (var prop in source) {
       target[prop] = source[prop];
@@ -38,7 +38,7 @@ Downloader.prototype._defaultOptions = {
 Downloader.prototype.download = function (url, filePath, options, id) {
   var options = extend({}, this._defaultOptions, options);
 
-  var dl = new Download();
+  let dl = new Download();
 
   dl.setUrl(url);
   dl.setFilePath(filePath);
@@ -49,7 +49,7 @@ Downloader.prototype.download = function (url, filePath, options, id) {
 };
 
 Downloader.prototype.resumeDownload = function (filePath) {
-  var dl = new Download();
+  let dl = new Download();
 
   if (!filePath.match(/\.mtd$/)) {
     filePath += '.mtd';
@@ -70,7 +70,7 @@ Downloader.prototype.restart = util.deprecate(function (filePath) {
 }, 'Downloader `restart(filePath)` is deprecated, please use `resumeDownload(filePath)` instead.');
 
 Downloader.prototype.getDownloadByUrl = function (url) {
-  var dlFound = null;
+  let dlFound = null;
 
   this._downloads.forEach(function (dl) {
     if (dl.url === url || (dl.meta && dl.meta.url && dl.meta.url == url)) {

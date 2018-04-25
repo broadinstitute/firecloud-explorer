@@ -1,12 +1,13 @@
 const Downloader = require('./Downloader');
 const path = require('path');
-const { handleFolder, fileAlreadyExists } = require('./helpers/handleDisk');
+const { handleFolder, fileAlreadyExists, deleteMTD } = require('./helpers/handleDisk');
 const downloadStats = require('./helpers/downloadInfo').downloadStats;
 const handleEvents = require('./helpers/handleEvents');
 const environment = require('./helpers/environment');
 
 let filePath = '';
 let allDownloads = [];
+let allNameItems = [];
 let fileExists = true;
 
 const downloadManager = (items, access_token, electronWin) => {
@@ -15,24 +16,30 @@ const downloadManager = (items, access_token, electronWin) => {
 
     let count = 0;
     let fileName = item.displayName;
-    const destination = item.preserveStructure ?
-      path.join(item.destination, item.path.substring(item.path.lastIndexOf('/'), 0)) : item.destination;
 
-    do {
-      fileExists = fileAlreadyExists(path.join(destination, fileName));
-      if (fileExists) {
-        count++;
-        fileName = item.displayName.substring(0, item.displayName.indexOf('.')) + '(' + (count) + ')' +
-          item.displayName.substring(item.displayName.indexOf('.'));
-      }
-    } while (fileExists);
+    // resume the download if mtd exists already in the array
+    if (!allNameItems.includes(fileName)) {
+      allNameItems.push(fileName);
+      const destination = item.preserveStructure ?
+        path.join(item.destination, item.path.substring(item.path.lastIndexOf('/'), 0)) : item.destination;
 
-    item.displayName = fileName;
+      do {
+        fileExists = fileAlreadyExists(path.join(destination, fileName));
+        if (fileExists) {
+          count++;
+          fileName = item.displayName.substring(0, item.displayName.indexOf('.')) + '(' + (count) + ')' +
+            item.displayName.substring(item.displayName.indexOf('.'));
+        }
+      } while (fileExists);
 
-    handleFolder(destination, (result) => {
-      allDownloads.push(processDownload(access_token, item, result, electronWin));
-    });
+      item.displayName = fileName;
 
+      handleFolder(destination, (result) => {
+        allDownloads.push(processDownload(access_token, item, result, electronWin));
+      });
+    } else {
+      resumeCanceled();
+    }
   });
 };
 
@@ -50,6 +57,8 @@ const stopAllDownloads = () => {
   allDownloads.forEach(dl => {
     if (dl.status !== 3) {
       dl.stop();
+    } else {
+      console.log(dl.filePath);
     }
   });
 };
@@ -57,7 +66,9 @@ const stopAllDownloads = () => {
 const destroyDownloads = () => {
   stopAllDownloads();
   allDownloads.forEach(dl => {
-    if (dl.status === -2) {
+    if (dl.status === -2 && dl.status !== 3) {
+      console.log('status ', dl.status);
+      console.log('destruir descarga ', dl.filePath);
       dl.destroy();
     }
   });
@@ -77,4 +88,12 @@ const setHeader = (access_token) => {
   };
 };
 
-module.exports = { downloadManager, destroyDownloads };
+const resumeCanceled = () => {
+  console.log('resume canceled', allDownloads[0].filePath);
+  allDownloads.forEach( dl => {
+    dl.resume();
+  })
+  // TODO buscar en allDownloads el elemento y continuar
+};
+
+module.exports = { downloadManager, destroyDownloads, stopAllDownloads };
