@@ -75,18 +75,24 @@ app.on('ready', function () {
       submenu: [
         { label: "About " + app.getName(), selector: "orderFrontStandardAboutPanel:" },
         { type: "separator" },
+        { role: 'services', submenu: [] },
+        { type: 'separator' },
+        { role: 'hide' },
+        { role: 'hideothers' },
+        { role: 'unhide' },
+        { type: 'separator' },
         { label: "Quit", accelerator: "Command+Q", click: function () { app.quit(); } }
       ]
     }, {
       label: "Edit",
       submenu: [
-        { label: "Undo", accelerator: "CmdOrCtrl+Z", selector: "undo:" },
-        { label: "Redo", accelerator: "Shift+CmdOrCtrl+Z", selector: "redo:" },
+        { label: "Undo", accelerator: "Cmd+Z", selector: "undo:" },
+        { label: "Redo", accelerator: "Shift+Cmd+Z", selector: "redo:" },
         { type: "separator" },
-        { label: "Cut", accelerator: "CmdOrCtrl+X", selector: "cut:" },
-        { label: "Copy", accelerator: "CmdOrCtrl+C", selector: "copy:" },
-        { label: "Paste", accelerator: "CmdOrCtrl+V", selector: "paste:" },
-        { label: "Select All", accelerator: "CmdOrCtrl+A", selector: "selectAll:" }
+        { label: "Cut", accelerator: "Cmd+X", selector: "cut:" },
+        { label: "Copy", accelerator: "Cmd+C", selector: "copy:" },
+        { label: "Paste", accelerator: "Cmd+V", selector: "paste:" },
+        { label: "Select All", accelerator: "Cmd+A", selector: "selectAll:" }
       ]
     }
     ];

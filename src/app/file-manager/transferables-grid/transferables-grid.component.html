@@ -33,22 +33,22 @@
 <mat-tab-group class="tab-group" [selectedIndex]="selectedIndex">
 
   <mat-tab label="Downloads">
-    <app-progress-tab source="Down" [filter]="tabFilter">
+    <app-progress-tab storeName="downloads" [filter]="tabFilter">
     </app-progress-tab>
   </mat-tab>
 
   <mat-tab label="Uploads">
-    <app-progress-tab source="Up" [filter]="tabFilter">
+    <app-progress-tab storeName="uploads" [filter]="tabFilter">
     </app-progress-tab>
   </mat-tab>
 
   <mat-tab label="Exports to Google Cloud">
-    <app-progress-tab source="GCS" [filter]="tabFilter">
+    <app-progress-tab storeName="exportToGCS" [filter]="tabFilter">
     </app-progress-tab>
   </mat-tab>
 
   <mat-tab label="Exports to Amazon S3">
-    <app-progress-tab source="S3" [filter]="tabFilter">
+    <app-progress-tab storeName="exportToS3" [filter]="tabFilter">
     </app-progress-tab>
   </mat-tab>
 
