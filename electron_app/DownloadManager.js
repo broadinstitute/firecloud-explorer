@@ -57,8 +57,10 @@ const stopAllDownloads = () => {
   allDownloads.forEach(dl => {
     if (dl.status !== 3) {
       dl.stop();
+      console.log('detiene ', dl.filePath);
     } else {
-      console.log(dl.filePath);
+      removeDownload(dl);
+      console.log('no se detiene un item ya descargado -> ', dl.filePath);
     }
   });
 };
@@ -66,12 +68,20 @@ const stopAllDownloads = () => {
 const destroyDownloads = () => {
   stopAllDownloads();
   allDownloads.forEach(dl => {
-    if (dl.status === -2 && dl.status !== 3) {
+    if (dl.status === 3) {
+      removeDownload(dl);
+    }
+    if (dl.status === -2) {
       console.log('status ', dl.status);
-      console.log('destruir descarga ', dl.filePath);
+      console.log(dl.filePath, ' destruir descarga');
       dl.destroy();
     }
   });
+};
+
+const removeDownload = (dl) => {
+  const del = allDownloads.splice(allDownloads.indexOf(dl), 1);
+  console.log('removed -> ', del.length);
 };
 
 const setHeader = (access_token) => {
@@ -89,11 +99,13 @@ const setHeader = (access_token) => {
 };
 
 const resumeCanceled = () => {
-  console.log('resume canceled', allDownloads[0].filePath);
+  console.log('continua descarga');
   allDownloads.forEach( dl => {
-    dl.resume();
+    if (dl.status === -2) {
+      console.log('resume canceled', dl.filePath, ' ', dl.status);
+      dl.resume();
+    }
   })
-  // TODO buscar en allDownloads el elemento y continuar
 };
 
-module.exports = { downloadManager, destroyDownloads, stopAllDownloads };
+module.exports = { downloadManager, destroyDownloads, stopAllDownloads, removeDownload };
