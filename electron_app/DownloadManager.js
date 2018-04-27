@@ -1,8 +1,8 @@
 const Downloader = require('./Downloader');
 const path = require('path');
-const { handleFolder, fileAlreadyExists, deleteMTD } = require('./helpers/handleDisk');
+const { handleFolder, fileAlreadyExists } = require('./helpers/handleDisk');
 const downloadStats = require('./helpers/downloadInfo').downloadStats;
-const handleEvents = require('./helpers/handleEvents');
+const handleEvents = require('./helpers/handleEvents').handleEvents;
 const environment = require('./helpers/environment');
 
 let filePath = '';
@@ -43,23 +43,28 @@ const downloadManager = (items, access_token, electronWin) => {
   });
 };
 
+const fileExistsPath = (path, fileName) => {
+  return fileAlreadyExists(path.join(destination, fileName));
+};
+
 const processDownload = (access_token, item, folder, win) => {
   filePath = path.join(folder, item.displayName);
   const dloader = new Downloader();
   const dl = dloader.download(item.mediaLink, filePath, setHeader(access_token));
   dl.start();
   downloadStats(dl, item, win);
-  handleEvents(dl, item);
+  handleEvents(dl, item, win);
   return dl;
 };
 
 const stopAllDownloads = () => {
   allDownloads.forEach(dl => {
-    if (dl.status !== 3) {
+    if (dl.status !== 3 && dl.progress !== 100) {
       dl.stop();
       console.log('detiene ', dl.filePath);
     } else {
       removeDownload(dl);
+      console.log('-----------------------------------------------');
       console.log('no se detiene un item ya descargado -> ', dl.filePath);
     }
   });
@@ -72,6 +77,7 @@ const destroyDownloads = () => {
       removeDownload(dl);
     }
     if (dl.status === -2) {
+      console.log('-----------------------------------------------');
       console.log('status ', dl.status);
       console.log(dl.filePath, ' destruir descarga');
       dl.destroy();
@@ -80,8 +86,7 @@ const destroyDownloads = () => {
 };
 
 const removeDownload = (dl) => {
-  const del = allDownloads.splice(allDownloads.indexOf(dl), 1);
-  console.log('removed -> ', del.length);
+  allDownloads.splice(allDownloads.indexOf(dl), 1);
 };
 
 const setHeader = (access_token) => {
@@ -108,4 +113,4 @@ const resumeCanceled = () => {
   })
 };
 
-module.exports = { downloadManager, destroyDownloads, stopAllDownloads, removeDownload };
+module.exports = { downloadManager, destroyDownloads, stopAllDownloads };

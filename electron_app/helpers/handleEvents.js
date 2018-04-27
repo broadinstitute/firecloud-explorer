@@ -1,30 +1,33 @@
-module.exports = function(dl, num) {
-	num = num || 1;
+const constants = require('./environment').constants;
+const handleEvents = (dl, item, win) => {
+  item = item || 1;
 
-	dl.on('start', function() {
-		//  console.log('EVENT - Download '+ num +' started !');
-	});
+  dl.on('start', function() {
+    //  console.log('EVENT - Download '+ item +' started !');
+  });
 
-	dl.on('error', function() {
-		//  console.log('EVENT - Download '+ num +' error !');
-		// console.log(dl.error);
-	});
+  dl.on('error', function() {
+    //  console.log('EVENT - Download '+ item +' error !');
+    // console.log(dl.error);
+  });
 
-	dl.on('end', function() {
-		//  console.log('EVENT - Download '+ num +' finished !');
+  dl.on('end', function() {
+    console.log('EVENT - Download '+ item.filePath +' finished !');
+    win.webContents.send(constants.IPC_DOWNLOAD_COMPLETE, item);
+    // console.log(dl.getStats());
+  });
 
-		//  console.log(dl.getStats());
-	});
+  dl.on('retry', function() {
+    //  console.log('EVENT - Download '+ item +' error, retrying...');
+  });
 
-	dl.on('retry', function() {
-		//  console.log('EVENT - Download '+ num +' error, retrying...');
-	});
+  dl.on('stopped', function() {
+    console.log('EVENT - Download '+ item.filePath +' stopped...');
+    console.log(dl.getStats().total);
+  });
 
-	dl.on('stopped', function() {
-		//  console.log('EVENT - Download '+ num +' stopped...');
-	});
-
-	dl.on('destroyed', function() {
-		//  console.log('EVENT - Download '+ num +' destroyed...');
-	});
+  dl.on('destroyed', function() {
+    //  console.log('EVENT - Download '+ item +' destroyed...');
+  });
 };
+module.exports = { handleEvents };
