@@ -14,9 +14,10 @@ groups:
   reviewers:
     required: 1
     teams:
-      - dsde-pipelines-developers
+      - workbench-dev
       - belatrix-fc
   tech-lead:
     required: -1
     users:
       - pshapiro4broad
+      - ahaessly
