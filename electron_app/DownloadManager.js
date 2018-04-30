@@ -73,10 +73,7 @@ const stopAllDownloads = () => {
 const destroyDownloads = () => {
   stopAllDownloads();
   allDownloads.forEach(dl => {
-    if (dl.status === 3) {
-      removeDownload(dl);
-    }
-    if (dl.status === -2) {
+    if (dl.status === -2 && dl.progress !== 100) {
       console.log('-----------------------------------------------');
       console.log('status ', dl.status);
       console.log(dl.filePath, ' destruir descarga');

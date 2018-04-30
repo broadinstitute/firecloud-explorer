@@ -16,11 +16,11 @@ const downloadStats = function (dl, item, win) {
       console.log(dl.filePath, ' ', dl.status, ' ', dl.getStats().total.completed);
       item.progress = 100;
       item.transferred = Number(item.size);
-      win.webContents.send(constants.IPC_DOWNLOAD_COMPLETE, item);
       if (win !== undefined) {
         clearInterval(timer);
       }
       timer = null;
+      win.webContents.send(constants.IPC_DOWNLOAD_COMPLETE, item);
     } else if (dl.status === -1 || dl.status === 3 || dl.status === -3) {
       clearInterval(timer);
       timer = null;

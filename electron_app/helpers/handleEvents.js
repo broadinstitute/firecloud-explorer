@@ -12,7 +12,7 @@ const handleEvents = (dl, item, win) => {
   });
 
   dl.on('end', function() {
-    console.log('EVENT - Download '+ item.filePath +' finished !');
+    console.log('EVENT - Download '+ dl.filePath +' finished !');
     win.webContents.send(constants.IPC_DOWNLOAD_COMPLETE, item);
     // console.log(dl.getStats());
   });
@@ -22,7 +22,7 @@ const handleEvents = (dl, item, win) => {
   });
 
   dl.on('stopped', function() {
-    console.log('EVENT - Download '+ item.filePath +' stopped...');
+    console.log('EVENT - Download '+ dl.filePath +' stopped...');
     console.log(dl.getStats().total);
   });
 
