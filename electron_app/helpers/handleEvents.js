@@ -1,5 +1,5 @@
 const constants = require('./environment').constants;
-const handleEvents = (dl, item, win) => {
+const handleEvents = (dl, item) => {
   item = item || 1;
 
   dl.on('start', function() {
@@ -12,8 +12,7 @@ const handleEvents = (dl, item, win) => {
   });
 
   dl.on('end', function() {
-    console.log('EVENT - Download '+ dl.filePath +' finished !');
-    win.webContents.send(constants.IPC_DOWNLOAD_COMPLETE, item);
+    // console.log('Finished! - Download '+ dl.filePath);
     // console.log(dl.getStats());
   });
 
@@ -22,8 +21,6 @@ const handleEvents = (dl, item, win) => {
   });
 
   dl.on('stopped', function() {
-    console.log('EVENT - Download '+ dl.filePath +' stopped...');
-    console.log(dl.getStats().total);
   });
 
   dl.on('destroyed', function() {

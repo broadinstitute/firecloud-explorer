@@ -53,7 +53,7 @@ const processDownload = (access_token, item, folder, win) => {
   const dl = dloader.download(item.mediaLink, filePath, setHeader(access_token));
   dl.start();
   downloadStats(dl, item, win);
-  handleEvents(dl, item, win);
+  handleEvents(dl, item);
   return dl;
 };
 
@@ -64,7 +64,6 @@ const stopAllDownloads = () => {
       console.log('detiene ', dl.filePath);
     } else {
       removeDownload(dl);
-      console.log('-----------------------------------------------');
       console.log('no se detiene un item ya descargado -> ', dl.filePath);
     }
   });
@@ -75,7 +74,6 @@ const destroyDownloads = () => {
   allDownloads.forEach(dl => {
     if (dl.status === -2 && dl.progress !== 100) {
       console.log('-----------------------------------------------');
-      console.log('status ', dl.status);
       console.log(dl.filePath, ' destruir descarga');
       dl.destroy();
     }
