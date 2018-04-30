@@ -22,46 +22,46 @@ const fileAlreadyExists = (file) => {
 };
 
 const handleDiskSpace = (destination, totalFileSize) => {
-    destination = destination !== null ? destination : userDataPath;
-    let drive = destination;
-    conditions = { error: Boolean, errorMessage: String };
-    return new Promise((res) => {
-        if (process.platform === 'win32') {
-            drive = drive.slice(0, 1);
+  destination = destination !== null ? destination : userDataPath;
+  let drive = destination;
+  conditions = { error: Boolean, errorMessage: String };
+  return new Promise((res) => {
+    if (process.platform === 'win32') {
+      drive = drive.slice(0, 1);
+    }
+    try {
+      diskspace.check(drive, function (dskErr, diskSpace) {
+        if (diskSpace.free < totalFileSize) {
+          conditions.error = true;
+          conditions.errorMessage = 'Sorry, there is not enough space on disk.';
+          res(conditions);
+        } else {
+          canWrite(destination, (wrtErr, isWritable) => {
+            if (!isWritable) {
+              conditions.error = true;
+              conditions.errorMessage = 'Sorry, you don\'t have the proper permissions to access that location.';
+            }
+            res(conditions);
+          });
         }
-        try {
-            diskspace.check(drive, function (dskErr, diskSpace) {
-                if (diskSpace.free < totalFileSize) {
-                    conditions.error = true;
-                    conditions.errorMessage = 'Sorry, there is not enough space on disk.';
-                    res(conditions);
-                } else {
-                    canWrite(destination, (wrtErr, isWritable) => {
-                        if (!isWritable) {
-                            conditions.error = true;
-                            conditions.errorMessage = 'Sorry, you don\'t have the proper permissions to access that location.';
-                        }                     
-                        res(conditions);
-                    });
-                }
-            });
-        } catch (err) {
-            rej(err);
-        }
-    });
+      });
+    } catch (err) {
+      rej(err);
+    }
+  });
 };
 const canWrite = (path, callback) => {
-    if (process.platform === 'win32') {
-        let temp = path + '/tmp-XXXXXX';
-        tmp.dir({ template: temp }, function _tempDirCreated(err, path, cleanupCallback) {
-            callback(null, !err);
-            if (!err) cleanupCallback();
-        });
-    } else {
-        fs.access(path, fs.W_OK, function (err) {
-            callback(null, !err);
-        });
-    }
+  if (process.platform === 'win32') {
+    let temp = path + '/tmp-XXXXXX';
+    tmp.dir({ template: temp }, function _tempDirCreated(err, path, cleanupCallback) {
+      callback(null, !err);
+      if (!err) cleanupCallback();
+    });
+  } else {
+    fs.access(path, fs.W_OK, function (err) {
+      callback(null, !err);
+    });
+  }
 };
 
 module.exports = { handleFolder, handleDiskSpace, fileAlreadyExists };

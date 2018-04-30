@@ -28,10 +28,12 @@ export class StatusService {
      * Download progress listeners
      */
     this.electronService.ipcRenderer.on(constants.IPC_DOWNLOAD_STATUS, (event, item) => {
+      // console.log(item.displayName, ' ', item.progress);
       this.store.dispatch(new downloadActions.UpdateProgress(item));
     });
 
     this.electronService.ipcRenderer.on(constants.IPC_DOWNLOAD_COMPLETE, (event, item) => {
+      console.log(item.displayName, ' ', item.progress);
       this.store.dispatch(new downloadActions.CompleteItem(item));
       this.limitTransferables.continueDownloading();
     });
