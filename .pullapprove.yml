@@ -17,7 +17,6 @@ groups:
       - workbench-dev
       - belatrix-fc
   tech-lead:
-    required: -1
+    required: 1
     users:
-      - pshapiro4broad
       - ahaessly
