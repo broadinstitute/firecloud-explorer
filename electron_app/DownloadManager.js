@@ -9,6 +9,7 @@ let filePath = '';
 let allDownloads = [];
 let allNameItems = [];
 let fileExists = true;
+let itemsToRemove = [];
 
 const downloadManager = (items, access_token, electronWin) => {
 
@@ -61,27 +62,26 @@ const stopAllDownloads = () => {
   allDownloads.forEach(dl => {
     if (dl.status !== 3 && dl.progress !== 100) {
       dl.stop();
-      console.log('detiene ', dl.filePath);
     } else {
-      removeDownload(dl);
-      console.log('no se detiene un item ya descargado -> ', dl.filePath);
+      itemsToRemove.push(dl);
     }
   });
+  removeDownloaded();
 };
 
 const destroyDownloads = () => {
   stopAllDownloads();
   allDownloads.forEach(dl => {
-    if (dl.status === -2 && dl.progress !== 100) {
-      console.log('-----------------------------------------------');
-      console.log(dl.filePath, ' destruir descarga');
+    if (dl.status === -2 && dl.getStats().total.completed !== 100) {
       dl.destroy();
     }
   });
 };
 
-const removeDownload = (dl) => {
-  allDownloads.splice(allDownloads.indexOf(dl), 1);
+const removeDownloaded = () => {
+  itemsToRemove.forEach( item => {
+    allDownloads.splice(allDownloads.indexOf(item), 1);
+  });
 };
 
 const setHeader = (access_token) => {
@@ -99,10 +99,8 @@ const setHeader = (access_token) => {
 };
 
 const resumeCanceled = () => {
-  console.log('continua descarga');
   allDownloads.forEach( dl => {
     if (dl.status === -2) {
-      console.log('resume canceled', dl.filePath, ' ', dl.status);
       dl.resume();
     }
   })
