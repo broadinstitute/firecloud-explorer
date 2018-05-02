@@ -14,6 +14,8 @@ let itemsToRemove = [];
 const downloadPlatform = (items, access_token, electronWin) => {
   if (process.platform === 'win32') {
     items.forEach(item => {
+      const destination = item.preserveStructure ?
+        path.join(item.destination, item.path.substring(item.path.lastIndexOf('/'), 0)) : item.destination;
       // resume the download if mtd exists already in the array
       if (!allNameItems.includes(path.join(destination, item.displayName))) {
         allNameItems.push(path.join(destination, item.displayName));
