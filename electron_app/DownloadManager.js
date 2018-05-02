@@ -17,14 +17,14 @@ const downloadManager = (items, access_token, electronWin) => {
 
     let count = 0;
     let fileName = item.displayName;
-    console.log(item.path);
 
       const destination = item.preserveStructure ?
         path.join(item.destination, item.path.substring(item.path.lastIndexOf('/'), 0)) : item.destination;
 
     // resume the download if mtd exists already in the array
-    if (!allNameItems.includes(destination)) {
-      allNameItems.push(destination);
+    console.log(allNameItems);
+    if (!allNameItems.includes(path.join(destination, item.displayName))) {
+      allNameItems.push(path.join(destination, item.displayName));
 
       do {
         fileExists = fileAlreadyExists(path.join(destination, fileName));
