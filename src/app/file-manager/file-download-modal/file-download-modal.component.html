@@ -10,18 +10,18 @@
     <p class="browse-location">{{directory}}</p>
   </div>
   <p-toolbar styleClass="toolbar-accent toolbar-modal">
-    <h4 class="subtitle">Selected: {{fileCount()}} files.
-      <span *ngIf="!isLoading()">Total size: {{ totalSize()  | filesize}}</span>
-      <span *ngIf="isLoading()">Size: {{ totalSize() | filesize}}</span>
-    </h4>
-    <div *ngIf="isLoading()" class="warn">
-      <p>Please wait, loading selected content</p>
-      <div class="progress-dots modal">
-        <span class="dot"></span>
-        <span class="dot"></span>
-        <span class="dot"></span>
+    <div *ngIf="isLoading()">
+      <h4  class="subtitle">Selected: {{filesCount}} files. Size: {{ filesSize | filesize}}</h4>
+      <div class="warn">
+        <p>Please wait, loading selected content</p>
+        <div class="progress-dots modal">
+          <span class="dot"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+        </div>
       </div>
     </div>
+    <h4 *ngIf="!isLoading()" class="subtitle">Selected: {{fileCount() | async}} files. Total size: {{totalSize() | async | filesize}}</h4>
   </p-toolbar>
 </mat-dialog-content>
 
