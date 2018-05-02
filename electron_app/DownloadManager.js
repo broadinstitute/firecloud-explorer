@@ -18,8 +18,8 @@ const downloadManager = (items, access_token, electronWin) => {
     let fileName = item.displayName;
 
     // resume the download if mtd exists already in the array
-    if (!allNameItems.includes(fileName)) {
-      allNameItems.push(fileName);
+    if (!allNameItems.includes(item.displayName)) {
+      allNameItems.push(item.displayName);
       const destination = item.preserveStructure ?
         path.join(item.destination, item.path.substring(item.path.lastIndexOf('/'), 0)) : item.destination;
 
@@ -81,6 +81,10 @@ const destroyDownloads = () => {
       console.log('status ', dl.status);
       console.log(dl.filePath, ' destruir descarga');
       dl.destroy();
+      console.log(dl.filePath.lastIndexOf('/'));
+
+      allNameItems.splice(allNameItems.indexOf(dl.fileName), 0);
+      console.log(allNameItems);
     }
   });
 };

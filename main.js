@@ -138,7 +138,11 @@ app.on('ready', function () {
   });
 
   ipcMain.on(constants.IPC_DOWNLOAD_CANCEL, (event) => {
-    stopAllDownloads();
+    if (process.platform === 'win32') {
+      stopAllDownloads();
+    } else {
+      destroyDownloads();
+    }
   });
 
   ipcMain.on(constants.IPC_DOWNLOAD_DESTROY, (event) => {
