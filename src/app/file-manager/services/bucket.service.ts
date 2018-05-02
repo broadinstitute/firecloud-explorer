@@ -3,12 +3,17 @@ import { GcsService } from './gcs.service';
 import { Item } from '@app/file-manager/models/item';
 import { Observable } from 'rxjs/Observable';
 import { SelectionService } from '@app/file-manager/services/selection.service';
+import { Subject } from 'rxjs/Subject';
 
 @Injectable()
 export class BucketService {
 
   elements: Item[];
   public isResponseComplete;
+  fileSize = 0;
+  fileCount = 0;
+  public getFilesSize = new Subject();
+  public getFilesCount = new Subject();
 
   constructor(private gcsService: GcsService,
     private selectionService: SelectionService) {
@@ -17,6 +22,8 @@ export class BucketService {
   readonly DELIMITER = '/';
 
   public getBucketData(parentNode: Item, token: string, useDelimiter: boolean, processData: boolean): Observable<Item[]> {
+    this.fileSize = 0;
+    this.fileCount = 0;
     this.isResponseComplete = false;
     return this.getBucketFiles(parentNode, token, useDelimiter, processData);
   }
@@ -90,7 +97,10 @@ export class BucketService {
           0,
           0
         );
-        if (processData) {
+        this.getFilesCount.next(++this.fileCount);
+        this.fileSize = Number(this.fileSize) + Number(newItem.size);
+        this.getFilesSize.next(this.fileSize);
+          if (processData) {
           this.processSelection(parentNode, newItem);
         }
         this.elements.push(newItem);

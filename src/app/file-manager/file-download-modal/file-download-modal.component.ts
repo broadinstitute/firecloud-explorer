@@ -24,6 +24,8 @@ export class FileDownloadModalComponent implements OnInit {
   verify: DiskStatus;
   downloadFiles: DownloadItem[] = [];
   disableButton = false;
+  filesCount = 0;
+  filesSize = 0;
 
   constructor(
     private downloadValidator: DownloadValidatorService,
@@ -42,6 +44,12 @@ export class FileDownloadModalComponent implements OnInit {
 
   ngOnInit() {
     this.preflightService.processFiles(this.data, Type.DOWNLOAD);
+      this.preflightService.getCount().subscribe( count => {
+        this.filesCount = Number(count);
+      });
+    this.preflightService.getSize().subscribe(size => {
+      this.filesSize = Number(size);
+    });
   }
 
   isLoading() {
@@ -53,7 +61,7 @@ export class FileDownloadModalComponent implements OnInit {
     this.disableButton = true;
     this.downloadFiles = [];
     const ids: string[] = [];
-    this.downloadValidator.verifyDisk(this.directory, this.totalSize()).then(
+      this.downloadValidator.verifyDisk(this.directory, this.filesSize).then(
       diskVerification => {
         this.verify = diskVerification;
 
@@ -107,11 +115,11 @@ export class FileDownloadModalComponent implements OnInit {
   }
 
   fileCount() {
-    return this.preflightService.fileCount;
+    return this.preflightService.fileCountObservable;
   }
 
   totalSize() {
-    return this.preflightService.totalSize;
+    return this.preflightService.totalSizeObservable;
   }
 
   totalFiles() {
