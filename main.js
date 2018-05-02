@@ -5,7 +5,7 @@ const { app, BrowserWindow, ipcMain, Menu} = require('electron');
 const path = require('path');
 const url = require('url');
 const {
-  downloadManager,
+  downloadPlatform,
   destroyDownloads,
   stopAllDownloads
 } = require('./electron_app/DownloadManager');
@@ -126,7 +126,7 @@ app.on('ready', function () {
   });
 
   ipcMain.on(constants.IPC_DOWNLOAD_START, (event, items, access_token) => {
-    downloadManager(items, access_token, win);
+    downloadPlatform(items, access_token, win);
   });
 
   ipcMain.on(constants.IPC_UPLOAD_START, (event, bucketName, files, access_token) => {

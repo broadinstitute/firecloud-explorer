@@ -11,43 +11,49 @@ let allNameItems = [];
 let fileExists = true;
 let itemsToRemove = [];
 
-const downloadManager = (items, access_token, electronWin) => {
+const downloadPlatform = (items, access_token, electronWin) => {
+  if (process.platform === 'win32') {
+    items.forEach(item => {
+      // resume the download if mtd exists already in the array
+      if (!allNameItems.includes(path.join(destination, item.displayName))) {
+        allNameItems.push(path.join(destination, item.displayName));
+        downloadManager(item, access_token, electronWin);
+      } else {
+        resumeCanceled();
+      }
+    });
 
-  items.forEach(item => {
-
-    let count = 0;
-    let fileName = item.displayName;
-
-      const destination = item.preserveStructure ?
-        path.join(item.destination, item.path.substring(item.path.lastIndexOf('/'), 0)) : item.destination;
-
-    // resume the download if mtd exists already in the array
-    console.log(allNameItems);
-    if (!allNameItems.includes(path.join(destination, item.displayName))) {
-      allNameItems.push(path.join(destination, item.displayName));
-
-      do {
-        fileExists = fileAlreadyExists(path.join(destination, fileName));
-        if (fileExists) {
-          count++;
-          fileName = item.displayName.substring(0, item.displayName.indexOf('.')) + '(' + (count) + ')' +
-            item.displayName.substring(item.displayName.indexOf('.'));
-        }
-      } while (fileExists);
-
-      item.displayName = fileName;
-
-      handleFolder(destination, (result) => {
-        allDownloads.push(processDownload(access_token, item, result, electronWin));
-      });
-    } else {
-      resumeCanceled();
-    }
-  });
+  } else {
+    items.forEach(item => {
+      downloadManager(item, access_token, electronWin)
+    });
+  }
 };
 
-const fileExistsPath = (path, fileName) => {
-  return fileAlreadyExists(path.join(destination, fileName));
+const downloadManager = (item, access_token, electronWin) => {
+  // items.forEach(item => {
+
+  let count = 0;
+  let fileName = item.displayName;
+
+  const destination = item.preserveStructure ?
+    path.join(item.destination, item.path.substring(item.path.lastIndexOf('/'), 0)) : item.destination;
+
+  do {
+    fileExists = fileAlreadyExists(path.join(destination, fileName));
+    if (fileExists) {
+      count++;
+      fileName = item.displayName.substring(0, item.displayName.indexOf('.')) + '(' + (count) + ')' +
+        item.displayName.substring(item.displayName.indexOf('.'));
+    }
+  } while (fileExists);
+
+  item.displayName = fileName;
+
+  handleFolder(destination, (result) => {
+    allDownloads.push(processDownload(access_token, item, result, electronWin));
+  });
+  // });
 };
 
 const processDownload = (access_token, item, folder, win) => {
@@ -76,10 +82,7 @@ const destroyDownloads = () => {
   allDownloads.forEach(dl => {
     if (dl.status === -2 && dl.getStats().total.completed !== 100) {
       dl.destroy();
-      console.log(dl.filePath.lastIndexOf('/'));
-
       allNameItems.splice(allNameItems.indexOf(dl.fileName), 0);
-      console.log(allNameItems);
     }
   });
 };
@@ -112,4 +115,4 @@ const resumeCanceled = () => {
   })
 };
 
-module.exports = { downloadManager, destroyDownloads, stopAllDownloads };
+module.exports = { downloadPlatform, destroyDownloads, stopAllDownloads };
