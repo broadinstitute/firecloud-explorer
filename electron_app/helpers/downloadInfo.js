@@ -13,7 +13,6 @@ const downloadStats = function (dl, item, win) {
       item.transferred = stats.total.downloaded;
       win.webContents.send(constants.IPC_DOWNLOAD_STATUS, item);
     } else if (dl.status === 3) {
-      console.log(dl.filePath, ' ', dl.status);
       item.progress = 100;
       item.transferred = Number(item.size);
       if (win !== undefined) {
