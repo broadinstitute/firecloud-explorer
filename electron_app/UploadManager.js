@@ -15,7 +15,7 @@ const uploadManager = (bucketName, fileList = [], access_token, win) => {
     let uri = url;
 
     if (file.preserveStructure === true) {
-      uri = uri + 'Uploads/' + file.path;
+      uri = uri + 'Uploads' + file.path;
     } else {
       uri = uri + 'Uploads/' + file.name;
     }
