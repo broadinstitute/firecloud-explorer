@@ -100,6 +100,16 @@ export class LimitTransferablesService implements OnInit, OnDestroy {
 
   }
 
+  public start(files: any[]): void {
+    if (files !== undefined && files !== null && files.length > 0) {
+      let maxFiles: DownloadItem[] = [];
+      this.store.dispatch(new downloadActions.Reset());
+      this.store.dispatch(new downloadActions.AddItems({ items: files }));
+      maxFiles = files.length > environment.LIMIT_DOWNLOADS ? files.slice(0, environment.LIMIT_DOWNLOADS) : files;
+      this.gcsService.downloadFiles(maxFiles);
+    }
+  }
+
   public startDownloading(files: DownloadItem[]): void {
     if (files !== undefined && files !== null && files.length > 0) {
       let maxFiles: DownloadItem[] = [];
@@ -122,7 +132,6 @@ export class LimitTransferablesService implements OnInit, OnDestroy {
   public startUploading(files: UploadItem[]): void {
     if (files !== undefined && files !== null && files.length > 0) {
       const uploadBucket = localStorage.getItem('uploadBucket');
-      const preserveStructure = localStorage.getItem('preserveStructureUpload');
       let maxFiles: UploadItem[] = [];
       this.store.dispatch(new uploadActions.Reset());
       this.store.dispatch(new uploadActions.AddItems({ items: files }));

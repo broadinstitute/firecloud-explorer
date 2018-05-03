@@ -5,21 +5,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { Store } from '@ngrx/store';
 import { ISubscription } from 'rxjs/Subscription';
 
-import { DownloadItem } from '@app/file-manager/models/download-item';
-import { DownloadsReducer, DownloadState, downloadInitialState } from '@app/file-manager/reducers/downloads.reducer';
-
-import { UploadItem } from '@app/file-manager/models/upload-item';
-import { UploadsReducer, UploadState, uploadInitialState } from '@app/file-manager/reducers/uploads.reducer';
-
-import { ExportToGCSItem } from '@app/file-manager/models/export-to-gcs-item';
-import { ExportToGCSReducer, ExportToGCSState, exportToGCSInitialState } from '@app/file-manager/reducers/export-to-gcs.reducer';
-
-import { ExportToS3Item } from '@app/file-manager/models/export-to-s3-item';
-import { ExportToS3Reducer, ExportToS3State, exportToS3InitialState } from '@app/file-manager/reducers/export-to-s3.reducer';
-
 import { Observable } from 'rxjs/Observable';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-
 import { AppState } from '@app/file-manager/reducers';
 import { EntityStatus } from '@app/file-manager/models/entity-status';
 
@@ -34,66 +20,26 @@ export class ProgressTabComponent implements OnInit, AfterViewInit, OnDestroy {
     this.applyFilter(filter);
   }
 
-  @Input('source') source;
+  @Input('storeName') storeName;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   dataSource = new MatTableDataSource([]);
   displayedColumns = ['name', 'size', 'status', 'progress', 'actions'];
 
-  downloads: Observable<DownloadState>;
-  uploads: Observable<UploadState>;
-  exportsToGCS: Observable<ExportToGCSState>;
-  exportsToS3: Observable<ExportToS3State>;
-
+  state: Observable<any>;
   private subscription: ISubscription;
 
-  constructor(private store: Store<AppState>, private spinner: NgxSpinnerService, private zone: NgZone, ) {
-
-    this.downloads = store.select('downloads');
-    this.uploads = store.select('uploads');
-    this.exportsToGCS = store.select('exportToGCS');
-    this.exportsToS3 = store.select('exportToS3');
-
-  }
+  constructor(private store: Store<AppState>, private spinner: NgxSpinnerService, private zone: NgZone, ) { }
 
   ngOnInit() {
 
-    switch (this.source) {
+    this.state = this.store.select(this.storeName);
 
-      case 'Down':
-        this.subscription = this.downloads.subscribe(
-          state => {
-            this.processChanges(state);
-          }
-        );
-        break;
-
-      case 'Up':
-        this.subscription = this.uploads.subscribe(
-          state => {
-            this.processChanges(state);
-          }
-        );
-        break;
-
-      case 'GCS':
-        this.subscription = this.exportsToGCS.subscribe(
-          state => {
-            this.processChanges(state);
-          }
-        );
-        break;
-
-      case 'S3':
-        this.subscription = this.exportsToS3.subscribe(
-          state => {
-            this.processChanges(state);
-          }
-        );
-        break;
-
-    }
+    this.subscription = this.subscription = this.state.subscribe(
+      state => {
+        this.processChanges(state);
+      });
 
   }
 

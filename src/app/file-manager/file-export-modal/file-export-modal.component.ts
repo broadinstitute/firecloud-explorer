@@ -48,6 +48,8 @@ export class FileExportModalComponent implements OnInit {
   msgs: Message[] = [];
   disable = false;
   exportFilesItem: Item[] = [];
+  filesCount = 0;
+  filesSize = 0;
 
   constructor(
     public dialogRef: MatDialogRef<FileExportModalComponent>,
@@ -66,6 +68,13 @@ export class FileExportModalComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.preflightService.getCount().subscribe( count => {
+      this.filesCount = Number(count);
+    });
+    this.preflightService.getSize().subscribe(size => {
+        this.filesSize = Number(size);
+    });
+
     if (localStorage.getItem('S3BucketName') !== undefined) {
       this.exportForm = this.formBuilder.group({
         exportDestination: [''],
@@ -242,11 +251,11 @@ export class FileExportModalComponent implements OnInit {
   }
 
   fileCount() {
-    return this.preflightService.fileCount;
+    return this.preflightService.fileCountObservable;
   }
 
   totalSize() {
-    return this.preflightService.totalSize;
+    return this.preflightService.totalSizeObservable;
   }
 
   totalFiles() {

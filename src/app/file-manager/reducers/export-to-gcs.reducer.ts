@@ -2,6 +2,10 @@ import { ExportToGCSItem } from '@app/file-manager/models/export-to-gcs-item';
 import * as ExportToGCSItemActions from '@app/file-manager/actions/export-to-gcs-item.actions';
 import { EntityStatus } from '@app/file-manager/models/entity-status';
 
+/**
+ * this interface model all data related to exports from Google Cloud storage buckets
+ * to another Google Cloud Storage bucket
+ */
 export interface ExportToGCSState {
     totalCount: number;
     totalSize: number;
@@ -40,6 +44,9 @@ export interface ExportToGCSState {
     };
 }
 
+/**
+ * initial state value
+ */
 export const exportToGCSInitialState: ExportToGCSState = {
 
     totalCount: 0,
@@ -74,11 +81,23 @@ export const exportToGCSInitialState: ExportToGCSState = {
     }
 };
 
+/**
+ *
+ * @param state : current state of exports
+ * @param action : action to be preformed on state
+ */
 export function ExportToGCSReducer(
     state: ExportToGCSState = exportToGCSInitialState,
     action: ExportToGCSItemActions.All) {
 
     switch (action.type) {
+        /**
+         * Add a new item to state, as PENDING.
+         * new Item is received as action.payload
+         * . items count is incremented
+         * . item size is added to total size
+         * . item is added to pending items array
+         */
         case ExportToGCSItemActions.ADD_ITEM:
             action.payload.status = EntityStatus.PENDING;
             state.pending.count++;
@@ -87,6 +106,13 @@ export function ExportToGCSReducer(
             state.pending.items[action.payload.id] = action.payload;
             break;
 
+        /**
+         * Add a lis of items to state, as PENDING.
+         * new Items are received as action.payload.items
+         * . each item increments items count by 1
+         * . each item size is added to total size
+         * . each item is added to pending items array
+         */
         case ExportToGCSItemActions.ADD_ITEMS:
             action.payload.items.forEach(item => {
                 item.status = EntityStatus.PENDING;
@@ -97,6 +123,15 @@ export function ExportToGCSReducer(
             });
             break;
 
+        /**
+         * Change item status to INPROGRESS.
+         * item is received as action.payload
+         * but only item.id is required
+         * . pending items count is decremented
+         * . item is removed from pending items array
+         * . inProgress items count is incremented
+         * . item is added to inProgress items array
+         */
         case ExportToGCSItemActions.PROCESS_ITEM:
             state.pending.count--;
             delete state.pending.items[action.payload.id];
@@ -105,6 +140,16 @@ export function ExportToGCSReducer(
             state.inProgress.items[action.payload.id] = action.payload;
             break;
 
+        /**
+         * Change item status to INPROGRESS.
+         * items are received as action.payload.items.
+         * item.metada.sourceId is added top each item
+         * to be used later in service callback
+         * . pending items count is decremented
+         * . item is removed from pending items array
+         * . inProgress items count is incremented
+         * . item is added to inProgress items array
+         */
         case ExportToGCSItemActions.PROCESS_ITEMS:
             action.payload.items.forEach(item => {
                 if (item.metadata) {
@@ -120,6 +165,16 @@ export function ExportToGCSReducer(
             });
             break;
 
+        /**
+         * Change item status to COMPLETED.
+         * item is received as action.payload
+         * MUST include sourceId
+         * . inProgress items count is decremented
+         * . item is removed from inProgress items array
+         * . completed items count is incremented
+         * . item.progress is set to 100
+         * . item is added to completed items array
+         */
         case ExportToGCSItemActions.COMPLETE_ITEM:
             state.completed.count++;
             state.completed.items[action.payload.sourceId] = state.inProgress.items[action.payload.sourceId];
@@ -130,6 +185,16 @@ export function ExportToGCSReducer(
             state.inProgress.count--;
             break;
 
+        /**
+         * Change item status to COMPLETED.
+         * items are received as action.payload.items
+         * each item MUST include sourceId
+         * . inProgress items count is decremented
+         * . item is removed from inProgress items array
+         * . completed items count is incremented
+         * . item.progress is set to 100
+         * . item is added to completed items array
+         */
         case ExportToGCSItemActions.COMPLETE_ITEMS:
             action.payload.items.forEach(item => {
                 const sourceId = item.sourceId;
@@ -143,6 +208,9 @@ export function ExportToGCSReducer(
             });
             break;
 
+        /**
+         * Not used yet
+         */
         case ExportToGCSItemActions.PAUSE_ITEM:
             state.inProgress.count--;
             delete state.inProgress.items[action.payload.id];
@@ -151,6 +219,9 @@ export function ExportToGCSReducer(
             state.paused.items[action.payload.id] = action.payload;
             break;
 
+        /**
+         * Not used yet
+         */
         case ExportToGCSItemActions.PAUSE_ITEMS:
             action.payload.items.forEach(item => {
                 state.inProgress.count--;
@@ -161,6 +232,14 @@ export function ExportToGCSReducer(
             });
             break;
 
+        /**
+         * Change item status to CANCELLED.
+         * item is received as action.payload
+         * . inProgress items count is decremented
+         * . item is removed from inProgress items array
+         * . cancelled items count is incremented
+         * . item is added to cancelled items array
+         */
         case ExportToGCSItemActions.CANCEL_ITEM:
             state.inProgress.count--;
             delete state.inProgress.items[action.payload.id];
@@ -169,6 +248,14 @@ export function ExportToGCSReducer(
             state.cancelled.items[action.payload.id] = action.payload;
             break;
 
+        /**
+         * Change item status to CANCELLED.
+         * items are received as action.payload.items
+         * . inProgress items count is decremented
+         * . item is removed from inProgress items array
+         * . cancelled items count is incremented
+         * . item is added to cancelled items array
+         */
         case ExportToGCSItemActions.CANCEL_ITEMS:
             action.payload.items.forEach(item => {
                 state.inProgress.count--;
@@ -179,6 +266,14 @@ export function ExportToGCSReducer(
             });
             break;
 
+        /**
+         * Change ALL item status to CANCELLED.
+         * no action.payload required
+         * . pending items count is decremented
+         * . item is removed from pending items array
+         * . cancelled items count is incremented
+         * . item is added to cancelled items array
+         */
         case ExportToGCSItemActions.CANCEL_ALL:
             if (state.pending.count > 0) {
                 // NOTE: UPLOADS, GCS, S3 cancel from PENDING instead of INPROGRESS
@@ -192,6 +287,14 @@ export function ExportToGCSReducer(
             }
             break;
 
+        /**
+         * Change item status to FAILED.
+         * item is received as action.payload
+         * . inProgress items count is decremented
+         * . item is removed from inProgress items array
+         * . failed items count is incremented
+         * . item is added to failed items array
+         */
         case ExportToGCSItemActions.FAIL_ITEM:
             state.inProgress.count--;
             delete state.inProgress.items[action.payload.id];
@@ -200,6 +303,14 @@ export function ExportToGCSReducer(
             state.failed.items[action.payload.id] = action.payload;
             break;
 
+        /**
+         * Change item status to FAILED.
+         * items are received as action.payload.items
+         * . inProgress items count is decremented
+         * . item is removed from inProgress items array
+         * . failed items count is incremented
+         * . item is added to failed items array
+         */
         case ExportToGCSItemActions.FAIL_ITEMS:
             action.payload.items.forEach(item => {
 
@@ -215,6 +326,13 @@ export function ExportToGCSReducer(
             });
             break;
 
+        /**
+         * Update progress.
+         * In progress items gets count and size updated
+         * to be able to show progress in the UI.
+         * In this case, progress is based on bytes transferred.
+         *
+         */
         case ExportToGCSItemActions.UPDATE_ITEM_PROGRESS:
             // decrement old values
             state.totalTransferred -= state.inProgress.items[action.payload.id].transferred;
@@ -232,6 +350,9 @@ export function ExportToGCSReducer(
             state.inProgress.progress = state.totalSize !== 0 ? state.inProgress.transferred / state.totalSize : 0;
             break;
 
+        /**
+         * set state to initial values.
+         */
         case ExportToGCSItemActions.RESET:
 
             state.totalSize = 0;
@@ -250,6 +371,14 @@ export function ExportToGCSReducer(
             return state;
     }
 
+    /**
+     * update total progress based on items count
+     */
+    state.totalProgress = state.totalCount !== 0 ? 100.0 * state.completed.count / state.totalCount : 0;
+
+    /**
+     * build new state to return
+     */
     return {
         totalCount: state.totalCount,
         totalSize: state.totalSize,

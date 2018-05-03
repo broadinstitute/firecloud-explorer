@@ -198,5 +198,11 @@ export class PreflightService {
     this.totalFiles = 0;
     this.loadingFolders = 0;
   }
+  public getCount() {
+    return this.bucketService.getFilesCount;
+  }
 
+  public getSize() {
+    return this.bucketService.getFilesSize;
+  }
 }

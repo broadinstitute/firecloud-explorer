@@ -204,23 +204,23 @@ export function ExportToS3Reducer(
             break;
 
         case ExportToS3ItemActions.UPDATE_ITEM_PROGRESS:
-          if (state.inProgress.items[action.payload.id] !== undefined) {
-            // decrement old values
-            state.totalTransferred -= state.inProgress.items[action.payload.id].transferred;
-            state.inProgress.transferred -= state.inProgress.items[action.payload.id].transferred;
+            if (state.inProgress.items[action.payload.id] !== undefined) {
+                // decrement old values
+                state.totalTransferred -= state.inProgress.items[action.payload.id].transferred;
+                state.inProgress.transferred -= state.inProgress.items[action.payload.id].transferred;
 
-            // update item
-            state.inProgress.items[action.payload.id].progress = action.payload.progress;
-            state.inProgress.items[action.payload.id].transferred = action.payload.transferred;
+                // update item
+                state.inProgress.items[action.payload.id].progress = action.payload.progress;
+                state.inProgress.items[action.payload.id].transferred = action.payload.transferred;
 
-            // increment new values
-            state.totalTransferred += state.inProgress.items[action.payload.id].transferred;
-            state.inProgress.transferred += state.inProgress.items[action.payload.id].transferred;
+                // increment new values
+                state.totalTransferred += state.inProgress.items[action.payload.id].transferred;
+                state.inProgress.transferred += state.inProgress.items[action.payload.id].transferred;
 
-            state.totalProgress = state.totalSize !== 0 ? 100.0 * state.totalTransferred / state.totalSize : 0;
-            state.inProgress.progress = state.totalSize !== 0 ? state.inProgress.transferred / state.totalSize : 0;
-          }
-          break;
+                state.totalProgress = state.totalSize !== 0 ? 100.0 * state.totalTransferred / state.totalSize : 0;
+                state.inProgress.progress = state.totalSize !== 0 ? state.inProgress.transferred / state.totalSize : 0;
+            }
+            break;
 
         case ExportToS3ItemActions.RESET:
 
@@ -241,7 +241,7 @@ export function ExportToS3Reducer(
             state.completed.items = {};
 
             state.paused.count = 0;
-        state.paused.items = {};
+            state.paused.items = {};
 
             state.cancelled = { count: 0, items: {} };
             state.failed = { count: 0, items: {} };
@@ -250,6 +250,8 @@ export function ExportToS3Reducer(
         default:
             return state;
     }
+
+    state.totalProgress = state.totalCount !== 0 ? 100.0 * state.completed.count / state.totalCount : 0;
 
     return {
         totalCount: state.totalCount,

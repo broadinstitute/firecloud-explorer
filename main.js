@@ -1,7 +1,7 @@
 if (require('electron-squirrel-startup')) return;
 
 // ./main.js
-const { app, BrowserWindow, ipcMain, Menu} = require('electron');
+const { app, BrowserWindow, ipcMain, Menu } = require('electron');
 const path = require('path');
 const url = require('url');
 const {
@@ -71,28 +71,42 @@ app.on('ready', function () {
 
   if (process.platform === 'darwin') {
     // Create our menu entries so that we can use MAC shortcuts
-    Menu.setApplicationMenu(Menu.buildFromTemplate([
-      {
-        label: 'Edit',
-        submenu: [
-          { role: 'undo' },
-          { role: 'redo' },
-          { type: 'separator' },
-          { role: 'cut' },
-          { role: 'copy' },
-          { role: 'paste' },
-          { role: 'pasteandmatchstyle' },
-          { role: 'delete' },
-          { role: 'selectall' }
-        ]
-      }
-    ]));
-  }
+
+    var template = [{
+      label: app.getName(),
+      submenu: [
+        { label: "About " + app.getName(), selector: "orderFrontStandardAboutPanel:" },
+        { type: "separator" },
+        { role: 'services', submenu: [] },
+        { type: 'separator' },
+        { role: 'hide' },
+        { role: 'hideothers' },
+        { role: 'unhide' },
+        { type: 'separator' },
+        { label: "Quit", accelerator: "Command+Q", click: function () { app.quit(); } }
+      ]
+    }, {
+      label: "Edit",
+      submenu: [
+        { label: "Undo", accelerator: "Cmd+Z", selector: "undo:" },
+        { label: "Redo", accelerator: "Shift+Cmd+Z", selector: "redo:" },
+        { type: "separator" },
+        { label: "Cut", accelerator: "Cmd+X", selector: "cut:" },
+        { label: "Copy", accelerator: "Cmd+C", selector: "copy:" },
+        { label: "Paste", accelerator: "Cmd+V", selector: "paste:" },
+        { label: "Select All", accelerator: "Cmd+A", selector: "selectAll:" }
+      ]
+    }
+    ];
+
+    Menu.setApplicationMenu(Menu.buildFromTemplate(template));
+
+  };
 
   ipcMain.on(constants.IPC_EXPORT_TO_GCP_START, (event, destinationBucket, files, access_token) => {
     exportGCPManager(destinationBucket, files, access_token, win);
   });
-  
+
 
   ipcMain.on(constants.IPC_EXPORT_TO_GCP_CANCEL, (event, file, access_token) => {
     exportGCPManagerCancel(file, access_token);

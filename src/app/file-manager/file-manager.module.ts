@@ -48,6 +48,7 @@ import { S3ExportService } from '@app/file-manager/services/s3-export.service';
 import { SelectionService } from '@app/file-manager/services/selection.service';
 import { NgZone } from '@angular/core';
 import { ProgressTabComponent } from './progress-tab/progress-tab.component';
+import { StatusBoxComponent } from './status-box/status-box.component';
 
 @NgModule({
   imports: [
@@ -74,6 +75,7 @@ import { ProgressTabComponent } from './progress-tab/progress-tab.component';
     BreadcrumbComponent,
     FileExportModalComponent,
     ProgressTabComponent,
+    StatusBoxComponent,
   ],
   providers: [
     FilterSizePipe,
