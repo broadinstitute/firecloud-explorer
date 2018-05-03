@@ -29,8 +29,7 @@
 </p-treeTable>
 
 <p-toolbar styleClass="toolbar-accent">
-
-  <div class="ui-toolbar-group-right">
+  <div class="ui-toolbar-group-left">
     <div *ngIf="uploadInProgress()" class="warn-message">
       Please wait, upload in progress
       <div class="progress-dots">
@@ -39,7 +38,9 @@
         <span class="dot"></span>
       </div>
     </div>
+  </div>
 
+  <div class="ui-toolbar-group-right">
     <button mat-raised-button (click)="selectionDone()" class="button-primary" [disabled]="disableButton()">
       <i class="material-icons">file_upload</i>Upload selection</button>
   </div>
