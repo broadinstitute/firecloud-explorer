@@ -18,7 +18,21 @@ const handleFolder = (directory, callback) => {
 };
 
 const fileAlreadyExists = (file) => {
-    return (fs.existsSync(file) || fs.existsSync(file.concat('.mtd')));
+     if (process.platform === 'win32') {
+        let result = false;
+        try{
+            fs.statSync(file.split("\\").join("\\\\").concat('.mtd'));
+        } catch(error) {
+            if(!error.message.includes("no such file or directory")) {
+                result = true;
+            }
+            
+        } finally {
+            return result;
+        }
+    } else {
+        return (fs.existsSync(file) || fs.existsSync(file.concat('.mtd')));
+    }       
 };
 
 const handleDiskSpace = (destination, totalFileSize) => {
