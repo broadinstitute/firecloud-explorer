@@ -40,22 +40,11 @@ export class UploadPreflightService {
     this.initializeValues();
 
     /**
-     * need to sort and remove nested folders
+     * store already selected files
      */
-    const sorted = data.selectedFiles
-      .filter(item => item.data.expanded === undefined)
-      .sort((f1, f2) => {
-        if (f1.data.path > f2.data.path) {
-          return 1;
-        } else if (f1.data.path < f2.data.path) {
-          return -1;
-        }
-        return 0;
-      });
-
     this.zone.run(() => {
-      this.selectedFiles = sorted
-        .filter(item => item.type === 'File')
+      this.selectedFiles = data.selectedFiles
+        .filter(item => item.type === 'File' && this.isNotMTD(item.data.name))
         .map(item => {
           this.fileCount++;
           this.totalSize += item.data.size;
@@ -67,7 +56,20 @@ export class UploadPreflightService {
         });
     });
 
-    const cleanedItems = this.filterFolderItems(sorted);
+    /**
+     * folders, need to sort and remove nested folders
+     */
+    const cleanedItems = this.filterFolderItems(data.selectedFiles
+      .filter(item => item.type === 'Folder')
+      .filter(item => item.data.expanded === undefined)
+      .sort((f1, f2) => {
+        if (f1.data.path > f2.data.path) {
+          return 1;
+        } else if (f1.data.path < f2.data.path) {
+          return -1;
+        }
+        return 0;
+      }));
 
     const sortedItems = cleanedItems
       .map(
@@ -76,7 +78,9 @@ export class UploadPreflightService {
             // should expande recursivelly and select all
             this.electronService.ipcRenderer.once(constants.IPC_GET_RECURSIVE_NODE_CONTENT, (event, nodeFiles) => {
               this.zone.run(() => {
-                nodeFiles.result.forEach(child => {
+                nodeFiles.result
+                .filter(child => this.isNotMTD(child.name))
+                .forEach(child => {
                   this.fileCount++;
                   this.totalSize += child.size;
 
@@ -136,6 +140,10 @@ export class UploadPreflightService {
       return false;
     }
     return child.data.path.startsWith(parent.data.path);
+  }
+
+  isNotMTD(name: string) {
+    return !name.toLowerCase().endsWith('.mtd');
   }
 
   initializeValues() {

@@ -63,11 +63,11 @@ const recursiveNodeReader = (dir, fileList = []) => {
       if (!file.startsWith('.') && stat.isDirectory()) {
         recursiveNodeReader(filePath, fileList);
       } else {
-        node = {
-          name: file,
-          path: path.join(dir, file),
-          size: stat.size,
-        };
+          node = {
+            name: file,
+            path: path.join(dir, file),
+            size: stat.size,
+          };
         fileList.push(node);
       }
     } catch (e) {

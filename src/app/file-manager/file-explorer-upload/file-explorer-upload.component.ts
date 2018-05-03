@@ -120,10 +120,18 @@ export class FileExplorerUploadComponent implements OnInit {
 
   nodeExpand(evt) {
     if (evt.node && !evt.node.expanded) {
+      const node: TreeNode = evt.node;
+      const selected = this.tt.isSelected(node);
+
       this.electronService.ipcRenderer.once(constants.IPC_GET_NODE_CONTENT, (event, nodeFiles) => {
         this.zone.run(() => {
           evt.node.children = nodeFiles.result;
           evt.node.expanded = true;
+          this.tt.propagateSelectionDown(evt.node, selected);
+          if (node.parent) {
+            this.tt.propagateSelectionUp(evt.node, selected);
+            // this.selectedFiles = [...this.selectedFiles, ...nodeFiles.result ];
+          }
         });
         return;
       });
