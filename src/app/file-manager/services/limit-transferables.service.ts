@@ -122,6 +122,7 @@ export class LimitTransferablesService implements OnInit, OnDestroy {
   public startUploading(files: UploadItem[]): void {
     if (files !== undefined && files !== null && files.length > 0) {
       const uploadBucket = localStorage.getItem('uploadBucket');
+      const preserveStructure = localStorage.getItem('preserveStructureUpload');
       let maxFiles: UploadItem[] = [];
       this.store.dispatch(new uploadActions.Reset());
       this.store.dispatch(new uploadActions.AddItems({ items: files }));

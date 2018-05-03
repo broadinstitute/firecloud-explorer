@@ -8,6 +8,10 @@ import { Message } from 'primeng/components/common/api';
 import { Router } from '@angular/router';
 import { Type } from '@app/file-manager/models/type';
 import { UploadPreflightService } from '@app/file-manager/services/upload-preflight.service';
+import { TransferablesGridComponent } from '@app/file-manager/transferables-grid/transferables-grid.component';
+import { UUID } from 'angular2-uuid';
+import { EntityStatus } from '@app/file-manager/models/entity-status';
+import { UploadItem } from '@app/file-manager/models/upload-item';
 
 @Component({
   selector: 'app-file-upload',
@@ -25,12 +29,13 @@ export class FileUploadModalComponent implements OnInit {
   writableWorkspaces: Workspace[] = [];
   filteredWorkspaces: Observable<any>;
   disableUpload = true;
-  preserveStructure = true;
+  preserveStructure = false;
 
   constructor(public dialogRef: MatDialogRef<FileUploadModalComponent>,
     private router: Router,
     private formBuilder: FormBuilder,
     @Inject(MAT_DIALOG_DATA) public data: any,
+    private transferablesGridComponent: TransferablesGridComponent,
     private preflightService: UploadPreflightService) {
 
     this.getWritableWorkspaces();
@@ -55,7 +60,6 @@ export class FileUploadModalComponent implements OnInit {
       });
     }
 
-    // TODO: Review Type here ...
     this.preflightService.processFiles(this.data);
 
   }
@@ -76,15 +80,15 @@ export class FileUploadModalComponent implements OnInit {
   }
 
   fileCount() {
-    return 0;
+    return this.preflightService.fileCount;
   }
 
   totalSize() {
-    return 0;
+    return this.preflightService.totalSize;
   }
 
   isLoading() {
-    return true;
+    return this.preflightService.loadingFiles;
   }
 
   cancel(): void {
@@ -92,10 +96,21 @@ export class FileUploadModalComponent implements OnInit {
   }
 
   uploadFiles(): void {
+
+    const filesToUpload = [];
+    this.selectedFiles().forEach(file => {
+      filesToUpload.push(this.uploadItemFactory(file));
+    });
+
     this.disableUpload = true;
     localStorage.setItem('uploadBucket', this.workspaceCtrl.value.bucketName);
     localStorage.setItem('operation-type', Type.UPLOAD);
     this.dialogRef.close({ status: 'upload' });
+    localStorage.setItem('preserveStructureUpload', String(this.preserveStructure));
+
+    this.dialogRef.close({ preserveStructure: this.preserveStructure, type: Type.EXPORT_S3 });
+    this.transferablesGridComponent.startUpload(filesToUpload);
+
     this.router.navigate(['/status']);
   }
 
@@ -112,7 +127,6 @@ export class FileUploadModalComponent implements OnInit {
   }
 
   displayFn(workspace: Workspace): any {
-    console.log(workspace);
     return workspace ? workspace.name : workspace;
   }
 
@@ -123,5 +137,14 @@ export class FileUploadModalComponent implements OnInit {
     } else {
       this.disableUpload = true;
     }
+  }
+
+  selectedFiles(): any[] {
+    return this.preflightService.selectedFiles;
+  }
+
+  uploadItemFactory(file) {
+    return new UploadItem(UUID.UUID(), file.name, '', '', file.size, file.path, '',
+      EntityStatus.PENDING, '', '', '', this.preserveStructure, '', file.name, '');
   }
 }

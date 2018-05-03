@@ -60,9 +60,7 @@ import { ProgressTabComponent } from './progress-tab/progress-tab.component';
     StoreModule.forFeature('uploads', UploadsReducer),
     StoreModule.forFeature('exportToGCS', ExportToGCSReducer),
     StoreModule.forFeature('exportToS3', ExportToS3Reducer),
-
     MatDialogModule,
-
   ],
   declarations: [
     FileExplorerComponent,

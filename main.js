@@ -9,7 +9,10 @@ const {
   destroyDownloads
 } = require('./electron_app/DownloadManager');
 const { ExportS3, testS3Credentials, exportS3Cancel } = require('./electron_app/ExportS3');
+
 const lazyNodeReader = require('./electron_app/FileSystemReader').lazyNodeReader;
+const recursiveNodeReader = require('./electron_app/FileSystemReader').recursiveNodeReader;
+
 const constants = require('./electron_app/helpers/environment').constants;
 const os = require('os');
 const {
@@ -60,7 +63,7 @@ app.on('ready', function () {
 
   // Show dev tools
   // Remove this line before distributing
-   win.webContents.openDevTools();
+  // win.webContents.openDevTools();
 
   win.once('ready-to-show', () => {
     win.show();
@@ -127,14 +130,24 @@ app.on('ready', function () {
   });
 
   ipcMain.on(constants.IPC_GET_NODE_CONTENT, (event, nodePath) => {
-    console.log('ipcMain.on GET NODE CONTENT', event, nodePath);
-
     if (nodePath === '/') {
       nodePath = os.homedir();
     }
     var files = lazyNodeReader(nodePath, []);
 
     win.webContents.send(constants.IPC_GET_NODE_CONTENT, {
+      result: files,
+      nodePath: nodePath
+    });
+  });
+
+  ipcMain.on(constants.IPC_GET_RECURSIVE_NODE_CONTENT, (event, nodePath) => {
+    if (nodePath === '/') {
+      nodePath = os.homedir();
+    }
+    var files = recursiveNodeReader(nodePath, []);
+
+    win.webContents.send(constants.IPC_GET_RECURSIVE_NODE_CONTENT, {
       result: files,
       nodePath: nodePath
     });

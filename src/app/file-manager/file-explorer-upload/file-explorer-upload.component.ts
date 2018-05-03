@@ -36,6 +36,7 @@ export class FileExplorerUploadComponent implements OnInit {
   files: TreeNode[];
   selectedFiles: TreeNode[] = [];
 
+  folderCount = 0;
   fileCount = 0;
   totalSize = 0;
 
@@ -71,6 +72,7 @@ export class FileExplorerUploadComponent implements OnInit {
       },
       leaf: false
     };
+
     this.files = [];
     this.files.push(rootNode);
 
@@ -87,10 +89,13 @@ export class FileExplorerUploadComponent implements OnInit {
   }
 
   countFiles() {
+    this.folderCount = 0;
     this.fileCount = 0;
     this.totalSize = 0;
     this.selectedFiles.forEach(f => {
-      if (f.data.type === 'File') {
+      if (f.data.type === 'Folder') {
+        this.folderCount++;
+      } else if (f.data.type === 'File') {
         this.fileCount++;
         this.totalSize += f.data.size;
       }
@@ -114,12 +119,8 @@ export class FileExplorerUploadComponent implements OnInit {
   }
 
   nodeExpand(evt) {
-    // let node: TreeNode;
-    console.log('nodeExpand ', evt.node);
     if (evt.node && !evt.node.expanded) {
       this.electronService.ipcRenderer.once(constants.IPC_GET_NODE_CONTENT, (event, nodeFiles) => {
-        console.log('nodeExpand callback ', evt.node, nodeFiles);
-        // node = evt.node;
         this.zone.run(() => {
           evt.node.children = nodeFiles.result;
           evt.node.expanded = true;
@@ -199,28 +200,18 @@ export class FileExplorerUploadComponent implements OnInit {
   }
 
   selectionDone() {
+
+    const items = {
+      selectedFiles: this.selectedFiles,
+      totalSize: 0
+    };
+
     const dialogRef = this.dialog.open(FileUploadModalComponent, {
       width: '500px',
-      disableClose: true
+      disableClose: true,
+      data: items
     });
 
-    dialogRef.afterClosed().subscribe(result => {
-      const filesToUpload: UploadItem[] = [];
-      let dataFile: UploadItem;
-
-      if (result !== undefined) {
-        this.selectedFiles
-          .filter(file => file.data.type === Type.FILE)
-          .forEach(file => {
-            dataFile = new UploadItem(UUID.UUID(), file.data.name, file.data.updated,
-              file.data.updated, file.data.size, file.data.path, result.directory,
-              EntityStatus.PENDING, '', '', '', result.preserveStructure, '', file.data.name, '');
-
-            filesToUpload.push(dataFile);
-          });
-        this.transferablesGridComponent.startUpload(filesToUpload);
-      }
-    });
   }
 
   upload() {
@@ -230,7 +221,7 @@ export class FileExplorerUploadComponent implements OnInit {
   }
 
   disableButton() {
-    return this.uploadInProgress() || this.fileCount <= 0;
+    return this.uploadInProgress() || this.fileCount + this.folderCount <= 0;
   }
 
   uploadInProgress() {

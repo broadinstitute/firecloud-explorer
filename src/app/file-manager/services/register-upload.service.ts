@@ -9,16 +9,20 @@ export class RegisterUploadService {
   constructor(private electronService: ElectronService) { }
 
   public getFileSystem(folderPath) {
-    console.log('getLazyNodeContent ', folderPath);
     if (this.electronService.isElectronApp) {
       this.electronService.ipcRenderer.send('get-filesystem', folderPath);
     }
   }
 
   public async getLazyNodeContent(nodePath) {
-    console.log('getLazyNodeContent ', nodePath);
     if (this.electronService.isElectronApp) {
       this.electronService.ipcRenderer.send(constants.IPC_GET_NODE_CONTENT, nodePath);
+    }
+  }
+
+  public async getRecursiveNodeContent(nodePath) {
+    if (this.electronService.isElectronApp) {
+      this.electronService.ipcRenderer.send(constants.IPC_GET_RECURSIVE_NODE_CONTENT, nodePath);
     }
   }
 }

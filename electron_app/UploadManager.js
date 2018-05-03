@@ -11,7 +11,15 @@ const uploadManager = (bucketName, fileList = [], access_token, win) => {
   fileList.forEach(file => {
     const contentType = mime.lookup(file.path) ? mime.lookup(file.path) : 'application/octet-stream';
     const size = Number(file.size);
-    const uri = url + 'Uploads/' + file.name;
+
+    let uri = url;
+
+    if (file.preserveStructure === true) {
+      uri = uri + 'Uploads' + file.path;
+    } else {
+      uri = uri + 'Uploads/' + file.name;
+    }
+
     let progressConf = progress({
       length: size
     });
