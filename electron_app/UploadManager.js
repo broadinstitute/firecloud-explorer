@@ -17,7 +17,7 @@ const uploadManager = (bucketName, fileList = [], access_token, win) => {
 
     if (file.preserveStructure === true) {
       if (process.platform === 'win32') {
-        uri = uri + 'Uploads' + file.path.slice(file.path.indexOf(':') + 1);
+        uri = uri + 'Uploads' + file.path.slice(file.path.indexOf(':') + 1).path.replace(/\\/g , '/');
       } else {
         uri = uri + 'Uploads' + file.path;
       }
