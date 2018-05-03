@@ -214,12 +214,11 @@ export class FileExplorerUploadComponent implements OnInit {
       totalSize: 0
     };
 
-    const dialogRef = this.dialog.open(FileUploadModalComponent, {
+    this.dialog.open(FileUploadModalComponent, {
       width: '500px',
       disableClose: true,
       data: items
     });
-
   }
 
   upload() {
