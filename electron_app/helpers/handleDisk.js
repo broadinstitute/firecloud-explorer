@@ -5,7 +5,8 @@ const diskspace = require('diskspace');
 const electron = require('electron');
 const userDataPath = (electron.app || electron.remote.app).getPath('userData');
 let conditions = { error: false, errorMessage: '' };
-
+const FILE_DOESNT_EXIST = -4058;
+const FILE_ALREADY_EXISTS = -4048;
 const handleFolder = (directory, callback) => {
     if (!fs.existsSync(directory)) {
         mkdirp.sync(directory, (err) => {
@@ -19,20 +20,28 @@ const handleFolder = (directory, callback) => {
 
 const fileAlreadyExists = (file) => {
      if (process.platform === 'win32') {
-        let result = false;
-        try{
-            fs.statSync(file.split("\\").join("\\\\").concat('.mtd'));
-        } catch(error) {
-            if(!error.message.includes("no such file or directory")) {
-                result = true;
-            }
-            
-        } finally {
-            return result;
-        }
+        let filePath = file.split("\\").join("\\\\");
+        return (exists(filePath) || exists(filePath.concat('.mtd')));
+        
+
     } else {
         return (fs.existsSync(file) || fs.existsSync(file.concat('.mtd')));
     }       
+};
+
+const exists = (filePath) => {
+    let result = false;
+    try{
+        fs.statSync(filePath);
+        result = true;
+    } catch(error) {
+        // if(!error.message.includes("no such file or directory")) {
+        if(!error.errno === FILE_DOESNT_EXIST || error.errno === FILE_ALREADY_EXISTS) {
+            result = true;
+        }
+    } finally {
+        return result;
+    }
 };
 
 const handleDiskSpace = (destination, totalFileSize) => {
