@@ -61,6 +61,7 @@ const destroyDownloads = () => {
       dl.destroy();
     }
   });
+  allDownloads = [];
 };
 
 const setHeader = (access_token) => {
