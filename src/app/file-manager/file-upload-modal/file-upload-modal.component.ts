@@ -1,5 +1,5 @@
 
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, AfterViewInit } from '@angular/core';
 import { Workspace } from '@app/file-manager/models/workspace';
 import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
@@ -17,7 +17,7 @@ import { UploadItem } from '@app/file-manager/models/upload-item';
   selector: 'app-file-upload',
   templateUrl: './file-upload-modal.component.html'
 })
-export class FileUploadModalComponent implements OnInit {
+export class FileUploadModalComponent implements OnInit, AfterViewInit {
 
   workspaceCtrl: FormControl;
   file;
@@ -47,11 +47,12 @@ export class FileUploadModalComponent implements OnInit {
   }
 
   ngOnInit() {
-
     this.uploadForm = this.formBuilder.group({
       workspaceCtrl: [''],
     });
+  }
 
+  ngAfterViewInit() {
     if (this.writableWorkspaces.length === 0) {
       this.disableUpload = false;
       this.msgs.push({
@@ -59,9 +60,7 @@ export class FileUploadModalComponent implements OnInit {
         summary: 'Sorry, you don\'t have permission to upload data to any workspace ',
       });
     }
-
     this.preflightService.processFiles(this.data);
-
   }
 
   filterWorkspaces(selectedWorkspace) {
