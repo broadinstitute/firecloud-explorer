@@ -35,7 +35,6 @@ const exists = (filePath) => {
         fs.statSync(filePath);
         result = true;
     } catch(error) {
-        // if(!error.message.includes("no such file or directory")) {
         if(!error.errno === FILE_DOESNT_EXIST || error.errno === FILE_ALREADY_EXISTS) {
             result = true;
         }
