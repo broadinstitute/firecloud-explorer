@@ -88,64 +88,37 @@ export class FileExplorerUploadComponent implements OnInit {
 
   }
 
-  countFiles() {
-    this.folderCount = 0;
-    this.fileCount = 0;
-    this.totalSize = 0;
-    this.selectedFiles.forEach(f => {
-      if (f.data.type === 'Folder') {
-        this.folderCount++;
-      } else if (f.data.type === 'File') {
-        this.fileCount++;
-        this.totalSize += f.data.size;
-      }
-    });
-  }
-
-  nodeSelect(event) {
-    this.zone.run(() => {
-      this.countFiles();
-      this.msgs = [];
-      this.msgs.push({ severity: 'info', summary: 'Node Selected', detail: event.node.data.name });
-    });
-  }
-
-  nodeUnselect(event) {
-    this.zone.run(() => {
-      this.countFiles();
-      this.msgs = [];
-      this.msgs.push({ severity: 'info', summary: 'Node Unselected', detail: event.node.data.name });
-    });
-  }
-
   nodeExpand(evt) {
     if (evt.node && !evt.node.expanded) {
 
       this.electronService.ipcRenderer.once(constants.IPC_GET_NODE_CONTENT, (event, nodeFiles) => {
-        console.log(event, nodeFiles);
         const dadIsSelected = this.tt.isSelected(evt.node);
+
         this.zone.run(() => {
+
+          if (evt.node.children) {
+            evt.node.children.forEach(child => {
+              const ix = this.tt.findIndexInSelection(child);
+              if (ix >= 0) {
+                this.selectedFiles.splice(ix, 1);
+              }
+            });
+          }
+
           evt.node.children = nodeFiles.result;
           evt.node.expanded = true;
 
           evt.node.children.forEach(child => {
-            if (dadIsSelected) {
-              this.tt.propagateSelectionDown(child, true);
-              if (child.parent) {
-                this.tt.propagateSelectionUp(child.parent, true);
-              }
-            } else {
-              this.tt.propagateSelectionDown(child, false);
-              if (child.parent) {
-                this.tt.propagateSelectionUp(child.parent, false);
-              }
+
+            this.tt.propagateSelectionDown(child, dadIsSelected);
+            if (child.parent) {
+              this.tt.propagateSelectionUp(child.parent, dadIsSelected);
             }
           });
 
         });
         return;
       });
-
       this.registerUpload.getLazyNodeContent(evt.node.data.path);
     }
   }
@@ -189,12 +162,10 @@ export class FileExplorerUploadComponent implements OnInit {
     this.files.forEach(node => {
       this.selectRecursive(node, true);
     });
-    this.countFiles();
   }
 
   selectNone() {
     this.selectedFiles = [];
-    this.countFiles();
   }
 
   toggleSelection() {
@@ -205,7 +176,6 @@ export class FileExplorerUploadComponent implements OnInit {
       }
     });
     this.selectedFiles = newSelection;
-    this.countFiles();
   }
 
   private selectRecursive(node: TreeNode, isExpand: boolean) {
@@ -238,7 +208,7 @@ export class FileExplorerUploadComponent implements OnInit {
   }
 
   disableButton() {
-    return this.uploadInProgress() || this.fileCount + this.folderCount <= 0;
+    return this.uploadInProgress() || this.selectedFiles.length <= 0;
   }
 
   uploadInProgress() {

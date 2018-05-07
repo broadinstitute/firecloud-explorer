@@ -57,7 +57,7 @@ export class UploadPreflightService {
     });
 
     /**
-     * folders, need to sort and remove nested folders
+     * need to sort folders before removing nested folders
      */
     const cleanedItems = this.filterFolderItems(data.selectedFiles
       .filter(item => item.type === 'Folder')
@@ -72,32 +72,30 @@ export class UploadPreflightService {
       }));
 
     const sortedItems = cleanedItems
-      .map(
+      .forEach(
         item => {
-          if (item.type === 'Folder') {
-            // should expande recursivelly and select all
-            this.electronService.ipcRenderer.once(constants.IPC_GET_RECURSIVE_NODE_CONTENT, (event, nodeFiles) => {
-              this.zone.run(() => {
-                nodeFiles.result
-                .filter(child => this.isNotMTD(child.name))
-                .forEach(child => {
-                  this.fileCount++;
-                  this.totalSize += child.size;
 
-                  this.addFile({
-                    name: child.name,
-                    path: child.path,
-                    size: child.size
-                  });
+          // should expande recursivelly and select all
+          this.electronService.ipcRenderer.once(constants.IPC_GET_RECURSIVE_NODE_CONTENT, (event, nodeFiles) => {
+
+            nodeFiles.result
+              .filter(child => this.isNotMTD(child.name))
+              .forEach(child => {
+                this.fileCount++;
+                this.totalSize += child.size;
+
+                this.addFile({
+                  name: child.name,
+                  path: child.path,
+                  size: child.size
                 });
               });
-            });
-            this.registerUploadService.getRecursiveNodeContent(item.data.path);
+
           }
-          return item;
+          );
+          this.registerUploadService.getRecursiveNodeContent(item.data.path);
         }
       );
-
     this.loadingFiles = false;
   }
 
