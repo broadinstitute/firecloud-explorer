@@ -190,6 +190,7 @@ export class FileExplorerUploadComponent implements OnInit {
 
   selectionDone() {
 
+    console.log('modal.selectedFiles', this.selectedFiles);
     const items = {
       selectedFiles: this.selectedFiles,
       totalSize: 0
@@ -200,12 +201,6 @@ export class FileExplorerUploadComponent implements OnInit {
       width: '500px',
       disableClose: true,
       data: items
-    });
-  }
-
-  upload() {
-    const dialogRef = this.dialog.open(FileUploadModalComponent, {
-      width: '500px'
     });
   }
 

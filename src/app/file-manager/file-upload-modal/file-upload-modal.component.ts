@@ -1,5 +1,5 @@
 
-import { Component, Inject, OnInit, AfterViewInit } from '@angular/core';
+import { Component, Inject, OnInit, AfterViewInit, NgZone } from '@angular/core';
 import { Workspace } from '@app/file-manager/models/workspace';
 import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
@@ -31,10 +31,12 @@ export class FileUploadModalComponent implements OnInit, AfterViewInit {
   filteredWorkspaces: Observable<any>;
   disableUpload = true;
   preserveStructure = false;
+  filesToUpload: any[];
 
   constructor(
     public dialogRef: MatDialogRef<FileUploadModalComponent>,
     private router: Router,
+    private zone: NgZone,
     private formBuilder: FormBuilder,
     private spinner: NgxSpinnerService,
     private transferablesGridComponent: TransferablesGridComponent,
@@ -50,6 +52,8 @@ export class FileUploadModalComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
+    this.filesToUpload = [];
+
     this.uploadForm = this.formBuilder.group({
       workspaceCtrl: [''],
     });
@@ -60,14 +64,19 @@ export class FileUploadModalComponent implements OnInit, AfterViewInit {
         severity: 'warn',
         summary: 'Sorry, you don\'t have permission to upload data to any workspace ',
       });
-    } else {
-      this.preflightService.processFiles(this.data);
     }
-    this.spinner.hide();
   }
 
   ngAfterViewInit() {
-
+    this.spinner.show();
+    this.preflightService.processFiles(this.data)
+      .subscribe(data => {
+        this.zone.run(() => {
+          console.log('data', data);
+          this.filesToUpload = data;
+          this.spinner.hide();
+        });
+      });
   }
 
   filterWorkspaces(selectedWorkspace) {
@@ -146,7 +155,7 @@ export class FileUploadModalComponent implements OnInit, AfterViewInit {
   }
 
   selectedFiles(): any[] {
-    return this.preflightService.selectedFiles;
+    return this.filesToUpload; // this.preflightService.selectedFiles;
   }
 
   uploadItemFactory(file) {

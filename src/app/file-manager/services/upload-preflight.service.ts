@@ -11,6 +11,7 @@ import * as Transferables from '@app/file-manager/actions/transferables.actions'
 import { UploadItem } from '@app/file-manager/models/upload-item';
 import { EntityStatus } from '@app/file-manager/models/entity-status';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { Observable } from 'rxjs/Observable';
 const constants = require('../../../../electron_app/helpers/environment').constants;
 
 @Injectable()
@@ -47,13 +48,12 @@ export class UploadPreflightService {
             size: child.size
           });
         });
-      this.spinner.hide();
     });
   }
 
-  processFiles(data) {
+  processFiles(data): Observable<any> {
 
-
+    console.log('processFiles', data.selectedFiles);
     this.loadingFiles = false;
     this.selectedFiles = [];
     this.initializeValues();
@@ -65,6 +65,7 @@ export class UploadPreflightService {
       this.spinner.show();
       this.selectedFiles = data.selectedFiles
         .filter(item => item.type === 'File' && this.isNotMTD(item.data.name))
+        .filter(item => item.parent.expanded === true && item.parent.partialSelected === true)
         .map(item => {
           this.fileCount++;
           this.totalSize += item.data.size;
@@ -81,7 +82,7 @@ export class UploadPreflightService {
      */
     const cleanedItems = this.filterFolderItems(data.selectedFiles
       .filter(item => item.type === 'Folder')
-      .filter(item => item.data.expanded === undefined)
+      .filter(item => (item.data.expanded === undefined || item.data.expanded === false) && item.partialSelected === false)
       .sort((f1, f2) => {
         if (f1.data.path > f2.data.path) {
           return 1;
@@ -91,6 +92,7 @@ export class UploadPreflightService {
         return 0;
       }));
 
+    console.log('cleanedItems', cleanedItems);
     const sortedItems = cleanedItems
       .forEach(
         item => {
@@ -99,6 +101,7 @@ export class UploadPreflightService {
       );
     this.spinner.hide();
     this.loadingFiles = false;
+    return Observable.of(this.selectedFiles);
   }
 
   addFile(fileNode) {
