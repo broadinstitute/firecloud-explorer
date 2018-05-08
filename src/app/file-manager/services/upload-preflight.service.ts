@@ -53,7 +53,6 @@ export class UploadPreflightService {
 
   processFiles(data): Observable<any> {
 
-    console.log('processFiles', data.selectedFiles);
     this.loadingFiles = false;
     this.selectedFiles = [];
     this.initializeValues();
@@ -92,7 +91,6 @@ export class UploadPreflightService {
         return 0;
       }));
 
-    console.log('cleanedItems', cleanedItems);
     const sortedItems = cleanedItems
       .forEach(
         item => {

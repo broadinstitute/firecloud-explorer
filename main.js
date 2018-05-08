@@ -63,7 +63,7 @@ app.on('ready', function () {
 
   // Show dev tools
   // Remove this line before distributing
-  win.webContents.openDevTools();
+  // win.webContents.openDevTools();
 
   win.once('ready-to-show', () => {
     win.show();

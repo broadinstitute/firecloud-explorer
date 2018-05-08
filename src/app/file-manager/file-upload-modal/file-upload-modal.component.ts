@@ -72,7 +72,6 @@ export class FileUploadModalComponent implements OnInit, AfterViewInit {
     this.preflightService.processFiles(this.data)
       .subscribe(data => {
         this.zone.run(() => {
-          console.log('data', data);
           this.filesToUpload = data;
           this.spinner.hide();
         });
@@ -155,7 +154,7 @@ export class FileUploadModalComponent implements OnInit, AfterViewInit {
   }
 
   selectedFiles(): any[] {
-    return this.filesToUpload; // this.preflightService.selectedFiles;
+    return this.filesToUpload;
   }
 
   uploadItemFactory(file) {

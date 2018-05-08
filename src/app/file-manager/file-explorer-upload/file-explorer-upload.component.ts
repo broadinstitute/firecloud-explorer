@@ -91,6 +91,7 @@ export class FileExplorerUploadComponent implements OnInit {
   }
 
   nodeExpand(evt) {
+
     if (evt.node && !evt.node.expanded) {
 
       this.electronService.ipcRenderer.once(constants.IPC_GET_NODE_CONTENT, (event, nodeFiles) => {
@@ -190,7 +191,6 @@ export class FileExplorerUploadComponent implements OnInit {
 
   selectionDone() {
 
-    console.log('modal.selectedFiles', this.selectedFiles);
     const items = {
       selectedFiles: this.selectedFiles,
       totalSize: 0
