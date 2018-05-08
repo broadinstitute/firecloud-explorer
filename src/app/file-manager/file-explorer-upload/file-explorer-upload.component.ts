@@ -17,6 +17,7 @@ import { ISubscription } from 'rxjs/Subscription';
 import { StatusService } from '@app/file-manager/services/status.service';
 import { UUID } from 'angular2-uuid';
 import { environment } from '@env/environment';
+import { NgxSpinnerService } from 'ngx-spinner';
 const constants = require('../../../../electron_app/helpers/environment').constants;
 
 @Component({
@@ -50,6 +51,7 @@ export class FileExplorerUploadComponent implements OnInit {
     private filterSize: FilterSizePipe,
     private registerUpload: RegisterUploadService,
     private changeDetectorRef: ChangeDetectorRef,
+    private spinner: NgxSpinnerService,
     private zone: NgZone
   ) {
 
@@ -92,6 +94,7 @@ export class FileExplorerUploadComponent implements OnInit {
     if (evt.node && !evt.node.expanded) {
 
       this.electronService.ipcRenderer.once(constants.IPC_GET_NODE_CONTENT, (event, nodeFiles) => {
+
         const dadIsSelected = this.tt.isSelected(evt.node);
 
         this.zone.run(() => {
@@ -115,15 +118,13 @@ export class FileExplorerUploadComponent implements OnInit {
               this.tt.propagateSelectionUp(child.parent, dadIsSelected);
             }
           });
-
+          this.spinner.hide();
         });
         return;
       });
+      this.spinner.show();
       this.registerUpload.getLazyNodeContent(evt.node.data.path);
     }
-  }
-
-  nodeCollapse(evt) {
   }
 
   viewNode(node: TreeNode) {
@@ -194,6 +195,7 @@ export class FileExplorerUploadComponent implements OnInit {
       totalSize: 0
     };
 
+    this.spinner.show();
     this.dialog.open(FileUploadModalComponent, {
       width: '500px',
       disableClose: true,

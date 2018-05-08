@@ -12,6 +12,7 @@ import { TransferablesGridComponent } from '@app/file-manager/transferables-grid
 import { UUID } from 'angular2-uuid';
 import { EntityStatus } from '@app/file-manager/models/entity-status';
 import { UploadItem } from '@app/file-manager/models/upload-item';
+import { NgxSpinnerService } from 'ngx-spinner';
 
 @Component({
   selector: 'app-file-upload',
@@ -31,12 +32,14 @@ export class FileUploadModalComponent implements OnInit, AfterViewInit {
   disableUpload = true;
   preserveStructure = false;
 
-  constructor(public dialogRef: MatDialogRef<FileUploadModalComponent>,
+  constructor(
+    public dialogRef: MatDialogRef<FileUploadModalComponent>,
     private router: Router,
     private formBuilder: FormBuilder,
-    @Inject(MAT_DIALOG_DATA) public data: any,
+    private spinner: NgxSpinnerService,
     private transferablesGridComponent: TransferablesGridComponent,
-    private preflightService: UploadPreflightService) {
+    private preflightService: UploadPreflightService,
+    @Inject(MAT_DIALOG_DATA) public data: any) {
 
     this.getWritableWorkspaces();
     this.workspaceCtrl = new FormControl();
@@ -50,17 +53,21 @@ export class FileUploadModalComponent implements OnInit, AfterViewInit {
     this.uploadForm = this.formBuilder.group({
       workspaceCtrl: [''],
     });
-  }
 
-  ngAfterViewInit() {
     if (this.writableWorkspaces.length === 0) {
       this.disableUpload = false;
       this.msgs.push({
         severity: 'warn',
         summary: 'Sorry, you don\'t have permission to upload data to any workspace ',
       });
+    } else {
+      this.preflightService.processFiles(this.data);
     }
-    this.preflightService.processFiles(this.data);
+    this.spinner.hide();
+  }
+
+  ngAfterViewInit() {
+
   }
 
   filterWorkspaces(selectedWorkspace) {

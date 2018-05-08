@@ -1,3 +1,5 @@
+<ngx-spinner #spin bdOpacity="0.6" bdColor="#fff" size="medium" color="#1e88e5" type="ball-circus" style="z-index:10000"></ngx-spinner>
+
 <h1>Select files to upload</h1>
 
 <p-growl [value]="msgs"></p-growl>
@@ -13,8 +15,7 @@
     <i class="material-icons">airplay</i>Collapse all</button>
 </div>
 
-<p-treeTable [value]="files" selectionMode="checkbox" [(selection)]="selectedFiles" styleClass="tree-table" (onNodeSelect)="nodeSelect($event)"
-  (onNodeUnselect)="nodeUnselect($event)" (onNodeExpand)="nodeExpand($event)" (onNodeCollapse)="nodeCollapse($event)">
+<p-treeTable [value]="files" selectionMode="checkbox" [(selection)]="selectedFiles" styleClass="tree-table" (onNodeExpand)="nodeExpand($event)">
   <p-column field="name" header="Name"></p-column>
   <p-column header="Size">
     <ng-template let-node="rowData" pTemplate="body">

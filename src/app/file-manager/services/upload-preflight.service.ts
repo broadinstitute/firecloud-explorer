@@ -10,6 +10,7 @@ import { AppState } from '@app/file-manager/reducers';
 import * as Transferables from '@app/file-manager/actions/transferables.actions';
 import { UploadItem } from '@app/file-manager/models/upload-item';
 import { EntityStatus } from '@app/file-manager/models/entity-status';
+import { NgxSpinnerService } from 'ngx-spinner';
 const constants = require('../../../../electron_app/helpers/environment').constants;
 
 @Injectable()
@@ -30,19 +31,38 @@ export class UploadPreflightService {
   constructor(private electronService: ElectronService,
     private registerUploadService: RegisterUploadService,
     private zone: NgZone,
-    private store: Store<AppState>) { }
+    private spinner: NgxSpinnerService,
+    private store: Store<AppState>) {
+
+    this.electronService.ipcRenderer.on(constants.IPC_GET_RECURSIVE_NODE_CONTENT, (event, nodeFiles) => {
+      nodeFiles.result
+        .filter(child => this.isNotMTD(child.name))
+        .forEach(child => {
+          this.fileCount++;
+          this.totalSize += child.size;
+
+          this.addFile({
+            name: child.name,
+            path: child.path,
+            size: child.size
+          });
+        });
+      this.spinner.hide();
+    });
+  }
 
   processFiles(data) {
 
+
     this.loadingFiles = false;
     this.selectedFiles = [];
-
     this.initializeValues();
 
     /**
      * store already selected files
      */
     this.zone.run(() => {
+      this.spinner.show();
       this.selectedFiles = data.selectedFiles
         .filter(item => item.type === 'File' && this.isNotMTD(item.data.name))
         .map(item => {
@@ -74,28 +94,10 @@ export class UploadPreflightService {
     const sortedItems = cleanedItems
       .forEach(
         item => {
-
-          // should expande recursivelly and select all
-          this.electronService.ipcRenderer.once(constants.IPC_GET_RECURSIVE_NODE_CONTENT, (event, nodeFiles) => {
-
-            nodeFiles.result
-              .filter(child => this.isNotMTD(child.name))
-              .forEach(child => {
-                this.fileCount++;
-                this.totalSize += child.size;
-
-                this.addFile({
-                  name: child.name,
-                  path: child.path,
-                  size: child.size
-                });
-              });
-
-          }
-          );
           this.registerUploadService.getRecursiveNodeContent(item.data.path);
         }
       );
+    this.spinner.hide();
     this.loadingFiles = false;
   }
 
