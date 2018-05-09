@@ -433,6 +433,10 @@ a.sidenav-link p {
   margin: 5px 0 10px 0;
 }
 
+.toolbar-modal.upload {
+  margin: 0 0 15px 0;
+}
+
 .toolbar-modal small {
   color: black;
   display: inline;
@@ -681,6 +685,11 @@ mat-error {
 
 .dialog-checkbox {
   display: block;
+  margin-top: 10px;
+}
+
+.dialog-checkbox.download {
+  margin-top: 0;
 }
 
 .mat-checkbox-checked.mat-accent .mat-checkbox-background,

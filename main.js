@@ -1,7 +1,7 @@
 if (require('electron-squirrel-startup')) return;
 
 // ./main.js
-const { app, BrowserWindow, ipcMain, Menu} = require('electron');
+const { app, BrowserWindow, ipcMain, Menu } = require('electron');
 const path = require('path');
 const url = require('url');
 const {
@@ -9,7 +9,10 @@ const {
   destroyDownloads
 } = require('./electron_app/DownloadManager');
 const { ExportS3, testS3Credentials, exportS3Cancel } = require('./electron_app/ExportS3');
+
 const lazyNodeReader = require('./electron_app/FileSystemReader').lazyNodeReader;
+const recursiveNodeReader = require('./electron_app/FileSystemReader').recursiveNodeReader;
+
 const constants = require('./electron_app/helpers/environment').constants;
 const os = require('os');
 const {
@@ -103,7 +106,7 @@ app.on('ready', function () {
   ipcMain.on(constants.IPC_EXPORT_TO_GCP_START, (event, destinationBucket, files, access_token) => {
     exportGCPManager(destinationBucket, files, access_token, win);
   });
-  
+
 
   ipcMain.on(constants.IPC_EXPORT_TO_GCP_CANCEL, (event, file, access_token) => {
     exportGCPManagerCancel(file, access_token);
@@ -147,6 +150,18 @@ app.on('ready', function () {
     var files = lazyNodeReader(nodePath, []);
 
     win.webContents.send(constants.IPC_GET_NODE_CONTENT, {
+      result: files,
+      nodePath: nodePath
+    });
+  });
+
+  ipcMain.on(constants.IPC_GET_RECURSIVE_NODE_CONTENT, (event, nodePath) => {
+    if (nodePath === '/') {
+      nodePath = os.homedir();
+    }
+    var files = recursiveNodeReader(nodePath, []);
+
+    win.webContents.send(constants.IPC_GET_RECURSIVE_NODE_CONTENT, {
       result: files,
       nodePath: nodePath
     });

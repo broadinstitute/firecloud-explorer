@@ -26,6 +26,7 @@ import { GcsApiService } from './services/gcs-api.service';
 import { GcsApiMockService } from './services/gcs-api-mock.service';
 import { FirecloudApiService } from './services/firecloud-api.service';
 import { PreflightService } from './services/preflight.service';
+import { UploadPreflightService } from './services/upload-preflight.service';
 import { ElectronService } from 'ngx-electron';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { RequestInterceptor } from './services/request.interceptor';
@@ -60,9 +61,7 @@ import { StatusBoxComponent } from './status-box/status-box.component';
     StoreModule.forFeature('uploads', UploadsReducer),
     StoreModule.forFeature('exportToGCS', ExportToGCSReducer),
     StoreModule.forFeature('exportToS3', ExportToS3Reducer),
-
     MatDialogModule,
-
   ],
   declarations: [
     FileExplorerComponent,
@@ -83,6 +82,7 @@ import { StatusBoxComponent } from './status-box/status-box.component';
     TransferablesGridComponent,
     StatusService,
     FilesService,
+    UploadPreflightService,
     PreflightService,
     BucketService,
     GoogleLoginService,

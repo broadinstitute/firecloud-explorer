@@ -66,9 +66,9 @@ export class SelectionService {
 
         childs = this.selection.selected
             .filter(
-                item => {
-                    return item.path.startsWith(row.path);
-                });
+            item => {
+                return item.path.startsWith(row.path);
+            });
 
         return childs;
     }

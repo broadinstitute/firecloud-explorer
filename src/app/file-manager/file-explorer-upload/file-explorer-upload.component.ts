@@ -1,5 +1,5 @@
 import { Component, OnInit, Output, ViewChild, EventEmitter, NgZone } from '@angular/core';
-import { Message, TreeNode } from 'primeng/primeng';
+import { Message, TreeNode, TreeTable } from 'primeng/primeng';
 import { Store } from '@ngrx/store';
 import { UploadItem } from '@app/file-manager/models/upload-item';
 import { AppState } from '@app/file-manager/reducers';
@@ -10,13 +10,15 @@ import { MatDialog } from '@angular/material';
 import { RegisterUploadService } from '@app/file-manager/services/register-upload.service';
 import { FileUploadModalComponent } from '../file-upload-modal/file-upload-modal.component';
 import { TransferablesGridComponent } from '../transferables-grid/transferables-grid.component';
-import { TreeTable } from 'primeng/primeng';
 import { ChangeDetectorRef } from '@angular/core';
 import { Type } from '@app/file-manager/models/type';
 import { EntityStatus } from '@app/file-manager/models/entity-status';
 import { ISubscription } from 'rxjs/Subscription';
 import { StatusService } from '@app/file-manager/services/status.service';
 import { UUID } from 'angular2-uuid';
+import { environment } from '@env/environment';
+import { NgxSpinnerService } from 'ngx-spinner';
+const constants = require('../../../../electron_app/helpers/environment').constants;
 
 @Component({
   selector: 'app-file-explorer-upload',
@@ -35,6 +37,7 @@ export class FileExplorerUploadComponent implements OnInit {
   files: TreeNode[];
   selectedFiles: TreeNode[] = [];
 
+  folderCount = 0;
   fileCount = 0;
   totalSize = 0;
 
@@ -48,6 +51,7 @@ export class FileExplorerUploadComponent implements OnInit {
     private filterSize: FilterSizePipe,
     private registerUpload: RegisterUploadService,
     private changeDetectorRef: ChangeDetectorRef,
+    private spinner: NgxSpinnerService,
     private zone: NgZone
   ) {
 
@@ -70,10 +74,11 @@ export class FileExplorerUploadComponent implements OnInit {
       },
       leaf: false
     };
+
     this.files = [];
     this.files.push(rootNode);
 
-    this.electronService.ipcRenderer.once('get-node-content', (event, localFiles) => {
+    this.electronService.ipcRenderer.once(constants.IPC_GET_NODE_CONTENT, (event, localFiles) => {
       this.zone.run(() => {
         rootNode.children = localFiles.result;
         rootNode.data.name = localFiles.nodePath;
@@ -85,49 +90,42 @@ export class FileExplorerUploadComponent implements OnInit {
 
   }
 
-  countFiles() {
-    this.fileCount = 0;
-    this.totalSize = 0;
-    this.selectedFiles.forEach(f => {
-      if (f.data.type === 'File') {
-        this.fileCount++;
-        this.totalSize += f.data.size;
-      }
-    });
-  }
-
-  nodeSelect(event) {
-    this.zone.run(() => {
-      this.countFiles();
-      this.msgs = [];
-      this.msgs.push({ severity: 'info', summary: 'Node Selected', detail: event.node.data.name });
-    });
-  }
-
-  nodeUnselect(event) {
-    this.zone.run(() => {
-      this.countFiles();
-      this.msgs = [];
-      this.msgs.push({ severity: 'info', summary: 'Node Unselected', detail: event.node.data.name });
-    });
-  }
-
   nodeExpand(evt) {
-    let node: TreeNode;
-    if (evt.node) {
-      this.electronService.ipcRenderer.once('get-node-content', (event, nodeFiles) => {
-        node = evt.node;
+
+    if (evt.node && !evt.node.expanded) {
+
+      this.electronService.ipcRenderer.once(constants.IPC_GET_NODE_CONTENT, (event, nodeFiles) => {
+
+        const dadIsSelected = this.tt.isSelected(evt.node);
+
         this.zone.run(() => {
-          node.children = nodeFiles.result;
-          node.expanded = true;
+
+          if (evt.node.children) {
+            evt.node.children.forEach(child => {
+              const ix = this.tt.findIndexInSelection(child);
+              if (ix >= 0) {
+                this.selectedFiles.splice(ix, 1);
+              }
+            });
+          }
+
+          evt.node.children = nodeFiles.result;
+          evt.node.expanded = true;
+
+          evt.node.children.forEach(child => {
+
+            this.tt.propagateSelectionDown(child, dadIsSelected);
+            if (child.parent) {
+              this.tt.propagateSelectionUp(child.parent, dadIsSelected);
+            }
+          });
+          this.spinner.hide();
         });
         return;
       });
+      this.spinner.show();
       this.registerUpload.getLazyNodeContent(evt.node.data.path);
     }
-  }
-
-  nodeCollapse(evt) {
   }
 
   viewNode(node: TreeNode) {
@@ -166,12 +164,10 @@ export class FileExplorerUploadComponent implements OnInit {
     this.files.forEach(node => {
       this.selectRecursive(node, true);
     });
-    this.countFiles();
   }
 
   selectNone() {
     this.selectedFiles = [];
-    this.countFiles();
   }
 
   toggleSelection() {
@@ -182,7 +178,6 @@ export class FileExplorerUploadComponent implements OnInit {
       }
     });
     this.selectedFiles = newSelection;
-    this.countFiles();
   }
 
   private selectRecursive(node: TreeNode, isExpand: boolean) {
@@ -195,38 +190,22 @@ export class FileExplorerUploadComponent implements OnInit {
   }
 
   selectionDone() {
-    const dialogRef = this.dialog.open(FileUploadModalComponent, {
+
+    const items = {
+      selectedFiles: this.selectedFiles,
+      totalSize: 0
+    };
+
+    this.spinner.show();
+    this.dialog.open(FileUploadModalComponent, {
       width: '500px',
-      disableClose: true
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      const filesToUpload: UploadItem[] = [];
-      let dataFile: UploadItem;
-
-      if (result !== undefined) {
-        this.selectedFiles
-          .filter(file => file.data.type === Type.FILE)
-          .forEach(file => {
-            dataFile = new UploadItem(UUID.UUID(), file.data.name, file.data.updated,
-              file.data.updated, file.data.size, file.data.path, result.directory,
-              EntityStatus.PENDING, '', '', '', result.preserveStructure, '', file.data.name, '');
-
-            filesToUpload.push(dataFile);
-          });
-        this.transferablesGridComponent.startUpload(filesToUpload);
-      }
-    });
-  }
-
-  upload() {
-    const dialogRef = this.dialog.open(FileUploadModalComponent, {
-      width: '500px'
+      disableClose: true,
+      data: items
     });
   }
 
   disableButton() {
-    return this.uploadInProgress() || this.fileCount <= 0;
+    return this.uploadInProgress() || this.selectedFiles.length <= 0;
   }
 
   uploadInProgress() {

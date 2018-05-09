@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ElectronService } from 'ngx-electron';
 import { Item } from '@app/file-manager/models/item';
+const constants = require('../../../../electron_app/helpers/environment').constants;
 
 @Injectable()
 export class RegisterUploadService {
@@ -15,7 +16,13 @@ export class RegisterUploadService {
 
   public async getLazyNodeContent(nodePath) {
     if (this.electronService.isElectronApp) {
-      this.electronService.ipcRenderer.send('get-node-content', nodePath);
+      this.electronService.ipcRenderer.send(constants.IPC_GET_NODE_CONTENT, nodePath);
+    }
+  }
+
+  public async getRecursiveNodeContent(nodePath) {
+    if (this.electronService.isElectronApp) {
+      this.electronService.ipcRenderer.send(constants.IPC_GET_RECURSIVE_NODE_CONTENT, nodePath);
     }
   }
 }

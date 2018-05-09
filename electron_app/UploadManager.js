@@ -1,4 +1,5 @@
 const fs = require('fs');
+const process = require('process');
 const mime = require('mime-types');
 const req = require('request');
 const constants = require('./helpers/environment').constants;
@@ -11,7 +12,19 @@ const uploadManager = (bucketName, fileList = [], access_token, win) => {
   fileList.forEach(file => {
     const contentType = mime.lookup(file.path) ? mime.lookup(file.path) : 'application/octet-stream';
     const size = Number(file.size);
-    const uri = url + 'Uploads/' + file.name;
+
+    let uri = url;
+
+    if (file.preserveStructure === true) {
+      if (process.platform === 'win32') {
+        uri = uri + 'Uploads' + file.path.slice(file.path.indexOf(':') + 1).replace(/\\/g , '/');
+      } else {
+        uri = uri + 'Uploads' + file.path;
+      }
+    } else {
+      uri = uri + 'Uploads/' + file.name;
+    }
+
     let progressConf = progress({
       length: size
     });

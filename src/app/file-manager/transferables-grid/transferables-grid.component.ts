@@ -57,7 +57,6 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
     private spinner: NgxSpinnerService,
     private dialog: MatDialog) {
     this.selectedIndex = 0;
-
   }
 
   load() {
@@ -65,7 +64,6 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   }
 
   filter() {
-
   }
 
   // filtering method
@@ -76,34 +74,42 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   }
 
   reset() {
+    // not yet implemented
     // this.store.dispatch(new Transferables.Reset());
   }
 
   selectAll() {
+    // not yet implemented
     // this.store.dispatch(new Transferables.SelectAll());
   }
 
   unselectAll() {
+    // not yet implemented
     // this.store.dispatch(new Transferables.UnselectAll());
   }
 
   toggleSelection() {
+    // not yet implemented
     // this.store.dispatch(new Transferables.ToggleSelection());
   }
 
   updateItem(item: any) {
+    // not yet implemented
     // this.store.dispatch(new Transferables.UpdateItem(item));
   }
 
   selectItem(item: any) {
+    // not yet implemented
     // this.store.dispatch(new Transferables.SelectItem(item));
   }
 
   toggleItemSelection(item: any) {
+    // not yet implemented
     // this.store.dispatch(new Transferables.ToggleItemSelection(item));
   }
 
   removeItem(item: any) {
+    // not yet implemented
     // this.store.dispatch(new Transferables.RemoveItem(item));
   }
 
@@ -147,12 +153,15 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
   }
 
   pauseSelected() {
+    // not yet implemented
   }
 
   resumeSelected() {
+    // not yet implemented
   }
 
   retrySelected() {
+    // not yet implemented
   }
 
   cancelUploads() {
@@ -166,8 +175,6 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
     dialogRef.afterClosed().subscribe(modalResponse => {
       this.zone.run(() => {
         if (modalResponse.exit) {
-          // this.upCanceled = modalResponse.exit;
-          // this.upInProgress = !modalResponse.exit;
           this.gcsService.cancelUploads();
         }
         this.spinner.hide();
@@ -186,8 +193,6 @@ export class TransferablesGridComponent implements OnInit, AfterViewInit {
     dialogRef.afterClosed().subscribe(modalResponse => {
       this.zone.run(() => {
         if (modalResponse.exit) {
-          // this.downCanceled = modalResponse.exit;
-          // this.downInProgress = !modalResponse.exit;
           this.gcsService.cancelDownloads();
         }
         this.spinner.hide();

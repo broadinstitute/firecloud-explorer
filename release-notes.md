@@ -1,5 +1,49 @@
 # FireCloud DataShuttle Release Notes
 
+### Alpha version 0.1.1
+ 
+## Feature summary
+
+This alpha release of FireCloud DataShuttle includes the following features:
+
+* Browse and select files or folders associated with FireCloud workspaces.
+* Export selection to a Google or Amazon S3 bucket that a user can write to.
+* Monitor the status of transfers as they proceed.
+* Fixed most of previous known issues.
+ 
+## Known Issues
+
+The following issues have been identified, but not resolved in this version:
+
+* If there is no internet connection while trying to login the app, the “Choose account” Google popup will appear blank. 
+
+_Temporary solution: the user should either restart the computer or end the app from the OS task manager._
+ 
+* If during a Download or Upload process internet connection gets lost, the app will block and files “In Progress”, will remain with that status indefinitely.
+
+_Temporary solution: the user should cancel the current transfer and retry when internet connection gets back._
+ 
+* Previous transfers will remain listed in the Progress Status page even though a new user logs in the app.
+
+_Temporary solution: to clean previous transfer information, the user will have to close the application first._
+ 
+* If the user tries to export a 0 bytes file to an Amazon S3 bucket, that file will be listed in the Progress Status page as “In Progress” indefinitely, but the transfer will never occur.
+
+_Temporary solution: the user should sign out or close the application and retry the operation skipping that empty file._
+ 
+* If the user cancels an export to a Google or Amazon S3 bucket, “In Progress” files will not be canceled, they will continue to be transferred, but those that hasn’t been started will.
+
+_Temporary solution: the user should sign out or close the application to terminate remaining “In Progress” transfers._
+ 
+* While a transfer is in progress, pagination is not working as expected since files don’t remain in the same position.
+ 
+* After cancelling an Upload, the destination bucket will have 3 more files than the amount stated on the Status Page.
+ 
+## Have any questions?
+
+Please visit: https://gatkforums.broadinstitute.org/firecloud/categories/fc-explorer
+
+
 ### Alpha version 0.1.0
 
 ## Feature summary

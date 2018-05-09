@@ -46,11 +46,37 @@ const lazyNodeReader = (dir, fileList = []) => {
     } catch (e) {
       // do nothing
       // we should log this somewhere in the future 
-      // console.log('error reading file stats ');
     }
   });
   return fileList;
-}
+};
+
+const recursiveNodeReader = (dir, fileList = []) => {
+  fs.readdirSync(dir).forEach(file => {
+
+    const filePath = path.join(dir, file);
+
+    let node = {};
+    try {
+      const stat = fs.statSync(filePath);
+
+      if (!file.startsWith('.') && stat.isDirectory()) {
+        recursiveNodeReader(filePath, fileList);
+      } else {
+          node = {
+            name: file,
+            path: path.join(dir, file),
+            size: stat.size,
+          };
+        fileList.push(node);
+      }
+    } catch (e) {
+      // do nothing
+      // we should log this somewhere in the future 
+    }
+  });
+  return fileList;
+};
 
 function getSizeFromFolder(dir) {
   const files = fs.readdirSync(dir);
@@ -62,5 +88,6 @@ function getSizeFromFolder(dir) {
 }
 
 module.exports = {
-  lazyNodeReader
+  lazyNodeReader,
+  recursiveNodeReader
 }
