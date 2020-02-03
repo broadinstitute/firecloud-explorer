@@ -1,4 +1,7 @@
 // ./main.js
+//const OAuth2Provider = require("electron-oauth-helper");
+const { OAuth2Client } = require('google-auth-library');
+
 const {
   app,
   BrowserWindow,
@@ -7,7 +10,7 @@ const {
 } = require('electron')
 const path = require('path');
 const url = require('url');
-const electronOauth2 = require('electron-oauth2');
+//const { electronOauth2 } = require('electron-oauth-helper');
 const {
   downloadManager,
   destroyDownloads
@@ -56,8 +59,19 @@ app.on('ready', function () {
   //  win.webContents.openDevTools()
 
   // ----- Google auth -----
-  var googleConfig = {};
+  //var googleConfig = {};
   var googleOptions = {};
+
+  const googleConfig = {
+    clientId: '60387149286-vj4e50v7dneg598m9ead6jqtu67ifj2p.apps.googleusercontent.com',
+    clientSecret: 'c8Gc0oD4Eof7xL95rMrPP1N7',
+    authorizationUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
+    tokenUrl: 'https://www.googleapis.com/oauth2/v4/token',
+    useBasicAuthorizationHeader: false,
+    redirectUri: 'http://localhost:4200'
+  };
+
+  const myApiOauth = new OAuth2Client(googleConfig);
 
   const windowParams = {
     parent: win,
@@ -77,7 +91,8 @@ app.on('ready', function () {
   });
 
   ipcMain.on(constants.IPC_GOOGLE_AUTH, (event) => {
-    const myApiOauth = electronOauth2(this.googleConfig, windowParams);
+    //const myApiOauth = new electronOauth2(this.googleConfig);
+    
     myApiOauth.getAccessToken(this.googleOptions)
       .then(token => {
         // use your token.access_token
@@ -96,11 +111,11 @@ app.on('ready', function () {
   ipcMain.on(constants.IPC_START_UPLOAD, (event, bucketName, files, access_token) => {
     uploadManager(bucketName, files, access_token, win);
   });
-  
+
   ipcMain.on(constants.IPC_UPLOAD_CANCEL, (event, file, access_token) => {
     uploadManagerCancel(file, access_token);
   });
-  
+
   ipcMain.on(constants.IPC_DOWNLOAD_CANCEL, (event) => {
     destroyDownloads();
   });
