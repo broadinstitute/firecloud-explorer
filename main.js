@@ -1,6 +1,26 @@
 // ./main.js
 //const OAuth2Provider = require("electron-oauth-helper");
-const { OAuth2Client } = require('google-auth-library');
+//const { OAuth2Client } = require('google-auth-library');
+const {SecretManagerServiceClient} = require('@google-cloud/secret-manager');
+// Instantiates a client
+const client = new SecretManagerServiceClient();
+
+// Define path for secret name
+const clientid = 'projects/60387149286/secrets/firecloud-explorer-client-id';
+const clientsecret = 'projects/60387149286/secrets/firecloud-explorer-client-secret';
+
+async function accessSecretVersion(secret) {
+  const [version] = await client.accessSecretVersion({
+    name: secret,
+  });
+
+  // Extract the payload as a string.
+  const payload = version.payload.data.toString('utf8');
+
+  // WARNING: Do not print the secret in a production environment - this
+  // snippet is showing how to access the secret material.
+  console.info(`Payload: ${payload}`);
+}
 
 const {
   app,
@@ -10,7 +30,7 @@ const {
 } = require('electron')
 const path = require('path');
 const url = require('url');
-//const { electronOauth2 } = require('electron-oauth-helper');
+const { electronOauth2 } = require('electron-oauth-helper');
 const {
   downloadManager,
   destroyDownloads
@@ -63,8 +83,8 @@ app.on('ready', function () {
   var googleOptions = {};
 
   const googleConfig = {
-    clientId: '60387149286-vj4e50v7dneg598m9ead6jqtu67ifj2p.apps.googleusercontent.com',
-    clientSecret: 'c8Gc0oD4Eof7xL95rMrPP1N7',
+    clientId: accessSecretVersion(clientid),
+    clientSecret: accessSecretVersion(clientsecret),
     authorizationUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
     tokenUrl: 'https://www.googleapis.com/oauth2/v4/token',
     useBasicAuthorizationHeader: false,
@@ -91,7 +111,7 @@ app.on('ready', function () {
   });
 
   ipcMain.on(constants.IPC_GOOGLE_AUTH, (event) => {
-    //const myApiOauth = new electronOauth2(this.googleConfig);
+    const myApiOauth = new electronOauth2(this.googleConfig);
     
     myApiOauth.getAccessToken(this.googleOptions)
       .then(token => {
