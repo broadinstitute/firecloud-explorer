@@ -53,6 +53,7 @@
     "moment": "^2.19.3",
     "ngx-bootstrap": "^1.9.3",
     "ngx-electron": "^1.0.3",
+    "node-sass": "^4.13.1",
     "primeng": "^5.0.0",
     "progress-stream": "^2.0.0",
     "request": "^2.83.0",
