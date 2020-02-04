@@ -59,6 +59,36 @@ app.on('ready', function () {
   var googleConfig = {};
   var googleOptions = {};
 
+  /*const {SecretManagerServiceClient} = require('@google-cloud/secret-manager');
+  // Instantiates a client
+  const client = new SecretManagerServiceClient();
+
+  async function accessSecretVersion(secret_path) {
+    const [version] = await client.accessSecretVersion({
+      name: secret_path,
+    });
+
+    // Extract the payload as a string.
+    const payload = version.payload.data.toString('utf8');
+
+    // WARNING: Do not print the secret in a production environment - this
+    // snippet is showing how to access the secret material.
+    //console.info(`Payload: ${payload}`);
+    return payload;
+  }
+
+  const CLIENT_ID_PATH = 'projects/60387149286/secrets/firecloud-explorer-client-id'
+  const CLIENT_SECRET_PATH = 'projects/60387149286/secrets/firecloud-explorer-client-secret'
+
+  const googleConfig = {
+    clientId: accessSecretVersion(CLIENT_ID_PATH),
+    clientSecret: accessSecretVersion(CLIENT_SECRET_PATH),
+    authorizationUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
+    tokenUrl: 'https://www.googleapis.com/oauth2/v4/token',
+    useBasicAuthorizationHeader: false,
+    redirectUri: 'http://localhost:4200'
+  };*/
+
   const windowParams = {
     parent: win,
     modal: true,
@@ -72,7 +102,7 @@ app.on('ready', function () {
   };
 
   ipcMain.on(constants.IPC_CONFIRGURE_ACCOUNT, (event, googleConfig, googleOptions) => {
-    this.googleConfig = googleConfig;
+    //this.googleConfig = googleConfig;
     this.googleOptions = googleOptions;
   });
 

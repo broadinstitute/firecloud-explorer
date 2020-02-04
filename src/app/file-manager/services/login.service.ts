@@ -7,9 +7,28 @@ import { SecurityService } from '../services/security.service';
 import { FirecloudService } from '../services/firecloud.service';
 import { Observable } from 'rxjs/Observable';
 
+//const {SecretManagerServiceClient} = require('@google-cloud/secret-manager');
+// Instantiates a client
+//const client = new SecretManagerServiceClient();
+
+/*async function accessSecretVersion(secret_path) {
+  const [version] = await client.accessSecretVersion({
+    name: secret_path,
+  });
+
+  // Extract the payload as a string.
+  const payload = version.payload.data.toString('utf8');
+
+  // WARNING: Do not print the secret in a production environment - this
+  // snippet is showing how to access the secret material.
+  //console.info(`Payload: ${payload}`);
+  return payload;
+}*/
+
+
 const googleConfig = {
-  clientId: environment.CLIENT_ID,
-  clientSecret: environment.CLIENT_SECRET,
+  clientId: environment.CLIENT_ID_PATH,
+  clientSecret: environment.CLIENT_SECRET_PATH,
   authorizationUrl: environment.AUTHORIZATION_URL,
   tokenUrl: environment.TOKEN_URL,
   useBasicAuthorizationHeader: false,

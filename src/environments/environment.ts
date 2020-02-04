@@ -8,8 +8,8 @@ export const environment = {
   testing: false,
   GOOGLE_URL: 'https://www.googleapis.com/',
   // google authorization values
-  CLIENT_ID: '454950129951-4nd5ah1v74efvi4619m5f075q4dp1puq.apps.googleusercontent.com',
-  CLIENT_SECRET: '7lWnz5qgiiPPkNr18kS1-DdF',
+  CLIENT_ID_PATH: '454950129951-4nd5ah1v74efvi4619m5f075q4dp1puq.apps.googleusercontent.com',
+  CLIENT_SECRET_PATH: '7lWnz5qgiiPPkNr18kS1-DdF',
   REDIRECT_URI: 'http://localhost',
   BUCKET_NAME: 'bucket-privado',
   AUTHORIZATION_URL: 'https://accounts.google.com/o/oauth2/v2/auth',
